@@ -9,7 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import com.kastik.appsaboard.ui.screens.auth.AuthenticationScreen
 import com.kastik.appsaboard.ui.screens.home.HomeScreen
 import com.kastik.appsaboard.ui.theme.AppsAboardTheme
 
@@ -19,17 +21,33 @@ fun NavHost() {
     AppsAboardTheme {
         NavHost(
             navController = navController,
-            startDestination = HomeScreen,
+            startDestination = HomeRoute,
         ) {
-            composable<HomeScreen>(
+            composable<HomeRoute>(
                 enterTransition = { scaleIn() },
                 exitTransition = { fadeOut() },
                 popEnterTransition = { fadeIn() }
             ) { backStackEntry ->
-                backStackEntry.toRoute<HomeScreen>()
                 HomeScreen()
             }
-            composable<SettingsScreen>(
+            composable<AuthRoute>(
+                deepLinks = listOf(
+                    navDeepLink {
+                        uriPattern =
+                            "com.kastik.apps://auth?code={code}&state={state}&error={error}&error_description={error_description}"
+                    }
+                ),
+                enterTransition = { scaleIn() },
+                exitTransition = { fadeOut() },
+                popEnterTransition = { fadeIn() }
+            ) { backStackEntry ->
+                val args = backStackEntry.toRoute<AuthRoute>()
+                AuthenticationScreen(
+                    navigateBack = { navController.popBackStack() },
+                    arguments = args
+                )
+            }
+            composable<SettingsRoute>(
                 enterTransition = {
                     slideInVertically(
                         initialOffsetY = { it },

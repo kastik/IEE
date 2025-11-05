@@ -12,5 +12,9 @@ class AnnouncementRepoImpl(
     override suspend fun getPublicAnnouncements(): List<Announcement> =
         remoteDataSource.fetchAnnouncements().map { it.toAnnouncement() }
 
+    override suspend fun getAllAnnouncements(): List<Announcement> =
+        remoteDataSource.fetchAllAnnouncements().map {
+            it.toAnnouncement()
+        }
 
 }

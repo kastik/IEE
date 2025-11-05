@@ -4,7 +4,8 @@ import com.kastik.appsaboard.data.datasource.remote.api.ItApiClient
 import com.kastik.appsaboard.data.datasource.remote.source.AnnouncementRemoteDataSource
 import com.kastik.appsaboard.data.repository.AnnouncementRepoImpl
 import com.kastik.appsaboard.domain.repository.AnnouncementRepository
-import com.kastik.appsaboard.domain.usecases.announcements.GetPublicAnnouncementsUseCase
+import com.kastik.appsaboard.domain.usecases.GetAllAnnouncementsUseCase
+import com.kastik.appsaboard.domain.usecases.GetPublicAnnouncementsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,7 +21,7 @@ object AnnouncementNetworkModule {
 
     @Provides
     @Singleton
-    fun provideAnnouncementApi(retrofit: Retrofit): ItApiClient =
+    fun provideAnnouncementApi(@AnnRetrofit retrofit: Retrofit): ItApiClient =
         retrofit.create(ItApiClient::class.java)
 
     @Provides
@@ -42,7 +43,14 @@ object AnnouncementUseCaseModule {
 
     @Provides
     @ViewModelScoped
-    fun provideGetAnnouncementsUseCase(
-        repository: AnnouncementRepository
-    ): GetPublicAnnouncementsUseCase = GetPublicAnnouncementsUseCase(repository)
+    fun provideGetPublicAnnouncementsUseCase(
+        announcementRepository: AnnouncementRepository,
+    ): GetPublicAnnouncementsUseCase = GetPublicAnnouncementsUseCase(announcementRepository)
+
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetAllAnnouncementsUseCase(
+        announcementRepository: AnnouncementRepository,
+    ): GetAllAnnouncementsUseCase = GetAllAnnouncementsUseCase(announcementRepository)
 }

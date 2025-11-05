@@ -4,4 +4,5 @@ import com.kastik.appsaboard.domain.models.Announcement
 
 interface AnnouncementRepository {
     suspend fun getPublicAnnouncements(): List<Announcement>
+    suspend fun getAllAnnouncements(): List<Announcement>
 }

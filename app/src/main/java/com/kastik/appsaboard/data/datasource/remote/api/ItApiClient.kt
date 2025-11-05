@@ -7,4 +7,9 @@ interface ItApiClient {
     @GET("announcements/public")
     suspend fun getPublicAnnouncements(
     ): List<AnnouncementDto>
+
+    @GET("announcements")
+    suspend fun getAllAnnouncements(
+    ): List<AnnouncementDto>
+
 }
