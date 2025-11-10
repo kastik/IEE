@@ -1,5 +1,5 @@
 plugins {
-    id("com.kastik.library")
+    alias(libs.plugins.kastik.library)
 }
 
 android {

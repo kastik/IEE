@@ -45,6 +45,10 @@ fun Project.configureAndroidCompose(
         // Icons
         add("implementation", libs.findLibrary("androidx-material-icons-extended").get())
 
+        //Activity
+        add("implementation", libs.findLibrary("androidx-activity-compose").get())
+
+        //Lifecycle
         add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-ktx").get())
         add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-compose").get())
         add("implementation", libs.findLibrary("androidx-lifecycle-runtime-compose").get())

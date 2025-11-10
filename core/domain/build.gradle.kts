@@ -1,6 +1,6 @@
 plugins {
-    id("com.kastik.library")
-    id("com.kastik.hilt")
+    alias(libs.plugins.kastik.library)
+    alias(libs.plugins.kastik.hilt)
 }
 
 android {
