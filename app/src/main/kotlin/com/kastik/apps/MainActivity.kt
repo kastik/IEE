@@ -14,11 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //TODO Find a proper fix for this
-        val field =
-            Class.forName("android.database.CursorWindow").getDeclaredField("sCursorWindowSize")
-        field.isAccessible = true
-        field.set(null, 100 * 1024 * 1024) // 100MB
         enableEdgeToEdge()
         setContent {
             AppsAboardTheme {

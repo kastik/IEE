@@ -25,6 +25,8 @@ fun TestNewSearchBar(
     searchBarState: SearchBarState,
     textFieldState: TextFieldState,
     navigateToSettings: () -> Unit,
+    navigateToProfile: () -> Unit,
+    isSignedIn: Boolean
 ) {
     val context = LocalContext.current
     AppBarWithSearch(
@@ -44,12 +46,15 @@ fun TestNewSearchBar(
         },
         navigationIcon = {
             IconButton(onClick = {
-                val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    ("https://login.it.teithe.gr/authorization?" + "client_id=690a9861468c9b767cabdc40" + "&response_type=code" + "&scope=announcements,profile" + "&redirect_uri=com.kastik.apps://auth").toUri()
-                )
-                context.startActivity(intent)
-
+                if (isSignedIn) {
+                    navigateToProfile()
+                } else {
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        ("https://login.it.teithe.gr/authorization?" + "client_id=690a9861468c9b767cabdc40" + "&response_type=code" + "&scope=announcements,profile" + "&redirect_uri=com.kastik.apps://auth").toUri()
+                    )
+                    context.startActivity(intent)
+                }
             }) {
                 Icon(Icons.Default.AccountCircle, null)
             }

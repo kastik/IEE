@@ -1,12 +1,12 @@
 package com.kastik.home
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +28,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.LoadingIndicator
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,18 +44,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
-import com.kastik.data.mappers.toTitleList
 import com.kastik.home.components.AnnouncementCard
 import com.kastik.home.components.FloatingToolBar
 import com.kastik.home.components.TestNewSearchBar
-
+import com.kastik.model.aboard.AnnouncementAttachment
+import com.kastik.model.aboard.AnnouncementAuthor
+import com.kastik.model.aboard.AnnouncementPreview
+import com.kastik.model.aboard.AnnouncementTag
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @OptIn(
@@ -64,19 +74,77 @@ fun HomeScreen(
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit
 ) {
+    val uiState = viewModel.uiState.value
 
-    val authors = viewModel.authors.collectAsStateWithLifecycle()
+    HomeScreenContent(
+        navigateToAnnouncement = navigateToAnnouncement,
+        navigateToSettings = navigateToSettings,
+        navigateToProfile = navigateToProfile,
+        announcements = viewModel.announcements,
+        isSignedIn = uiState.isSignedIn,
+        hasEvaluatedAuth = uiState.hasEvaluatedAuth,
+        showSignInNotice = uiState.showSignInNotice,
+        onSignInNoticeDismissed = viewModel::onSignInNoticeDismissed,
+        onSignInClicked = viewModel::onSignInClicked,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun HomeScreenContent(
+    navigateToAnnouncement: (Int) -> Unit,
+    navigateToSettings: () -> Unit,
+    navigateToProfile: () -> Unit,
+    announcements: Flow<PagingData<AnnouncementPreview>>,
+    isSignedIn: Boolean,
+    hasEvaluatedAuth: Boolean,
+    showSignInNotice: Boolean,
+    onSignInNoticeDismissed: () -> Unit,
+    onSignInClicked: () -> Unit,
+) {
 
     val scope = rememberCoroutineScope()
     val searchBarState = rememberSearchBarState()
+    val pullRefreshState = rememberPullToRefreshState()
     val textFieldState = rememberTextFieldState()
-    val lazyItems = viewModel.announcements.collectAsLazyPagingItems()
     val lazyListState = rememberLazyListState()
-    val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
-    //val toolbarScroll = FloatingToolbarDefaults.exitAlwaysScrollBehavior(exitDirection = End)
+    val lazyAnnouncements = announcements.collectAsLazyPagingItems()
+    val isScrollingUp = lazyListState.isScrollingUp()
+    val expandFab by remember {
+        derivedStateOf {
+            isScrollingUp && lazyListState.firstVisibleItemIndex < 6
+        }
+    }
 
-    LaunchedEffect(lazyListState.firstVisibleItemIndex) {
-        Log.d("thequickbrownfox", "${lazyListState.firstVisibleItemIndex}")
+    val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
+
+
+    LaunchedEffect(isSignedIn) {
+        Log.d("MyLog", "hasEvaluatedAuth: $hasEvaluatedAuth")
+        if (hasEvaluatedAuth) {
+            Log.d("MyLog", "hasEvaluatedAuth: refreshing")
+            lazyAnnouncements.refresh()
+        }
+    }
+
+    AnimatedVisibility(showSignInNotice) {
+        AlertDialog(onDismissRequest = onSignInNoticeDismissed, confirmButton = {
+            Button(
+                onClick = onSignInClicked
+            ) {
+                Text("Sign-in")
+            }
+        }, title = {
+            Text("Sign In Required")
+        }, text = {
+            Text(
+                "You’re currently browsing limited content. " + "Sign-ing to view all the announcements\n\n" + "Would you like to sign in now?",
+            )
+        }, dismissButton = {
+            TextButton(onClick = onSignInNoticeDismissed) {
+                Text("Dismiss")
+            }
+        })
     }
 
     Scaffold(
@@ -86,12 +154,23 @@ fun HomeScreen(
                 searchBarState = searchBarState,
                 textFieldState = textFieldState,
                 navigateToSettings = navigateToSettings,
+                navigateToProfile = navigateToProfile,
+                isSignedIn = isSignedIn
             )
         },
         floatingActionButton = {
-            FloatingToolBar(expanded = lazyListState.isScrollingUp(), onFabClick = {
+            FloatingToolBar(expanded = (expandFab), onFabClick = {
                 scope.launch {
                     lazyListState.animateScrollToItem(0)
+                }
+            }, nextPage = {
+                scope.launch {
+                    lazyListState.animateScrollToItem(lazyListState.firstVisibleItemIndex + 20)
+
+                }
+            }, prevPage = {
+                scope.launch {
+                    lazyListState.animateScrollToItem(lazyListState.firstVisibleItemIndex - 20)
                 }
             })
         },
@@ -104,7 +183,7 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            when (lazyItems.loadState.refresh) {
+            when (lazyAnnouncements.loadState.refresh) {
                 is LoadState.Loading -> {
                     Column(
                         modifier = Modifier
@@ -136,61 +215,74 @@ fun HomeScreen(
                             "Failed to load. Tap to retry.",
                             modifier = Modifier
                                 .padding(16.dp)
-                                .clickable { lazyItems.retry() })
+                                .clickable { lazyAnnouncements.retry() })
                     }
                 }
 
                 else -> Unit
             }
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    //.nestedScroll(toolbarScroll)
-                    .nestedScroll(searchScroll.nestedScrollConnection), state = lazyListState
-            ) {
-                items(
-                    count = lazyItems.itemCount,
-                    key = lazyItems.itemKey { it.id },
-                    contentType = lazyItems.itemContentType { "announcement_card" }) { index ->
-                    val item = lazyItems[index]
-                    if (item != null) {
-                        AnnouncementCard(
-                            onClick = { navigateToAnnouncement(item.id) },
-                            publisher = item.author.name,
-                            title = item.title,
-                            categories = remember(item.tags) { item.tags.toTitleList() },
-                            date = item.updatedAt,
-                            content = remember(item.preview) { item.preview.orEmpty() })
-                    }
-                }
-                when (lazyItems.loadState.append) {
-                    is LoadState.Loading -> item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
 
-                            CircularWavyProgressIndicator(
-                                modifier = Modifier.size(32.dp),
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                            Text("Getting next page...")
+            PullToRefreshBox(
+                isRefreshing = lazyAnnouncements.loadState.refresh is LoadState.Loading,
+                state = pullRefreshState,
+                onRefresh = { lazyAnnouncements.refresh() },
+                indicator = {
+                    LoadingIndicator(
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        state = pullRefreshState,
+                        isRefreshing = lazyAnnouncements.loadState.refresh is LoadState.Loading,
+                    )
+                }) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        //.nestedScroll(toolbarScroll)
+                        .nestedScroll(searchScroll.nestedScrollConnection), state = lazyListState
+                ) {
+                    items(
+                        count = lazyAnnouncements.itemCount,
+                        key = lazyAnnouncements.itemKey { it.id },
+                        contentType = lazyAnnouncements.itemContentType { "announcement_card" }) { index ->
+                        val item = lazyAnnouncements[index]
+                        if (item != null) {
+                            AnnouncementCard(
+                                onClick = { navigateToAnnouncement(item.id) },
+                                publisher = item.author,
+                                title = item.title,
+                                categories = remember(item.tags) { item.tags },
+                                date = item.date,
+                                content = remember(item.preview) { item.preview.orEmpty() })
                         }
                     }
+                    when (lazyAnnouncements.loadState.append) {
+                        is LoadState.Loading -> item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
 
-                    is LoadState.Error -> item {
-                        Text(
-                            "Retry",
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .clickable { lazyItems.retry() })
+                                CircularWavyProgressIndicator(
+                                    modifier = Modifier.size(32.dp),
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                                Text("Getting next page...")
+                            }
+                        }
 
+                        is LoadState.Error -> item {
+                            Text(
+                                "Retry",
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clickable { lazyAnnouncements.retry() })
+
+                        }
+
+                        else -> Unit
                     }
-
-                    else -> Unit
                 }
             }
         }
@@ -202,19 +294,7 @@ fun HomeScreen(
                     onSearch = {},
                     placeholder = { Text("Search...") })
             }) {
-            FlowRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                maxLines = 2
-            ) {
-                authors.value.forEach {
-                    AssistChip(onClick = {}, label = {
-                        Text(it.name, style = MaterialTheme.typography.labelLarge)
-                    })
-                }
 
-            }
         }
     }
 }
@@ -235,4 +315,62 @@ private fun LazyListState.isScrollingUp(): Boolean {
             }
         }
     }.value
+}
+
+val FakeAuthors = listOf(
+    AnnouncementAuthor(
+        id = 1, name = "Kostas Papadopoulos"
+    ),
+    AnnouncementAuthor(
+        id = 2, name = "Dimitris Papadopoulos"
+    ),
+
+    )
+
+val FakeAnnouncementTags = listOf(
+    AnnouncementTag(
+        id = 1, title = "Tag1", parentId = null, isPublic = false, mailListName = "Tag1 maillist"
+    ), AnnouncementTag(
+        id = 2, title = "Tag2", parentId = 5, isPublic = true, mailListName = "Tag2 maillist"
+    )
+)
+
+val FakeAttachments = listOf(
+    AnnouncementAttachment(
+        id = 1,
+        announcementId = 1,
+        filename = "image.jpg",
+        filesize = 1000,
+        mimeType = "image/jpeg",
+        attachmentUrl = "someurl.com",
+        attachmentUrlView = "someurl.com"
+    )
+)
+
+val FakeAnnouncements = listOf<AnnouncementPreview>(
+    AnnouncementPreview(
+        id = 1,
+        title = "Announcement Title",
+        preview = "The quick brow fox jumps over the lazy dog",
+        author = FakeAuthors[1].name,
+        tags = FakeAnnouncementTags.map { it.toString() },
+        attachments = FakeAttachments.map { it.toString() },
+        date = "10-12-2025 11:45"
+    )
+)
+
+@Preview
+@Composable
+fun PreviewHomeScreenContent() {
+    HomeScreenContent(
+        navigateToAnnouncement = {},
+        navigateToSettings = {},
+        navigateToProfile = {},
+        announcements = flowOf(PagingData.from(FakeAnnouncements)),
+        isSignedIn = true,
+        hasEvaluatedAuth = false,
+        showSignInNotice = false,
+        onSignInNoticeDismissed = {},
+        onSignInClicked = {},
+    )
 }

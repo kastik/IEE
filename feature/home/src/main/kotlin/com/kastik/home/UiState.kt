@@ -1,7 +1,7 @@
 package com.kastik.home
 
-sealed class UiState {
-    data object Loading : UiState()
-    object Success : UiState()
-    data class Error(val message: String) : UiState()
-}
+data class UiState(
+    val isSignedIn: Boolean = false,
+    val showSignInNotice: Boolean = false,
+    val hasEvaluatedAuth: Boolean = false
+)

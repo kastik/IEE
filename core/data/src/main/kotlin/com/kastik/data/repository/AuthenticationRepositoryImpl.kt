@@ -33,7 +33,24 @@ class AuthenticationRepositoryImpl(
         )
     }
 
+    override suspend fun checkIfUserIsAuthenticated(): Boolean {
+        if (local.getAboardAccessToken() == null) {
+            return false
+        }
+
+        val response = remote.checkIfTokenIsValid()
+        return response
+    }
+
     override suspend fun getSavedToken(): String? {
         return local.getAppsAccessToken()
+    }
+
+    override suspend fun getUserProfile(): UserProfile {
+        return remote.getUserProfile().toDomain()
+    }
+
+    override suspend fun getUserSubscriptions(): List<UserSubscribedTag> {
+        return remote.getUserSubscriptions().map { it.toDomain() }
     }
 }

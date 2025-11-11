@@ -1,8 +1,12 @@
 package com.kastik.network.datasource
 
+import com.kastik.di.AnnRetrofit
+import com.kastik.di.AuthRetrofit
 import com.kastik.network.api.AboardApiClient
 import com.kastik.network.api.AppsApiClient
 import com.kastik.network.model.aboard.AboardAuthTokenDto
+import com.kastik.network.model.aboard.UserProfileDto
+import com.kastik.network.model.aboard.UserSubscribedTagDto
 import com.kastik.network.model.apps.AppsAuthTokenDto
 
 
@@ -19,4 +23,18 @@ class AuthenticationRemoteDataSource(
     suspend fun exchangeCodeForAboardToken(code: String): AboardAuthTokenDto =
         aboardApiClient.exchangeCodeForAboardToken(code = code)
 
+
+    suspend fun checkIfTokenIsValid(): Boolean {
+        return runCatching {
+            aboardApiClient.getUserInfo()
+        }.isSuccess
+    }
+
+    suspend fun getUserProfile(): UserProfileDto {
+        return aboardApiClient.getUserInfo()
+    }
+
+    suspend fun getUserSubscriptions(): List<UserSubscribedTagDto> {
+        return aboardApiClient.getUserSubscriptions()
+    }
 }
