@@ -39,7 +39,13 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             tasks.withType<KotlinJvmCompile>().configureEach {
                 compilerOptions {
                     jvmTarget.set(AppConfig.jvmTarget)
-                    freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+                    freeCompilerArgs.addAll(
+                        listOf(
+                            "-opt-in=kotlin.RequiresOptIn",
+                            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                            "-opt-in=kotlinx.coroutines.FlowPreview"
+                        )
+                    )
                 }
             }
         }

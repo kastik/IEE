@@ -16,7 +16,9 @@ android {
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -30,3 +32,5 @@ dependencies {
     implementation(project(":feature:auth"))
     implementation(project(":feature:announcement"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:profile"))
+}

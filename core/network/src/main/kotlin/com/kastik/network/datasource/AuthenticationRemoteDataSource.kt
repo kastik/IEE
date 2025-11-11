@@ -10,12 +10,14 @@ import com.kastik.network.model.aboard.UserSubscribedTagDto
 import com.kastik.network.model.apps.AppsAuthTokenDto
 
 
-//TODO Removed this pre-commit
+
 class AuthenticationRemoteDataSource(
     private val appsApiClient: AppsApiClient,
     private val aboardApiClient: AboardApiClient,
     private val clientId: String = "Secret 1",
     private val clientSecret: String = "Secret 2",
+    @param:AuthRetrofit private val appsApiClient: AppsApiClient,
+    @param:AnnRetrofit private val aboardApiClient: AboardApiClient,
 ) {
     suspend fun exchangeCodeForAppsToken(code: String): AppsAuthTokenDto =
         appsApiClient.exchangeCodeForAppsToken(clientId, clientSecret, code = code)

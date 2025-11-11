@@ -1,8 +1,11 @@
 package com.kastik.data.repository
 
+import com.kastik.data.mappers.toDomain
 import com.kastik.datastore.AuthenticationLocalDataSource
 import com.kastik.model.aboard.AboardToken
 import com.kastik.model.aboard.UserData
+import com.kastik.model.aboard.UserProfile
+import com.kastik.model.aboard.UserSubscribedTag
 import com.kastik.model.apps.AppsToken
 import com.kastik.network.datasource.AuthenticationRemoteDataSource
 import com.kastik.repository.AuthenticationRepository
@@ -25,6 +28,7 @@ class AuthenticationRepositoryImpl(
     override suspend fun exchangeCodeForAbroadToken(code: String): AboardToken {
         val response = remote.exchangeCodeForAboardToken(code)
         local.saveAboardToken((response.accessToken))
+        local.saveAboardTokenExpiration(response.expiresIn)
         return AboardToken(
             accessToken = response.accessToken,
             tokenType = response.tokenType,

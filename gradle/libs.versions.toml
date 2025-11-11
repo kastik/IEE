@@ -42,19 +42,6 @@ gms = "4.4.4"
 firebase-bom = "34.5.0"
 
 
-
-
-#firebaseCrashlyticsPlugin = "3.0.6"
-#firebasePerfPlugin = "2.0.2"
-#lifecycleRuntimeKtx = "2.9.4"
-#androidTools = "31.13.0"
-#junitVersion = "1.3.0"
-#truth = "1.4.4"
-#arch-core = "2.2.0"
-#appcompat = "1.7.1"
-#material = "1.13.0"
-
-
 [libraries]
 
 #Kotlin
@@ -92,6 +79,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 
 
+
 ####### Testing #######
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
@@ -101,14 +89,12 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
 
 
-# Dependencies of the included build-logic
+####### Used in Conventions #######
+
+#Build Logic
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
-
-
-
-####### Used in Conventions #######
 
 #Compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -149,20 +135,20 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 #firebase-crashlytics-gradlePlugin = { group = "com.google.firebase", name = "firebase-crashlytics-gradle", version.ref = "firebaseCrashlyticsPlugin" }
 #firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
 #ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-#room-gradlePlugin = { group = "androidx.room", name = "room-gradle-plugin", version.ref = "room" }
 
 
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerializationPlugin" }
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
-gms = { id = "com.google.gms.google-services", version.ref = "gms" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerializationPlugin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+room = { id = "androidx.room", version.ref = "room" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 
 ####### Convention plugins #######
 kastik-application = { id = "com.kastik.application" }
