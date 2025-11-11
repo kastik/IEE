@@ -62,6 +62,7 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel(),
     navigateToAnnouncement: (Int) -> Unit,
     navigateToSettings: () -> Unit,
+    navigateToProfile: () -> Unit
 ) {
 
     val authors = viewModel.authors.collectAsStateWithLifecycle()

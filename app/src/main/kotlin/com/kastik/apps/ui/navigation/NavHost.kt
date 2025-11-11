@@ -15,6 +15,7 @@ import com.kastik.announcement.AnnouncementScreen
 import com.kastik.apps.ui.theme.AppsAboardTheme
 import com.kastik.auth.AuthenticationScreen
 import com.kastik.home.HomeScreen
+import com.kastik.profile.ProfileScreen
 import com.kastik.settings.SettingsScreen
 
 @Composable
@@ -34,7 +35,10 @@ fun NavHost() {
                     navController.navigate(AnnouncementRoute(it))
                 }, navigateToSettings = {
                     navController.navigate(SettingsRoute)
-                })
+                },
+                    navigateToProfile = {
+                        navController.navigate(ProfileRoute)
+                    })
             }
             composable<AuthRoute>(
                 deepLinks = listOf(
@@ -67,6 +71,18 @@ fun NavHost() {
                 SettingsScreen(
 
                 )
+            }
+            composable<ProfileRoute>(enterTransition = {
+                slideInVertically(
+                    initialOffsetY = { it },
+                )
+            }, exitTransition = {
+                slideOutVertically(
+                    targetOffsetY = { it },
+                )
+            }) { backStackEntry ->
+                backStackEntry.toRoute<SettingsRoute>()
+                ProfileScreen()
             }
             composable<AnnouncementRoute>(
                 enterTransition = { scaleIn() },
