@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import com.kastik.apps.ui.navigation.NavHost
+import com.kastik.apps.navigation.NavHost
 import com.kastik.apps.ui.theme.AppsAboardTheme
 import dagger.hilt.android.AndroidEntryPoint
 

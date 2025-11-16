@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kastik.model"
+    namespace = "com.kastik.apps.core.model"
 }
 
 dependencies {

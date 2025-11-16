@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kastik.datastore.proto"
+    namespace = "com.kastik.apps.core.datastore.proto"
 }
 
 protobuf {

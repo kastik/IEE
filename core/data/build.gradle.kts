@@ -1,9 +1,26 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+
 plugins {
     alias(libs.plugins.kastik.library)
+    alias(libs.plugins.kastik.library.testing)
     alias(libs.plugins.kastik.hilt)
+    alias(libs.plugins.power.assert)
 }
 android {
-    namespace = "com.kastik.apps.data"
+    namespace = "com.kastik.apps.core.data"
+}
+
+powerAssert {
+    functions = listOf(
+        "kotlin.assert",
+        "kotlin.test.assertTrue",
+        "kotlin.test.assertFalse",
+        "kotlin.test.assertEquals",
+        "kotlin.test.assertNull"
+    )
+    includedSourceSets = listOf("commonMain", "jvmMain", "jsMain", "nativeMain")
 }
 
 dependencies {
@@ -20,4 +37,8 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:model"))
 
+
+    testImplementation(libs.androidx.paging.testing)
+    testImplementation(libs.junit.platform.runner)
+    testImplementation(project(":core:testing"))
 }

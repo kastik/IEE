@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kastik.apps.announcement"
+    namespace = "com.kastik.apps.feature.announcement"
 }
 dependencies {
     implementation(project(":core:domain"))

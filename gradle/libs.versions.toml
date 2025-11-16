@@ -14,6 +14,7 @@ retrofit = "3.0.0"
 
 hiltAndroid = "2.57.2"
 
+activity ="1.8.0"
 lifecycle = "2.9.4"
 
 
@@ -34,20 +35,35 @@ datastorePreferences = "1.1.7"
 
 
 junit = "4.13.2"
+junitVersion = "1.3.0"
+junitPlatformSuiteEngine = "6.0.1"
+junitPlatformRunner = "1.14.1"
+espressoCore = "3.7.0"
 robolectric = "4.16"
 androidx-test-core = "1.7.0"
+mockk = "1.14.6"
 
 
 gms = "4.4.4"
 firebase-bom = "34.5.0"
 
+appcompat = "1.7.1"
+material = "1.13.0"
+
 
 [libraries]
+
+#Android
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity"}
 
 #Kotlin
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+#Material
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 #Retrofit
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
@@ -82,12 +98,18 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 
 ####### Testing #######
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+junit-platform-runner = { module = "org.junit.platform:junit-platform-runner", version.ref = "junitPlatformRunner" }
+junit-platform-suite-engine = { module = "org.junit.platform:junit-platform-suite-engine", version.ref = "junitPlatformSuiteEngine" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
-
+androidx-compose-ui-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+io-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 ####### Used in Conventions #######
 
@@ -149,6 +171,8 @@ room = { id = "androidx.room", version.ref = "room" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
+power-assert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
+
 
 ####### Convention plugins #######
 kastik-application = { id = "com.kastik.application" }
@@ -156,3 +180,5 @@ kastik-application-compose = { id = "com.kastik.application.compose" }
 kastik-library = { id = "com.kastik.library" }
 kastik-library-compose = { id = "com.kastik.library.compose" }
 kastik-hilt = { id = "com.kastik.hilt" }
+kastik-library-testing = { id = "com.kastik.library.testing" }
+kastik-library-testing-compose = { id = "com.kastik.library.testing.compose" }

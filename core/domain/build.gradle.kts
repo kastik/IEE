@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kastik.apps.domain"
+    namespace = "com.kastik.apps.core.domain"
 }
 
 dependencies {

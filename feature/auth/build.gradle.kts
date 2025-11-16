@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kastik.apps.auth"
+    namespace = "com.kastik.apps.feature.auth"
 }
 
 dependencies {
