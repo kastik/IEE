@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kastik.apps.home"
+    namespace = "com.kastik.apps.feature.home"
 }
 dependencies {
     implementation(project(":core:domain"))

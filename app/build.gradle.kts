@@ -33,4 +33,5 @@ dependencies {
     implementation(project(":feature:announcement"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:profile"))
+    implementation(libs.androidx.activity)
 }

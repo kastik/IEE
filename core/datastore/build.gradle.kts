@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kastik.apps.datastore"
+    namespace = "com.kastik.apps.core.datastore"
 }
 
 dependencies {

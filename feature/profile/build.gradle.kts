@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kastik.apps.profile"
+    namespace = "com.kastik.apps.feature.profile"
 }
 
 dependencies {
