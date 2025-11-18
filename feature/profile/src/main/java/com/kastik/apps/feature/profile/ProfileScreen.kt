@@ -34,6 +34,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,6 +49,11 @@ import com.kastik.apps.core.model.aboard.UserSubscribedTag
 fun ProfileScreen(
     viewModel: ProfileScreenViewModel = hiltViewModel()
 ) {
+
+    LaunchedEffect(Unit) {
+        viewModel.onScreenViewed()
+    }
+
     val uiState = viewModel.uiState.value
     AnimatedContent(
         targetState = uiState,

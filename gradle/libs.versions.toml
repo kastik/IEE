@@ -45,7 +45,10 @@ mockk = "1.14.6"
 
 
 gms = "4.4.4"
-firebase-bom = "34.5.0"
+firebase-bom = "34.6.0"
+crashlyticsGradle = "3.0.6"
+performanceGradle = "2.0.2"
+
 
 appcompat = "1.7.1"
 material = "1.13.0"
@@ -93,6 +96,8 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 #Firebase
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
+firebase-performance = { module = "com.google.firebase:firebase-perf" }
 
 
 
@@ -172,6 +177,8 @@ protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 power-assert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
+crashlytics-gradlePlugin = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsGradle" }
+performance-gradlePlugin = { id = "com.google.firebase.firebase-perf", version.ref = "performanceGradle" }
 
 
 ####### Convention plugins #######

@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.domain.usecases.GetUserProfileUseCase
 import com.kastik.apps.core.domain.usecases.GetUserSubscriptionsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileScreenViewModel @Inject constructor(
+    private val analytics: Analytics,
     private val getProfileUseCase: GetUserProfileUseCase,
     private val getUserSubscriptionsUseCase: GetUserSubscriptionsUseCase
 ) : ViewModel() {
@@ -22,6 +24,10 @@ class ProfileScreenViewModel @Inject constructor(
 
     init {
         loadProfile()
+    }
+
+    fun onScreenViewed() {
+        analytics.logScreenView("profile_screen")
     }
 
     private fun loadProfile() {

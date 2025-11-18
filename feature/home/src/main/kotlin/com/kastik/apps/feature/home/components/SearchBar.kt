@@ -1,6 +1,5 @@
 package com.kastik.apps.feature.home.components
 
-import android.content.Intent
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -14,9 +13,7 @@ import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.core.net.toUri
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,9 +23,9 @@ fun TestNewSearchBar(
     textFieldState: TextFieldState,
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
-    isSignedIn: Boolean
+    isSignedIn: Boolean,
+    onSignInClick: () -> Unit,
 ) {
-    val context = LocalContext.current
     AppBarWithSearch(
         scrollBehavior = scrollBehavior,
         state = searchBarState,
@@ -49,11 +46,7 @@ fun TestNewSearchBar(
                 if (isSignedIn) {
                     navigateToProfile()
                 } else {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        ("https://login.it.teithe.gr/authorization?" + "client_id=690a9861468c9b767cabdc40" + "&response_type=code" + "&scope=announcements,profile" + "&redirect_uri=com.kastik.apps://auth").toUri()
-                    )
-                    context.startActivity(intent)
+                    onSignInClick()
                 }
             }) {
                 Icon(Icons.Default.AccountCircle, null)

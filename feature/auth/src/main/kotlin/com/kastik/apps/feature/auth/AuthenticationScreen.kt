@@ -30,7 +30,12 @@ fun AuthenticationScreen(
     errorDescription: String? = null,
     viewModel: AuthenticationScreenViewModel = hiltViewModel()
 ) {
+
     val uiState = viewModel.uiState
+
+    LaunchedEffect(Unit) {
+        viewModel.onScreenViewed()
+    }
     LaunchedEffect(code, error) {
         viewModel.onAuthRedirect(code = code, error = error, errorDesc = errorDescription)
     }

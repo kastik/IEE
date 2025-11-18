@@ -9,4 +9,6 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.protobuf) apply false
     alias(libs.plugins.room) apply false
+    alias(libs.plugins.crashlytics.gradlePlugin) apply false
+    alias(libs.plugins.performance.gradlePlugin) apply false
 }

@@ -3,22 +3,23 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-            android:name=".AppsAboardApplication"
-            android:allowBackup="true"
-            android:dataExtractionRules="@xml/data_extraction_rules"
-            android:fullBackupContent="@xml/backup_rules"
+        android:name=".AppsAboardApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/iee_launcher"
-            android:label="@string/app_name"
+        android:label="@string/app_name"
         android:roundIcon="@mipmap/iee_launcher_round"
-            android:supportsRtl="true"
-            android:theme="@style/Theme.AppsAboard">
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppsAboard">
         <activity
-                android:name=".MainActivity"
-                android:exported="true"
-                android:label="@string/app_name"
-                android:theme="@style/Theme.AppsAboard">
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppsAboard">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,6 +36,9 @@
                     android:scheme="com.kastik.apps" />
             </intent-filter>
         </activity>
+        <meta-data
+            android:name="google_analytics_automatic_screen_reporting_enabled"
+            android:value="false" />
     </application>
 
 </manifest>

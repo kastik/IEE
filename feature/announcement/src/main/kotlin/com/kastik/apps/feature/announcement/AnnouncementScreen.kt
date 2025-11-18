@@ -59,9 +59,15 @@ fun AnnouncementScreen(
     announcementId: Int,
 ) {
     val uiState = viewModel.uiState.value
+
     LaunchedEffect(Unit) {
         viewModel.getData(announcementId)
     }
+
+    LaunchedEffect(Unit) {
+        viewModel.onScreenViewed()
+    }
+
     when (uiState) {
         UiState.Error -> {
             AnnouncementScreenContentError()
@@ -82,8 +88,7 @@ fun AnnouncementScreen(
                 attachments = uiState.announcement.attachments,
                 onAttachmentClick = { attachmentId, filename ->
 
-                }
-            )
+                })
         }
     }
 }
@@ -139,16 +144,12 @@ fun AnnouncementScreenContentSuccess(
             LargeFlexibleTopAppBar(
                 title = {
                     Text(
-                        text = title,
-                        style = MaterialTheme.typography.headlineMedium.copy(
+                        text = title, style = MaterialTheme.typography.headlineMedium.copy(
                             fontWeight = FontWeight.SemiBold, lineHeight = 38.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
+                        ), color = MaterialTheme.colorScheme.onSurface
                     )
-                }
-            )
-        }
-    ) { innerPadding ->
+                })
+        }) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -209,14 +210,11 @@ fun AnnouncementScreenContentSuccess(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     attachments.forEach { attachment ->
-                        AssistChip(
-                            onClick = {
-                                onAttachmentClick(
-                                    attachment.id,
-                                    attachment.filename
-                                )
-                            },
-                            label = { Text(attachment.filename) }, leadingIcon = {
+                        AssistChip(onClick = {
+                            onAttachmentClick(
+                                attachment.id, attachment.filename
+                            )
+                        }, label = { Text(attachment.filename) }, leadingIcon = {
                             Icon(
                                 Icons.Outlined.AttachFile,
                                 contentDescription = null,
@@ -264,15 +262,10 @@ private fun DotDivider() {
 
 @Composable
 fun FunkyTagChip(
-    text: String,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    text: String, modifier: Modifier = Modifier, onClick: () -> Unit = {}
 ) {
     val shape = RoundedCornerShape(
-        topStart = 18.dp,
-        topEnd = 6.dp,
-        bottomEnd = 18.dp,
-        bottomStart = 6.dp
+        topStart = 18.dp, topEnd = 6.dp, bottomEnd = 18.dp, bottomStart = 6.dp
     )
 
     val background = MaterialTheme.colorScheme.secondaryContainer
@@ -296,14 +289,11 @@ fun FunkyTagChip(
         shadowElevation = 3.dp,
     ) {
         Row(
-            modifier = Modifier
-                .padding(horizontal = 14.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text,
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 1
+                text, style = MaterialTheme.typography.labelLarge, maxLines = 1
             )
         }
     }
@@ -325,24 +315,17 @@ fun AnnouncementScreenContentSuccessPreview() {
         ),
         attachments = listOf(
             AnnouncementAttachment(
-                id = 1, filename = "Attachment 1",
-                fileSize = 1000,
-                mimeType = "TODO()"
+                id = 1, filename = "Attachment 1", fileSize = 1000, mimeType = "TODO()"
             ),
             AnnouncementAttachment(
-                id = 2, filename = "Attachment 2",
-                fileSize = 1000,
-                mimeType = "TODO()"
+                id = 2, filename = "Attachment 2", fileSize = 1000, mimeType = "TODO()"
             ),
             AnnouncementAttachment(
-                id = 3, filename = "Attachment 3",
-                fileSize = 1000,
-                mimeType = "TODO()"
+                id = 3, filename = "Attachment 3", fileSize = 1000, mimeType = "TODO()"
             ),
         ),
         onAttachmentClick = { _, _ ->
-        }
-    )
+        })
 }
 
 @Preview

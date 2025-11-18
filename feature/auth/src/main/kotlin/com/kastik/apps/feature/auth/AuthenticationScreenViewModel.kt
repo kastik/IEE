@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.domain.usecases.ExchangeCodeForAboardTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,11 +13,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationScreenViewModel @Inject constructor(
+    private val analytics: Analytics,
     private val exchangeCodeForToken: ExchangeCodeForAboardTokenUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableState<UiState> = mutableStateOf(UiState.Loading)
     val uiState: State<UiState> = _uiState
+
+    fun onScreenViewed() {
+        analytics.logScreenView("auth_screen")
+    }
 
     fun onAuthRedirect(code: String?, error: String?, errorDesc: String?) {
         if (!error.isNullOrBlank()) {
