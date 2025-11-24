@@ -33,7 +33,6 @@ class ProfileScreenViewModel @Inject constructor(
     private fun loadProfile() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-
             try {
                 // Run both requests in parallel for speed
                 val profileDeferred = async { getProfileUseCase() }
@@ -44,7 +43,7 @@ class ProfileScreenViewModel @Inject constructor(
 
                 _uiState.value = UiState.Success(
                     profile = profile,
-                    subscribedTag = subscriptions   // now a List<UserSubscribedTag>
+                    subscribedTag = subscriptions
                 )
 
             } catch (e: Exception) {

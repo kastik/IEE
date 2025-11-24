@@ -8,8 +8,11 @@ import com.kastik.apps.core.domain.usecases.CheckIfUserIsAuthenticatedUseCase
 import com.kastik.apps.core.domain.usecases.ExchangeCodeForAboardTokenUseCase
 import com.kastik.apps.core.domain.usecases.ExchangeCodeForAppsTokenUseCase
 import com.kastik.apps.core.domain.usecases.GetAnnouncementWithIdUseCase
+import com.kastik.apps.core.domain.usecases.GetAuthorsUseCase
 import com.kastik.apps.core.domain.usecases.GetDynamicColorUseCase
 import com.kastik.apps.core.domain.usecases.GetPagedAnnouncementsUseCase
+import com.kastik.apps.core.domain.usecases.GetPagedFilteredAnnouncementsUseCase
+import com.kastik.apps.core.domain.usecases.GetTagsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserProfileUseCase
 import com.kastik.apps.core.domain.usecases.GetUserSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserThemeUseCase
@@ -26,22 +29,40 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object AnnouncementUseCaseModule {
 
-    @Module
-    @InstallIn(ViewModelComponent::class)
-    object AnnouncementUseCaseModule {
 
-        @Provides
-        @ViewModelScoped
-        fun provideGetPagedAnnouncementsUseCase(
-            repo: AnnouncementRepository
-        ): GetPagedAnnouncementsUseCase = GetPagedAnnouncementsUseCase(repo)
-    }
+    @Provides
+    @ViewModelScoped
+    fun provideGetPagedAnnouncementsUseCase(
+        repo: AnnouncementRepository
+    ): GetPagedAnnouncementsUseCase = GetPagedAnnouncementsUseCase(repo)
+
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetPagedFilteredAnnouncementsUseCase(
+        repo: AnnouncementRepository
+    ): GetPagedFilteredAnnouncementsUseCase = GetPagedFilteredAnnouncementsUseCase(repo)
+
+
 
     @Provides
     @ViewModelScoped
     fun provideGetAnnouncementWithIdUseCase(
         repo: AnnouncementRepository
     ): GetAnnouncementWithIdUseCase = GetAnnouncementWithIdUseCase(repo)
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetTagsUseCase(
+        repo: AnnouncementRepository
+    ): GetTagsUseCase = GetTagsUseCase(repo)
+
+    @Provides
+    @ViewModelScoped
+    fun provideGetAuthorsUseCase(
+        repo: AnnouncementRepository
+    ): GetAuthorsUseCase = GetAuthorsUseCase(repo)
+
 
     @Provides
     @ViewModelScoped

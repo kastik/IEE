@@ -13,7 +13,6 @@ import java.net.UnknownHostException
 @OptIn(ExperimentalPagingApi::class)
 class AnnouncementRemoteMediator(
     private val remote: AnnouncementRemoteDataSource,
-    private val query: String? = null,
     private val db: AppDatabase
 ) : RemoteMediator<Int, AnnouncementWithoutBody>() {
 
@@ -46,7 +45,14 @@ class AnnouncementRemoteMediator(
         }
 
         try {
-            val response = remote.fetchAnnouncements(page = page, perPage = state.config.pageSize)
+            val response = remote.fetchAnnouncements(
+                page = page,
+                perPage = state.config.pageSize,
+                title = null,
+                body = null,
+                authorId = null,
+                tagId = null,
+            )
             val newCurrentPage = response.meta.currentPage
             val newLastPage = response.meta.lastPage
 

@@ -132,10 +132,9 @@ fun ProfileScreenSuccessContent(
                 .padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(28.dp)
         ) {
-
-            // Avatar
             Box(
                 modifier = Modifier
+                    .padding(horizontal = 6.dp)
                     .size(110.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)),
@@ -148,8 +147,6 @@ fun ProfileScreenSuccessContent(
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
-
-            // Name + Email Card
             ElevatedCard(
                 shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier.fillMaxWidth()

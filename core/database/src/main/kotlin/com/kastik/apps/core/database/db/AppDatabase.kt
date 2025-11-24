@@ -18,7 +18,6 @@ import com.kastik.apps.core.database.entities.TagsCrossRefEntity
         AttachmentEntity::class,
         AnnouncementEntity::class,
         TagsCrossRefEntity::class,
-
     ],
     version = 1,
     exportSchema = false

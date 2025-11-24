@@ -1,4 +1,4 @@
-package com.kastik.apps.ui.theme
+package com.kastik.apps.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

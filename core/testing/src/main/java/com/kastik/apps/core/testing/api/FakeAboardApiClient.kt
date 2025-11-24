@@ -4,8 +4,10 @@ package com.kastik.apps.core.testing.api
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.AboardAuthTokenDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementDto
-import com.kastik.apps.core.network.model.aboard.AnnouncementResponse
-import com.kastik.apps.core.network.model.aboard.AnnouncementTagDto
+import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
+import com.kastik.apps.core.network.model.aboard.AuthorDto
+import com.kastik.apps.core.network.model.aboard.SingleAnnouncementResponse
+import com.kastik.apps.core.network.model.aboard.TagsResponse
 import com.kastik.apps.core.network.model.aboard.UserProfileDto
 import com.kastik.apps.core.network.model.aboard.UserSubscribedTagDto
 import com.kastik.apps.core.testing.testdata.aboardAuthTokenDtoTestData
@@ -23,21 +25,24 @@ class FakeAboardApiClient : AboardApiClient {
         failUserInfo = fail
     }
 
-
     override suspend fun getAnnouncements(
         sortId: Int,
         page: Int,
-        perPage: Int
-    ): AnnouncementResponse {
-        //TODO Maybe implement sort and perPage
+        perPage: Int,
+        authorId: List<Int>?,
+        tagsIds: List<Int>?,
+        title: String?,
+        body: String?
+    ): AnnouncementPageResponse {
         return announcementResponses[page - 1]
     }
 
-    override suspend fun getAnnouncement(id: Int): AnnouncementResponse {
+
+    override suspend fun getAnnouncement(id: Int): SingleAnnouncementResponse {
         announcementResponses.forEach {
             it.data.forEach { announcement ->
                 if (announcement.id == id) {
-                    return it
+                    return it.data
                 }
             }
         }
@@ -74,7 +79,11 @@ class FakeAboardApiClient : AboardApiClient {
         throw Exception("Not implemented")
     }
 
-    override suspend fun getTags(): AnnouncementTagDto {
+    override suspend fun getTags(): TagsResponse {
+        throw Exception("Not implemented")
+    }
+
+    override suspend fun getAuthors(): List<AuthorDto> {
         throw Exception("Not implemented")
     }
 

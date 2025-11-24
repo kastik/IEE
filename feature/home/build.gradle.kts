@@ -11,6 +11,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:model"))
     implementation(project(":core:analytics"))
+    implementation(project(":core:designsystem"))
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)
 }

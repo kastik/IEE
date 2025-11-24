@@ -50,9 +50,7 @@ fun AuthenticationScreen(
                 navigateBack()
             }
 
-            is UiState.Loading -> {
-
-            }
+            is UiState.Loading -> Unit
         }
     }
 

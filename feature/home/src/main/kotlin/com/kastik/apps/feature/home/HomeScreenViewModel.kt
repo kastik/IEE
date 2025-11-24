@@ -22,7 +22,7 @@ class HomeScreenViewModel @Inject constructor(
     private val checkIfUserHasSkippedSignInUseCase: CheckIfUserHasSkippedSignInUseCase,
     private val checkIfUserIsAuthenticatedUseCase: CheckIfUserIsAuthenticatedUseCase,
     private val setUserHasSkippedSignInUseCase: SetUserHasSkippedSignInUseCase,
-    getPagedAnnouncements: GetPagedAnnouncementsUseCase,
+    private val getPagedAnnouncements: GetPagedAnnouncementsUseCase,
 ) : ViewModel() {
 
     init {
@@ -34,7 +34,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _uiState = mutableStateOf(
         UiState(
-            announcements = getPagedAnnouncements().cachedIn(viewModelScope)
+            announcements = getPagedAnnouncements().cachedIn(viewModelScope),
         )
     )
     val uiState: State<UiState> = _uiState
@@ -45,13 +45,19 @@ class HomeScreenViewModel @Inject constructor(
 
     fun evaluateSignInStatus() {
         viewModelScope.launch {
-            val isAuthenticated = checkIfUserIsAuthenticatedUseCase()
-            val hasSkipped = checkIfUserHasSkippedSignInUseCase()
-            _uiState.value = _uiState.value.copy(
-                isSignedIn = isAuthenticated,
-                showSignInNotice = !isAuthenticated && !hasSkipped,
-                hasEvaluatedAuth = true
-            )
+            try {
+                val isAuthenticated = checkIfUserIsAuthenticatedUseCase()
+                val hasSkipped = checkIfUserHasSkippedSignInUseCase()
+                _uiState.value = _uiState.value.copy(
+                    isSignedIn = isAuthenticated,
+                    showSignInNotice = !isAuthenticated && !hasSkipped,
+                    hasEvaluatedAuth = true
+                )
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    hasEvaluatedAuth = false
+                )
+            }
         }
     }
 
@@ -64,14 +70,9 @@ class HomeScreenViewModel @Inject constructor(
 
     fun onSignInClick() {
         val url =
-            "https://login.it.teithe.gr/authorization?" +
-                    "client_id=690a9861468c9b767cabdc40" +
-                    "&response_type=code" +
-                    "&scope=announcements,profile" +
-                    "&redirect_uri=com.kastik.apps://auth"
+            "https://login.it.teithe.gr/authorization?" + "client_id=690a9861468c9b767cabdc40" + "&response_type=code" + "&scope=announcements,profile" + "&redirect_uri=com.kastik.apps://auth"
         viewModelScope.launch {
             _events.emit(HomeEvent.OpenUrl(url))
         }
     }
-
 }

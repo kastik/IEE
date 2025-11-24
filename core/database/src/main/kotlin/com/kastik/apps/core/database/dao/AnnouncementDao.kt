@@ -20,18 +20,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AnnouncementDao {
 
-    @Transaction
+    @Transaction //TODO ORDER BY isPinned DESC, createdAt DESC, id DESC
     @Query("SELECT * FROM announcemententity ORDER BY updatedAt DESC")
     fun getPagingAnnouncementPreviews(): PagingSource<Int, AnnouncementWithoutBody>
-
-    @Transaction
-    @Query("SELECT * FROM announcemententity WHERE id = :id")
-    suspend fun getAnnouncementWithId(id: Int): AnnouncementWithBody
-
-
-    @Query("SELECT * FROM authorentity")
-    fun getAuthors(): Flow<List<AuthorEntity>>
-
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAnnouncement(announcement: AnnouncementEntity)
@@ -51,6 +42,8 @@ interface AnnouncementDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
 
+    @Query("SELECT * FROM authorentity")
+    fun getAuthors(): Flow<List<AuthorEntity>>
 
     @Query("DELETE FROM announcemententity")
     suspend fun clearAllAnnouncements()
@@ -69,6 +62,9 @@ interface AnnouncementDao {
 
 
     @Transaction
+    @Query("SELECT * FROM announcemententity WHERE id = :id")
+    fun getAnnouncementWithId(id: Int): AnnouncementWithBody?
+
     suspend fun addAnnouncement(
         announcement: AnnouncementEntityWrapper
     ) {

@@ -12,11 +12,24 @@ android {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 1
+        versionCode = 4
         versionName = "1.0"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("MyKeystore.jks")
+            storePassword =
+                "214221121236547k"
+            keyAlias = "appsKey"
+            keyPassword = "214221121236547k"
+        }
+    }
+
     buildTypes {
+        debug {
+            //ext.enableCrashlytics = false
+        }
         release {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
@@ -36,8 +49,10 @@ dependencies {
     implementation(project(":feature:announcement"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:search"))
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
+    implementation(project(":core:designsystem"))
     implementation(libs.androidx.activity)
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.firebase.performance) {

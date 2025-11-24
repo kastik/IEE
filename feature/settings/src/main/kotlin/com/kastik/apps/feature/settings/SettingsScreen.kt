@@ -1,5 +1,6 @@
 package com.kastik.apps.feature.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,10 +17,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.CircularWavyProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -85,6 +87,7 @@ fun SettingsScreenContent(
     dynamicColorEnabled: Boolean,
     setDynamicColor: (Boolean) -> Unit = {},
 ) {
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -120,7 +123,7 @@ fun SettingsScreenContent(
                                 selected = theme, onSelected = setTheme
                             )
                         }
-                        Divider()
+                        HorizontalDivider()
                         SettingSwitchRow(
                             title = "Dynamic color",
                             subtitle = "Use colors from the wallpaper",
@@ -142,13 +145,25 @@ fun SettingsScreenContent(
                             title = "Push notifications",
                             subtitle = "Receive updates and announcements",
                             checked = false,
-                            onCheckedChange = { })
-                        Divider()
+                            onCheckedChange = {
+                                val text = "Not implemented yet!"
+                                val duration = Toast.LENGTH_SHORT
+                                val toast = Toast.makeText(context, text, duration) // in Activity
+                                toast.show()
+
+                            })
+                        HorizontalDivider()
                         SettingSwitchRow(
                             title = "Email updates",
                             subtitle = "Send summaries to your inbox",
-                            checked = true,
-                            onCheckedChange = { })
+                            checked = false,
+                            onCheckedChange = {
+                                val text = "Not implemented yet!"
+                                val duration = Toast.LENGTH_SHORT
+                                val toast = Toast.makeText(context, text, duration) // in Activity
+                                toast.show()
+
+                            })
                     }
                 }
             }
@@ -161,12 +176,22 @@ fun SettingsScreenContent(
                 ) {
                     Column {
                         SettingNavigationRow(
-                            title = "About app",
-                            subtitle = "Version 1.0",
-                            onClick = { /* navigate */ })
-                        Divider()
+                            title = "About app", subtitle = "Version 1.0", onClick = {
+                                val text = "Not implemented yet!"
+                                val duration = Toast.LENGTH_SHORT
+                                val toast = Toast.makeText(context, text, duration) // in Activity
+                                toast.show()
+
+                            })
+                        HorizontalDivider()
                         SettingNavigationRow(
-                            title = "Open source licenses", onClick = { /* navigate */ })
+                            title = "Open source licenses", onClick = {
+                                val text = "Not implemented yet!"
+                                val duration = Toast.LENGTH_SHORT
+                                val toast = Toast.makeText(context, text, duration) // in Activity
+                                toast.show()
+
+                            })
                     }
                 }
             }

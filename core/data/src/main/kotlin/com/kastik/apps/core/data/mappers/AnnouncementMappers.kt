@@ -14,7 +14,11 @@ import com.kastik.apps.core.model.aboard.AnnouncementAttachment
 import com.kastik.apps.core.model.aboard.AnnouncementPreview
 import com.kastik.apps.core.model.aboard.AnnouncementTag
 import com.kastik.apps.core.model.aboard.AnnouncementView
+import com.kastik.apps.core.model.aboard.Author
+import com.kastik.apps.core.network.model.aboard.AnnouncementAttachmentDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementDto
+import com.kastik.apps.core.network.model.aboard.AnnouncementTagDto
+import com.kastik.apps.core.network.model.aboard.AuthorDto
 
 
 fun AnnouncementDto.toRoomEntities(): AnnouncementEntityWrapper {
@@ -121,4 +125,46 @@ internal fun AttachmentEntity.toDomain() = AnnouncementAttachment(
 internal fun TagEntity.toDomain() = AnnouncementTag(
     id = id,
     title = title,
+)
+internal fun AnnouncementTagDto.toDomain() = AnnouncementTag(
+    id = id,
+    title = title,
+)
+
+internal fun AnnouncementAttachmentDto.toDomain(): AnnouncementAttachment {
+    return AnnouncementAttachment(
+        id = id,
+        filename = filename,
+        fileSize = filesize,
+        mimeType = mimeType
+    )
+
+}
+
+internal fun AuthorDto.toDomain() = Author(
+    id = id,
+    name = name,
+    announcementCount = announcementCount
+)
+
+internal fun AnnouncementDto.toAnnouncementPreview(): AnnouncementPreview {
+    return AnnouncementPreview(
+        id = id,
+        title = title,
+        preview = preview,
+        author = author.name,
+        tags = tags.map { it.toDomain() },
+        attachments = attachments.map { it.toDomain() },
+        date = updatedAt
+    )
+}
+
+internal fun AnnouncementDto.toDomain() = AnnouncementView(
+    id = id,
+    title = title,
+    body = body,
+    tags = tags.map { it.toDomain() },
+    attachments = attachments.map { it.toDomain() },
+    author = author.name,
+    date = updatedAt,
 )

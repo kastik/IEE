@@ -7,6 +7,12 @@ import kotlinx.serialization.Serializable
 object HomeRoute
 
 @Serializable
+object AnnouncementListRoute
+
+@Serializable
+object AnnouncementSearchRoute
+
+@Serializable
 data class AuthRoute(
     val code: String? = null,
     val state: String? = null,

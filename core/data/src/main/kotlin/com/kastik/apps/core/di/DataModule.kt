@@ -31,7 +31,7 @@ object DataModule {
     fun provideAppDatabase(
         @ApplicationContext context: Context
     ): AppDatabase = Room.databaseBuilder(
-        context, AppDatabase::class.java, "apps_database.db"
+        context, AppDatabase::class.java, "announcement_cache.db"
     ).fallbackToDestructiveMigration(true)
         .build()
 

@@ -1,9 +1,9 @@
 package com.kastik.apps.core.testing.testdata
 
 import com.kastik.apps.core.network.model.aboard.AnnouncementMeta
-import com.kastik.apps.core.network.model.aboard.AnnouncementResponse
+import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
 
-val pageOneAnnouncementResponses = AnnouncementResponse(
+val pageOneAnnouncementResponses = AnnouncementPageResponse(
     data = testAnnouncementDtoList.subList(0, 9),
     meta = AnnouncementMeta(
         currentPage = 1,
@@ -16,7 +16,7 @@ val pageOneAnnouncementResponses = AnnouncementResponse(
     )
 )
 
-val pageTwoAnnouncementResponses = AnnouncementResponse(
+val pageTwoAnnouncementResponses = AnnouncementPageResponse(
     data = testAnnouncementDtoList.subList(0, 9),
     meta = AnnouncementMeta(
         currentPage = 2,
@@ -29,7 +29,7 @@ val pageTwoAnnouncementResponses = AnnouncementResponse(
     )
 )
 
-val pageThreeAnnouncementResponses = AnnouncementResponse(
+val pageThreeAnnouncementResponses = AnnouncementPageResponse(
     data = testAnnouncementDtoList.subList(0, 9),
     meta = AnnouncementMeta(
         currentPage = 3,

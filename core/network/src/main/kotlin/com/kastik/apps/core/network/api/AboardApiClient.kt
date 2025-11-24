@@ -3,8 +3,10 @@ package com.kastik.apps.core.network.api
 
 import com.kastik.apps.core.network.model.aboard.AboardAuthTokenDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementDto
-import com.kastik.apps.core.network.model.aboard.AnnouncementResponse
-import com.kastik.apps.core.network.model.aboard.AnnouncementTagDto
+import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
+import com.kastik.apps.core.network.model.aboard.AuthorDto
+import com.kastik.apps.core.network.model.aboard.SingleAnnouncementResponse
+import com.kastik.apps.core.network.model.aboard.TagsResponse
 import com.kastik.apps.core.network.model.aboard.UserProfileDto
 import com.kastik.apps.core.network.model.aboard.UserSubscribedTagDto
 import okhttp3.ResponseBody
@@ -22,13 +24,17 @@ interface AboardApiClient {
     suspend fun getAnnouncements(
         @Query("sortId") sortId: Int = 1,
         @Query("page") page: Int,
-        @Query("perPage") perPage: Int
-    ): AnnouncementResponse
+        @Query("perPage") perPage: Int,
+        @Query("users[]") authorId: List<Int>? = null,
+        @Query("tags[]") tagsIds: List<Int>? = null,
+        @Query("title") title: String? = null,
+        @Query("body") body: String? = null,
+    ): AnnouncementPageResponse
 
     @GET("announcements/{id}")
     suspend fun getAnnouncement(
         @Path("id") id: Int
-    ): AnnouncementResponse
+    ): SingleAnnouncementResponse
 
     @Streaming
     @GET("announcements/{id}/attachments/{attachmentId}")
@@ -54,7 +60,11 @@ interface AboardApiClient {
 
     @GET("tags")
     suspend fun getTags(
-    ): AnnouncementTagDto
+    ): TagsResponse
+
+    @GET("authors")
+    suspend fun getAuthors(
+    ): List<AuthorDto>
 
 
     @GET("authenticate")

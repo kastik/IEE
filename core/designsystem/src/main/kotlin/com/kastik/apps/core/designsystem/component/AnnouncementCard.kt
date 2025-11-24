@@ -1,4 +1,4 @@
-package com.kastik.apps.feature.home.components
+package com.kastik.apps.core.designsystem.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
@@ -85,6 +86,7 @@ fun AnnouncementCard(
             ) {
                 items(categories) { category ->
                     AssistChip(
+                        enabled = false,
                         onClick = {},
                         label = {
                             Text(
@@ -95,7 +97,9 @@ fun AnnouncementCard(
                         shape = RoundedCornerShape(10.dp),
                         colors = AssistChipDefaults.assistChipColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            disabledLabelColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer
                         )
                     )
                 }
@@ -116,3 +120,19 @@ fun AnnouncementCard(
 
 private fun String.collapseWhitespace(): String =
     replace(Regex("\\s+"), " ").trim()
+
+
+@Preview
+@Composable
+fun PreviewAnnouncementCard() {
+    AnnouncementCard(
+        onClick = {},
+        publisher = "Kostas Papastathopoulos",
+        title = "The quick brown fox",
+        categories = listOf("The", "Quick", "Brown", "Fox"),
+        date = "25-1-2019 08:34",
+        content = "The quick brown fox jumps over the lazy dog"
+    )
+}
+
+

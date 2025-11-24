@@ -1,4 +1,4 @@
-package com.kastik.apps.ui.theme
+package com.kastik.apps.core.designsystem.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
