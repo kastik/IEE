@@ -1,7 +1,7 @@
 -keepclassmembers class com.google.firebase.perf.v1.PerfMetric { *; }
 -keepclassmembers class com.google.firebase.perf.v1.TraceMetric { *; }
 -keepclassmembers class com.kastik.apps.core.datastore.proto.* { *; }
--keepclassmembernames class com.google.firebase.perf.v1.GaugeMetadata { *; }
+-keepclassmembers class com.google.firebase.perf.v1.GaugeMetadata { *; }
 -keepclassmembernames class com.google.firebase.perf.v1.PerfSession { *; }
 -keepclassmembernames class com.google.firebase.perf.v1.NetworkRequestMetric { *; }
 -keepclassmembernames class com.google.firebase.perf.v1.ApplicationInfo { *; }
