@@ -1,8 +1,5 @@
 package com.kastik.apps.core.domain.repository
 
-import com.kastik.apps.core.model.aboard.UserProfile
-import com.kastik.apps.core.model.aboard.UserSubscribedTag
-
 
 interface AuthenticationRepository {
     suspend fun exchangeCodeForAppsToken(code: String)
@@ -13,7 +10,4 @@ interface AuthenticationRepository {
 
     suspend fun getSavedToken(): String?
 
-    suspend fun getUserProfile(): UserProfile
-
-    suspend fun getUserSubscriptions(): List<UserSubscribedTag>
 }

@@ -19,15 +19,3 @@ class CheckIfUserIsAuthenticatedUseCase(
 ) {
     suspend operator fun invoke() = repository.checkIfUserIsAuthenticated()
 }
-
-class GetUserProfileUseCase(
-    private val repository: AuthenticationRepository
-) {
-    suspend operator fun invoke() = repository.getUserProfile()
-}
-
-class GetUserSubscriptionsUseCase(
-    private val repository: AuthenticationRepository
-) {
-    suspend operator fun invoke() = repository.getUserSubscriptions()
-}
