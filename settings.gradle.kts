@@ -20,7 +20,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AppsAboard"
+rootProject.name = "IEE"
 include(":app")
 include(":core:data")
 include(":core:domain")
