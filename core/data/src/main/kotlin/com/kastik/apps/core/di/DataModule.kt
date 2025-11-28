@@ -4,17 +4,21 @@ import android.content.Context
 import androidx.room.Room
 import com.kastik.apps.core.data.repository.AnnouncementRepoImpl
 import com.kastik.apps.core.data.repository.AuthenticationRepositoryImpl
+import com.kastik.apps.core.data.repository.UserInfoRepositoryImpl
 import com.kastik.apps.core.data.repository.UserPreferencesRepoImpl
 import com.kastik.apps.core.database.db.AppDatabase
 import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
 import com.kastik.apps.core.datastore.UserPreferencesLocalDataSource
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
+import com.kastik.apps.core.domain.repository.UserInfoRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSourceImpl
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
+import com.kastik.apps.core.network.datasource.UserInfoRemoteDataSource
+import com.kastik.apps.core.network.datasource.UserInfoRemoteDataSourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -64,6 +68,19 @@ object DataModule {
     fun provideUserPreferencesRepository(
         datastore: UserPreferencesLocalDataSource
     ): UserPreferencesRepository = UserPreferencesRepoImpl(datastore)
+
+    @Provides
+    @Singleton
+    fun provideUserInfoRepository(
+        datasource: UserInfoRemoteDataSource
+    ): UserInfoRepository = UserInfoRepositoryImpl(datasource)
+
+    @Provides
+    @Singleton
+    fun provideUserInfoRemoteDataSource(
+        api: AboardApiClient
+    ): UserInfoRemoteDataSource = UserInfoRemoteDataSourceImpl(api)
+
 
 }
 

@@ -5,22 +5,12 @@ import com.kastik.apps.core.di.AuthRetrofit
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.api.AppsApiClient
 import com.kastik.apps.core.network.model.aboard.AboardAuthTokenDto
-import com.kastik.apps.core.network.model.aboard.UserProfileDto
-import com.kastik.apps.core.network.model.aboard.UserSubscribedTagDto
 import com.kastik.apps.core.network.model.apps.AppsAuthTokenDto
 
 interface AuthenticationRemoteDataSource {
     suspend fun exchangeCodeForAppsToken(code: String): AppsAuthTokenDto
-
     suspend fun exchangeCodeForAboardToken(code: String): AboardAuthTokenDto
-
-
     suspend fun checkIfTokenIsValid(): Boolean
-
-    suspend fun getUserProfile(): UserProfileDto
-
-
-    suspend fun getUserSubscriptions(): List<UserSubscribedTagDto>
 }
 
 
@@ -36,18 +26,10 @@ class AuthenticationRemoteDataSourceImpl(
     override suspend fun exchangeCodeForAboardToken(code: String): AboardAuthTokenDto =
         aboardApiClient.exchangeCodeForAboardToken(code = code)
 
-
     override suspend fun checkIfTokenIsValid(): Boolean {
         return runCatching {
             aboardApiClient.getUserInfo()
         }.isSuccess
     }
 
-    override suspend fun getUserProfile(): UserProfileDto {
-        return aboardApiClient.getUserInfo()
-    }
-
-    override suspend fun getUserSubscriptions(): List<UserSubscribedTagDto> {
-        return aboardApiClient.getUserSubscriptions()
-    }
 }

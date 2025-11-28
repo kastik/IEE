@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kastik.apps.core.designsystem.component.FilterSheetAuthor
@@ -26,14 +27,14 @@ fun SearchScreen(
     navigateBack: () -> Unit, navigateToAnnouncement: (Int) -> Unit
 ) {
     val viewModel: SearchScreenViewModel = hiltViewModel()
-    val uiState = viewModel.uiState.value
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.onScreenViewed()
     }
 
     SearchScreenContent(
-        uiState = uiState,
+        uiState = uiState.value,
         navigateBack = navigateBack,
         navigateToAnnouncement = navigateToAnnouncement,
         updateQuery = viewModel::updateQuery,

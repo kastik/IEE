@@ -19,6 +19,7 @@ import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,8 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kastik.apps.core.designsystem.component.FloatingToolBar
 import com.kastik.apps.core.designsystem.component.PagingRefreshError
@@ -46,7 +49,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(
     ExperimentalAnimationApi::class,
-    ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
 fun HomeScreen(
@@ -56,8 +60,9 @@ fun HomeScreen(
     navigateToProfile: () -> Unit,
     navigateToSearch: () -> Unit,
 ) {
-    val uiState = viewModel.uiState.value
     val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val lazyAnnouncementPagingItems = viewModel.announcements.collectAsLazyPagingItems()
 
     LaunchedEffect(Unit) {
         viewModel.onScreenViewed()
@@ -78,6 +83,7 @@ fun HomeScreen(
 
     HomeScreenContent(
         uiState = uiState,
+        announcements = lazyAnnouncementPagingItems,
         navigateToAnnouncement = navigateToAnnouncement,
         navigateToSettings = navigateToSettings,
         navigateToProfile = navigateToProfile,
@@ -91,6 +97,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     uiState: UiState,
+    announcements: LazyPagingItems<AnnouncementPreview>,
     navigateToSearch: () -> Unit,
     navigateToProfile: () -> Unit,
     navigateToSettings: () -> Unit,
@@ -100,14 +107,13 @@ fun HomeScreenContent(
 ) {
     val scope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
-    val lazyAnnouncements = uiState.announcements.collectAsLazyPagingItems()
     val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
     LaunchedEffect(uiState.isSignedIn) {
         Log.d("MyLog", "hasEvaluatedAuth: ${uiState.hasEvaluatedAuth}")
         if (uiState.hasEvaluatedAuth) {
             Log.d("MyLog", "hasEvaluatedAuth: refreshing")
-            lazyAnnouncements.refresh()
+            announcements.refresh()
         }
     }
 
@@ -130,18 +136,19 @@ fun HomeScreenContent(
             navigateToSearch = navigateToSearch
         )
         Box {
-            when (lazyAnnouncements.loadState.refresh) {
+            when (announcements.loadState.refresh) {
                 is LoadState.Loading -> {
                     PagingRefreshLoading()
                 }
+
                 is LoadState.Error -> {
-                    PagingRefreshError { lazyAnnouncements.retry() }
+                    PagingRefreshError { announcements.retry() }
                 }
 
                 is LoadState.NotLoading -> {
                     PagingRefreshSuccess(
                         navigateToAnnouncement = navigateToAnnouncement,
-                        lazyAnnouncements = lazyAnnouncements,
+                        lazyAnnouncements = announcements,
                         lazyListState = lazyListState,
                         searchScroll = searchScroll
                     )
@@ -166,12 +173,13 @@ fun HomeScreenContent(
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun PreviewHomeScreenContent() {
+    val pagedAnnouncements = flowOf(PagingData.from(FakeAnnouncements))
+        .collectAsLazyPagingItems()
     AppsAboardTheme {
         Surface {
             HomeScreenContent(
-                uiState = UiState(
-                    announcements = flowOf(PagingData.from(FakeAnnouncements)),
-                ),
+                uiState = UiState(),
+                announcements = pagedAnnouncements,
                 navigateToAnnouncement = {},
                 navigateToSettings = {},
                 navigateToProfile = {},

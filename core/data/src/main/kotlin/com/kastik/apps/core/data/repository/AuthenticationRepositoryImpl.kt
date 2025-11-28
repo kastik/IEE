@@ -1,10 +1,7 @@
 package com.kastik.apps.core.data.repository
 
-import com.kastik.apps.core.data.mappers.toDomain
 import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
-import com.kastik.apps.core.model.aboard.UserProfile
-import com.kastik.apps.core.model.aboard.UserSubscribedTag
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
 
 class AuthenticationRepositoryImpl(
@@ -36,11 +33,4 @@ class AuthenticationRepositoryImpl(
         return local.getAppsAccessToken()
     }
 
-    override suspend fun getUserProfile(): UserProfile {
-        return remote.getUserProfile().toDomain()
-    }
-
-    override suspend fun getUserSubscriptions(): List<UserSubscribedTag> {
-        return remote.getUserSubscriptions().map { it.toDomain() }
-    }
 }

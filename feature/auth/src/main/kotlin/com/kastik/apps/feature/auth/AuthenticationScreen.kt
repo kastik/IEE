@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 
 
@@ -30,15 +31,15 @@ fun AuthenticationScreen(
     errorDescription: String? = null,
     viewModel: AuthenticationScreenViewModel = hiltViewModel()
 ) {
-
-    val uiState = viewModel.uiState
-
     LaunchedEffect(Unit) {
         viewModel.onScreenViewed()
     }
     LaunchedEffect(code, error) {
         viewModel.onAuthRedirect(code = code, error = error, errorDesc = errorDescription)
     }
+
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(uiState.value) {
         delay(500)
         when (uiState.value) {

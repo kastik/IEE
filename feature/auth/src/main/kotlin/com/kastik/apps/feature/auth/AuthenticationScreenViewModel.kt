@@ -1,13 +1,12 @@
 package com.kastik.apps.feature.auth
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.domain.usecases.ExchangeCodeForAboardTokenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,8 +16,8 @@ class AuthenticationScreenViewModel @Inject constructor(
     private val exchangeCodeForToken: ExchangeCodeForAboardTokenUseCase
 ) : ViewModel() {
 
-    private val _uiState: MutableState<UiState> = mutableStateOf(UiState.Loading)
-    val uiState: State<UiState> = _uiState
+    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
+    val uiState: StateFlow<UiState> = _uiState
 
     fun onScreenViewed() {
         analytics.logScreenView("auth_screen")

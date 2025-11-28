@@ -26,7 +26,10 @@ import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
 
 @Composable
 fun SelectableTagItem(
-    title: String, isSelected: Boolean, onToggle: () -> Unit
+    modifier: Modifier = Modifier,
+    title: String,
+    isSelected: Boolean,
+    onToggle: () -> Unit
 ) {
     val shape = RoundedCornerShape(20)
     val containerColor by animateColorAsState(
@@ -39,9 +42,9 @@ fun SelectableTagItem(
     )
 
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .padding(horizontal = 4.dp, vertical = 6.dp)
             .clip(shape)
             .clickable(onClick = onToggle),
         color = containerColor,

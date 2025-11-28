@@ -57,5 +57,11 @@ gradlePlugin {
             implementationClass =
                 "com.kastik.buildlogic.conventions.testing.AndroidLibraryComposeTestingConventionPlugin"
         }
+
+        create("benchmark") {
+            id = "com.kastik.benchmark"
+            implementationClass =
+                "com.kastik.buildlogic.conventions.benchmark.BenchmarkConventionPlugin"
+        }
     }
 }

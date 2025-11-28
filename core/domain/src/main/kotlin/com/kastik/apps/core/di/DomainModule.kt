@@ -2,6 +2,7 @@ package com.kastik.apps.core.di
 
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
+import com.kastik.apps.core.domain.repository.UserInfoRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.usecases.CheckIfUserHasSkippedSignInUseCase
 import com.kastik.apps.core.domain.usecases.CheckIfUserIsAuthenticatedUseCase
@@ -14,11 +15,13 @@ import com.kastik.apps.core.domain.usecases.GetPagedAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetPagedFilteredAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetTagsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserProfileUseCase
+import com.kastik.apps.core.domain.usecases.GetUserSubscribableTagsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserThemeUseCase
 import com.kastik.apps.core.domain.usecases.SetDynamicColorUseCase
 import com.kastik.apps.core.domain.usecases.SetUserHasSkippedSignInUseCase
 import com.kastik.apps.core.domain.usecases.SetUserThemeUseCase
+import com.kastik.apps.core.domain.usecases.SubscribeToTagsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,6 +62,20 @@ object AnnouncementUseCaseModule {
 
     @Provides
     @ViewModelScoped
+    fun provideGetUserSubscribableTagsUseCase(
+        repo: UserInfoRepository
+    ): GetUserSubscribableTagsUseCase = GetUserSubscribableTagsUseCase(repo)
+
+
+    @Provides
+    @ViewModelScoped
+    fun provideSubscribeToTagsUseCaseUseCase(
+        repo: UserInfoRepository
+    ): SubscribeToTagsUseCase = SubscribeToTagsUseCase(repo)
+
+
+    @Provides
+    @ViewModelScoped
     fun provideGetAuthorsUseCase(
         repo: AnnouncementRepository
     ): GetAuthorsUseCase = GetAuthorsUseCase(repo)
@@ -88,13 +105,13 @@ object AnnouncementUseCaseModule {
     @Provides
     @ViewModelScoped
     fun provideGetUserProfileUseCase(
-        repository: AuthenticationRepository
+        repository: UserInfoRepository
     ): GetUserProfileUseCase = GetUserProfileUseCase(repository)
 
     @Provides
     @ViewModelScoped
     fun provideGetUserSubscriptionsUseCase(
-        repository: AuthenticationRepository
+        repository: UserInfoRepository
     ): GetUserSubscriptionsUseCase = GetUserSubscriptionsUseCase(repository)
 
     @Provides

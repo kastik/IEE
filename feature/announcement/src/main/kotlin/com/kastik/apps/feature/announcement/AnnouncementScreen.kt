@@ -54,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kastik.apps.core.model.aboard.AnnouncementAttachment
 import com.kastik.apps.core.model.aboard.AnnouncementTag
 
@@ -64,7 +65,6 @@ fun AnnouncementScreen(
     navigateBack: () -> Unit,
     announcementId: Int,
 ) {
-    val uiState = viewModel.uiState.value
 
     LaunchedEffect(Unit) {
         viewModel.getData(announcementId)
@@ -74,7 +74,9 @@ fun AnnouncementScreen(
         viewModel.onScreenViewed()
     }
 
-    when (uiState) {
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (val state = uiState.value) {
         UiState.Error -> {
             AnnouncementScreenContentError()
         }
@@ -86,12 +88,12 @@ fun AnnouncementScreen(
         is UiState.Success -> {
             AnnouncementScreenContentSuccess(
                 announcementId = announcementId,
-                title = uiState.announcement.title,
-                author = uiState.announcement.author,
-                date = uiState.announcement.date,
-                body = uiState.announcement.body,
-                tags = uiState.announcement.tags,
-                attachments = uiState.announcement.attachments,
+                title = state.announcement.title,
+                author = state.announcement.author,
+                date = state.announcement.date,
+                body = state.announcement.body,
+                tags = state.announcement.tags,
+                attachments = state.announcement.attachments,
                 navigateBack = navigateBack,
                 onAttachmentClick = { attachmentId, filename ->
 

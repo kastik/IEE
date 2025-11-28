@@ -57,8 +57,8 @@ fun FloatingToolBarExpandedPreview() {
             expanded = false,
             expandedAction = {},
             collapsedAction = { },
-            expandedIcon = { Icon(Icons.Default.Search, null) },
-            collapsedIcon = { Icon(Icons.Default.ArrowUpward, null) },
+            expandedIcon = { Icon(Icons.Default.ArrowUpward, null) },
+            collapsedIcon = { Icon(Icons.Default.Search, null) },
         )
     }
 }
@@ -71,8 +71,8 @@ fun FloatingToolBarCollapsedPreview() {
             expanded = true,
             expandedAction = {},
             collapsedAction = { },
-            expandedIcon = { Icon(Icons.Default.Search, null) },
-            collapsedIcon = { Icon(Icons.Default.ArrowUpward, null) },
+            expandedIcon = { Icon(Icons.Default.ArrowUpward, null) },
+            collapsedIcon = { Icon(Icons.Default.Search, null) },
         )
     }
 }

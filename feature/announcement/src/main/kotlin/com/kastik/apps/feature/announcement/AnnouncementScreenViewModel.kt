@@ -1,12 +1,12 @@
 package com.kastik.apps.feature.announcement
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.domain.usecases.GetAnnouncementWithIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,21 +17,21 @@ class AnnouncementScreenViewModel @Inject constructor(
     private val analytics: Analytics
 ) : ViewModel() {
 
-    val uiState: MutableState<UiState> = mutableStateOf(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
+    val uiState: StateFlow<UiState> = _uiState
+
     fun onScreenViewed() {
         analytics.logScreenView("announcement_screen")
     }
 
-
     fun getData(id: Int) {
         viewModelScope.launch {
             try {
-                getAnnouncementWithIdUseCase(id)
-                    .collect { announcement ->
-                        uiState.value = UiState.Success(announcement)
+                getAnnouncementWithIdUseCase(id).collect { announcement ->
+                    _uiState.value = UiState.Success(announcement)
                     }
-            } catch (e: Exception) {
-                uiState.value = UiState.Error
+            } catch (_: Exception) {
+                _uiState.value = UiState.Error
             }
 
         }

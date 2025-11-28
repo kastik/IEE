@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kastik.application.compose)
     alias(libs.plugins.kastik.hilt)
@@ -5,6 +8,7 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.crashlytics.gradlePlugin)
     alias(libs.plugins.performance.gradlePlugin)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -12,14 +16,31 @@ android {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 4
-        versionName = "1.0"
+        versionCode = 6
+        versionName = "0.5"
     }
+    val keystoreProperties = Properties()
+    val keystorePropertiesFile = rootProject.file("local.properties")
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(keystoreProperties["store.file"] as String)
+            storePassword = keystoreProperties["store.password"] as String
+            keyAlias = keystoreProperties["key.alias"] as String
+            keyPassword = keystoreProperties["key.password"] as String
+        }
+    }
+
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
+            baselineProfile.automaticGenerationDuringBuild = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -45,4 +66,6 @@ dependencies {
         exclude(group = "com.google.protobuf", module = "protobuf-javalite")
         exclude(group = "com.google.firebase", module = "protolite-well-known-types")
     }
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(project(":benchmark"))
 }

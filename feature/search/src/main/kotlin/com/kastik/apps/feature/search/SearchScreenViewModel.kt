@@ -1,7 +1,5 @@
 package com.kastik.apps.feature.search
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -10,6 +8,8 @@ import com.kastik.apps.core.domain.usecases.GetAuthorsUseCase
 import com.kastik.apps.core.domain.usecases.GetPagedFilteredAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetTagsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,8 +25,8 @@ class SearchScreenViewModel @Inject constructor(
         getTags()
     }
 
-    private val _uiState = mutableStateOf(UiState())
-    val uiState: State<UiState> = _uiState
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = _uiState
 
     fun onScreenViewed() {
         analytics.logScreenView("search_screen")
