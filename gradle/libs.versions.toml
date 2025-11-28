@@ -42,7 +42,10 @@ espressoCore = "3.7.0"
 robolectric = "4.16"
 androidx-test-core = "1.7.0"
 mockk = "1.14.6"
-
+androidxMacroBenchmark = "1.4.1"
+uiautomator = "2.4.0-alpha06"
+benchmarkMacroJunit4 = "1.4.1"
+profileinstaller = "1.4.1"
 
 gms = "4.4.4"
 firebase-bom = "34.6.0"
@@ -116,6 +119,11 @@ androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", 
 androidx-compose-ui-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 io-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "androidxMacroBenchmark" }
+androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
+
 
 ####### Used in Conventions #######
 
@@ -180,6 +188,8 @@ gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 power-assert = { id = "org.jetbrains.kotlin.plugin.power-assert", version.ref = "kotlin" }
 crashlytics-gradlePlugin = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsGradle" }
 performance-gradlePlugin = { id = "com.google.firebase.firebase-perf", version.ref = "performanceGradle" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark" }
+android-test = { id = "com.android.test", version.ref = "agp" }
 
 
 ####### Convention plugins #######
@@ -190,3 +200,4 @@ kastik-library-compose = { id = "com.kastik.library.compose" }
 kastik-hilt = { id = "com.kastik.hilt" }
 kastik-library-testing = { id = "com.kastik.library.testing" }
 kastik-library-testing-compose = { id = "com.kastik.library.testing.compose" }
+kastik-benchmark = { id = "com.kastik.benchmark" }

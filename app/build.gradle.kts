@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.crashlytics.gradlePlugin)
     alias(libs.plugins.performance.gradlePlugin)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -18,8 +19,10 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
+            baselineProfile.automaticGenerationDuringBuild = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -45,4 +48,6 @@ dependencies {
         exclude(group = "com.google.protobuf", module = "protobuf-javalite")
         exclude(group = "com.google.firebase", module = "protolite-well-known-types")
     }
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(project(":benchmark"))
 }

@@ -11,4 +11,6 @@ plugins {
     alias(libs.plugins.room) apply false
     alias(libs.plugins.crashlytics.gradlePlugin) apply false
     alias(libs.plugins.performance.gradlePlugin) apply false
+    alias(libs.plugins.android.test) apply false
+    alias(libs.plugins.baselineprofile) apply false
 }
