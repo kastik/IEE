@@ -20,20 +20,15 @@ class AnnouncementScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState: StateFlow<UiState> = _uiState
 
-    fun onScreenViewed() {
-        analytics.logScreenView("announcement_screen")
-    }
-
-    fun getData(id: Int) {
+    fun getAnnouncement(announcementId: Int) {
         viewModelScope.launch {
             try {
-                getAnnouncementWithIdUseCase(id).collect { announcement ->
+                getAnnouncementWithIdUseCase(announcementId).collect { announcement ->
                     _uiState.value = UiState.Success(announcement)
                     }
             } catch (_: Exception) {
                 _uiState.value = UiState.Error
             }
-
         }
     }
 }

@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kastik.apps.core.designsystem.utils.TrackScreenViewEvent
 import com.kastik.apps.core.model.aboard.AnnouncementAttachment
 import com.kastik.apps.core.model.aboard.AnnouncementTag
 
@@ -66,12 +67,10 @@ internal fun AnnouncementRoute(
     viewModel: AnnouncementScreenViewModel = hiltViewModel(),
 ) {
 
-    LaunchedEffect(Unit) {
-        viewModel.getData(announcementId)
-    }
+    TrackScreenViewEvent("announcement_screen")
 
     LaunchedEffect(Unit) {
-        viewModel.onScreenViewed()
+        viewModel.getAnnouncement(announcementId)
     }
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -104,7 +103,7 @@ internal fun AnnouncementRoute(
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AnnouncementScreenContentLoading() {
+private fun AnnouncementScreenContentLoading() {
     Surface {
         Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
@@ -123,7 +122,7 @@ fun AnnouncementScreenContentLoading() {
 
 
 @Composable
-fun AnnouncementScreenContentError() {
+private fun AnnouncementScreenContentError() {
     Surface {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -137,7 +136,7 @@ fun AnnouncementScreenContentError() {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AnnouncementScreenContentSuccess(
+private fun AnnouncementScreenContentSuccess(
     announcementId: Int,
     title: String,
     author: String,

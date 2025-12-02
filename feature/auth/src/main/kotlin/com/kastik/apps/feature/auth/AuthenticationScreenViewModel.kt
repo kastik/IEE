@@ -19,10 +19,6 @@ class AuthenticationScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState: StateFlow<UiState> = _uiState
 
-    fun onScreenViewed() {
-        analytics.logScreenView("auth_screen")
-    }
-
     fun onAuthRedirect(code: String?, error: String?, errorDesc: String?) {
         if (!error.isNullOrBlank()) {
             _uiState.value = UiState.Error(error)

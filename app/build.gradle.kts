@@ -60,7 +60,10 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
     implementation(project(":core:designsystem"))
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
     implementation(libs.androidx.activity)
+    implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.firebase.performance) {
         exclude(group = "com.google.protobuf", module = "protobuf-javalite")

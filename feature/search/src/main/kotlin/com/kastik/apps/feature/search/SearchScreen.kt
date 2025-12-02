@@ -29,9 +29,7 @@ internal fun SearchScreen(
     val viewModel: SearchScreenViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.onScreenViewed()
-    }
+    TrackScreenViewEvent("search_screen")
 
     SearchScreenContent(
         uiState = uiState.value,

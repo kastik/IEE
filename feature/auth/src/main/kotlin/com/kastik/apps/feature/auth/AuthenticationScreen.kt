@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kastik.apps.core.designsystem.utils.TrackScreenViewEvent
 import kotlinx.coroutines.delay
 
 
@@ -31,9 +32,8 @@ internal fun AuthenticationRoute(
     errorDescription: String? = null,
     viewModel: AuthenticationScreenViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.onScreenViewed()
-    }
+    TrackScreenViewEvent("auth_screen")
+
     LaunchedEffect(code, error) {
         viewModel.onAuthRedirect(code = code, error = error, errorDesc = errorDescription)
     }

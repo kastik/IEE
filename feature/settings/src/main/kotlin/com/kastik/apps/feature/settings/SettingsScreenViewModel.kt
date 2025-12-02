@@ -38,10 +38,6 @@ class SettingsScreenViewModel @Inject constructor(
                 initialValue = UiState.Loading
             )
 
-    fun onScreenViewed() {
-        analytics.logScreenView("settings_screen")
-    }
-
     fun setDynamicColor(value: Boolean) {
         viewModelScope.launch {
             setDynamicColorUseCase(value)

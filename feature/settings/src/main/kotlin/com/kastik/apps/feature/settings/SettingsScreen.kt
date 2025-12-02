@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kastik.apps.core.designsystem.utils.TrackScreenViewEvent
 import com.kastik.apps.core.model.user.UserTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -47,9 +48,8 @@ import com.kastik.apps.core.model.user.UserTheme
 internal fun SettingsRoute(
     viewModel: SettingsScreenViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.onScreenViewed()
-    }
+    TrackScreenViewEvent("settings_screen")
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState) {

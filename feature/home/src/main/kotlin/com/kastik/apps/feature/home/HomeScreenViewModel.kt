@@ -37,11 +37,8 @@ class HomeScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState
 
-    fun onScreenViewed() {
-        analytics.logScreenView("home_screen")
-    }
 
-    fun evaluateSignInStatus() {
+    init {
         viewModelScope.launch {
             try {
                 val isAuthenticated = checkIfUserIsAuthenticatedUseCase()

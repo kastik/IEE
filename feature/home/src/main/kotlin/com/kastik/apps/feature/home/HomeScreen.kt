@@ -40,6 +40,7 @@ import com.kastik.apps.core.designsystem.component.PagingRefreshSuccess
 import com.kastik.apps.core.designsystem.component.SearchBarCollapsed
 import com.kastik.apps.core.designsystem.component.SignInNotice
 import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
+import com.kastik.apps.core.designsystem.utils.TrackScreenViewEvent
 import com.kastik.apps.core.designsystem.utils.isScrollingUp
 import com.kastik.apps.core.model.aboard.AnnouncementAttachment
 import com.kastik.apps.core.model.aboard.AnnouncementPreview
@@ -64,9 +65,7 @@ internal fun HomeScreenRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lazyAnnouncementPagingItems = viewModel.announcements.collectAsLazyPagingItems()
 
-    LaunchedEffect(Unit) {
-        viewModel.onScreenViewed()
-    }
+    TrackScreenViewEvent("home_screen")
 
     LaunchedEffect(Unit) {
         viewModel.events.collect { event ->

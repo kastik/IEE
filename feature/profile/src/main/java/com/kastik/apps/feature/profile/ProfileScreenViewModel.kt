@@ -27,11 +27,15 @@ class ProfileScreenViewModel @Inject constructor(
     val uiState: StateFlow<UiState> = _uiState
 
     init {
-        loadProfile()
-    }
-
-    fun onScreenViewed() {
-        analytics.logScreenView("profile_screen")
+        viewModelScope.launch {
+            getIsSignedInUseCase().collect { isSignedIn ->
+                if (!isSignedIn) {
+                    _uiState.value = UiState.SignedOut
+                } else {
+                    loadProfile()
+                }
+            }
+        }
     }
 
     fun toggleTagsSheet() {

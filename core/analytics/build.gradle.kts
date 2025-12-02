@@ -8,6 +8,6 @@ android {
 
 
 dependencies {
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
+    releaseImplementation(platform(libs.firebase.bom))
+    releaseImplementation(libs.firebase.analytics)
 }

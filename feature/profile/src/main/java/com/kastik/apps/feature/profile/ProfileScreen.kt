@@ -30,6 +30,9 @@ import com.kastik.apps.core.designsystem.component.ProfileMeta
 import com.kastik.apps.core.designsystem.component.ProfileName
 import com.kastik.apps.core.designsystem.component.ProfilePicture
 import com.kastik.apps.core.designsystem.component.ProfileSubscribedTags
+import com.kastik.apps.core.designsystem.utils.TrackScreenViewEvent
+import com.kastik.apps.core.model.aboard.UserProfile
+import kotlinx.coroutines.delay
 
 
 @Composable
@@ -37,10 +40,7 @@ internal fun ProfileRoute(
     viewModel: ProfileScreenViewModel = hiltViewModel(),
     navigateBack: () -> Unit
 ) {
-
-    LaunchedEffect(Unit) {
-        viewModel.onScreenViewed()
-    }
+    TrackScreenViewEvent("profile_screen")
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     when (val state = uiState.value) {
