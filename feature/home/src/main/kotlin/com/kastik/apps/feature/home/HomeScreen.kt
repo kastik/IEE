@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
     ExperimentalMaterial3ExpressiveApi::class,
 )
 @Composable
-fun HomeScreen(
+internal fun HomeScreenRoute(
     viewModel: HomeScreenViewModel = hiltViewModel(),
     navigateToAnnouncement: (Int) -> Unit,
     navigateToSettings: () -> Unit,
@@ -95,7 +95,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun HomeScreenContent(
+private fun HomeScreenContent(
     uiState: UiState,
     announcements: LazyPagingItems<AnnouncementPreview>,
     navigateToSearch: () -> Unit,

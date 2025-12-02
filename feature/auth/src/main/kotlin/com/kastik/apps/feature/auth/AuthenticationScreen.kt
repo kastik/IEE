@@ -23,7 +23,7 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun AuthenticationScreen(
+internal fun AuthenticationRoute(
     navigateBack: () -> Unit,
     code: String? = null,
     state: String? = null,
@@ -55,12 +55,13 @@ fun AuthenticationScreen(
         }
     }
 
+    AuthenticationScreenContent()
 }
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AuthenticationScreenContent() {
+private fun AuthenticationScreenContent() {
     Surface {
         Box(
             modifier = Modifier

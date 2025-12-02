@@ -44,7 +44,7 @@ import com.kastik.apps.core.model.user.UserTheme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SettingsScreen(
+internal fun SettingsRoute(
     viewModel: SettingsScreenViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
@@ -81,7 +81,7 @@ fun SettingsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreenContent(
+private fun SettingsScreenContent(
     theme: UserTheme,
     setTheme: (UserTheme) -> Unit = {},
     dynamicColorEnabled: Boolean,

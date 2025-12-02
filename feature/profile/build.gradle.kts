@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kastik.library.compose)
     alias(libs.plugins.kastik.hilt)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {

@@ -60,10 +60,10 @@ import com.kastik.apps.core.model.aboard.AnnouncementTag
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun AnnouncementScreen(
-    viewModel: AnnouncementScreenViewModel = hiltViewModel(),
-    navigateBack: () -> Unit,
+internal fun AnnouncementRoute(
     announcementId: Int,
+    navigateBack: () -> Unit,
+    viewModel: AnnouncementScreenViewModel = hiltViewModel(),
 ) {
 
     LaunchedEffect(Unit) {

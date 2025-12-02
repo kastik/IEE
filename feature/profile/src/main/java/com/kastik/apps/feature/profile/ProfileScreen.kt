@@ -33,8 +33,9 @@ import com.kastik.apps.core.designsystem.component.ProfileSubscribedTags
 
 
 @Composable
-fun ProfileScreen(
-    viewModel: ProfileScreenViewModel = hiltViewModel()
+internal fun ProfileRoute(
+    viewModel: ProfileScreenViewModel = hiltViewModel(),
+    navigateBack: () -> Unit
 ) {
 
     LaunchedEffect(Unit) {
@@ -71,7 +72,7 @@ fun ProfileScreenLoadingContent() {
 }
 
 @Composable
-fun ProfileScreenErrorContent(error: String) {
+private fun ProfileScreenErrorContent(error: String) {
     Surface {
         Box(
             Modifier.fillMaxSize(), contentAlignment = Alignment.Center
@@ -84,7 +85,7 @@ fun ProfileScreenErrorContent(error: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreenSuccessContent(
+private fun ProfileScreenSuccessContent(
     uiState: UiState.Success,
     applySelectedTags: () -> Unit,
     updateSelectedSubscribableTag: (List<Int>) -> Unit,

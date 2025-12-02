@@ -23,7 +23,7 @@ import com.kastik.apps.core.designsystem.component.SearchBarExpanded
 
 
 @Composable
-fun SearchScreen(
+internal fun SearchScreen(
     navigateBack: () -> Unit, navigateToAnnouncement: (Int) -> Unit
 ) {
     val viewModel: SearchScreenViewModel = hiltViewModel()
@@ -49,7 +49,7 @@ fun SearchScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreenContent(
+private fun SearchScreenContent(
     uiState: UiState,
     updateQuery: (String) -> Unit,
     updateSelectedTagIds: (List<Int>) -> Unit,

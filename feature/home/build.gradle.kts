@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kastik.library.compose)
     alias(libs.plugins.kastik.hilt)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -12,6 +13,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:analytics"))
     implementation(project(":core:designsystem"))
+    implementation(libs.accompanist.permissions)
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)
 }
