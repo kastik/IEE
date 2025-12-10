@@ -24,7 +24,6 @@ powerAssert {
 }
 
 dependencies {
-    //TODO Find a way to remove room from here
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
     implementation(libs.room.paging)
@@ -36,6 +35,7 @@ dependencies {
     implementation(project(":core:database"))
     implementation(project(":core:network"))
     implementation(project(":core:model"))
+    implementation(project(":core:notifications"))
 
 
     testImplementation(libs.androidx.paging.testing)

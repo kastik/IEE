@@ -9,3 +9,15 @@ annotation class AuthDatastore
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class UserPrefsDatastore
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class UserProfileDatastore
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class UserSubscriptionsDatastore
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class UserSubscribableTagsDatastore

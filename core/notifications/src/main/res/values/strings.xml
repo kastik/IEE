@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fcm_default_channel_id" translatable="false">general</string>
+    <string name="fcm_default_channel_name">General notifications</string>
+    <string name="fcm_announcement_channel_id" translatable="false">announcement</string>
+    <string name="fcm_announcement_channel_name">New announcements</string>
+</resources>

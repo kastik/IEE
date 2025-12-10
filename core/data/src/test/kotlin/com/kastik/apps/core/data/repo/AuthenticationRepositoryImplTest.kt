@@ -45,14 +45,14 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun checkIfUserIsAuthenticatedReturnsFalseWhenNoTokenIssSavedTest() = runTest {
-        val result = authenticationRepositoryImpl.checkIfUserIsAuthenticated()
+        val result = authenticationRepositoryImpl.checkTokenValidity()
         assertFalse(result)
     }
 
     @Test
     fun checkIfUserIsAuthenticatedReturnsTrueWhenLocalTokenExistsTest() = runTest {
         authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
-        assertTrue(authenticationRepositoryImpl.checkIfUserIsAuthenticated())
+        assertTrue(authenticationRepositoryImpl.checkTokenValidity())
     }
 
     @Test

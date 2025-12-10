@@ -11,7 +11,7 @@ internal class UserMappersTest {
     @Test
     fun userTagsDtoMapsToDomainTest() {
         userSubscribedTagDtoListTestData.forEach { subscribedTagDto ->
-            val domainTags = subscribedTagDto.toDomain()
+            val domainTags = subscribedTagDto.toTag()
             assertEquals(subscribedTagDto.id, domainTags.id)
         }
     }
@@ -19,7 +19,7 @@ internal class UserMappersTest {
     @Test
     fun userProfileDtoMapsToDomainTest() {
         userProfilesTestData.forEach { userProfileDto ->
-            val domainProfile = userProfileDto.toDomain()
+            val domainProfile = userProfileDto.toUserTheme()
             assertEquals(userProfileDto.id, domainProfile.id)
         }
     }
@@ -28,7 +28,7 @@ internal class UserMappersTest {
     fun userNameFallsBackToEngNameWhenEmptyTest() {
         userProfilesTestData.forEach { userProfileDto ->
             if (userProfileDto.name.isEmpty()) {
-                val domainProfile = userProfileDto.toDomain()
+                val domainProfile = userProfileDto.toUserTheme()
                 assertTrue(userProfileDto.name.isEmpty())
                 assertEquals(userProfileDto.nameEng, domainProfile.name)
             }

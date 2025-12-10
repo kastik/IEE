@@ -37,7 +37,7 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
 import com.kastik.apps.core.model.aboard.AnnouncementPreview
-import com.kastik.apps.core.model.aboard.AnnouncementTag
+import com.kastik.apps.core.model.aboard.Tag
 import kotlinx.coroutines.flow.flowOf
 
 
@@ -177,7 +177,7 @@ private fun PagingRefreshSuccessPreview() {
             author = "Admin",
             title = "Welcome to AppsAboard!",
             date = "2024-01-01",
-            tags = listOf(AnnouncementTag(1, "General"), AnnouncementTag(2, "New")),
+            tags = listOf(Tag(1, "General"), Tag(2, "New")),
             preview = "This is the first announcement."
         ),
         AnnouncementPreview(
@@ -185,7 +185,7 @@ private fun PagingRefreshSuccessPreview() {
             author = "Admin",
             title = "Second Announcement",
             date = "2024-01-02",
-            tags = listOf(AnnouncementTag(1, "General")),
+            tags = listOf(Tag(1, "General")),
             preview = "This is the second announcement with a bit longer preview text to see how it renders."
         )
     )

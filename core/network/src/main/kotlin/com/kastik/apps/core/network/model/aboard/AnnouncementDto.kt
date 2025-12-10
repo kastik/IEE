@@ -34,7 +34,7 @@ data class AnnouncementDto(
 
 
     val tags: List<AnnouncementTagDto> = emptyList(),
-    val attachments: List<AnnouncementAttachmentDto> = emptyList(),
+    val attachments: List<AttachmentDto> = emptyList(),
     val author: AnnouncementAuthorDto,
 
 

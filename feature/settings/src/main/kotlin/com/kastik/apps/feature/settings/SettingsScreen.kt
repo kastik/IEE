@@ -1,5 +1,9 @@
 package com.kastik.apps.feature.settings
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +35,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +43,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.kastik.apps.core.designsystem.utils.TrackScreenViewEvent
 import com.kastik.apps.core.model.user.UserTheme
 
@@ -79,7 +85,7 @@ internal fun SettingsRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 private fun SettingsScreenContent(
     theme: UserTheme,
@@ -88,6 +94,17 @@ private fun SettingsScreenContent(
     setDynamicColor: (Boolean) -> Unit = {},
 ) {
     val context = LocalContext.current
+
+    val areNotificationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(
+            android.Manifest.permission.POST_NOTIFICATIONS
+        ).status.isGranted
+    } else {
+        true
+    }
+
+
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -144,14 +161,20 @@ private fun SettingsScreenContent(
                         SettingSwitchRow(
                             title = "Push notifications",
                             subtitle = "Receive updates and announcements",
-                            checked = false,
+                            checked = areNotificationGranted,
                             onCheckedChange = {
-                                val text = "Not implemented yet!"
-                                val duration = Toast.LENGTH_SHORT
-                                val toast = Toast.makeText(context, text, duration) // in Activity
-                                toast.show()
-
-                            })
+                                val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                    }
+                                } else {
+                                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                        data = Uri.fromParts("package", context.packageName, null)
+                                    }
+                                }
+                                context.startActivity(intent)
+                            }
+                        )
                         HorizontalDivider()
                         SettingSwitchRow(
                             title = "Email updates",

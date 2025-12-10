@@ -1,29 +1,35 @@
 package com.kastik.apps.core.di
 
-import android.content.Context
-import androidx.room.Room
-import com.kastik.apps.core.data.repository.AnnouncementRepoImpl
+import com.kastik.apps.core.data.repository.AnnouncementRepositoryImpl
 import com.kastik.apps.core.data.repository.AuthenticationRepositoryImpl
-import com.kastik.apps.core.data.repository.UserInfoRepositoryImpl
+import com.kastik.apps.core.data.repository.AuthorRepositoryImpl
+import com.kastik.apps.core.data.repository.ProfileRepositoryImpl
+import com.kastik.apps.core.data.repository.TagsRepositoryImpl
 import com.kastik.apps.core.data.repository.UserPreferencesRepoImpl
-import com.kastik.apps.core.database.db.AppDatabase
+import com.kastik.apps.core.database.dao.AnnouncementDao
 import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
-import com.kastik.apps.core.datastore.UserPreferencesLocalDataSource
+import com.kastik.apps.core.datastore.PreferencesLocalDataSource
+import com.kastik.apps.core.datastore.ProfileLocalDataSource
+import com.kastik.apps.core.datastore.TagsLocalDataSource
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
-import com.kastik.apps.core.domain.repository.UserInfoRepository
+import com.kastik.apps.core.domain.repository.AuthorRepository
+import com.kastik.apps.core.domain.repository.ProfileRepository
+import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
-import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
-import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSourceImpl
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
-import com.kastik.apps.core.network.datasource.UserInfoRemoteDataSource
-import com.kastik.apps.core.network.datasource.UserInfoRemoteDataSourceImpl
+import com.kastik.apps.core.network.datasource.AuthorRemoteDataSource
+import com.kastik.apps.core.network.datasource.ProfileRemoteDataSource
+import com.kastik.apps.core.network.datasource.TagsRemoteDataSource
+import com.kastik.apps.core.notifications.PushNotificationsDatasource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -32,55 +38,66 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideAppDatabase(
-        @ApplicationContext context: Context
-    ): AppDatabase = Room.databaseBuilder(
-        context, AppDatabase::class.java, "announcement_cache.db"
-    ).fallbackToDestructiveMigration(true)
-        .build()
-
-    @Provides
-    fun provideAnnouncementDao(db: AppDatabase) = db.announcementDao()
-
-
-    @Provides
-    @Singleton
-    fun provideAnnouncementRemoteDataSource(
-        api: AboardApiClient
-    ): AnnouncementRemoteDataSource = AnnouncementRemoteDataSourceImpl(api)
-
-    @Provides
-    @Singleton
     fun provideAnnouncementRepository(
-        remoteDataSource: AnnouncementRemoteDataSource,
-        database: AppDatabase,
-    ): AnnouncementRepository = AnnouncementRepoImpl(remoteDataSource, database)
+        announcementLocalDataSource: AnnouncementDao,
+        announcementRemoteDataSource: AnnouncementRemoteDataSource,
+    ): AnnouncementRepository = AnnouncementRepositoryImpl(
+        announcementLocalDataSource = announcementLocalDataSource,
+        announcementRemoteDataSource = announcementRemoteDataSource,
 
+        )
+
+    @Provides
+    @Singleton
+    fun provideTagsRepository(
+        tagsLocalDataSource: TagsLocalDataSource,
+        tagsRemoteDataSource: TagsRemoteDataSource,
+    ): TagsRepository = TagsRepositoryImpl(
+        tagsLocalDataSource = tagsLocalDataSource,
+        tagsRemoteDataSource = tagsRemoteDataSource,
+    )
+
+    @Provides
+    @Singleton
+    fun provideAuthorRepository(
+        authorRemoteDataSource: AuthorRemoteDataSource,
+    ): AuthorRepository = AuthorRepositoryImpl(
+        authorRemoteDataSource = authorRemoteDataSource
+    )
 
     @Provides
     @Singleton
     fun provideAuthenticationRepository(
-        local: AuthenticationLocalDataSource, remote: AuthenticationRemoteDataSource
-    ): AuthenticationRepository = AuthenticationRepositoryImpl(local, remote)
+        authenticationLocalDataSource: AuthenticationLocalDataSource,
+        authenticationRemoteDataSource: AuthenticationRemoteDataSource
+    ): AuthenticationRepository = AuthenticationRepositoryImpl(
+        authenticationLocalDataSource = authenticationLocalDataSource,
+        authenticationRemoteDataSource = authenticationRemoteDataSource
+    )
 
     @Provides
     @Singleton
     fun provideUserPreferencesRepository(
-        datastore: UserPreferencesLocalDataSource
-    ): UserPreferencesRepository = UserPreferencesRepoImpl(datastore)
+        preferencesLocalDataSource: PreferencesLocalDataSource
+    ): UserPreferencesRepository =
+        UserPreferencesRepoImpl(preferencesLocalDataSource = preferencesLocalDataSource)
 
     @Provides
     @Singleton
     fun provideUserInfoRepository(
-        datasource: UserInfoRemoteDataSource
-    ): UserInfoRepository = UserInfoRepositoryImpl(datasource)
+        profileLocalDataSource: ProfileLocalDataSource,
+        profileRemoteDataSource: ProfileRemoteDataSource,
+        pushNotificationsDatasource: PushNotificationsDatasource
+    ): ProfileRepository = ProfileRepositoryImpl(
+        profileLocalDataSource = profileLocalDataSource,
+        profileRemoteDataSource = profileRemoteDataSource,
+        pushNotificationsDatasource = pushNotificationsDatasource
+    )
 
     @Provides
     @Singleton
-    fun provideUserInfoRemoteDataSource(
-        api: AboardApiClient
-    ): UserInfoRemoteDataSource = UserInfoRemoteDataSourceImpl(api)
-
+    fun provideAppCoroutineScope(): CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
 }
 

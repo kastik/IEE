@@ -5,6 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingConfig
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import com.kastik.apps.core.data.paging.AnnouncementRemoteMediator
 import com.kastik.apps.core.database.model.AnnouncementWithoutBody
 import com.kastik.apps.core.testing.datasource.remote.FakeAnnouncementRemoteDataSource
 import com.kastik.apps.core.testing.db.FakeAppDatabase

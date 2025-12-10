@@ -2,7 +2,7 @@ package com.kastik.apps.core.data.repo
 
 
 import androidx.paging.ExperimentalPagingApi
-import com.kastik.apps.core.data.repository.AnnouncementRepoImpl
+import com.kastik.apps.core.data.repository.AnnouncementRepositoryImpl
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.testing.datasource.remote.FakeAnnouncementRemoteDataSource
 import com.kastik.apps.core.testing.db.FakeAppDatabase
@@ -25,7 +25,7 @@ class AnnouncementRepoImplTest {
     fun setup() {
         fakeDb = FakeAppDatabase()
         fakeAnnouncementRemoteDataSource = FakeAnnouncementRemoteDataSource()
-        announcementRepoImpl = AnnouncementRepoImpl(fakeAnnouncementRemoteDataSource, fakeDb)
+        announcementRepoImpl = AnnouncementRepositoryImpl(fakeAnnouncementRemoteDataSource, fakeDb)
     }
 
     @Test

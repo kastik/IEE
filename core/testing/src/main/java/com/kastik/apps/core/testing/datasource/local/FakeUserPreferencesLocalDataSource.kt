@@ -1,11 +1,11 @@
 package com.kastik.apps.core.testing.datasource.local
 
-import com.kastik.apps.core.datastore.UserPreferencesLocalDataSource
+import com.kastik.apps.core.datastore.PreferencesLocalDataSource
 import com.kastik.apps.core.datastore.proto.Theme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-class FakeUserPreferencesLocalDataSource : UserPreferencesLocalDataSource {
+class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
     var skipped: Boolean = false
     var theme: Theme = Theme.Light
     var dynamicColor: Boolean = true

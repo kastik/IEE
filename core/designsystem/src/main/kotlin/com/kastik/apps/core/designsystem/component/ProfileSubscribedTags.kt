@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,7 +25,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ProfileSubscribedTags(
     subscribedTagTitles: List<String>,
-    dismissSubscribeSheet: () -> Unit,
+    showTagSheet: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ElevatedCard(
@@ -50,7 +47,7 @@ fun ProfileSubscribedTags(
                     Text("Subscribed Tags", style = MaterialTheme.typography.titleMedium)
                 }
                 IconButton(
-                    onClick = dismissSubscribeSheet
+                    onClick = { showTagSheet(true) }
                 ) {
                     Icon(Icons.Outlined.Settings, null)
                 }
@@ -68,16 +65,8 @@ fun ProfileSubscribedTags(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     subscribedTagTitles.forEachIndexed { index, tag ->
-                        AssistChip(
-                            enabled = false,
-                            onClick = { },
-                            shape = MaterialTheme.shapes.medium,
-                            label = { Text(tag) },
-                            modifier = Modifier.wrapContentSize(),
-                            colors = AssistChipDefaults.assistChipColors(
-                                disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                disabledLabelColor = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
+                        FunkyChip(
+                            tag
                         )
                     }
                 }
@@ -91,6 +80,6 @@ fun ProfileSubscribedTags(
 fun ProfileSubscribedTagsPreview() {
     ProfileSubscribedTags(
         subscribedTagTitles = listOf("1st semester", "2nd semester", "General"),
-        dismissSubscribeSheet = {},
+        showTagSheet = {},
     )
 }

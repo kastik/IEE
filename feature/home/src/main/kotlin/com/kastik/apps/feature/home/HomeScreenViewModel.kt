@@ -3,55 +3,56 @@ package com.kastik.apps.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.kastik.apps.core.analytics.Analytics
-import com.kastik.apps.core.domain.usecases.CheckIfUserHasSkippedSignInUseCase
-import com.kastik.apps.core.domain.usecases.CheckIfUserIsAuthenticatedUseCase
+import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetPagedAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.SetUserHasSkippedSignInUseCase
+import com.kastik.apps.core.domain.usecases.ShouldRefreshAnnouncementsUseCase
+import com.kastik.apps.core.domain.usecases.ShowSignInNoticeRationalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val analytics: Analytics,
-    private val checkIfUserHasSkippedSignInUseCase: CheckIfUserHasSkippedSignInUseCase,
-    private val checkIfUserIsAuthenticatedUseCase: CheckIfUserIsAuthenticatedUseCase,
-    private val setUserHasSkippedSignInUseCase: SetUserHasSkippedSignInUseCase,
+    private val isSignedInUseCase: GetIsSignedInUseCase,
     private val getPagedAnnouncements: GetPagedAnnouncementsUseCase,
+    private val setUserHasSkippedSignInUseCase: SetUserHasSkippedSignInUseCase,
+    private val showSignInNoticeRationalUseCase: ShowSignInNoticeRationalUseCase,
+    private val shouldRefreshAnnouncementsUseCase: ShouldRefreshAnnouncementsUseCase,
 ) : ViewModel() {
-
-    init {
-        evaluateSignInStatus()
-    }
-
-    private val _events = MutableSharedFlow<HomeEvent>(replay = 0)
-    val events = _events.asSharedFlow()
-
     val announcements = getPagedAnnouncements().cachedIn(viewModelScope)
-
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState
+
+    private val _refreshTrigger = Channel<Unit>(Channel.BUFFERED)
+    val refreshTrigger = _refreshTrigger.receiveAsFlow()
 
 
     init {
         viewModelScope.launch {
-            try {
-                val isAuthenticated = checkIfUserIsAuthenticatedUseCase()
-                val hasSkipped = checkIfUserHasSkippedSignInUseCase()
-                _uiState.value = _uiState.value.copy(
-                    isSignedIn = isAuthenticated,
-                    showSignInNotice = !isAuthenticated && !hasSkipped,
-                    hasEvaluatedAuth = true
-                )
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    hasEvaluatedAuth = false
-                )
+            combine(
+                showSignInNoticeRationalUseCase(),
+                isSignedInUseCase()
+            ) { showSignInNotice, isSignedIn ->
+                _uiState.update {
+                    it.copy(
+                        isSignedIn = isSignedIn,
+                        showSignInNotice = showSignInNotice
+                    )
+                }
+            }.stateIn(viewModelScope)
+        }
+
+        viewModelScope.launch {
+            shouldRefreshAnnouncementsUseCase().collect {
+                _refreshTrigger.send(Unit)
             }
         }
     }
@@ -60,14 +61,6 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(showSignInNotice = false)
             setUserHasSkippedSignInUseCase(true)
-        }
-    }
-
-    fun onSignInClick() {
-        val url =
-            "https://login.it.teithe.gr/authorization?" + "client_id=690a9861468c9b767cabdc40" + "&response_type=code" + "&scope=announcements,profile" + "&redirect_uri=com.kastik.apps://auth"
-        viewModelScope.launch {
-            _events.emit(HomeEvent.OpenUrl(url))
         }
     }
 }

@@ -4,33 +4,34 @@ import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
 
-class AuthenticationRepositoryImpl(
-    private val local: AuthenticationLocalDataSource,
-    private val remote: AuthenticationRemoteDataSource,
+internal class AuthenticationRepositoryImpl(
+    private val authenticationLocalDataSource: AuthenticationLocalDataSource,
+    private val authenticationRemoteDataSource: AuthenticationRemoteDataSource,
 ) : AuthenticationRepository {
 
     override suspend fun exchangeCodeForAppsToken(code: String) {
-        val response = remote.exchangeCodeForAppsToken(code)
-        local.saveAppsTokens(response.accessToken, response.refreshToken)
+        val response = authenticationRemoteDataSource.exchangeCodeForAppsToken(code)
+        authenticationLocalDataSource.saveAppsTokens(response.accessToken, response.refreshToken)
     }
 
     override suspend fun exchangeCodeForAbroadToken(code: String) {
-        val response = remote.exchangeCodeForAboardToken(code)
-        local.saveAboardToken((response.accessToken))
-        local.saveAboardTokenExpiration(response.expiresIn)
+        val response = authenticationRemoteDataSource.exchangeCodeForAboardToken(code)
+        authenticationLocalDataSource.saveAboardToken((response.accessToken))
+        authenticationLocalDataSource.saveAboardTokenExpiration(response.expiresIn)
     }
 
-    override suspend fun checkIfUserIsAuthenticated(): Boolean {
-        if (local.getAboardAccessToken() == null) {
+    override suspend fun checkTokenValidity(): Boolean {
+        if (authenticationLocalDataSource.getAboardAccessToken() == null) {
             return false
         }
 
-        val response = remote.checkIfTokenIsValid()
+        val response = authenticationRemoteDataSource.checkIfTokenIsValid()
         return response
     }
 
-    override suspend fun getSavedToken(): String? {
-        return local.getAppsAccessToken()
+    override suspend fun clearTokens() {
+        authenticationLocalDataSource.clearAboardToken()
+        authenticationLocalDataSource.clearAppsToken()
     }
 
 }

@@ -6,11 +6,11 @@ import com.kastik.apps.core.network.model.aboard.AnnouncementDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
 import com.kastik.apps.core.network.model.aboard.AuthorDto
 import com.kastik.apps.core.network.model.aboard.SingleAnnouncementResponse
+import com.kastik.apps.core.network.model.aboard.SubscribableTagsDto
+import com.kastik.apps.core.network.model.aboard.SubscribedTagDto
 import com.kastik.apps.core.network.model.aboard.TagsResponse
 import com.kastik.apps.core.network.model.aboard.UpdateUserSubscriptionsDto
 import com.kastik.apps.core.network.model.aboard.UserProfileDto
-import com.kastik.apps.core.network.model.aboard.UserSubscribableTagsDto
-import com.kastik.apps.core.network.model.aboard.UserSubscribedTagDto
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -78,10 +78,10 @@ interface AboardApiClient {
     suspend fun getUserInfo(): UserProfileDto
 
     @GET("auth/subscriptions")
-    suspend fun getUserSubscriptions(): List<UserSubscribedTagDto>
+    suspend fun getUserSubscriptions(): List<SubscribedTagDto>
 
     @GET("subscribetags")
-    suspend fun getUserSubscribableTags(): List<UserSubscribableTagsDto>
+    suspend fun getUserSubscribableTags(): List<SubscribableTagsDto>
 
     @POST("auth/subscribe")
     suspend fun subscribeToTags(

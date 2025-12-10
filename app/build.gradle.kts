@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.crashlytics.gradlePlugin)
     alias(libs.plugins.performance.gradlePlugin)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.oss.licenses)
 }
 
 android {
@@ -16,8 +17,8 @@ android {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 6
-        versionName = "0.5"
+        versionCode = 7
+        versionName = "0.7"
     }
     val keystoreProperties = Properties()
     val keystorePropertiesFile = rootProject.file("local.properties")
@@ -45,6 +46,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = "true"
+        }
+        debug {
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = "false"
         }
     }
 }
@@ -60,6 +65,8 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:notifications"))
+    implementation(libs.oss.licenses)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.androidx.activity)
@@ -71,4 +78,8 @@ dependencies {
     }
     implementation(libs.androidx.profileinstaller)
     baselineProfile(project(":benchmark"))
+}
+baselineProfile {
+    automaticGenerationDuringBuild = false
+    dexLayoutOptimization = true
 }

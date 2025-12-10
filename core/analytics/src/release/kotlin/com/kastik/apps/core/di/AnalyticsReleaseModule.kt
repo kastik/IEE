@@ -19,7 +19,7 @@ import javax.inject.Singleton
 abstract class AnalyticsModule {
     @Binds
     @Singleton
-    abstract fun bindAnalytics(impl: AnalyticsReleaseImpl): Analytics
+    internal abstract fun bindAnalytics(impl: AnalyticsReleaseImpl): Analytics
 }
 
 @Module

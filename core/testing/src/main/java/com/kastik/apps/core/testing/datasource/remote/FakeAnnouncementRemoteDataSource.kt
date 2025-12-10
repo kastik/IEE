@@ -21,7 +21,7 @@ class FakeAnnouncementRemoteDataSource : AnnouncementRemoteDataSource {
         return announcementResponses[page - 1]
     }
 
-    override suspend fun fetchAnnouncement(id: Int): SingleAnnouncementResponse {
+    override suspend fun fetchAnnouncementWithId(id: Int): SingleAnnouncementResponse {
         TODO("Not yet implemented")
     }
 }

@@ -8,7 +8,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -20,6 +19,7 @@ import com.kastik.apps.core.designsystem.component.PagingRefreshError
 import com.kastik.apps.core.designsystem.component.PagingRefreshLoading
 import com.kastik.apps.core.designsystem.component.PagingRefreshSuccess
 import com.kastik.apps.core.designsystem.component.SearchBarExpanded
+import com.kastik.apps.core.designsystem.utils.TrackScreenViewEvent
 
 
 @Composable

@@ -1,15 +1,15 @@
 package com.kastik.apps.core.testing.testdata
 
-import com.kastik.apps.core.network.model.aboard.AnnouncementAttachmentDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementAuthorDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementTagDto
+import com.kastik.apps.core.network.model.aboard.AttachmentDto
 
 val testAnnouncementAuthorDto = AnnouncementAuthorDto(
     id = 1, name = "Kostas"
 )
 
-val testAnnouncementAttachmentDto = AnnouncementAttachmentDto(
+val testAttachmentDto = AttachmentDto(
     id = 0,
     announcementId = 4,
     filename = "dilosi.pdf",
@@ -65,13 +65,13 @@ val testAnnouncementDtoEvent = testAnnouncementDto.copy(
 
 val testAnnouncementDtoWithAttachment = testAnnouncementDto.copy(
     id = 4, attachments = listOf(
-        testAnnouncementAttachmentDto.copy(
+        testAttachmentDto.copy(
             id = 1,
             announcementId = 4,
-        ), testAnnouncementAttachmentDto.copy(
+        ), testAttachmentDto.copy(
             id = 2,
             announcementId = 4,
-        ), testAnnouncementAttachmentDto.copy(
+        ), testAttachmentDto.copy(
             id = 3,
             announcementId = 4,
         )
@@ -106,13 +106,13 @@ val testAnnouncementDtoCombined = testAnnouncementDto.copy(
         )
     ),
     attachments = listOf(
-        testAnnouncementAttachmentDto.copy(
+        testAttachmentDto.copy(
             id = 4,
             announcementId = 6,
-        ), testAnnouncementAttachmentDto.copy(
+        ), testAttachmentDto.copy(
             id = 5,
             announcementId = 6,
-        ), testAnnouncementAttachmentDto.copy(
+        ), testAttachmentDto.copy(
             id = 6,
             announcementId = 6,
         )
@@ -138,13 +138,13 @@ val testAnnouncementDtoCombined2 = testAnnouncementDto.copy(
         )
     ),
     attachments = listOf(
-        testAnnouncementAttachmentDto.copy(
+        testAttachmentDto.copy(
             id = 7,
             announcementId = 7,
-        ), testAnnouncementAttachmentDto.copy(
+        ), testAttachmentDto.copy(
             id = 8,
             announcementId = 7,
-        ), testAnnouncementAttachmentDto.copy(
+        ), testAttachmentDto.copy(
             id = 9,
             announcementId = 7,
         )

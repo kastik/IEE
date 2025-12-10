@@ -46,7 +46,7 @@ internal class AnnouncementMappersTest {
                 tags = wrapper.tags,
                 attachments = wrapper.attachments
             )
-            val announcementViewDomain = announcementDatabaseView.toDomain()
+            val announcementViewDomain = announcementDatabaseView.toAnnouncementPreview()
             assertEquals(wrapper.announcement.id, announcementViewDomain.id)
             assertEquals(wrapper.announcement.title, announcementViewDomain.title)
             assertEquals(
@@ -69,7 +69,7 @@ internal class AnnouncementMappersTest {
                 tags = wrapper.tags,
                 attachments = wrapper.attachments
             )
-            val announcementViewDomain = announcementDatabaseView.toDomain()
+            val announcementViewDomain = announcementDatabaseView.toAnnouncementView()
             assertEquals(wrapper.announcement.id, announcementViewDomain.id)
             assertEquals(wrapper.announcement.title, announcementViewDomain.title)
             assertEquals(

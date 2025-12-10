@@ -36,11 +36,44 @@ fun SignInNotice(
 
 }
 
+@Composable
+fun NotificationNotice(
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    AlertDialog(modifier = modifier, onDismissRequest = onDismiss, title = {
+        Text("Notification permission required")
+    }, text = {
+        Text(
+            "To get notified about new announcements allow notifications. \n\n" + "" + "Would you like to enable them now?",
+        )
+    }, confirmButton = {
+        Button(
+            onClick = onConfirm
+        ) {
+            Text("Yes")
+        }
+    }, dismissButton = {
+        TextButton(onClick = onDismiss) {
+            Text("No")
+        }
+    })
+
+}
+
 @Preview
 @Composable
 fun SignInNoticePreview() {
     AppsAboardTheme {
         SignInNotice(onDismiss = {}, onSignIn = {})
     }
+}
 
+@Preview
+@Composable
+fun NotificationNoticePreview() {
+    AppsAboardTheme {
+        NotificationNotice(onDismiss = {}, onConfirm = {})
+    }
 }

@@ -2,7 +2,6 @@ package com.kastik.apps.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.domain.usecases.GetDynamicColorUseCase
 import com.kastik.apps.core.domain.usecases.GetUserThemeUseCase
 import com.kastik.apps.core.domain.usecases.SetDynamicColorUseCase
@@ -18,7 +17,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
-    private val analytics: Analytics,
     private val setUserThemeUseCase: SetUserThemeUseCase,
     private val setDynamicColorUseCase: SetDynamicColorUseCase,
     private val getDynamicColorUseCase: GetDynamicColorUseCase,

@@ -3,7 +3,7 @@ package com.kastik.apps.core.analytics
 import android.util.Log
 import javax.inject.Inject
 
-class AnalyticsDebugImpl @Inject constructor() : Analytics {
+internal class AnalyticsDebugImpl @Inject constructor() : Analytics {
 
     override fun logEvent(name: String, params: Map<String, Any?>) {
         Log.d("Analytics", "logEvent($name, $params)")

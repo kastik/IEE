@@ -37,8 +37,6 @@ class MainActivity : ComponentActivity() {
                 darkTheme = uiState.theme.shouldUseDarkTheme(),
                 dynamicColor = uiState.dynamicColor
             ) {
-                Surface(color = MaterialTheme.colorScheme.background) {
-                    NavHost()
                 CompositionLocalProvider(LocalAnalytics provides analytics) {
                     Surface(color = MaterialTheme.colorScheme.background) {
                         AppsNavHost()

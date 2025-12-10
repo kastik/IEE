@@ -7,9 +7,9 @@ import com.kastik.apps.core.network.model.aboard.AnnouncementDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
 import com.kastik.apps.core.network.model.aboard.AuthorDto
 import com.kastik.apps.core.network.model.aboard.SingleAnnouncementResponse
+import com.kastik.apps.core.network.model.aboard.SubscribedTagDto
 import com.kastik.apps.core.network.model.aboard.TagsResponse
 import com.kastik.apps.core.network.model.aboard.UserProfileDto
-import com.kastik.apps.core.network.model.aboard.UserSubscribedTagDto
 import com.kastik.apps.core.testing.testdata.aboardAuthTokenDtoTestData
 import com.kastik.apps.core.testing.testdata.announcementResponses
 import com.kastik.apps.core.testing.testdata.studentUserProfileDto
@@ -59,7 +59,7 @@ class FakeAboardApiClient : AboardApiClient {
         } else studentUserProfileDto
     }
 
-    override suspend fun getUserSubscriptions(): List<UserSubscribedTagDto> {
+    override suspend fun getUserSubscriptions(): List<SubscribedTagDto> {
         return userSubscribedTagDtoListTestData
     }
 

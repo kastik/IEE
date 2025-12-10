@@ -24,13 +24,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kastik.apps.core.model.aboard.AnnouncementTag
+import com.kastik.apps.core.model.aboard.Tag
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 
 fun FilterSheetTag(
-    tags: List<AnnouncementTag>,
+    tags: List<Tag>,
     selectedIds: List<Int>,
     updateSelectedTagsIds: (List<Int>) -> Unit,
     sheetState: SheetState,
@@ -128,35 +128,35 @@ fun PreviewHalfFilterSheetTag() {
 }
 
 val previewTags = listOf(
-    AnnouncementTag(
+    Tag(
         id = 1,
         title = "Tag 1"
     ),
-    AnnouncementTag(
+    Tag(
         id = 2,
         title = "Tag 2"
     ),
-    AnnouncementTag(
+    Tag(
         id = 3,
         title = "Tag 3"
     ),
-    AnnouncementTag(
+    Tag(
         id = 4,
         title = "Tag 4"
     ),
-    AnnouncementTag(
+    Tag(
         id = 5,
         title = "Tag 5"
     ),
-    AnnouncementTag(
+    Tag(
         id = 6,
         title = "Tag 6"
     ),
-    AnnouncementTag(
+    Tag(
         id = 7,
         title = "Tag 7"
     ),
-    AnnouncementTag(
+    Tag(
         id = 8,
         title = "Tag 8"
     )

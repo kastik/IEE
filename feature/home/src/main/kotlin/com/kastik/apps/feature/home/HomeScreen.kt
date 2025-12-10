@@ -1,7 +1,7 @@
 package com.kastik.apps.feature.home
 
 import android.content.Intent
-import android.util.Log
+import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
@@ -20,7 +20,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +36,12 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.kastik.apps.core.designsystem.component.FloatingToolBar
+import com.kastik.apps.core.designsystem.component.NotificationNotice
 import com.kastik.apps.core.designsystem.component.PagingRefreshError
 import com.kastik.apps.core.designsystem.component.PagingRefreshLoading
 import com.kastik.apps.core.designsystem.component.PagingRefreshSuccess
@@ -42,16 +50,16 @@ import com.kastik.apps.core.designsystem.component.SignInNotice
 import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
 import com.kastik.apps.core.designsystem.utils.TrackScreenViewEvent
 import com.kastik.apps.core.designsystem.utils.isScrollingUp
-import com.kastik.apps.core.model.aboard.AnnouncementAttachment
 import com.kastik.apps.core.model.aboard.AnnouncementPreview
-import com.kastik.apps.core.model.aboard.AnnouncementTag
+import com.kastik.apps.core.model.aboard.Attachment
+import com.kastik.apps.core.model.aboard.Tag
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @OptIn(
     ExperimentalAnimationApi::class,
     ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalMaterial3ExpressiveApi::class, ExperimentalPermissionsApi::class,
 )
 @Composable
 internal fun HomeScreenRoute(
@@ -61,24 +69,18 @@ internal fun HomeScreenRoute(
     navigateToProfile: () -> Unit,
     navigateToSearch: () -> Unit,
 ) {
-    val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val lazyAnnouncementPagingItems = viewModel.announcements.collectAsLazyPagingItems()
 
-    TrackScreenViewEvent("home_screen")
-
     LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is HomeEvent.OpenUrl -> {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW, event.url.toUri()
-                    )
-                    context.startActivity(intent)
-                }
-            }
+        viewModel.refreshTrigger.collect {
+            lazyAnnouncementPagingItems.refresh()
         }
     }
+
+    TrackScreenViewEvent("home_screen")
+
+    NotificationRationale()
 
     HomeScreenContent(
         uiState = uiState,
@@ -87,12 +89,15 @@ internal fun HomeScreenRoute(
         navigateToSettings = navigateToSettings,
         navigateToProfile = navigateToProfile,
         onSignInNoticeDismissed = viewModel::onSignInNoticeDismiss,
-        onSignInClicked = viewModel::onSignInClick,
-        navigateToSearch = navigateToSearch
+        navigateToSearch = navigateToSearch,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class,
+    ExperimentalPermissionsApi::class
+)
 @Composable
 private fun HomeScreenContent(
     uiState: UiState,
@@ -101,38 +106,46 @@ private fun HomeScreenContent(
     navigateToProfile: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateToAnnouncement: (Int) -> Unit,
-    onSignInClicked: () -> Unit,
     onSignInNoticeDismissed: () -> Unit,
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
-    LaunchedEffect(uiState.isSignedIn) {
-        Log.d("MyLog", "hasEvaluatedAuth: ${uiState.hasEvaluatedAuth}")
-        if (uiState.hasEvaluatedAuth) {
-            Log.d("MyLog", "hasEvaluatedAuth: refreshing")
-            announcements.refresh()
-        }
+    val onSignIn = {
+        val url =
+            "https://login.it.teithe.gr/authorization?" +
+                    "client_id=690a9861468c9b767cabdc40" +
+                    "&response_type=code" +
+                    "&scope=announcements,profile" +
+                    "&redirect_uri=com.kastik.apps://auth"
+
+        val intent = Intent(
+            Intent.ACTION_VIEW, url.toUri()
+        )
+        context.startActivity(intent)
     }
+
+    //TODO Re-implement refresh when changing sign states with usecase HERE!!!!
+
 
     AnimatedVisibility(uiState.showSignInNotice) {
         SignInNotice(
-            onDismiss = onSignInNoticeDismissed, onSignIn = onSignInClicked
+            onDismiss = onSignInNoticeDismissed,
+            onSignIn = onSignIn
         )
     }
-
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         SearchBarCollapsed(
             scrollBehavior = searchScroll,
-            navigateToSettings = navigateToSettings,
+            navigateToSearch = navigateToSearch,
             navigateToProfile = navigateToProfile,
+            navigateToSettings = navigateToSettings,
             isSignedIn = uiState.isSignedIn,
-            onSignInClick = onSignInClicked,
-            navigateToSearch = navigateToSearch
+            onSignInClick = onSignIn
         )
         Box {
             when (announcements.loadState.refresh) {
@@ -169,11 +182,40 @@ private fun HomeScreenContent(
 }
 
 
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun NotificationRationale() {
+    var showRationale by rememberSaveable { mutableStateOf(true) }
+    val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        rememberPermissionState(
+            android.Manifest.permission.POST_NOTIFICATIONS
+        )
+    } else {
+        null
+    }
+
+    notificationPermissionState?.let {
+        if (!notificationPermissionState.status.isGranted && showRationale) {
+            if (notificationPermissionState.status.shouldShowRationale) {
+                NotificationNotice(
+                    onDismiss = { showRationale = false },
+                    onConfirm = { notificationPermissionState.launchPermissionRequest() }
+                )
+            } else {
+                LaunchedEffect(Unit) {
+                    notificationPermissionState.launchPermissionRequest()
+                }
+            }
+        }
+    }
+}
+
+
+
 @Preview(showSystemUi = false, showBackground = true)
 @Composable
 fun PreviewHomeScreenContent() {
-    val pagedAnnouncements = flowOf(PagingData.from(FakeAnnouncements))
-        .collectAsLazyPagingItems()
+    val pagedAnnouncements = flowOf(PagingData.from(FakeAnnouncements)).collectAsLazyPagingItems()
     AppsAboardTheme {
         Surface {
             HomeScreenContent(
@@ -183,23 +225,22 @@ fun PreviewHomeScreenContent() {
                 navigateToSettings = {},
                 navigateToProfile = {},
                 onSignInNoticeDismissed = {},
-                onSignInClicked = {},
                 navigateToSearch = {},
             )
         }
     }
 }
 
-val FakeAnnouncementTags = listOf(
-    AnnouncementTag(
+val FakeTags = listOf(
+    Tag(
         id = 1, title = "Tag1",
-    ), AnnouncementTag(
+    ), Tag(
         id = 2, title = "Tag2",
     )
 )
 
 val FakeAttachments = listOf(
-    AnnouncementAttachment(
+    Attachment(
         id = 1,
         filename = "image.jpg",
         fileSize = 1000,
@@ -213,7 +254,7 @@ val FakeAnnouncements = listOf<AnnouncementPreview>(
         title = "Announcement Title",
         preview = "The quick brow fox jumps over the lazy dog",
         author = "Kostas",
-        tags = FakeAnnouncementTags,
+        tags = FakeTags,
         attachments = FakeAttachments,
         date = "10-12-2025 11:45"
     )

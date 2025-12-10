@@ -114,8 +114,8 @@ fun PreviewSearchBarCollapsed() {
         scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior(),
         navigateToSettings = {},
         navigateToProfile = { },
-        isSignedIn = false,
-        onSignInClick = {},
         navigateToSearch = {},
+        isSignedIn = true,
+        onSignInClick = {}
     )
 }

@@ -2,48 +2,46 @@ package com.kastik.apps.core.domain.usecases
 
 import androidx.paging.PagingData
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
+import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.model.aboard.AnnouncementPreview
-import com.kastik.apps.core.model.aboard.AnnouncementTag
 import com.kastik.apps.core.model.aboard.AnnouncementView
-import com.kastik.apps.core.model.aboard.Author
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class GetPagedAnnouncementsUseCase(
-    private val repo: AnnouncementRepository
+class GetPagedAnnouncementsUseCase @Inject constructor(
+    private val announcementRepository: AnnouncementRepository
 ) {
     operator fun invoke(): Flow<PagingData<AnnouncementPreview>> =
-        repo.getPagedAnnouncements()
+        announcementRepository.getPagedAnnouncements()
 }
 
-class GetPagedFilteredAnnouncementsUseCase(
-    private val repo: AnnouncementRepository
+class GetPagedFilteredAnnouncementsUseCase @Inject constructor(
+    private val announcementRepository: AnnouncementRepository
 ) {
     operator fun invoke(
         query: String?,
         authorIds: List<Int>?,
         tagIds: List<Int>?
     ): Flow<PagingData<AnnouncementPreview>> =
-        repo.getPagedFilteredAnnouncements(query, authorIds, tagIds)
+        announcementRepository.getPagedFilteredAnnouncements(query, authorIds, tagIds)
 }
 
-class GetAnnouncementWithIdUseCase(
-    private val repo: AnnouncementRepository
+class GetAnnouncementWithIdUseCase @Inject constructor(
+    private val announcementRepository: AnnouncementRepository
 ) {
     operator fun invoke(id: Int): Flow<AnnouncementView> =
-        repo.getAnnouncementWithId(id)
+        announcementRepository.getAnnouncementWithId(id)
 }
 
-class GetTagsUseCase(
-    private val repo: AnnouncementRepository
+class ShouldRefreshAnnouncementsUseCase @Inject constructor(
+    private val profileRepository: ProfileRepository
 ) {
-    suspend operator fun invoke(): Flow<List<AnnouncementTag>> =
-        repo.getTags()
-}
-
-
-class GetAuthorsUseCase(
-    private val repo: AnnouncementRepository
-) {
-    suspend operator fun invoke(): Flow<List<Author>> =
-        repo.getAuthors()
+    operator fun invoke(): Flow<Unit> =
+        profileRepository.isSignedIn()
+            .distinctUntilChanged()
+            .drop(1)
+            .map { }
 }

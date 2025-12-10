@@ -3,10 +3,9 @@ package com.kastik.apps.feature.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.kastik.apps.core.analytics.Analytics
+import com.kastik.apps.core.domain.usecases.GetAnnouncementTagsUseCase
 import com.kastik.apps.core.domain.usecases.GetAuthorsUseCase
 import com.kastik.apps.core.domain.usecases.GetPagedFilteredAnnouncementsUseCase
-import com.kastik.apps.core.domain.usecases.GetTagsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,9 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
-    private val analytics: Analytics,
     private val getFilteredAnnouncementsUseCase: GetPagedFilteredAnnouncementsUseCase,
-    private val getTagsUseCase: GetTagsUseCase,
+    private val getAnnouncementTagsUseCase: GetAnnouncementTagsUseCase,
     private val getAuthorsUseCase: GetAuthorsUseCase,
 ) : ViewModel() {
     init {
@@ -27,10 +25,6 @@ class SearchScreenViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState
-
-    fun onScreenViewed() {
-        analytics.logScreenView("search_screen")
-    }
 
     fun toggleTagSheet() {
         _uiState.value = _uiState.value.copy(
@@ -65,7 +59,7 @@ class SearchScreenViewModel @Inject constructor(
     fun getTags() {
         viewModelScope.launch {
             try {
-                getTagsUseCase().collect {
+                getAnnouncementTagsUseCase().collect {
                     _uiState.value = _uiState.value.copy(
                         tags = it
                     )

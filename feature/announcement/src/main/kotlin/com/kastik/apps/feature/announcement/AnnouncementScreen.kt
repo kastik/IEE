@@ -1,8 +1,5 @@
 package com.kastik.apps.feature.announcement
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -37,14 +33,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -55,9 +45,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kastik.apps.core.designsystem.component.DotDivider
+import com.kastik.apps.core.designsystem.component.FunkyChip
 import com.kastik.apps.core.designsystem.utils.TrackScreenViewEvent
-import com.kastik.apps.core.model.aboard.AnnouncementAttachment
-import com.kastik.apps.core.model.aboard.AnnouncementTag
+import com.kastik.apps.core.model.aboard.Attachment
+import com.kastik.apps.core.model.aboard.Tag
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -76,34 +68,29 @@ internal fun AnnouncementRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val state = uiState.value) {
-        UiState.Error -> {
-            AnnouncementScreenContentError()
-        }
+        is UiState.Loading -> LoadingState()
 
-        UiState.Loading -> {
-            AnnouncementScreenContentLoading()
-        }
+        is UiState.Error -> ErrorState(state.message)
 
-        is UiState.Success -> {
-            AnnouncementScreenContentSuccess(
-                announcementId = announcementId,
-                title = state.announcement.title,
-                author = state.announcement.author,
-                date = state.announcement.date,
-                body = state.announcement.body,
-                tags = state.announcement.tags,
-                attachments = state.announcement.attachments,
-                navigateBack = navigateBack,
-                onAttachmentClick = { attachmentId, filename ->
+        is UiState.Success -> SuccessState(
+            announcementId = state.announcement.id,
+            title = state.announcement.title,
+            author = state.announcement.author,
+            date = state.announcement.date,
+            body = state.announcement.body,
+            tags = state.announcement.tags,
+            attachments = state.announcement.attachments,
+            navigateBack = navigateBack,
+            onAttachmentClick = { attachmentId, filename ->
+            }
+        )
 
-                })
-        }
     }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun AnnouncementScreenContentLoading() {
+private fun LoadingState() {
     Surface {
         Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
@@ -122,13 +109,13 @@ private fun AnnouncementScreenContentLoading() {
 
 
 @Composable
-private fun AnnouncementScreenContentError() {
+private fun ErrorState(message: String) {
     Surface {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            Text("Something went wrong")
+            Text(message)
         }
     }
 }
@@ -136,14 +123,14 @@ private fun AnnouncementScreenContentError() {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun AnnouncementScreenContentSuccess(
+private fun SuccessState(
     announcementId: Int,
     title: String,
     author: String,
     date: String,
     body: String,
-    tags: List<AnnouncementTag>,
-    attachments: List<AnnouncementAttachment>,
+    tags: List<Tag>,
+    attachments: List<Attachment>,
     onAttachmentClick: (Int, String) -> Unit,
     navigateBack: () -> Unit,
 ) {
@@ -265,87 +252,35 @@ private fun AnnouncementScreenContentSuccess(
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
                     tags.forEach { tag ->
-                        FunkyTagChip(text = tag.title)
+                        FunkyChip(text = tag.title)
                     }
                 }
             }
         }
     }
 }
-
-
-@Composable
-private fun DotDivider() {
-    Box(
-        modifier = Modifier
-            .size(4.dp)
-            .background(
-                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f), shape = CircleShape
-            )
-    )
-}
-
-@Composable
-fun FunkyTagChip(
-    text: String, modifier: Modifier = Modifier, onClick: () -> Unit = {}
-) {
-    val shape = RoundedCornerShape(
-        topStart = 18.dp, topEnd = 6.dp, bottomEnd = 18.dp, bottomStart = 6.dp
-    )
-
-    val background = MaterialTheme.colorScheme.secondaryContainer
-    val contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-
-    var pressed by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(if (pressed) 0.94f else 1f, label = "scale")
-
-    Surface(
-        modifier = modifier
-            .clip(shape)
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = {},
-                onLongClickLabel = null,
-            )
-            .scale(scale),
-        color = background,
-        contentColor = contentColor,
-        tonalElevation = 2.dp,
-        shadowElevation = 3.dp,
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text, style = MaterialTheme.typography.labelLarge, maxLines = 1
-            )
-        }
-    }
-}
-
 @Preview
 @Composable
-fun AnnouncementScreenContentSuccessPreview() {
-    AnnouncementScreenContentSuccess(
+fun SuccessStatePreview() {
+    SuccessState(
         announcementId = 1,
         title = "Announcement Title",
         author = "Kostas Papastathopoulos",
         date = "2/10/2025",
         body = "The body of the announcement.",
         tags = listOf(
-            AnnouncementTag(id = 1, title = "Tag 1"),
-            AnnouncementTag(id = 2, title = "Tag 3"),
-            AnnouncementTag(id = 3, title = "Tag 2"),
+            Tag(id = 1, title = "Tag 1"),
+            Tag(id = 2, title = "Tag 3"),
+            Tag(id = 3, title = "Tag 2"),
         ),
         attachments = listOf(
-            AnnouncementAttachment(
+            Attachment(
                 id = 1, filename = "Attachment 1", fileSize = 1000, mimeType = "TODO()"
             ),
-            AnnouncementAttachment(
+            Attachment(
                 id = 2, filename = "Attachment 2", fileSize = 1000, mimeType = "TODO()"
             ),
-            AnnouncementAttachment(
+            Attachment(
                 id = 3, filename = "Attachment 3", fileSize = 1000, mimeType = "TODO()"
             ),
         ),
@@ -356,15 +291,12 @@ fun AnnouncementScreenContentSuccessPreview() {
 
 @Preview
 @Composable
-fun AnnouncementScreenContentFailPreview() {
-    AnnouncementScreenContentError()
+fun ErrorStatePreview() {
+    ErrorState("Something went wrong")
 }
 
 @Preview
 @Composable
-fun AnnouncementScreenContentLoadingPreview() {
-    AnnouncementScreenContentLoading()
+fun LoadingStatePreview() {
+    LoadingState()
 }
-
-
-

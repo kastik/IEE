@@ -1,14 +1,14 @@
 package com.kastik.apps.core.testing.testdata
 
 import com.kastik.apps.core.network.model.aboard.PivotDto
-import com.kastik.apps.core.network.model.aboard.UserSubscribedTagDto
+import com.kastik.apps.core.network.model.aboard.SubscribedTagDto
 
 
 val pivotDtoTestData = PivotDto(
     userId = 1, tagId = 1
 )
 
-val userSubscribedTagDtoTestData = UserSubscribedTagDto(
+val subscribedTagDtoTestData = SubscribedTagDto(
     id = 1,
     title = "Tag Name",
     parentId = 0,
@@ -22,8 +22,8 @@ val userSubscribedTagDtoTestData = UserSubscribedTagDto(
 
 
 val userSubscribedTagDtoListTestData = listOf(
-    userSubscribedTagDtoTestData,
-    userSubscribedTagDtoTestData.copy(
+    subscribedTagDtoTestData,
+    subscribedTagDtoTestData.copy(
         id = 2,
         deletedAt = null
     ),

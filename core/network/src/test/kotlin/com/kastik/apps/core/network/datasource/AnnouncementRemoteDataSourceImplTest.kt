@@ -27,7 +27,7 @@ class AnnouncementRemoteDataSourceImplTest {
             perPage = 10
         )
 
-        val resultPageOne = dataSourceImpl.fetchAnnouncements(page = 1, perPage = 10)
+        val resultPageOne = dataSourceImpl.fetchPagedAnnouncements(page = 1, perPage = 10)
         assertEquals(responsePageOne.meta.currentPage, resultPageOne.meta.currentPage)
 
         val responsePageTwo = api.getAnnouncements(
@@ -35,7 +35,7 @@ class AnnouncementRemoteDataSourceImplTest {
             page = 2,
             perPage = 10
         )
-        val resultPageTwo = dataSourceImpl.fetchAnnouncements(page = 2, perPage = 10)
+        val resultPageTwo = dataSourceImpl.fetchPagedAnnouncements(page = 2, perPage = 10)
         assertEquals(responsePageTwo.meta.currentPage, resultPageTwo.meta.currentPage)
 
         val responsePageThree = api.getAnnouncements(
@@ -43,7 +43,7 @@ class AnnouncementRemoteDataSourceImplTest {
             page = 3,
             perPage = 10
         )
-        val resultPageThree = dataSourceImpl.fetchAnnouncements(page = 3, perPage = 10)
+        val resultPageThree = dataSourceImpl.fetchPagedAnnouncements(page = 3, perPage = 10)
         assertEquals(responsePageThree.meta.currentPage, resultPageThree.meta.currentPage)
 
     }

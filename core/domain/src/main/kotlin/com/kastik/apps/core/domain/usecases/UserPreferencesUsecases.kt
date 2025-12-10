@@ -1,48 +1,65 @@
 package com.kastik.apps.core.domain.usecases
 
+import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import javax.inject.Inject
 
-class CheckIfUserHasSkippedSignInUseCase(
-    private val repo: UserPreferencesRepository
-) {
-    suspend operator fun invoke(): Boolean =
-        repo.getHasSkippedSignIn()
-}
-
-class SetUserHasSkippedSignInUseCase(
-    private val repo: UserPreferencesRepository
-) {
-    suspend operator fun invoke(hasSkippedSignIn: Boolean) =
-        repo.setHasSkippedSignIn(hasSkippedSignIn)
-}
-
-class GetUserThemeUseCase(
-    private val repo: UserPreferencesRepository
-) {
-    operator fun invoke(): Flow<UserTheme> =
-        repo.getUserTheme()
-}
-
-class SetUserThemeUseCase(
-    private val repo: UserPreferencesRepository
-) {
-    suspend operator fun invoke(theme: UserTheme) =
-        repo.setUserTheme(theme)
-}
-
-
-class GetDynamicColorUseCase(
-    private val repo: UserPreferencesRepository
+class GetUserHasSkippedSignInUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<Boolean> =
-        repo.getDynamicColor()
+        userPreferencesRepository.getHasSkippedSignIn()
 }
 
-class SetDynamicColorUseCase(
-    private val repo: UserPreferencesRepository
+class SetUserHasSkippedSignInUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke(hasSkippedSignIn: Boolean) =
+        userPreferencesRepository.setHasSkippedSignIn(hasSkippedSignIn)
+}
+
+class GetUserThemeUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<UserTheme> =
+        userPreferencesRepository.getUserTheme()
+}
+
+class SetUserThemeUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke(theme: UserTheme) =
+        userPreferencesRepository.setUserTheme(theme)
+}
+
+
+class GetDynamicColorUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<Boolean> =
+        userPreferencesRepository.getDynamicColor()
+}
+
+class SetDynamicColorUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(enabled: Boolean) =
-        repo.setDynamicColor(enabled)
+        userPreferencesRepository.setDynamicColor(enabled)
+}
+
+class ShowSignInNoticeRationalUseCase @Inject constructor(
+    private val profileRepository: ProfileRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
+) {
+    operator fun invoke(): Flow<Boolean> {
+        return combine(
+            profileRepository.isSignedIn(),
+            userPreferencesRepository.getHasSkippedSignIn()
+        ) { isSignedIn, hasSkipped ->
+            !isSignedIn && !hasSkipped
+        }
+    }
 }

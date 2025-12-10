@@ -15,5 +15,5 @@ abstract class AnalyticsDebugModule {
 
     @Binds
     @Singleton
-    abstract fun bindAnalytics(impl: AnalyticsDebugImpl): Analytics
+    internal abstract fun bindAnalytics(impl: AnalyticsDebugImpl): Analytics
 }

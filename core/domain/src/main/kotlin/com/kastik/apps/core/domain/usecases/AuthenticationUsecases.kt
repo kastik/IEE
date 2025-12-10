@@ -1,21 +1,24 @@
 package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
+import javax.inject.Inject
 
-class ExchangeCodeForAppsTokenUseCase(
-    private val repository: AuthenticationRepository
+class ExchangeCodeForAppsTokenUseCase @Inject constructor(
+    private val authenticationRepository: AuthenticationRepository
 ) {
-    suspend operator fun invoke(code: String) = repository.exchangeCodeForAppsToken(code)
+    suspend operator fun invoke(code: String) =
+        authenticationRepository.exchangeCodeForAppsToken(code)
 }
 
-class ExchangeCodeForAboardTokenUseCase(
-    private val repository: AuthenticationRepository
+class ExchangeCodeForAboardTokenUseCase @Inject constructor(
+    private val authenticationRepository: AuthenticationRepository
 ) {
-    suspend operator fun invoke(code: String) = repository.exchangeCodeForAbroadToken(code)
+    suspend operator fun invoke(code: String) =
+        authenticationRepository.exchangeCodeForAbroadToken(code)
 }
 
-class CheckIfUserIsAuthenticatedUseCase(
-    private val repository: AuthenticationRepository
+class CheckIfTokenIsValidUseCase @Inject constructor(
+    private val authenticationRepository: AuthenticationRepository
 ) {
-    suspend operator fun invoke() = repository.checkIfUserIsAuthenticated()
+    suspend operator fun invoke() = authenticationRepository.checkTokenValidity()
 }

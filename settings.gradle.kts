@@ -11,6 +11,13 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.google.android.gms.oss-licenses-plugin") {
+                useModule("com.google.android.gms:oss-licenses-plugin:0.10.9")
+            }
+        }
+    }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -39,3 +46,5 @@ include(":core:analytics")
 include(":feature:search")
 include(":core:designsystem")
 include(":benchmark")
+include(":core:notifications")
+include(":feature:licenses")

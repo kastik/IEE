@@ -1,0 +1,19 @@
+syntax = "proto3";
+option java_package = "com.kastik.apps.core.datastore.proto";
+option java_multiple_files = true;
+
+message SubscribableTagsProto {
+  repeated SubscribableTagProto tags = 1;
+}
+
+message SubscribableTagProto {
+  int32 id = 1;
+  string title = 2;
+  optional int32 parent_id = 3;
+  bool is_public = 4;
+  string created_at = 5;
+  optional string updated_at = 6;
+  optional string deleted_at = 7;
+  string mail_list_name = 8;
+  repeated SubscribableTagProto sub_tags = 9;
+}

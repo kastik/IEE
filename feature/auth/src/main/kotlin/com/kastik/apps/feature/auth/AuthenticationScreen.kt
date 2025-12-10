@@ -32,36 +32,26 @@ internal fun AuthenticationRoute(
     errorDescription: String? = null,
     viewModel: AuthenticationScreenViewModel = hiltViewModel()
 ) {
+
     TrackScreenViewEvent("auth_screen")
 
-    LaunchedEffect(code, error) {
+    LaunchedEffect(Unit) {
         viewModel.onAuthRedirect(code = code, error = error, errorDesc = errorDescription)
     }
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(uiState.value) {
-        delay(500)
-        when (uiState.value) {
-            is UiState.Success -> {
-                navigateBack()
-            }
-
-            is UiState.Error -> {
-                navigateBack()
-            }
-
-            is UiState.Loading -> Unit
-        }
+    when (val state = uiState.value) {
+        is UiState.Loading -> LoadingState()
+        is UiState.Success -> SuccessState(navigateBack = navigateBack)
+        is UiState.Error -> ErrorState(error = state.message, navigateBack = navigateBack)
     }
-
-    AuthenticationScreenContent()
 }
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun AuthenticationScreenContent() {
+private fun LoadingState() {
     Surface {
         Box(
             modifier = Modifier
@@ -81,10 +71,42 @@ private fun AuthenticationScreenContent() {
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun ErrorState(
+    error: String,
+    navigateBack: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        delay(1000)
+        navigateBack()
+    }
+
+    Surface {
+        Box(
+            modifier = Modifier
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(error)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun SuccessState(
+    navigateBack: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        navigateBack()
+    }
+}
+
 
 @Preview
 @Composable
 fun AuthenticationScreenPreview() {
-    AuthenticationScreenContent()
+    LoadingState()
 }
 
