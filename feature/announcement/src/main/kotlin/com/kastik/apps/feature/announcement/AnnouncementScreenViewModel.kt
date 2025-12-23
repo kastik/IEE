@@ -14,12 +14,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
-
-@HiltViewModel
-class AnnouncementScreenViewModel @Inject constructor(
 @HiltViewModel(assistedFactory = AnnouncementScreenViewModel.Factory::class)
 class AnnouncementScreenViewModel @AssistedInject constructor(
     @Assisted val announcementId: Int,
+    private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
+    private val refreshAnnouncementWithIdUseCase: RefreshAnnouncementWithIdUseCase,
     private val getAnnouncementWithIdUseCase: GetAnnouncementWithIdUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)

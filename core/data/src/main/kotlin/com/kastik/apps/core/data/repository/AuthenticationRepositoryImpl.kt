@@ -29,6 +29,10 @@ internal class AuthenticationRepositoryImpl(
         return response
     }
 
+    override suspend fun getAboardToken(): String? {
+        return authenticationLocalDataSource.getAboardAccessToken()
+    }
+
     override suspend fun clearTokens() {
         authenticationLocalDataSource.clearAboardToken()
         authenticationLocalDataSource.clearAppsToken()
