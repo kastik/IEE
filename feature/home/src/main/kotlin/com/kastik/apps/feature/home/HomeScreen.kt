@@ -172,12 +172,21 @@ private fun HomeScreenContent(
                 }
             }
             FloatingToolBar(
+            IEEFloatingToolBar(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 expanded = (lazyListState.isScrollingUp()),
-                expandedAction = { scope.launch { lazyListState.animateScrollToItem(0) } },
-                collapsedAction = { navigateToSearch() },
+                expandedAction = {
+                    analytics.logEvent("scroll_up_clicked")
+                    scope.launch { lazyListState.animateScrollToItem(0) }
+                },
+                collapsedAction = {
+                    analytics.logEvent("search_clicked")
+                    navigateToSearch(
+                        "", emptyList(), emptyList()
+                    )
+                },
                 expandedIcon = { Icon(Icons.Filled.ArrowUpward, null) },
                 collapsedIcon = { Icon(Icons.Filled.Search, null) },
             )

@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun FloatingToolBar(
+fun IEEFloatingToolBar(
     modifier: Modifier = Modifier,
     expanded: Boolean,
     expandedAction: () -> Unit,
@@ -51,9 +51,9 @@ fun FloatingToolBar(
 
 @Preview
 @Composable
-fun FloatingToolBarExpandedPreview() {
+fun IEEFloatingToolBarExpandedPreview() {
     MaterialTheme {
-        FloatingToolBar(
+        IEEFloatingToolBar(
             expanded = false,
             expandedAction = {},
             collapsedAction = { },
@@ -65,9 +65,9 @@ fun FloatingToolBarExpandedPreview() {
 
 @Preview
 @Composable
-fun FloatingToolBarCollapsedPreview() {
+fun IEEFloatingToolBarCollapsedPreview() {
     MaterialTheme {
-        FloatingToolBar(
+        IEEFloatingToolBar(
             expanded = true,
             expandedAction = {},
             collapsedAction = { },

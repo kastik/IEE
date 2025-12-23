@@ -17,14 +17,14 @@ class MainActivityViewModel @Inject constructor(
     getUserThemeUseCase: GetUserThemeUseCase, getDynamicColorUseCase: GetDynamicColorUseCase
 ) : ViewModel() {
 
-    val themeState: StateFlow<ThemeState> = combine(
+    val appState: StateFlow<IEEAppState> = combine(
         getUserThemeUseCase(), getDynamicColorUseCase()
     ) { theme, dynamicColor ->
-        ThemeState(theme, dynamicColor)
+        IEEAppState(theme, dynamicColor)
     }.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        ThemeState(UserTheme.FOLLOW_SYSTEM, true)
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = IEEAppState(UserTheme.FOLLOW_SYSTEM, true)
     )
 
 }

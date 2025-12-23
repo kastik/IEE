@@ -1,4 +1,4 @@
-package com.kastik.apps.core.designsystem.utils
+package com.kastik.apps.core.ui.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -12,6 +12,18 @@ fun TrackScreenViewEvent(screenName: String) {
 
     DisposableEffect(Unit) {
         analytics.logScreenView(screenName)
+        onDispose {}
+    }
+}
+
+@Composable
+fun TrackAnnouncementOpened(announcementId: Int) {
+    val analytics = LocalAnalytics.current
+    DisposableEffect(Unit) {
+        analytics.logEvent(
+            name = "opened_announcement",
+            params = mapOf("announcement_id" to announcementId)
+        )
         onDispose {}
     }
 }
