@@ -6,10 +6,17 @@ message UserPreferences{
   Theme theme = 1;
   bool enable_dynamic_color = 2;
   bool has_skipped_sign_in = 3;
+  Sort sort_type = 4;
 }
 
 enum Theme {
   System = 0;
   Light = 1;
   Dark = 2;
+}
+
+enum Sort {
+  Priority = 0;
+  ASC = 1;
+  DESC = 2;
 }

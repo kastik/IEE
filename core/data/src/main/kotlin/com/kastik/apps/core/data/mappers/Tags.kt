@@ -10,6 +10,14 @@ internal fun AnnouncementTagDto.toTag() = Tag(
     title = title,
 )
 
+fun AnnouncementTagDto.toTagEntity() = TagEntity(
+    id = id,
+    title = title,
+    parentId = parentId,
+    isPublic = isPublic,
+    mailListName = mailListName
+)
+
 internal fun TagEntity.toTag() = Tag(
     id = id,
     title = title,

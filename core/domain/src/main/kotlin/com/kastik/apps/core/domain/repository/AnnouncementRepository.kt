@@ -6,12 +6,23 @@ import com.kastik.apps.core.model.aboard.AnnouncementView
 import kotlinx.coroutines.flow.Flow
 
 interface AnnouncementRepository {
-    fun getPagedAnnouncements(): Flow<PagingData<AnnouncementPreview>>
-    fun getPagedFilteredAnnouncements(
-        query: String?,
-        authorIds: List<Int>?,
-        tagIds: List<Int>?
+    fun getPagedAnnouncements(
+        sortType: SortType,
+        query: String,
+        authorIds: List<Int>,
+        tagIds: List<Int>
     ): Flow<PagingData<AnnouncementPreview>>
+
+    fun getAnnouncementsQuickResults(
+        sortType: SortType,
+        query: String
+    ): Flow<List<AnnouncementPreview>>
     fun getAnnouncementWithId(id: Int): Flow<AnnouncementView>
+    suspend fun getAttachmentUrl(attachmentId: Int): String
+    suspend fun refreshAnnouncementWithId(id: Int)
     suspend fun clearAnnouncementCache()
+}
+
+enum class SortType {
+    Priority, DESC, ASC,
 }

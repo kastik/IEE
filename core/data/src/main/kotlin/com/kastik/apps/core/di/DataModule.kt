@@ -7,6 +7,9 @@ import com.kastik.apps.core.data.repository.ProfileRepositoryImpl
 import com.kastik.apps.core.data.repository.TagsRepositoryImpl
 import com.kastik.apps.core.data.repository.UserPreferencesRepoImpl
 import com.kastik.apps.core.database.dao.AnnouncementDao
+import com.kastik.apps.core.database.dao.AuthorsDao
+import com.kastik.apps.core.database.dao.TagsDao
+import com.kastik.apps.core.database.db.AppDatabase
 import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
 import com.kastik.apps.core.datastore.PreferencesLocalDataSource
 import com.kastik.apps.core.datastore.ProfileLocalDataSource
@@ -39,29 +42,35 @@ object DataModule {
     @Provides
     @Singleton
     fun provideAnnouncementRepository(
+        database: AppDatabase,
         announcementLocalDataSource: AnnouncementDao,
         announcementRemoteDataSource: AnnouncementRemoteDataSource,
     ): AnnouncementRepository = AnnouncementRepositoryImpl(
         announcementLocalDataSource = announcementLocalDataSource,
         announcementRemoteDataSource = announcementRemoteDataSource,
-
-        )
+        database = database,
+    )
 
     @Provides
     @Singleton
     fun provideTagsRepository(
+        announcementTagsLocalDataSource: TagsDao,
         tagsLocalDataSource: TagsLocalDataSource,
         tagsRemoteDataSource: TagsRemoteDataSource,
+
     ): TagsRepository = TagsRepositoryImpl(
-        tagsLocalDataSource = tagsLocalDataSource,
+        subscribableTagsLocalDataSource = tagsLocalDataSource,
+        announcementTagsLocalDataSource = announcementTagsLocalDataSource,
         tagsRemoteDataSource = tagsRemoteDataSource,
     )
 
     @Provides
     @Singleton
     fun provideAuthorRepository(
+        authorLocalDataSource: AuthorsDao,
         authorRemoteDataSource: AuthorRemoteDataSource,
     ): AuthorRepository = AuthorRepositoryImpl(
+        authorLocalDataSource = authorLocalDataSource,
         authorRemoteDataSource = authorRemoteDataSource
     )
 

@@ -24,7 +24,7 @@ import retrofit2.http.Streaming
 interface AboardApiClient {
     @GET("announcements")
     suspend fun getAnnouncements(
-        @Query("sortId") sortId: Int = 1,
+        @Query("sortId") sortId: Int,
         @Query("page") page: Int,
         @Query("perPage") perPage: Int,
         @Query("users[]") authorId: List<Int>? = null,

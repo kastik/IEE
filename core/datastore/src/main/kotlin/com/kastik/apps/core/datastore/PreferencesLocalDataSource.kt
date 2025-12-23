@@ -1,6 +1,7 @@
 package com.kastik.apps.core.datastore
 
 import androidx.datastore.core.DataStore
+import com.kastik.apps.core.datastore.proto.Sort
 import com.kastik.apps.core.datastore.proto.Theme
 import com.kastik.apps.core.datastore.proto.UserPreferences
 import com.kastik.apps.core.di.UserPrefsDatastore
@@ -11,9 +12,11 @@ interface PreferencesLocalDataSource {
     fun getHasSkippedSignIn(): Flow<Boolean>
     suspend fun setHasSkippedSignIn(hasSkippedSignIn: Boolean)
     fun getUserTheme(): Flow<Theme>
-    suspend fun setUserTheme(value: Theme)
+    suspend fun setUserTheme(theme: Theme)
     fun getDynamicColor(): Flow<Boolean>
     suspend fun setDynamicColor(value: Boolean)
+    fun getSortType(): Flow<Sort>
+    suspend fun setSortType(sortType: Sort)
 
 }
 
@@ -36,10 +39,10 @@ internal class PreferencesLocalDataSourceImpl(
         dataStore.data.map { it.theme }
 
 
-    override suspend fun setUserTheme(value: Theme) {
+    override suspend fun setUserTheme(theme: Theme) {
         dataStore.updateData { prefs ->
             prefs.toBuilder()
-                .setTheme(value)
+                .setTheme(theme)
                 .build()
         }
     }
@@ -52,6 +55,17 @@ internal class PreferencesLocalDataSourceImpl(
         dataStore.updateData { prefs ->
             prefs.toBuilder()
                 .setEnableDynamicColor(value)
+                .build()
+        }
+    }
+
+    override fun getSortType(): Flow<Sort> =
+        dataStore.data.map { it.sortType }
+
+    override suspend fun setSortType(sortType: Sort) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setSortType(sortType)
                 .build()
         }
     }

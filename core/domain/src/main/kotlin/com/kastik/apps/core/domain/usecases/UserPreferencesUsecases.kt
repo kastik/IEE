@@ -1,6 +1,7 @@
 package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.domain.repository.ProfileRepository
+import com.kastik.apps.core.domain.repository.SortType
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
@@ -62,4 +63,18 @@ class ShowSignInNoticeRationalUseCase @Inject constructor(
             !isSignedIn && !hasSkipped
         }
     }
+}
+
+class GetSortTypeUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<SortType> =
+        userPreferencesRepository.getSortType()
+}
+
+class SetSortTypeUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke(sortType: SortType) =
+        userPreferencesRepository.setSortType(sortType)
 }

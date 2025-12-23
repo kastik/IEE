@@ -5,7 +5,8 @@ import com.kastik.apps.core.model.aboard.Tag
 import kotlinx.coroutines.flow.Flow
 
 interface TagsRepository {
-    suspend fun getAnnouncementTags(): Flow<List<Tag>>
+    fun getAnnouncementTags(): Flow<List<Tag>>
+    suspend fun refreshAnnouncementTags()
     fun getSubscribableTags(): Flow<List<SubscribableTag>>
     suspend fun refreshSubscribableTags()
 }

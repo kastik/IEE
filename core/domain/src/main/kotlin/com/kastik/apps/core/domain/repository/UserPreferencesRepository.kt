@@ -10,4 +10,6 @@ interface UserPreferencesRepository {
     suspend fun setUserTheme(theme: UserTheme)
     fun getDynamicColor(): Flow<Boolean>
     suspend fun setDynamicColor(enabled: Boolean)
+    fun getSortType(): Flow<SortType>
+    suspend fun setSortType(sortType: SortType)
 }

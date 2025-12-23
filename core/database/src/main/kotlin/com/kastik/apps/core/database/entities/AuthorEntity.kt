@@ -8,4 +8,5 @@ import androidx.room.PrimaryKey
 data class AuthorEntity(
     @PrimaryKey val id: Int,
     val name: String,
+    val announcementCount: Int? = null
 )
