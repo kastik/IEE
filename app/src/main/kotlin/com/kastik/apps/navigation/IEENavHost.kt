@@ -1,6 +1,7 @@
 package com.kastik.apps.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -9,6 +10,8 @@ import com.kastik.apps.feature.announcement.navigation.navigateToAnnouncement
 import com.kastik.apps.feature.auth.navigation.authenticationScreen
 import com.kastik.apps.feature.home.navigation.HomeRoute
 import com.kastik.apps.feature.home.navigation.homeScreen
+import com.kastik.apps.feature.licenses.navigation.licenseScreen
+import com.kastik.apps.feature.licenses.navigation.navigateToLicences
 import com.kastik.apps.feature.profile.navigation.navigateToProfile
 import com.kastik.apps.feature.profile.navigation.profileScreen
 import com.kastik.apps.feature.search.navigation.navigateToSearch
@@ -17,19 +20,14 @@ import com.kastik.apps.feature.settings.navigation.navigateToSettings
 import com.kastik.apps.feature.settings.navigation.settingsScreen
 
 @Composable
-fun AppsNavHost() {
+fun IEENavHost() {
     val navController = rememberNavController()
-    val topLevelNavOptions = navOptions {
-        // Pop up to the start destination of the graph to
-        // avoid building up a large stack of destinations
-        // on the back stack as users select items
-        //popUpTo(navController.graph.findStartDestination().id) {
-        //    saveState = true
-        //}
-        // Avoid multiple copies of the same destination when
-        // reselecting the same item
+
+    fun getTopLevelNavOptions() = navOptions {
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
         launchSingleTop = true
-        // Restore state when reselecting a previously selected item
         restoreState = true
     }
 
@@ -38,34 +36,49 @@ fun AppsNavHost() {
         startDestination = HomeRoute,
     ) {
         homeScreen(
-            navigateToSearch = { navController.navigateToSearch(navOptions = topLevelNavOptions) },
-            navigateToAnnouncement = {
-                navController.navigateToAnnouncement(
-                    topLevelNavOptions,
-                    it
+            navigateToSearch = { query: String, tags: List<Int>, authors: List<Int> ->
+                navController.navigateToSearch(
+                    navOptions = getTopLevelNavOptions(),
+                    query = query,
+                    tags = tags,
+                    authors = authors
                 )
             },
-            navigateToSettings = { navController.navigateToSettings(navOptions = topLevelNavOptions) },
-            navigateToProfile = { navController.navigateToProfile(navOptions = topLevelNavOptions) }
+            navigateToAnnouncement = {
+                navController.navigateToAnnouncement(
+                    getTopLevelNavOptions(), it
+                )
+            },
+            navigateToSettings = { navController.navigateToSettings(navOptions = getTopLevelNavOptions()) },
+            navigateToProfile = { navController.navigateToProfile(navOptions = getTopLevelNavOptions()) },
         )
 
         searchScreen(
-            navigateBack = { navController.popBackStack() },
+            navigateBack = {
+                navController.navigate(HomeRoute) {
+                    popUpTo(HomeRoute) {
+                        inclusive = true
+                    }
+                }
+            },
             navigateToAnnouncement = {
                 navController.navigateToAnnouncement(
-                    topLevelNavOptions,
-                    it
+                    getTopLevelNavOptions(), it
                 )
-            }
+            },
         )
+
+
 
         authenticationScreen({ navController.popBackStack() })
 
-        settingsScreen()
+        settingsScreen(navigateToLicenses = { navController.navigateToLicences(navOptions = getTopLevelNavOptions()) })
 
         profileScreen({ navController.popBackStack() })
 
         announcementScreen({ navController.popBackStack() })
+
+        licenseScreen()
 
     }
 }

@@ -61,6 +61,7 @@ dependencies {
     implementation(project(":feature:announcement"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:licenses"))
     implementation(project(":feature:search"))
     implementation(project(":core:domain"))
     implementation(project(":core:model"))

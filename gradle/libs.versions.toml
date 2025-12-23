@@ -49,7 +49,7 @@ benchmarkMacroJunit4 = "1.4.1"
 profileinstaller = "1.4.1"
 
 gms = "4.4.4"
-ooslicenses = "0.10.9"
+ooslicenses = "0.10.10"
 playServicesOssLicenses = "17.3.0"
 firebase-bom = "34.7.0"
 crashlyticsGradle = "3.0.6"
@@ -59,6 +59,8 @@ performanceGradle = "2.0.2"
 appcompat = "1.7.1"
 material = "1.13.0"
 
+
+aboutLibraries = "13.2.1"
 
 [libraries]
 
@@ -111,7 +113,10 @@ firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-
 firebase-performance = { module = "com.google.firebase:firebase-perf" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 
-
+#OSS Licenses
+aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
+aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose-core", version.ref = "aboutLibraries" } # Common compose core
+aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }      # Material 3 UI
 
 
 ####### Testing #######
@@ -200,6 +205,7 @@ performance-gradlePlugin = { id = "com.google.firebase.firebase-perf", version.r
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidxMacroBenchmark" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 oss-licenses = { id = "com.google.android.gms.oss-licenses-plugin", version.ref = "ooslicenses" }
+aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
 
 
 
