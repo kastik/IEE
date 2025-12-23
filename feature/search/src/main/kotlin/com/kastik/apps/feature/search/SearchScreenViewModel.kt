@@ -6,6 +6,10 @@ import androidx.paging.cachedIn
 import com.kastik.apps.core.domain.usecases.GetAnnouncementTagsUseCase
 import com.kastik.apps.core.domain.usecases.GetAuthorsUseCase
 import com.kastik.apps.core.domain.usecases.GetPagedFilteredAnnouncementsUseCase
+import com.kastik.apps.core.domain.usecases.GetSearchQuickResultsAnnouncementsUseCase
+import com.kastik.apps.core.domain.usecases.GetTagsQuickResults
+import com.kastik.apps.core.domain.usecases.RefreshAnnouncementTagsUseCase
+import com.kastik.apps.core.domain.usecases.RefreshAuthorsUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

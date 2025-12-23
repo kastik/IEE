@@ -1,6 +1,6 @@
 package com.kastik.buildlogic.conventions.library
 
-import com.android.build.gradle.LibraryExtension
+import com.android.build.api.dsl.LibraryExtension
 import com.kastik.buildlogic.conventions.common.configureAndroidCompose
 import org.gradle.api.Plugin
 import org.gradle.api.Project

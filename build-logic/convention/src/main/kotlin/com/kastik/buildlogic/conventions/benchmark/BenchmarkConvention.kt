@@ -16,7 +16,6 @@ class BenchmarkConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.test")
-                apply("org.jetbrains.kotlin.android")
             }
 
             extensions.configure<TestExtension> {

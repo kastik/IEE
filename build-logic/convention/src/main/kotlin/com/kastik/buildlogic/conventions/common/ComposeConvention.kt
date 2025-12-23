@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 fun Project.configureAndroidCompose(
-    extension: CommonExtension<*, *, *, *, *, *>
+    extension: CommonExtension
 ) {
     val libs = project.libs
 
