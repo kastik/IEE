@@ -1,9 +1,11 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     alias(libs.plugins.kastik.library.compose)
     alias(libs.plugins.kastik.hilt)
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.ui"
 }
 

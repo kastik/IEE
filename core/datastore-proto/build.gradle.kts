@@ -1,9 +1,11 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     alias(libs.plugins.kastik.library)
     alias(libs.plugins.protobuf)
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.datastore.proto"
 }
 

@@ -5,8 +5,8 @@ plugins {
 group = "com.kastik.buildlogic.conventions"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
@@ -23,12 +23,6 @@ gradlePlugin {
                 "com.kastik.buildlogic.conventions.application.AndroidApplicationConventionPlugin"
         }
 
-        create("androidApplicationCompose") {
-            id = "com.kastik.application.compose"
-            implementationClass =
-                "com.kastik.buildlogic.conventions.application.AndroidApplicationComposeConventionPlugin"
-        }
-
         create("androidLibrary") {
             id = "com.kastik.library"
             implementationClass =
@@ -39,6 +33,12 @@ gradlePlugin {
             id = "com.kastik.library.compose"
             implementationClass =
                 "com.kastik.buildlogic.conventions.library.AndroidLibraryComposeConventionPlugin"
+        }
+
+        create("feature") {
+            id = "com.kastik.library.feature"
+            implementationClass =
+                "com.kastik.buildlogic.conventions.feature.FeatureConventionPlugin"
         }
 
         create("hilt") {

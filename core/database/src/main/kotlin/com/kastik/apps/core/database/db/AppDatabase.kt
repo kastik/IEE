@@ -26,8 +26,8 @@ import com.kastik.apps.core.database.entities.TagsCrossRefEntity
         AnnouncementEntity::class,
         TagsCrossRefEntity::class,
     ],
-    version = 4,
-    exportSchema = false
+    version = 5,
+    exportSchema = true
 )
 @TypeConverters(IntListConverter::class)
 

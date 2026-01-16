@@ -1,27 +1,18 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
+import com.android.build.api.dsl.LibraryExtension
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     alias(libs.plugins.kastik.library)
     alias(libs.plugins.kastik.library.testing)
     alias(libs.plugins.kastik.hilt)
-    alias(libs.plugins.power.assert)
 }
-android {
+
+configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.data"
 }
 
-powerAssert {
-    functions = listOf(
-        "kotlin.assert",
-        "kotlin.test.assertTrue",
-        "kotlin.test.assertFalse",
-        "kotlin.test.assertEquals",
-        "kotlin.test.assertNull"
-    )
-    includedSourceSets = listOf("commonMain", "jvmMain", "jsMain", "nativeMain")
-}
 
 dependencies {
     ksp(libs.room.compiler)
@@ -29,7 +20,7 @@ dependencies {
     implementation(libs.room.paging)
     implementation(libs.room.runtime)
     implementation(libs.paging.common)
-
+    implementation(libs.retrofit)
     implementation(project(":core:domain"))
     implementation(project(":core:datastore"))
     implementation(project(":core:database"))
@@ -40,5 +31,7 @@ dependencies {
 
     testImplementation(libs.androidx.paging.testing)
     testImplementation(libs.junit.platform.runner)
+    testImplementation(libs.io.mockk)
     testImplementation(project(":core:testing"))
+    testImplementation(libs.robolectric)
 }

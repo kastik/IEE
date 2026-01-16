@@ -1,9 +1,11 @@
+import com.android.build.api.dsl.TestExtension
+
 plugins {
     alias(libs.plugins.kastik.benchmark)
     alias(libs.plugins.baselineprofile)
 }
 
-android {
+configure<TestExtension> {
     namespace = "com.kastik.apps.benchmark"
 
     defaultConfig {
@@ -13,8 +15,6 @@ android {
 
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
-
-
 }
 
 baselineProfile {

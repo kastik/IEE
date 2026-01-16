@@ -1,4 +1,4 @@
-package com.kastik.apps.core.database.runner
+package com.kastik.apps.core.testing.runner
 
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config

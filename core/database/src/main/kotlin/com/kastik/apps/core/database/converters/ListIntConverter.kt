@@ -1,4 +1,4 @@
-package com.kastik.apps.core.database.converter
+package com.kastik.apps.core.database.converters
 
 import androidx.room.TypeConverter
 
@@ -7,7 +7,7 @@ class IntListConverter {
     @TypeConverter
     fun fromList(list: List<Int>?): String {
         if (list.isNullOrEmpty()) return ""
-        return list.joinToString(separator = ",")
+        return list.sorted().joinToString(separator = ",")
     }
 
     @TypeConverter

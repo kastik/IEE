@@ -1,19 +1,15 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
-    alias(libs.plugins.kastik.library.compose)
-    alias(libs.plugins.kastik.hilt)
-    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kastik.feature)
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "com.kastik.apps.feature.home"
 }
 dependencies {
-    implementation(project(":core:domain"))
     implementation(project(":core:data"))
-    implementation(project(":core:model"))
-    implementation(project(":core:analytics"))
-    implementation(project(":core:ui"))
-    implementation(project(":core:designsystem"))
+    implementation(project(":core:common"))
     implementation(libs.accompanist.permissions)
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)

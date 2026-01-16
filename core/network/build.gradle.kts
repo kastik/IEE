@@ -1,5 +1,6 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
+import com.android.build.api.dsl.LibraryExtension
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
@@ -10,18 +11,8 @@ plugins {
     alias(libs.plugins.power.assert)
 }
 
-android {
+configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.network"
-}
-powerAssert {
-    functions = listOf(
-        "kotlin.assert",
-        "kotlin.test.assertTrue",
-        "kotlin.test.assertFalse",
-        "kotlin.test.assertEquals",
-        "kotlin.test.assertNull"
-    )
-    includedSourceSets = listOf("commonMain", "jvmMain", "jsMain", "nativeMain")
 }
 
 dependencies {
