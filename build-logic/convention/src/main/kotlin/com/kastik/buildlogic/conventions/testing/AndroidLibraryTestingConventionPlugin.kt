@@ -12,13 +12,13 @@ class AndroidLibraryTestingConventionPlugin : Plugin<Project> {
         with(project) {
             plugins.withId("com.android.library") {
                 dependencies {
-                    add("testImplementation", libs.findLibrary("junit").get())
-                    add("testImplementation", libs.findLibrary("junit-platform-suite-engine").get())
                     add("testImplementation", libs.findLibrary("kotlin-test").get())
                     add("testImplementation", libs.findLibrary("kotlinx-coroutines-test").get())
-                    add("testImplementation", libs.findLibrary("androidx-junit").get())
                     add("testImplementation", libs.findLibrary("androidx-test-core").get())
-                    add("testImplementation", libs.findLibrary("google-truth").get())
+                    add("testImplementation", libs.findLibrary("androidx-test-core-ktx").get())
+                    add("testImplementation", libs.findLibrary("androidx-junit").get())
+                    add("testImplementation", libs.findLibrary("androidx-truth").get())
+                    add("testImplementation", libs.findLibrary("junit-platform-suite-engine").get())
                 }
             }
             tasks.withType<Test>().configureEach {

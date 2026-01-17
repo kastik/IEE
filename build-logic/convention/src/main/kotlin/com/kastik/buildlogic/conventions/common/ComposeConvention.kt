@@ -31,28 +31,12 @@ fun Project.configureAndroidCompose(
         // Material
         add("implementation", libs.findLibrary("androidx-compose-material3").get())
 
-        // Navigation
-        add(
-            "implementation",
-            libs.findLibrary("androidx-compose-material3-adaptive-navigation-suite").get()
-        )
-        add("implementation", libs.findLibrary("androidx-navigation-compose").get())
-        add("implementation", libs.findLibrary("androidx-hilt-navigation-compose").get())
         // Tooling
         add("implementation", libs.findLibrary("androidx-compose-ui-tooling-preview").get())
         add("debugImplementation", libs.findLibrary("androidx-compose-ui-tooling").get())
 
         // Icons
         add("implementation", libs.findLibrary("androidx-material-icons-extended").get())
-
-        //Activity
-        add("implementation", libs.findLibrary("androidx-activity-compose").get())
-
-        //Lifecycle
-        add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-ktx").get())
-        add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-compose").get())
-        add("implementation", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
-
     }
 
     tasks.withType<KotlinJvmCompile>().configureEach {
