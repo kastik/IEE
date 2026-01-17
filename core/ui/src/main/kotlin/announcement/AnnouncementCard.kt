@@ -31,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,9 +72,7 @@ fun AnnouncementCard(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current,
                 onClick = {
-                    hapticFeedback.performHapticFeedback(
-                        HapticFeedbackType.Confirm
-                    )
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                     onClick()
                 },
                 onLongClick = {
@@ -111,7 +111,7 @@ fun AnnouncementCard(
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = title.collapseWhitespace(),
+                text = AnnotatedString.fromHtml(title.collapseWhitespace()),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 overflow = TextOverflow.Ellipsis

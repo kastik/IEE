@@ -1,7 +1,5 @@
 package com.kastik.apps.feature.announcement
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,6 +54,7 @@ import com.kastik.apps.core.ui.extensions.TrackAnnouncementOpened
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
+import com.kastik.apps.core.common.extensions.shareAnnouncement
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -131,7 +130,7 @@ private fun SuccessState(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = title,
+                text = AnnotatedString.fromHtml(title),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleLarge.copy(
@@ -139,7 +138,7 @@ private fun SuccessState(
                 ), color = MaterialTheme.colorScheme.onSurface
             )
             IconButton(
-                onClick = { shareAnnouncement(context, announcementId) }
+                onClick = { context.shareAnnouncement(announcementId) }
             ) {
                 Icon(
                     Icons.Outlined.Share,
@@ -279,20 +278,4 @@ fun SuccessStatePreview() {
         navigateBack = {},
         onAttachmentClick = { _, _, _, _ ->
         })
-}
-
-//TODO This is copied/pasted across AnnouncementScreen/SearchScreen/HomeScreen, find a common module and hoist it
-fun shareAnnouncement(
-    context: Context,
-    announcementId: Int
-) {
-    val url = "https://aboard.iee.ihu.gr/announcements/$announcementId"
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, url)
-        type = "text/plain"
-        putExtra(Intent.EXTRA_SUBJECT, "Check out this announcement!")
-    }
-    val shareIntent = Intent.createChooser(sendIntent, "Share Announcement via")
-    context.startActivity(shareIntent)
 }

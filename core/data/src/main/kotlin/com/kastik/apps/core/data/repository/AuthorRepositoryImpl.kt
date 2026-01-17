@@ -6,10 +6,15 @@ import com.kastik.apps.core.database.dao.AuthorsDao
 import com.kastik.apps.core.domain.repository.AuthorRepository
 import com.kastik.apps.core.model.aboard.Author
 import com.kastik.apps.core.network.datasource.AuthorRemoteDataSource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-internal class AuthorRepositoryImpl(
+@Singleton
+internal class AuthorRepositoryImpl @Inject constructor(
     private val authorLocalDataSource: AuthorsDao,
     private val authorRemoteDataSource: AuthorRemoteDataSource,
 ) : AuthorRepository {
@@ -18,8 +23,8 @@ internal class AuthorRepositoryImpl(
         return authorLocalDataSource.getAuthors().map { it.map { it.toAuthor() } }
     }
 
-    override suspend fun refreshAuthors() {
+    override suspend fun refreshAuthors() = withContext(Dispatchers.IO) {
         val authors = authorRemoteDataSource.fetchAuthors()
-        authorLocalDataSource.insertAuthors(authors.map { it.toAuthorEntity() })
+        authorLocalDataSource.insertOrReplaceAuthors(authors.map { it.toAuthorEntity() })
     }
 }

@@ -10,10 +10,15 @@ import com.kastik.apps.core.model.aboard.Profile
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.network.datasource.ProfileRemoteDataSource
 import com.kastik.apps.core.notifications.PushNotificationsDatasource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-internal class ProfileRepositoryImpl(
+@Singleton
+internal class ProfileRepositoryImpl @Inject constructor(
     private val profileLocalDataSource: ProfileLocalDataSource,
     private val profileRemoteDataSource: ProfileRemoteDataSource,
     private val pushNotificationsDatasource: PushNotificationsDatasource,
@@ -27,7 +32,7 @@ internal class ProfileRepositoryImpl(
         return profileLocalDataSource.getProfile().map { profile -> profile.toProfile() }
     }
 
-    override suspend fun refreshProfile() {
+    override suspend fun refreshProfile() = withContext(Dispatchers.IO) {
         val userProfile = profileRemoteDataSource.getProfile()
         profileLocalDataSource.setProfile(userProfile.toProfileProto())
     }
@@ -37,26 +42,25 @@ internal class ProfileRepositoryImpl(
             .map { tagList -> tagList.subscribedTagsList.map { it.toTag() } }
     }
 
-    override suspend fun refreshEmailSubscriptions() {
+    override suspend fun refreshEmailSubscriptions() = withContext(Dispatchers.IO) {
         val subscribedTags = profileRemoteDataSource.getEmailSubscriptions()
         profileLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
     }
 
-    override suspend fun subscribeToEmailTags(tagIds: List<Int>) {
+    override suspend fun subscribeToEmailTags(tagIds: List<Int>) = withContext(Dispatchers.IO) {
         profileRemoteDataSource.subscribeToEmailTags(tagIds)
     }
 
-    override suspend fun subscribeToTopics(tagIds: List<Int>) {
+    override suspend fun subscribeToTopics(tagIds: List<Int>) = withContext(Dispatchers.IO) {
         pushNotificationsDatasource.subscribeToPushTags(tagIds)
     }
 
-    override suspend fun unsubscribeFromAllTopics() {
+    override suspend fun unsubscribeFromAllTopics() = withContext(Dispatchers.IO) {
         pushNotificationsDatasource.unSubscribeFromPushTags()
     }
 
-    override suspend fun clearLocalData() {
+    override suspend fun clearLocalData() = withContext(Dispatchers.IO) {
         profileLocalDataSource.clearProfile()
         profileLocalDataSource.clearSubscriptions()
     }
-
 }

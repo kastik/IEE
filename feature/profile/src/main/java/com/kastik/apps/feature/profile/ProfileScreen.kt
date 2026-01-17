@@ -54,8 +54,8 @@ import com.kastik.apps.core.ui.sheet.GenericRecursiveSheet
 
 @Composable
 internal fun ProfileRoute(
+    navigateBack: () -> Unit,
     viewModel: ProfileScreenViewModel = hiltViewModel(),
-    navigateBack: () -> Unit
 ) {
     TrackScreenViewEvent("profile_screen")
 
@@ -320,7 +320,7 @@ private fun ProfileSubscribedTags(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    subscribedTagTitles.forEachIndexed { index, tag ->
+                    subscribedTagTitles.forEach { tag ->
                         IEETag(
                             tag
                         )
