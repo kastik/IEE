@@ -3,7 +3,8 @@ package com.kastik.apps.core.database.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.kastik.apps.core.database.converter.IntListConverter
+import com.kastik.apps.core.database.converters.IntListConverter
+import com.kastik.apps.core.database.converters.SortTypeConverter
 import com.kastik.apps.core.database.dao.AnnouncementDao
 import com.kastik.apps.core.database.dao.AuthorsDao
 import com.kastik.apps.core.database.dao.RemoteKeysDao
@@ -29,8 +30,7 @@ import com.kastik.apps.core.database.entities.TagsCrossRefEntity
     version = 5,
     exportSchema = true
 )
-@TypeConverters(IntListConverter::class)
-
+@TypeConverters(IntListConverter::class, SortTypeConverter::class)
 
 abstract class AppDatabase : RoomDatabase() {
     abstract fun announcementDao(): AnnouncementDao
