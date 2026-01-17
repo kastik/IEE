@@ -23,11 +23,22 @@ class StartupProfile {
     }
 
     @Test
-    fun generateIntentFilterStartupProfile() = baselineProfileRule.collect(
+    fun generateAuthenticationIntentFilterStartupProfile() = baselineProfileRule.collect(
         packageName = "com.kastik.apps",
         includeInStartupProfile = true,
     ) {
         val intent = Intent(Intent.ACTION_VIEW, "com.kastik.apps://auth".toUri())
+        intent.setPackage("com.kastik.apps")
+        startActivityAndWait(intent)
+    }
+
+    @Test
+    fun generateAnnouncementIntentFilterStartupProfile() = baselineProfileRule.collect(
+        packageName = "com.kastik.apps",
+        includeInStartupProfile = true,
+    ) {
+        val intent =
+            Intent(Intent.ACTION_VIEW, "https://aboard.iee.ihu.gr/announcements/65163".toUri())
         intent.setPackage("com.kastik.apps")
         startActivityAndWait(intent)
     }
