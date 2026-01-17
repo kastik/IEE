@@ -21,7 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kastik.apps.core.model.aboard.AnnouncementPreview
+import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.Author
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.QuickResultGroup
@@ -30,16 +30,16 @@ import com.kastik.apps.core.ui.announcement.AnnouncementCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SearchBarExpanded(
+fun SearchBarExpanded(
     navigateToAnnouncement: (Int) -> Unit,
     onSearch: (query: String, tagsId: List<Int>, authorIds: List<Int>) -> Unit,
     searchBarState: SearchBarState,
     inputField: @Composable () -> Unit,
     tagsQuickResults: List<Tag>,
     authorsQuickResults: List<Author>,
-    announcements: List<AnnouncementPreview>,
+    announcements: List<Announcement>,
+    modifier: Modifier = Modifier,
     supplementaryContent: @Composable () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     ExpandedFullScreenSearchBar(
         state = searchBarState,

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SearchBarCollapsed(
+fun SearchBarCollapsed(
     searchBarState: SearchBarState,
     inputField: @Composable () -> Unit,
     scrollBehavior: SearchBarScrollBehavior,
@@ -28,6 +28,7 @@ internal fun SearchBarCollapsed(
     ) {
         Column {
             AppBarWithSearch(
+                modifier = modifier,
                 inputField = inputField,
                 state = searchBarState,
                 navigationIcon = navigationIconButton,

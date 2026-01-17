@@ -5,13 +5,14 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SearchBarState
+import androidx.compose.material3.SearchBarValue
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import com.kastik.apps.core.model.aboard.AnnouncementPreview
+import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.Author
 import com.kastik.apps.core.model.aboard.Tag
 import kotlinx.coroutines.launch
@@ -32,26 +33,33 @@ fun SearchBar(
     onSearch: (query: String, tagsId: List<Int>, authorIds: List<Int>) -> Unit,
     tagsQuickResults: List<Tag>,
     authorsQuickResults: List<Author>,
-    announcementsQuickResults: List<AnnouncementPreview>,
+    announcementsQuickResults: List<Announcement>,
 ) {
 
 
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
-    val searchBarInputField = remember {
-        movableContentOf {
+    LaunchedEffect(searchBarState.currentValue) {
+        if (searchBarState.currentValue == SearchBarValue.Collapsed) {
+            focusManager.clearFocus()
+        }
+    }
+
+    val searchBarInputField = remember(searchBarState, textFieldState, onSearch) {
+        @Composable {
             SearchBarInputField(
                 modifier = modifier,
                 searchBarState = searchBarState,
                 textFieldState = textFieldState,
                 onSearch = {
-                    onSearch(it, emptyList(), emptyList())
+                    scope.launch {
+                        searchBarState.animateToCollapsed()
+                        onSearch(it, emptyList(), emptyList())
+                    }
                 },
             )
-
         }
-
     }
 
     SearchBarCollapsed(
@@ -64,21 +72,22 @@ fun SearchBar(
         modifier = modifier
     )
 
-    SearchBarExpanded(
-        modifier = modifier,
-        onSearch = { query, tags, authors ->
-            scope.launch {
-                searchBarState.animateToCollapsed()
-                onSearch(query, tags, authors)
-            }
-            focusManager.clearFocus()
-        },
-        navigateToAnnouncement = navigateToAnnouncement,
-        searchBarState = searchBarState,
-        inputField = searchBarInputField,
-        announcements = announcementsQuickResults,
-        tagsQuickResults = tagsQuickResults,
-        authorsQuickResults = authorsQuickResults,
-        supplementaryContent = expandedSupplementaryContent
-    )
+    if (searchBarState.currentValue == SearchBarValue.Expanded) {
+        SearchBarExpanded(
+            modifier = modifier,
+            onSearch = { query, tags, authors ->
+                scope.launch {
+                    searchBarState.animateToCollapsed()
+                    onSearch(query, tags, authors)
+                }
+            },
+            navigateToAnnouncement = navigateToAnnouncement,
+            searchBarState = searchBarState,
+            inputField = searchBarInputField,
+            announcements = announcementsQuickResults,
+            tagsQuickResults = tagsQuickResults,
+            authorsQuickResults = authorsQuickResults,
+            supplementaryContent = expandedSupplementaryContent
+        )
+    }
 }
