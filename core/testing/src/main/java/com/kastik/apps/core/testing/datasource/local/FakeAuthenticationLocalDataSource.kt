@@ -3,52 +3,61 @@ package com.kastik.apps.core.testing.datasource.local
 import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-class FakeAuthenticationLocalDataSource(
-    initialToken: String? = null
-) : AuthenticationLocalDataSource {
+class FakeAuthenticationLocalDataSource : AuthenticationLocalDataSource {
 
-    private val tokenFlow = MutableStateFlow(initialToken)
+    private val _aboardToken = MutableStateFlow<String?>(null)
+    val aboardToken: StateFlow<String?> = _aboardToken.asStateFlow()
 
-    var savedAppsAccessToken: String? = null
-    var savedAppsRefreshToken: String? = null
+    private val _aboardTokenExpiration = MutableStateFlow<Int?>(null)
+    val aboardTokenExpiration: StateFlow<Int?> = _aboardTokenExpiration.asStateFlow()
 
-    var savedAboardAccessToken: String? = initialToken
-        private set
+    private val _appsRefreshToken = MutableStateFlow<String?>(null)
+    val refreshToken = _appsRefreshToken.asStateFlow()
 
-    var savedAboardExpiration: Int? = null
+    private val _appsToken = MutableStateFlow<String?>(null)
+    val appsToken: StateFlow<String?> = _aboardToken.asStateFlow()
 
 
-    override fun getAboardAccessTokenFlow(): Flow<String?> = tokenFlow
+    override fun getAboardAccessTokenFlow(): Flow<String?> = aboardToken
 
     fun emitToken(newToken: String?) {
-        savedAboardAccessToken = newToken
-        tokenFlow.value = newToken
+        _aboardToken.value = newToken
     }
 
 
     override suspend fun saveAboardToken(accessToken: String) {
-        savedAboardAccessToken = accessToken
-        tokenFlow.value = accessToken
+        _aboardToken.value = accessToken
     }
 
     override suspend fun getAboardAccessToken(): String? {
-        return savedAboardAccessToken
+        return _aboardToken.value
     }
 
     override suspend fun saveAboardTokenExpiration(expiration: Int) {
-        savedAboardExpiration = expiration
+        _aboardTokenExpiration.value = expiration
     }
 
     override suspend fun getAboardTokenExpiration(): Int? {
-        return savedAboardExpiration
+        return _aboardTokenExpiration.value
+    }
+
+    override suspend fun clearAboardToken() {
+        _aboardToken.value = null
+        _aboardTokenExpiration.value = null
     }
 
     override suspend fun saveAppsTokens(accessToken: String, refreshToken: String?) {
-        savedAppsAccessToken = accessToken
-        savedAppsRefreshToken = refreshToken
+        _appsToken.value = accessToken
+        _appsRefreshToken.value = refreshToken
     }
 
-    override suspend fun getAppsAccessToken(): String? =
-        savedAppsAccessToken
+    override suspend fun getAppsAccessToken(): String? = _appsToken.value
+
+    override suspend fun clearAppsToken() {
+        _appsToken.value = null
+        _appsRefreshToken.value = null
+    }
 }

@@ -1,10 +1,21 @@
 package com.kastik.apps.core.database.dao
 
+import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
-import com.kastik.apps.core.database.db.MemoryDatabase
-import com.kastik.apps.core.database.runner.RoboDatabaseTestRunner
-import com.kastik.apps.core.testing.testdata.testAnnouncementEntityWrapperList
+import androidx.paging.testing.TestPager
+import com.google.common.truth.Truth.assertThat
+import com.kastik.apps.core.model.user.SortType
+import com.kastik.apps.core.testing.db.MemoryDatabase
+import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
+import com.kastik.apps.core.testing.testdata.announcementBodyEntityTestData
+import com.kastik.apps.core.testing.testdata.announcementEntityTestData
+import com.kastik.apps.core.testing.testdata.announcementTagsCrossRefEntityTestData
+import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
+import com.kastik.apps.core.testing.testdata.remoteKeys
+import com.kastik.apps.core.testing.testdata.tagEntitiesTestData
 import junit.framework.TestCase
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,38 +29,42 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
     fun getAnnouncementWithIdTest() = runTest {
         insertAnnouncements()
         val announcement =
-            announcementDao.getAnnouncementWithId(testAnnouncementEntityWrapperList.first().announcement.id)
+            announcementDao.getAnnouncementWithId(announcementEntityTestData.first().id)
         assertEquals(
-            testAnnouncementEntityWrapperList.first().announcement.title,
-            announcement.announcement.title
+            announcementEntityTestData.first().title,
+            announcement.first()?.announcement?.title
         )
     }
 
+    //TODO Test for more pages and errors
     @Test
     fun getPagingAnnouncementPreviewsTest() = runTest {
         insertAnnouncements()
-        val announcement = announcementDao.getPagingAnnouncementPreviews()
-        val page = announcement.load(
-            PagingSource.LoadParams.Refresh(
-                key = null, loadSize = 20, placeholdersEnabled = false
-            )
+        val announcement = announcementDao.getPagedAnnouncements(
+            query = "",
+            authorIds = emptyList(),
+            tagIds = emptyList(),
+            sortType = SortType.ASC,
         )
-        when (page) {
-            is PagingSource.LoadResult.Page -> assertEquals(
-                page.data.firstOrNull()?.announcement?.id ?: -10, 1
-            )
+        val pager = TestPager(PagingConfig(pageSize = 20), announcement)
+        val result = pager.refresh() as PagingSource.LoadResult.Page
+        assertEquals(result.data.firstOrNull()?.announcement?.id ?: -10, 1)
 
-            is PagingSource.LoadResult.Error -> throw page.throwable
-            is PagingSource.LoadResult.Invalid<*, *> -> throw IllegalStateException()
-        }
+        assertThat(result.data.map { it.announcement.id }).containsExactlyElementsIn(
+            announcementEntityTestData.map { it.id }).inOrder()
     }
 
 
     @Test
     fun deleteAnnouncementTest() = runTest {
         insertAnnouncements()
-        announcementDao.clearAnnouncements()
-        val announcement = announcementDao.getPagingAnnouncementPreviews()
+        announcementDao.clearAllAnnouncements()
+        val announcement = announcementDao.getPagedAnnouncements(
+            query = "",
+            authorIds = emptyList(),
+            tagIds = emptyList(),
+            sortType = SortType.Priority,
+        )
 
         val page = announcement.load(
             PagingSource.LoadParams.Refresh(
@@ -66,11 +81,11 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
     //TODO More robust testing with edge cases
 
     private suspend fun insertAnnouncements() {
-        testAnnouncementEntityWrapperList.forEach {
-            announcementDao.addAnnouncement(
-                it
-            )
-        }
-
+        remoteKeysDao.insertOrReplaceKeys(remoteKeys)
+        tagsDao.insertOrIgnoreTags(tagEntitiesTestData)
+        authorsDao.insertOrIgnoreAuthors(authorEntitiesTestData)
+        announcementDao.insertOrIgnoreAnnouncements(announcementEntityTestData)
+        announcementDao.insertOrIgnoreAnnouncementBody(announcementBodyEntityTestData)
+        announcementDao.insertOrIgnoreTagCrossRefs(announcementTagsCrossRefEntityTestData)
     }
 }

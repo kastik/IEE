@@ -15,7 +15,7 @@ import org.junit.After
 import java.util.concurrent.Executors
 
 abstract class MemoryDatabase(
-    protected val testDispatcher: CoroutineDispatcher = Executors.newSingleThreadExecutor()
+    protected val dispatcher: CoroutineDispatcher = Executors.newSingleThreadExecutor()
         .asCoroutineDispatcher()
 ) {
 
@@ -25,10 +25,9 @@ abstract class MemoryDatabase(
             context,
             AppDatabase::class.java,
         )
-            .setTransactionExecutor(testDispatcher.asExecutor())
-            .setQueryExecutor(testDispatcher.asExecutor())
+            .setTransactionExecutor(dispatcher.asExecutor())
+            .setQueryExecutor(dispatcher.asExecutor())
             .allowMainThreadQueries()
-
             .build()
     }
 
@@ -39,7 +38,6 @@ abstract class MemoryDatabase(
 
     @After
     fun closeDb() {
-        println("Closing database")
         db.close()
     }
 
