@@ -1,8 +1,8 @@
 package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.domain.repository.ProfileRepository
-import com.kastik.apps.core.domain.repository.SortType
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
+import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
