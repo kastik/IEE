@@ -9,8 +9,7 @@ class DownloadAttachmentUseCase @Inject constructor(
     private val fileDownloader: FileDownloader,
     private val announcementsRepo: AnnouncementRepository,
     private val authenticationRepository: AuthenticationRepository,
-
-    ) {
+) {
     suspend operator fun invoke(
         attachmentId: Int,
         announcementId: Int,

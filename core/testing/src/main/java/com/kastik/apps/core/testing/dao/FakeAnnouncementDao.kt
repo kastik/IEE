@@ -7,17 +7,25 @@ import com.kastik.apps.core.data.mappers.toAttachmentEntity
 import com.kastik.apps.core.data.mappers.toBodyEntity
 import com.kastik.apps.core.data.mappers.toTagCrossRefs
 import com.kastik.apps.core.database.dao.AnnouncementDao
-import com.kastik.apps.core.database.entities.*
+import com.kastik.apps.core.database.entities.AnnouncementEntity
+import com.kastik.apps.core.database.entities.AttachmentEntity
+import com.kastik.apps.core.database.entities.BodyEntity
+import com.kastik.apps.core.database.entities.TagsCrossRefEntity
 import com.kastik.apps.core.database.relations.AnnouncementDetailRelation
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
-import com.kastik.apps.core.model.user.SortType
+import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.testing.testdata.announcementDtoTestData
 import com.kastik.apps.core.testing.testdata.announcementTagEntityTestData
 import com.kastik.apps.core.testing.testdata.attachmentEntityTestData
 import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
 import com.kastik.apps.core.testing.testdata.tagEntitiesTestData
-import kotlinx.coroutines.flow.*
-import kotlin.collections.emptyList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 
 class FakeAnnouncementDao : AnnouncementDao {
     private val _announcements: MutableStateFlow<List<AnnouncementEntity>> =

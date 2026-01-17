@@ -1,5 +1,6 @@
 package com.kastik.apps.core.domain.repository
 
+import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
 

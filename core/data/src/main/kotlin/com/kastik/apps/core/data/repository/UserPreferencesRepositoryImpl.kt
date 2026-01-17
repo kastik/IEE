@@ -5,22 +5,26 @@ import com.kastik.apps.core.data.mappers.toSortType
 import com.kastik.apps.core.data.mappers.toTheme
 import com.kastik.apps.core.data.mappers.toUserTheme
 import com.kastik.apps.core.datastore.PreferencesLocalDataSource
-import com.kastik.apps.core.di.UserPrefsDatastore
-import com.kastik.apps.core.domain.repository.SortType
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
+import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.UserTheme
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
-internal class UserPreferencesRepoImpl @Inject constructor(
-    @param:UserPrefsDatastore private val preferencesLocalDataSource: PreferencesLocalDataSource
+@Singleton
+internal class UserPreferencesRepositoryImpl @Inject constructor(
+    private val preferencesLocalDataSource: PreferencesLocalDataSource,
 ) : UserPreferencesRepository {
     override fun getHasSkippedSignIn(): Flow<Boolean> {
         return preferencesLocalDataSource.getHasSkippedSignIn()
     }
 
-    override suspend fun setHasSkippedSignIn(hasSkippedSignIn: Boolean) {
+    override suspend fun setHasSkippedSignIn(hasSkippedSignIn: Boolean) =
+        withContext(Dispatchers.IO) {
         preferencesLocalDataSource.setHasSkippedSignIn(hasSkippedSignIn)
     }
 
@@ -28,7 +32,7 @@ internal class UserPreferencesRepoImpl @Inject constructor(
         return preferencesLocalDataSource.getUserTheme().map { it.toUserTheme() }
     }
 
-    override suspend fun setUserTheme(theme: UserTheme) {
+    override suspend fun setUserTheme(theme: UserTheme) = withContext(Dispatchers.IO) {
         preferencesLocalDataSource.setUserTheme(theme.toTheme())
     }
 
@@ -36,7 +40,7 @@ internal class UserPreferencesRepoImpl @Inject constructor(
         return preferencesLocalDataSource.getDynamicColor()
     }
 
-    override suspend fun setDynamicColor(enabled: Boolean) {
+    override suspend fun setDynamicColor(enabled: Boolean) = withContext(Dispatchers.IO) {
         preferencesLocalDataSource.setDynamicColor(enabled)
     }
 
@@ -44,7 +48,7 @@ internal class UserPreferencesRepoImpl @Inject constructor(
         return preferencesLocalDataSource.getSortType().map { it.toSortType() }
     }
 
-    override suspend fun setSortType(sortType: SortType) {
+    override suspend fun setSortType(sortType: SortType) = withContext(Dispatchers.IO) {
         preferencesLocalDataSource.setSortType(sortType.toSort())
     }
 }

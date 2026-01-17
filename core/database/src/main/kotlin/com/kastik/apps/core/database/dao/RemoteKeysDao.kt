@@ -5,24 +5,42 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.kastik.apps.core.database.entities.RemoteKeys
+import com.kastik.apps.core.model.aboard.SortType
 
 @Dao
 interface RemoteKeysDao {
-    @Query("SELECT * FROM REMOTE_KEYS WHERE announcementId = :id")
-    suspend fun getKeyByAnnouncementId(id: Int): RemoteKeys?
+    @Query(
+        """
+    SELECT * FROM remote_keys 
+    WHERE sortType = :sortType
+    AND announcementId = :id 
+    AND searchQuery = :query 
+    AND authorIds = :authorIds 
+    AND tagIds = :tagIds
+"""
+    )
+    suspend fun getKeyByAnnouncementId(
+        id: Int,
+        sortType: SortType,
+        query: String,
+        authorIds: List<Int>,
+        tagIds: List<Int>
+    ): RemoteKeys?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertKeys(keys: List<RemoteKeys>)
+    suspend fun insertOrReplaceKeys(keys: List<RemoteKeys>)
 
     @Query(
         """
         DELETE FROM REMOTE_KEYS
-        WHERE searchQuery LIKE :query 
-        AND authorIds LIKE :authorIds
-        AND tagIds LIKE :tagIds
+        WHERE sortType = :sortType
+        AND searchQuery = :query 
+        AND authorIds = :authorIds
+        AND tagIds = :tagIds
     """
     )
     suspend fun clearKeys(
+        sortType: SortType,
         query: String,
         authorIds: List<Int>,
         tagIds: List<Int>

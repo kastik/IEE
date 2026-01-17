@@ -9,7 +9,7 @@ import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.database.entities.RemoteKeys
 import com.kastik.apps.core.database.relations.AnnouncementDetailRelation
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
-import com.kastik.apps.core.model.user.SortType
+import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.model.aboard.AnnouncementDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementMeta
 import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse

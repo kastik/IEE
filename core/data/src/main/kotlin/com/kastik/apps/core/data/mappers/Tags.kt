@@ -1,14 +1,13 @@
 package com.kastik.apps.core.data.mappers
 
 import com.kastik.apps.core.database.entities.TagEntity
+import com.kastik.apps.core.datastore.proto.SubscribableTagProto
+import com.kastik.apps.core.datastore.proto.SubscribedTagProto
+import com.kastik.apps.core.model.aboard.SubscribableTag
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.network.model.aboard.AnnouncementTagDto
-
-
-internal fun AnnouncementTagDto.toTag() = Tag(
-    id = id,
-    title = title,
-)
+import com.kastik.apps.core.network.model.aboard.SubscribableTagsDto
+import com.kastik.apps.core.network.model.aboard.SubscribedTagDto
 
 fun AnnouncementTagDto.toTagEntity() = TagEntity(
     id = id,
@@ -18,7 +17,47 @@ fun AnnouncementTagDto.toTagEntity() = TagEntity(
     mailListName = mailListName
 )
 
-internal fun TagEntity.toTag() = Tag(
+fun TagEntity.toTag() = Tag(
     id = id,
     title = title,
 )
+
+fun SubscribedTagDto.toSubscribedTagProto(): SubscribedTagProto = let { dto ->
+    SubscribedTagProto.newBuilder().apply {
+        setId(dto.id)
+        setTitle(dto.title)
+    }.build()
+}
+
+fun SubscribedTagProto.toTag() = Tag(
+    id = id,
+    title = title,
+)
+
+fun SubscribableTagsDto.toSubscribableTagProto(): SubscribableTagProto =
+    SubscribableTagProto.newBuilder()
+        .setId(id)
+        .setTitle(title)
+        .setIsPublic(isPublic)
+        .setCreatedAt(createdAt)
+        .setMailListName(mailListName)
+        .addAllSubTags(subTags.map { it.toSubscribableTagProto() })
+        .also { builder ->
+            parentId?.let { builder.setParentId(it) }
+            updatedAt?.let { builder.setUpdatedAt(it) }
+            deletedAt?.let { builder.setDeletedAt(it) }
+        }
+        .build()
+
+fun SubscribableTagProto.toSubscribableTag(): SubscribableTag = SubscribableTag(
+    id = id,
+    title = title,
+    parentId = if (hasParentId()) parentId else null,
+    isPublic = isPublic,
+    createdAt = createdAt,
+    updatedAt = if (hasUpdatedAt()) updatedAt else null,
+    deletedAt = if (hasDeletedAt()) deletedAt else null,
+    mailListName = mailListName,
+    subTags = subTagsList.map { it.toSubscribableTag() }
+)
+

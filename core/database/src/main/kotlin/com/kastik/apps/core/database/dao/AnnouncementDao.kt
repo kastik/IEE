@@ -10,39 +10,40 @@ import com.kastik.apps.core.database.entities.AnnouncementEntity
 import com.kastik.apps.core.database.entities.AttachmentEntity
 import com.kastik.apps.core.database.entities.BodyEntity
 import com.kastik.apps.core.database.entities.TagsCrossRefEntity
-import com.kastik.apps.core.database.model.AnnouncementEntityWrapper
-import com.kastik.apps.core.database.model.AnnouncementWithBody
-import com.kastik.apps.core.database.model.AnnouncementWithoutBody
+import com.kastik.apps.core.database.relations.AnnouncementDetailRelation
+import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
+import com.kastik.apps.core.model.aboard.SortType
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface AnnouncementDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAnnouncement(announcement: AnnouncementEntity)
+    suspend fun insertOrIgnoreAnnouncements(announcements: List<AnnouncementEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
+    suspend fun insertOrIgnoreTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAnnouncementBody(body: BodyEntity)
+    suspend fun insertOrIgnoreAnnouncementBody(bodies: List<BodyEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAnnouncementAttachments(attachments: List<AttachmentEntity>)
+    suspend fun insertOrIgnoreAnnouncementAttachments(attachments: List<AttachmentEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateAnnouncement(announcement: AnnouncementEntity)
+    suspend fun insertOrReplaceAnnouncement(announcement: AnnouncementEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
+    suspend fun insertOrReplaceTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateAnnouncementBody(body: BodyEntity)
+    suspend fun insertOrReplaceAnnouncementBody(body: BodyEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun updateAnnouncementAttachments(attachments: List<AttachmentEntity>)
+    suspend fun insertOrReplaceAnnouncementAttachments(attachments: List<AttachmentEntity>)
 
     //TODO Add support for tags, authors
+    @Transaction
     @Query(
         """
     SELECT announcemententity.* FROM announcemententity
@@ -61,17 +62,18 @@ interface AnnouncementDao {
     )
     fun getQuickSearchAnnouncements(
         query: String,
-        sortType: String
-    ): Flow<List<AnnouncementWithoutBody>>
+        sortType: SortType
+    ): Flow<List<AnnouncementPreviewRelation>>
 
     @Transaction
     @Query(
         """
         SELECT announcemententity.* FROM announcemententity
         INNER JOIN remote_keys ON announcemententity.id = remote_keys.announcementId
-        WHERE searchQuery LIKE :query
-        AND authorIds LIKE :authorIds
-        AND tagIds LIKE :tagIds
+        WHERE remote_keys.searchQuery = :query
+        AND remote_keys.authorIds = :authorIds
+        AND remote_keys.tagIds = :tagIds
+        AND remote_keys.sortType = :sortType
         ORDER BY
             CASE WHEN :sortType = 'Priority' THEN 
             (CASE WHEN isPinned = 1 AND (pinnedUntil IS NULL OR pinnedUntil > strftime('%Y-%m-%d %H:%M', 'now', 'localtime')) THEN 1 ELSE 0 END)
@@ -82,15 +84,15 @@ interface AnnouncementDao {
     """
     )
     fun getPagedAnnouncements(
-        query: String,
-        tagIds: List<Int>,
-        authorIds: List<Int>,
-        sortType: String
-    ): PagingSource<Int, AnnouncementWithoutBody>
+        query: String = "",
+        tagIds: List<Int> = emptyList(),
+        authorIds: List<Int> = emptyList(),
+        sortType: SortType = SortType.DESC
+    ): PagingSource<Int, AnnouncementPreviewRelation>
 
     @Transaction
     @Query("SELECT * FROM announcemententity WHERE id = :id")
-    fun getAnnouncementWithId(id: Int): Flow<AnnouncementWithBody?>
+    fun getAnnouncementWithId(id: Int): Flow<AnnouncementDetailRelation?>
 
     @Transaction
     @Query("SELECT attachmentUrl FROM attachmententity WHERE id = :id")
@@ -99,34 +101,12 @@ interface AnnouncementDao {
     @Query("DELETE FROM announcemententity")
     suspend fun clearAllAnnouncements()
 
+    @Query("DELETE FROM bodyentity")
+    suspend fun clearBodies()
+
     @Query("DELETE FROM attachmententity")
     suspend fun clearAttachments()
 
     @Query("DELETE FROM tagscrossrefentity")
     suspend fun clearTagCrossRefs()
-
-    suspend fun addAnnouncement(
-        announcement: AnnouncementEntityWrapper
-    ) {
-        insertAnnouncement(announcement.announcement)
-        insertAnnouncementBody(announcement.body)
-        insertAnnouncementAttachments(announcement.attachments)
-        insertTagCrossRefs(announcement.tagCrossRefs)
-    }
-
-    suspend fun updateAnnouncement(
-        announcement: AnnouncementEntityWrapper
-    ) {
-        updateAnnouncement(announcement.announcement)
-        updateAnnouncementBody(announcement.body)
-        updateAnnouncementAttachments(announcement.attachments)
-        updateTagCrossRefs(announcement.tagCrossRefs)
-    }
-
-    @Transaction
-    suspend fun clearAnnouncements() {
-        clearAllAnnouncements()
-        clearAttachments()
-        clearTagCrossRefs()
-    }
 }

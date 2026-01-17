@@ -1,7 +1,7 @@
 package com.kastik.apps.core.testing.api
 
 
-import com.kastik.apps.core.model.user.SortType
+import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.AboardAuthTokenDto
 import com.kastik.apps.core.network.model.aboard.AnnouncementDto

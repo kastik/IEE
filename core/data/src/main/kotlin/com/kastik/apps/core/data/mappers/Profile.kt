@@ -4,19 +4,6 @@ import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.model.aboard.Profile
 import com.kastik.apps.core.network.model.aboard.UserProfileDto
 
-fun ProfileProto.toProfile() = Profile(
-    id = id,
-    name = name,
-    email = email,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-    isAuthor = isAuthor,
-    isAdmin = isAdmin,
-    lastLoginAt = lastLoginAt,
-    uid = uid,
-    deletedAt = deletedAt
-)
-
 fun UserProfileDto.toProfileProto(): ProfileProto = let { dto ->
     ProfileProto.newBuilder().apply {
         setId(dto.id)
@@ -32,3 +19,15 @@ fun UserProfileDto.toProfileProto(): ProfileProto = let { dto ->
         setDeletedAt(dto.deletedAt ?: "")
     }.build()
 }
+fun ProfileProto.toProfile() = Profile(
+    id = id,
+    name = name,
+    email = email,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isAuthor = isAuthor,
+    isAdmin = isAdmin,
+    lastLoginAt = lastLoginAt,
+    uid = uid,
+    deletedAt = deletedAt
+)

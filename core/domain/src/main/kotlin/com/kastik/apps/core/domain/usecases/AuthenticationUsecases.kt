@@ -20,5 +20,5 @@ class ExchangeCodeForAboardTokenUseCase @Inject constructor(
 class CheckIfTokenIsValidUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository
 ) {
-    suspend operator fun invoke() = authenticationRepository.checkTokenValidity()
+    suspend operator fun invoke() = authenticationRepository.checkAboardTokenValidity()
 }

@@ -1,6 +1,6 @@
 package com.kastik.apps.core.testing.datasource.remote
 
-import com.kastik.apps.core.model.user.SortType
+import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
 import com.kastik.apps.core.network.model.aboard.AnnouncementMeta
 import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse

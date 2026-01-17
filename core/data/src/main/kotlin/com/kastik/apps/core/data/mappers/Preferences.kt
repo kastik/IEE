@@ -2,7 +2,7 @@ package com.kastik.apps.core.data.mappers
 
 import com.kastik.apps.core.datastore.proto.Sort
 import com.kastik.apps.core.datastore.proto.Theme
-import com.kastik.apps.core.domain.repository.SortType
+import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.UserTheme
 
 
@@ -23,19 +23,19 @@ fun UserTheme.toTheme(): Theme {
     }
 }
 
-fun SortType.toSort(): Sort {
-    return when (this) {
-        SortType.ASC -> Sort.ASC
-        SortType.DESC -> Sort.DESC
-        SortType.Priority -> Sort.Priority
-    }
-}
-
 fun Sort.toSortType(): SortType {
     return when (this) {
         Sort.ASC -> SortType.ASC
         Sort.DESC -> SortType.DESC
         Sort.Priority -> SortType.Priority
         else -> SortType.ASC
+    }
+}
+
+fun SortType.toSort(): Sort {
+    return when (this) {
+        SortType.ASC -> Sort.ASC
+        SortType.DESC -> Sort.DESC
+        SortType.Priority -> Sort.Priority
     }
 }

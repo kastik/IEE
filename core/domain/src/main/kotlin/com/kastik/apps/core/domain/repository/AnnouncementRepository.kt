@@ -1,8 +1,8 @@
 package com.kastik.apps.core.domain.repository
 
 import androidx.paging.PagingData
-import com.kastik.apps.core.model.aboard.AnnouncementPreview
-import com.kastik.apps.core.model.aboard.AnnouncementView
+import com.kastik.apps.core.model.aboard.Announcement
+import com.kastik.apps.core.model.aboard.SortType
 import kotlinx.coroutines.flow.Flow
 
 interface AnnouncementRepository {
@@ -11,18 +11,15 @@ interface AnnouncementRepository {
         query: String,
         authorIds: List<Int>,
         tagIds: List<Int>
-    ): Flow<PagingData<AnnouncementPreview>>
+    ): Flow<PagingData<Announcement>>
 
     fun getAnnouncementsQuickResults(
         sortType: SortType,
         query: String
-    ): Flow<List<AnnouncementPreview>>
-    fun getAnnouncementWithId(id: Int): Flow<AnnouncementView>
+    ): Flow<List<Announcement>>
+
+    fun getAnnouncementWithId(id: Int): Flow<Announcement?>
     suspend fun getAttachmentUrl(attachmentId: Int): String
     suspend fun refreshAnnouncementWithId(id: Int)
     suspend fun clearAnnouncementCache()
-}
-
-enum class SortType {
-    Priority, DESC, ASC,
 }

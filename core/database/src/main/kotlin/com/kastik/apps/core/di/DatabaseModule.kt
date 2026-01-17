@@ -2,7 +2,6 @@ package com.kastik.apps.core.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.withTransaction
 import com.kastik.apps.core.database.dao.AnnouncementDao
 import com.kastik.apps.core.database.dao.AuthorsDao
 import com.kastik.apps.core.database.dao.RemoteKeysDao
@@ -28,29 +27,27 @@ object DatabaseModule {
     ).fallbackToDestructiveMigration(true).build()
 
     @Provides
+    @Singleton
     fun provideAnnouncementDao(appDatabase: AppDatabase): AnnouncementDao {
         return appDatabase.announcementDao()
     }
 
     @Provides
+    @Singleton
     fun provideAuthorDao(appDatabase: AppDatabase): AuthorsDao {
         return appDatabase.authorDao()
     }
 
     @Provides
+    @Singleton
     fun provideTagsDao(appDatabase: AppDatabase): TagsDao {
         return appDatabase.tagsDao()
     }
 
     @Provides
+    @Singleton
     fun provideRemoteKeysDao(appDatabase: AppDatabase): RemoteKeysDao {
         return appDatabase.remoteKeysDao()
-    }
-
-    @Provides
-    @DbTransaction
-    fun provideTransactionLambda(db: AppDatabase): suspend (suspend () -> Unit) -> Unit {
-        return { block -> db.withTransaction(block) }
     }
 
 }

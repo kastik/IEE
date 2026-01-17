@@ -2,7 +2,7 @@ package com.kastik.apps.core.testing.dao
 
 import com.kastik.apps.core.database.dao.RemoteKeysDao
 import com.kastik.apps.core.database.entities.RemoteKeys
-import com.kastik.apps.core.model.user.SortType
+import com.kastik.apps.core.model.aboard.SortType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
