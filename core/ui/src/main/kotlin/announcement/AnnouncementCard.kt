@@ -133,7 +133,7 @@ fun AnnouncementCard(
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = content.collapseWhitespace(),
+                text = AnnotatedString.fromHtml(content.collapseWhitespace()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
