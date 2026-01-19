@@ -8,9 +8,9 @@ internal object AppConfig {
     const val MIN_SDK = 24
     const val TARGET_SDK = 36
 
-    val sourceCompatibility = JavaVersion.VERSION_17
-    val targetCompatibility = JavaVersion.VERSION_17
+    val sourceCompatibility = JavaVersion.VERSION_21
+    val targetCompatibility = JavaVersion.VERSION_21
 
-    val jvmTarget = JvmTarget.JVM_17
+    val jvmTarget = JvmTarget.JVM_21
 
 }

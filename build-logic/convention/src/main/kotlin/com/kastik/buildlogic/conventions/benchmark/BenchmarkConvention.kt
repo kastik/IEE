@@ -2,14 +2,13 @@ package com.kastik.buildlogic.conventions.benchmark
 
 import com.android.build.api.dsl.TestExtension
 import com.kastik.buildlogic.conventions.config.AppConfig
+import com.kastik.buildlogic.conventions.extensions.configureKotlinJvm
 import com.kastik.buildlogic.conventions.extensions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 class BenchmarkConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -39,20 +38,7 @@ class BenchmarkConventionPlugin : Plugin<Project> {
             dependencies {
                 add("implementation", libs.findLibrary("androidx-core-ktx").get())
             }
-
-            tasks.withType<KotlinJvmCompile>().configureEach {
-                compilerOptions {
-                    jvmTarget.set(AppConfig.jvmTarget)
-                    freeCompilerArgs.addAll(
-                        listOf(
-                            "-opt-in=kotlin.RequiresOptIn",
-                            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                            "-opt-in=kotlinx.coroutines.FlowPreview",
-                            "-Xannotation-default-target=param-property"
-                        )
-                    )
-                }
-            }
+            configureKotlinJvm()
         }
     }
 }

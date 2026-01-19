@@ -21,7 +21,6 @@ class FeatureConventionPlugin : Plugin<Project> {
                 add("implementation", project(":core:ui"))
                 add("implementation", project(":core:designsystem"))
 
-                // Navigation
                 add(
                     "implementation",
                     libs.findLibrary("androidx-compose-material3-adaptive-navigation-suite").get()
@@ -29,7 +28,6 @@ class FeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx-navigation-compose").get())
                 add("implementation", libs.findLibrary("androidx-hilt-navigation-compose").get())
 
-                //Lifecycle
                 add("implementation", libs.findLibrary("androidx-lifecycle-viewmodel-ktx").get())
                 add(
                     "implementation",
