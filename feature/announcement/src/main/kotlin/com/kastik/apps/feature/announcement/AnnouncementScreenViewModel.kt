@@ -1,14 +1,14 @@
 package com.kastik.apps.feature.announcement
 
 import android.accounts.AuthenticatorException
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.kastik.apps.core.domain.usecases.DownloadAttachmentUseCase
 import com.kastik.apps.core.domain.usecases.GetAnnouncementWithIdUseCase
 import com.kastik.apps.core.domain.usecases.RefreshAnnouncementWithIdUseCase
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import com.kastik.apps.feature.announcement.navigation.AnnouncementRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,18 +19,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-@HiltViewModel(assistedFactory = AnnouncementScreenViewModel.Factory::class)
-class AnnouncementScreenViewModel @AssistedInject constructor(
-    @Assisted val announcementId: Int,
+@HiltViewModel
+class AnnouncementScreenViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
     private val refreshAnnouncementWithIdUseCase: RefreshAnnouncementWithIdUseCase,
     private val getAnnouncementWithIdUseCase: GetAnnouncementWithIdUseCase,
 ) : ViewModel() {
 
+    val args = savedStateHandle.toRoute<AnnouncementRoute>()
     private val errorState = MutableStateFlow<String?>(null)
     val uiState: StateFlow<UiState> = combine(
-        getAnnouncementWithIdUseCase(announcementId),
+        getAnnouncementWithIdUseCase(args.id),
         errorState
     ) { announcement, errorMsg ->
         if (announcement != null) {
@@ -48,16 +50,17 @@ class AnnouncementScreenViewModel @AssistedInject constructor(
         initialValue = UiState.Loading
     )
 
+    //TODO Clean this up
     fun refreshAnnouncement() {
         viewModelScope.launch {
             try {
-                refreshAnnouncementWithIdUseCase(announcementId)
+                refreshAnnouncementWithIdUseCase(args.id)
                 errorState.update { null }
             } catch (e: Exception) {
                 val msg = when (e) {
                     is AuthenticatorException -> "Sign in required"
                     is UnknownHostException -> "No internet connection"
-                    else -> "${e.message}"
+                    else -> "Something went wrong while refreshing."
                 }
                 errorState.update { msg }
             }
@@ -69,15 +72,11 @@ class AnnouncementScreenViewModel @AssistedInject constructor(
     ) {
         viewModelScope.launch {
             downloadAttachmentUseCase(
-                attachmentId, announcementId, fileName = fileName, mimeType = mimeType
+                attachmentId = attachmentId,
+                announcementId = announcementId,
+                fileName = fileName,
+                mimeType = mimeType
             )
         }
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun create(
-            announcementId: Int,
-        ): AnnouncementScreenViewModel
     }
 }

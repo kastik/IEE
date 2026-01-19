@@ -3,7 +3,6 @@ package com.kastik.apps.feature.announcement.navigation
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -12,7 +11,6 @@ import androidx.navigation.navDeepLink
 import androidx.navigation.navOptions
 import androidx.navigation.toRoute
 import com.kastik.apps.feature.announcement.AnnouncementRoute
-import com.kastik.apps.feature.announcement.AnnouncementScreenViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -43,11 +41,6 @@ fun NavGraphBuilder.announcementScreen(
         AnnouncementRoute(
             navigateBack = navigateBack,
             announcementId = args.id,
-            viewModel = hiltViewModel<AnnouncementScreenViewModel, AnnouncementScreenViewModel.Factory>(
-                key = args.id.toString(),
-            ) { factory ->
-                factory.create(args.id)
-            }
         )
     }
 }
