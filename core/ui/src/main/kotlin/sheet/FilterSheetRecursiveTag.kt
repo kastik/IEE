@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +30,7 @@ fun <T> GenericRecursiveSheet(
     items: ImmutableList<T>,
     applySelectedTags: () -> Unit,
     selectedRootIds: ImmutableList<Int>,
-    updateSelectedTagsIds: (List<Int>) -> Unit,
+    updateSelectedTagsIds: (ImmutableList<Int>) -> Unit,
     sheetState: SheetState,
     onDismiss: () -> Unit,
     idProvider: (T) -> Int,
@@ -106,7 +107,7 @@ fun <T> GenericRecursiveSheet(
 
         Button(
             onClick = {
-                updateSelectedTagsIds(selectedIds)
+                updateSelectedTagsIds(selectedIds.toImmutableList())
                 applySelectedTags()
                 onDismiss()
             }, modifier = Modifier

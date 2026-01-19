@@ -11,6 +11,7 @@ import com.kastik.apps.core.domain.usecases.RefreshUserProfileUseCase
 import com.kastik.apps.core.domain.usecases.SignOutUserUseCase
 import com.kastik.apps.core.domain.usecases.SubscribeToTagsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -53,7 +54,7 @@ class ProfileScreenViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedTagIds(newSubscribedTagsIds: List<Int>) {
+    fun updateSelectedTagIds(newSubscribedTagsIds: ImmutableList<Int>) {
         val state = _uiState.value as? UiState.Success
         state?.let {
             _uiState.value = state.copy(

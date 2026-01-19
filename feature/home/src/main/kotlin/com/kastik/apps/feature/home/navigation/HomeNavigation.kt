@@ -9,6 +9,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import com.kastik.apps.feature.home.HomeScreenRoute
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.serialization.Serializable
 
 
@@ -31,7 +32,7 @@ fun NavGraphBuilder.homeScreen(
     navigateToAnnouncement: (Int) -> Unit,
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
-    navigateToSearch: (query: String, tagsId: List<Int>, authorIds: List<Int>) -> Unit,
+    navigateToSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
 ) {
     composable<HomeRoute>(
         enterTransition = { scaleIn() },

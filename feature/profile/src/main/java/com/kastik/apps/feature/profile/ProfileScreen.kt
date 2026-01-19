@@ -99,7 +99,7 @@ internal fun ProfileRoute(
 private fun SuccessState(
     uiState: UiState.Success,
     applySelectedTags: () -> Unit,
-    updateSelectedSubscribableTag: (List<Int>) -> Unit,
+    updateSelectedSubscribableTag: (ImmutableList<Int>) -> Unit,
     showTagSheet: (Boolean) -> Unit,
     onSignOutClick: () -> Unit
 ) {
@@ -356,9 +356,9 @@ fun ProfileSuccessStatePreview() {
                 deletedAt = null,
             ),
 
-            subscribedTags = listOf(),
+            subscribedTags = persistentListOf(),
             subscribableTags = null,
-            selectedSubscribableTagsIds = emptyList(),
+            selectedSubscribableTagsIds = persistentListOf(),
         ),
         updateSelectedSubscribableTag = {},
         applySelectedTags = {},

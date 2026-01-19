@@ -16,6 +16,7 @@ import com.kastik.apps.feature.search.navigation.navigateToSearch
 import com.kastik.apps.feature.search.navigation.searchScreen
 import com.kastik.apps.feature.settings.navigation.navigateToSettings
 import com.kastik.apps.feature.settings.navigation.settingsScreen
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun IEENavHost() {
@@ -26,7 +27,7 @@ fun IEENavHost() {
         startDestination = HomeRoute,
     ) {
         homeScreen(
-            navigateToSearch = { query: String, tags: List<Int>, authors: List<Int> ->
+            navigateToSearch = { query: String, tags: ImmutableList<Int>, authors: ImmutableList<Int> ->
                 navController.navigateToSearch(query = query, tags = tags, authors = authors)
             },
             navigateToAnnouncement = { navController.navigateToAnnouncement(it) },

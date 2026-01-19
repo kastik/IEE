@@ -4,7 +4,9 @@ import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.model.aboard.Profile
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.util.concurrent.ExecutionException
 import javax.inject.Inject
 
@@ -58,7 +60,7 @@ class RefreshSubscriptionsUseCase @Inject constructor(
 class GetSubscriptionsUseCase @Inject constructor(
     private val profileRepository: ProfileRepository
 ) {
-    operator fun invoke() = profileRepository.getEmailSubscriptions()
+    operator fun invoke() = profileRepository.getEmailSubscriptions().map { it.toImmutableList() }
 }
 
 class SubscribeToTagsUseCase @Inject constructor(

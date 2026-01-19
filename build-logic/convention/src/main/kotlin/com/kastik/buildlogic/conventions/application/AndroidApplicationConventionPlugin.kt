@@ -44,6 +44,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx.activity").get())
                 add("implementation", libs.findLibrary("androidx-core-ktx").get())
                 add("implementation", libs.findLibrary("androidx-activity-compose").get())
+                add("implementation", libs.findLibrary("kotlinx-collections-immutable").get())
                 add("implementation", libs.findLibrary("androidx-hilt-navigation-compose").get())
             }
             configureKotlinJvm()

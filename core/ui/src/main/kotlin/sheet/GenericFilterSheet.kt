@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import java.text.Normalizer
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -34,7 +35,7 @@ import java.text.Normalizer
 fun <T> GenericFilterSheet(
     items: ImmutableList<T>,
     selectedIds: ImmutableList<Int>,
-    onApply: (List<Int>) -> Unit,
+    onApply: (ImmutableList<Int>) -> Unit,
     sheetState: SheetState,
     onDismiss: () -> Unit,
     idProvider: (T) -> Int,
@@ -113,7 +114,7 @@ fun <T> GenericFilterSheet(
         // Bottom apply button ALWAYS visible
         Button(
             onClick = {
-                onApply(currentSelection)
+                onApply(currentSelection.toImmutableList())
                 onDismiss()
             },
             modifier = Modifier

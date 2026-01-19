@@ -2,6 +2,7 @@ package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.model.aboard.SubscribableTag
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -24,8 +25,8 @@ class RefreshAnnouncementTagsUseCase @Inject constructor(
 class GetSubscribableTagsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository
 ) {
-    operator fun invoke(): Flow<List<SubscribableTag>> =
-        tagsRepository.getSubscribableTags()
+    operator fun invoke(): Flow<ImmutableList<SubscribableTag>> =
+        tagsRepository.getSubscribableTags().map { it.toImmutableList() }
 }
 
 class RefreshSubscribableTagsUseCase @Inject constructor(
