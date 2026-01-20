@@ -7,10 +7,5 @@ data class UiState(
     val isSignedIn: Boolean = false,
     val showSignInNotice: Boolean = false,
     val availableFilters: FilterOptions = FilterOptions(),
-    val activeFilters: ActiveFilters = ActiveFilters(),
     val quickResults: QuickResults = QuickResults(),
-)
-
-data class ActiveFilters(
-    val activeQuery: String = "",
 )

@@ -1,38 +1,39 @@
 package com.kastik.apps.feature.search
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.kastik.apps.core.ui.SupplementaryContent
+import com.kastik.apps.core.common.extensions.shareAnnouncement
+import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.pagging.AnnouncementFeed
@@ -40,31 +41,32 @@ import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import com.kastik.apps.core.ui.sheet.GenericFilterSheet
 import com.kastik.apps.core.ui.topbar.SearchBar
+import com.kastik.apps.core.ui.topbar.SearchBarFilters
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SearchScreen(
-    viewModel: SearchScreenViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
-    navigateToAnnouncement: (Int) -> Unit
+    navigateToAnnouncement: (Int) -> Unit,
+    viewModel: SearchScreenViewModel = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
-
-    val textFieldState = rememberTextFieldState()
-    val searchBarState = rememberSearchBarState()
+    val searchFeedAnnouncements = viewModel.searchFeedAnnouncements.collectAsLazyPagingItems()
+    val textFieldState = viewModel.searchBarTextFieldState
 
     TrackScreenViewEvent("search_screen")
 
     SearchScreenContent(
         uiState = uiState.value,
+        searchBarTextFieldState = textFieldState,
+        searchFeedAnnouncements = searchFeedAnnouncements,
         navigateBack = navigateBack,
         navigateToAnnouncement = navigateToAnnouncement,
-        updateQuickResults = viewModel::updateQuickResults,
-        updateSearchResults = viewModel::updateSearchResults,
-        textFieldState = textFieldState,
-        searchBarState = searchBarState
+        onSearch = viewModel::onSearch
     )
 }
 
@@ -73,195 +75,176 @@ internal fun SearchScreen(
 @Composable
 private fun SearchScreenContent(
     uiState: UiState,
-    navigateToAnnouncement: (Int) -> Unit,
-    updateQuickResults: (query: String) -> Unit,
-    updateSearchResults: (query: String, tagsId: List<Int>, authorIds: List<Int>) -> Unit,
-    textFieldState: TextFieldState,
-    searchBarState: SearchBarState,
-
+    searchBarTextFieldState: TextFieldState,
+    searchFeedAnnouncements: LazyPagingItems<Announcement>,
     navigateBack: () -> Unit,
+    navigateToAnnouncement: (Int) -> Unit,
+    onSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
 ) {
-    val analytics = LocalAnalytics.current
+
     val context = LocalContext.current
+    val analytics = LocalAnalytics.current
     val scope = rememberCoroutineScope()
-    val lazyResults = uiState.searchResults.collectAsLazyPagingItems()
     val lazyListState = rememberLazyListState()
     val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
-
-    LocalFocusManager.current
-
-
-    var showTagSheet by remember { mutableStateOf(false) }
     val tagSheetState = rememberModalBottomSheetState()
-    var showAuthorSheet by remember { mutableStateOf(false) }
+    val showTagSheet = rememberSaveable { mutableStateOf(false) }
     val authorSheetState = rememberModalBottomSheetState()
+    val showAuthorSheet = rememberSaveable { mutableStateOf(false) }
+    val searchBarState = rememberSearchBarState()
 
-    LaunchedEffect(textFieldState.text) {
-        updateQuickResults(textFieldState.text.toString())
+    val secondaryActions = remember(uiState.activeFilters) {
+        movableContentOf {
+            SearchBarFilters(
+                selectedTagsCount = uiState.activeFilters.selectedTagIds.size,
+                selectedAuthorsCount = uiState.activeFilters.selectedAuthorIds.size,
+                openTagSheet = { showTagSheet.value = true },
+                openAuthorSheet = { showAuthorSheet.value = true })
+        }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        SearchBar(
-            scrollBehavior = searchScroll,
-            searchBarState = searchBarState,
-            textFieldState = textFieldState,
-            navigateToAnnouncement = navigateToAnnouncement,
-            onSearch = updateSearchResults,
-            tagsQuickResults = uiState.tagsQuickResults,
-            authorsQuickResults = uiState.authorQuickResults,
-            announcementsQuickResults = uiState.announcementQuickResults,
-            actionButton = {},
-            navigationIcon = {
-                IconButton(onClick = navigateBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing, topBar = {
+            SearchBar(
+                scrollBehavior = searchScroll,
+                quickResults = uiState.quickResults,
+                searchBarState = searchBarState,
+                textFieldState = searchBarTextFieldState,
+                expandedSecondaryActions = secondaryActions,
+                collapsedSecondaryActions = secondaryActions,
+                onAnnouncementQuickResultClick = navigateToAnnouncement,
+                onSearch = { query ->
+                    onSearch(
+                        query,
+                        uiState.activeFilters.selectedTagIds,
+                        uiState.activeFilters.selectedAuthorIds,
                     )
-                }
-            },
-            expandedSupplementaryContent = {
-                SupplementaryContent(
-                    selectedTagsCount = uiState.selectedTagIds.size,
-                    selectedAuthorsCount = uiState.selectedAuthorIds.size,
-                    openTagSheet = {
-                        showTagSheet = true
-                    },
-                    openAuthorSheet = {
-                        showAuthorSheet = true
-                    })
-            },
-            collapsedSupplementaryContent = {
-                SupplementaryContent(
-                    selectedTagsCount = uiState.selectedTagIds.size,
-                    selectedAuthorsCount = uiState.selectedAuthorIds.size,
-                    openTagSheet = {
-                        scope.launch {
-                            searchBarState.animateToExpanded()
-                            showTagSheet = true
-                        }
-                    },
-                    openAuthorSheet = {
-                        scope.launch {
-                            searchBarState.animateToExpanded()
-                            showAuthorSheet = true
-                        }
-                    })
-            }
-        )
-
-        Box(modifier = Modifier.fillMaxSize()) {
-            val refreshState = lazyResults.loadState.refresh
-            val isEmpty by remember { derivedStateOf { lazyResults.itemCount == 0 } }
+                },
+                onTagQuickResultClick = { tag ->
+                    onSearch(
+                        uiState.activeFilters.committedQuery,
+                        (uiState.activeFilters.selectedTagIds + tag).toImmutableList(),
+                        uiState.activeFilters.selectedAuthorIds,
+                    )
+                },
+                onAuthorQuickResultClick = { author ->
+                    onSearch(
+                        uiState.activeFilters.committedQuery,
+                        uiState.activeFilters.selectedTagIds,
+                        (uiState.activeFilters.selectedAuthorIds + author).toImmutableList(),
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                },
+            )
+        }) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = paddingValues.calculateTopPadding())
+        ) {
+            val refreshState = searchFeedAnnouncements.loadState.refresh
+            val isEmpty by remember { derivedStateOf { searchFeedAnnouncements.itemCount == 0 } }
 
             AnnouncementFeed(
+                announcements = searchFeedAnnouncements,
+                lazyListState = lazyListState,
+                scrollBehavior = searchScroll,
                 onAnnouncementClick = { announcementId ->
                     analytics.logEvent(
-                        "announcement_clicked", mapOf("announcement_id" to announcementId)
+                        "announcement_clicked",
+                        mapOf("announcement_id" to announcementId)
                     )
                     navigateToAnnouncement(announcementId)
                 },
                 onAnnouncementLongClick = { announcementId ->
-                    shareAnnouncement(context, announcementId)
+                    analytics.logEvent(
+                        "announcement_shared",
+                        mapOf("announcement_id" to announcementId)
+                    )
+                    context.shareAnnouncement(announcementId)
                 },
-                lazyAnnouncements = lazyResults,
-                lazyListState = lazyListState,
-                scrollBehavior = searchScroll,
+                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
             )
 
             if (refreshState is LoadState.Error && isEmpty) {
                 StatusContent(
                     message = "Failed to load.",
-                    action = { lazyResults.retry() },
+                    action = { searchFeedAnnouncements.retry() },
                     actionText = "Retry",
                 )
             }
 
             if (refreshState is LoadState.Loading && isEmpty) {
-                LoadingContent("Fetching Announcements...", modifier = Modifier.fillMaxSize())
+                LoadingContent(
+                    modifier = Modifier.fillMaxSize(),
+                    message = "Fetching Announcements...",
+                )
             }
+        }
 
 
+        if (showTagSheet.value) {
+            GenericFilterSheet(
+                sheetState = tagSheetState,
+                items = uiState.availableFilters.tags,
+                selectedIds = uiState.activeFilters.selectedTagIds,
+                idProvider = { it.id },
+                labelProvider = { it.title },
+                titlePlaceholder = "Search Tags...",
+                onApply = { newTagIds ->
+                    scope.launch {
+                        analytics.logEvent(
+                            "search_tags_updated",
+                            mapOf("tags" to newTagIds.toList())
+                        )
+                        onSearch(
+                            uiState.activeFilters.committedQuery,
+                            newTagIds,
+                            uiState.activeFilters.selectedAuthorIds,
+                        )
+                        showTagSheet.value = false
+                        searchBarState.animateToCollapsed()
+                    }
+                },
+                onDismiss = {
+                    showTagSheet.value = false
+                },
+            )
+        }
+        if (showAuthorSheet.value) {
+            GenericFilterSheet(
+                sheetState = authorSheetState,
+                items = uiState.availableFilters.authors,
+                selectedIds = uiState.activeFilters.selectedAuthorIds,
+                idProvider = { it.id },
+                labelProvider = { "${it.name} [${it.announcementCount}]" },
+                groupProvider = { it.name.first().uppercaseChar() },
+                titlePlaceholder = "Search Authors...",
+                onApply = { newAuthorIds ->
+                    scope.launch {
+                        analytics.logEvent(
+                            "search_authors_updated", mapOf("authors" to newAuthorIds.toList())
+                        )
+                        onSearch(
+                            uiState.activeFilters.committedQuery,
+                            uiState.activeFilters.selectedTagIds,
+                            newAuthorIds,
+                        )
+                        showAuthorSheet.value = false
+                        searchBarState.animateToCollapsed()
+                    }
+                },
+                onDismiss = {
+                    showAuthorSheet.value = false
+                },
+            )
         }
     }
-
-    if (showTagSheet) {
-        GenericFilterSheet(
-            items = uiState.tags,
-            selectedIds = uiState.selectedTagIds,
-            onApply = { newTagIds ->
-                analytics.logEvent(
-                    "search_tags_updated", mapOf("tags" to newTagIds.toList())
-                )
-                updateSearchResults(uiState.query, newTagIds, uiState.selectedAuthorIds)
-                scope.launch { tagSheetState.hide() }.invokeOnCompletion {
-                    if (!tagSheetState.isVisible) {
-                        showTagSheet = false
-                    }
-                }
-            },
-            sheetState = tagSheetState,
-            onDismiss = {
-                scope.launch { tagSheetState.hide() }.invokeOnCompletion {
-                    if (!tagSheetState.isVisible) {
-                        showTagSheet = false
-                    }
-                }
-            },
-            idProvider = { it.id },
-            labelProvider = { it.title },
-            titlePlaceholder = "Search Tags..."
-        )
-    }
-    if (showAuthorSheet) {
-        GenericFilterSheet(
-            items = uiState.authors, // List<Author>
-            selectedIds = uiState.selectedAuthorIds,
-            onApply = { newAuthorIds ->
-                analytics.logEvent(
-                    "search_authors_updated", mapOf("authors" to newAuthorIds.toList())
-                )
-                updateSearchResults(uiState.query, uiState.selectedTagIds, newAuthorIds)
-                scope.launch {
-                    searchBarState.animateToCollapsed()
-                    scope.launch { authorSheetState.hide() }.invokeOnCompletion {
-                        if (!authorSheetState.isVisible) {
-                            showAuthorSheet = false
-                        }
-
-                    }
-                }
-            },
-            sheetState = authorSheetState,
-            onDismiss = {
-                scope.launch {
-                    searchBarState.animateToCollapsed()
-                    scope.launch { authorSheetState.hide() }.invokeOnCompletion {
-                        if (!authorSheetState.isVisible) {
-                            showAuthorSheet = false
-                        }
-                    }
-                }
-            },
-            idProvider = { it.id },
-            labelProvider = { "${it.name} [${it.announcementCount}]" },
-            groupProvider = { it.name.first().uppercaseChar() }, // Turns on grouping
-            titlePlaceholder = "Search Authors..."
-        )
-    }
-}
-
-//TODO This is copied/pasted across AnnouncementScreen/SearchScreen/HomeScreen, find a common module and hoist it
-fun shareAnnouncement(
-    context: Context, announcementId: Int
-) {
-    val url = "https://aboard.iee.ihu.gr/announcements/$announcementId"
-    val sendIntent: Intent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, url)
-        type = "text/plain"
-        putExtra(Intent.EXTRA_SUBJECT, "Check out this announcement!")
-    }
-    val shareIntent = Intent.createChooser(sendIntent, "Share Announcement via")
-    context.startActivity(shareIntent)
 }

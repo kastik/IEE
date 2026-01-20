@@ -1,5 +1,6 @@
 package com.kastik.apps.core.ui.pagging
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,6 +30,7 @@ import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.announcement.AnnouncementCard
 import com.kastik.apps.core.ui.announcement.AnnouncementCardShimmer
+import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import kotlinx.collections.immutable.persistentListOf
@@ -39,28 +41,31 @@ import kotlinx.coroutines.flow.flowOf
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnnouncementFeed(
+    announcements: LazyPagingItems<Announcement>,
     modifier: Modifier = Modifier,
-    onAnnouncementClick: (Int) -> Unit,
+    lazyListState: LazyListState = rememberLazyListState(),
+    scrollBehavior: SearchBarScrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior(),
+    onAnnouncementClick: (Int) -> Unit = {},
     onAnnouncementLongClick: (Int) -> Unit = {},
-    lazyAnnouncements: LazyPagingItems<Announcement>,
-    lazyListState: LazyListState,
-    scrollBehavior: SearchBarScrollBehavior
+    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    val refreshState = lazyAnnouncements.loadState.refresh
-    val appendState = lazyAnnouncements.loadState.append
+    val refreshState = announcements.loadState.refresh
+    val appendState = announcements.loadState.append
     val vibrator = LocalHapticFeedback.current
+    val _ = LocalAnalytics.current
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
-        state = lazyListState
+        state = lazyListState,
+        contentPadding = contentPadding
     ) {
         items(
-            count = lazyAnnouncements.itemCount,
-            key = lazyAnnouncements.itemKey { it.id },
-            contentType = lazyAnnouncements.itemContentType { "announcement_card" }) { index ->
-            val item = lazyAnnouncements[index]
+            count = announcements.itemCount,
+            key = announcements.itemKey { it.id },
+            contentType = announcements.itemContentType { "announcement_card" }) { index ->
+            val item = announcements[index]
             item?.let {
                 AnnouncementCard(
                     onClick = {
@@ -94,7 +99,7 @@ fun AnnouncementFeed(
             (appendState is LoadState.Error) && (refreshState is LoadState.NotLoading) -> item {
                 StatusContent(
                     message = "Failed to load more announcements.",
-                    action = { lazyAnnouncements.retry() },
+                    action = { announcements.retry() },
                     actionText = "Retry"
                 )
             }
@@ -131,16 +136,11 @@ private fun AnnouncementFeedPreview() {
         )
     )
     val lazyPagingItems = flowOf(PagingData.from(sampleAnnouncements)).collectAsLazyPagingItems()
-    val lazyListState = rememberLazyListState()
-    val scrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
 
     Surface {
         AppsAboardTheme {
             AnnouncementFeed(
-                onAnnouncementClick = {},
-                lazyAnnouncements = lazyPagingItems,
-                lazyListState = lazyListState,
-                scrollBehavior = scrollBehavior,
+                announcements = lazyPagingItems,
             )
         }
     }
