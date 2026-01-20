@@ -1,6 +1,7 @@
 package com.kastik.apps.core.ui.topbar
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,9 +19,9 @@ fun SearchBarCollapsed(
     inputField: @Composable () -> Unit,
     scrollBehavior: SearchBarScrollBehavior,
     modifier: Modifier = Modifier,
-    navigationIconButton: @Composable () -> Unit = {},
-    actionIcons: @Composable RowScope.() -> Unit = {},
-    bottomContent: @Composable () -> Unit = {},
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
+    secondaryActions: @Composable () -> Unit = {},
 ) {
     Surface(
         modifier = modifier
@@ -31,10 +32,10 @@ fun SearchBarCollapsed(
                 modifier = modifier,
                 inputField = inputField,
                 state = searchBarState,
-                navigationIcon = navigationIconButton,
-                actions = actionIcons,
+                navigationIcon = navigationIcon,
+                actions = actions,
             )
-            bottomContent()
+            Row { secondaryActions() }
         }
     }
 }

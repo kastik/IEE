@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.component.IEEFilterChip
 
 @Composable
-fun SupplementaryContent(
+fun SearchBarFilters(
     selectedTagsCount: Int,
     selectedAuthorsCount: Int,
     openTagSheet: () -> Unit,
