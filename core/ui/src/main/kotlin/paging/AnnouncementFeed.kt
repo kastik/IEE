@@ -1,4 +1,4 @@
-package com.kastik.apps.core.ui.pagging
+package com.kastik.apps.core.ui.paging
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
