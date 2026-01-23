@@ -1,6 +1,7 @@
 package com.kastik.apps.core.domain.repository
 
 import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
 
@@ -13,4 +14,6 @@ interface UserPreferencesRepository {
     suspend fun setDynamicColor(enabled: Boolean)
     fun getSortType(): Flow<SortType>
     suspend fun setSortType(sortType: SortType)
+    fun getSearchScope(): Flow<SearchScope>
+    suspend fun setSearchScope(searchScope: SearchScope)
 }

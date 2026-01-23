@@ -3,6 +3,7 @@ package com.kastik.apps.core.domain.usecases
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -77,4 +78,19 @@ class SetSortTypeUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(sortType: SortType) =
         userPreferencesRepository.setSortType(sortType)
+}
+
+
+class GetSearchScopeUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<SearchScope> =
+        userPreferencesRepository.getSearchScope()
+}
+
+class SetSearchScopeUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke(searchScope: SearchScope) =
+        userPreferencesRepository.setSearchScope(searchScope)
 }

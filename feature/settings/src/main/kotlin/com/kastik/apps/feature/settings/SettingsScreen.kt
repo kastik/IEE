@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.ElevatedCard
@@ -48,10 +50,13 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.placeholder.LoadingContent
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -77,6 +82,8 @@ internal fun SettingsRoute(
                     setTheme = viewModel::setTheme,
                     sortType = state.sortType,
                     setSortType = viewModel::setSortType,
+                    searchScope = state.searchScope,
+                    setSearchScope = viewModel::setSearchScope,
                     dynamicColor = state.dynamicColor,
                     setDynamicColor = viewModel::setDynamicColor,
                     navigateToLicenses = navigateToLicenses
@@ -96,6 +103,8 @@ private fun SettingsScreenContent(
     setTheme: (UserTheme) -> Unit = {},
     sortType: SortType,
     setSortType: (SortType) -> Unit = {},
+    searchScope: SearchScope,
+    setSearchScope: (SearchScope) -> Unit = {},
     dynamicColor: Boolean,
     setDynamicColor: (Boolean) -> Unit = {},
     navigateToLicenses: () -> Unit = {}
@@ -123,155 +132,220 @@ private fun SettingsScreenContent(
                 })
 
         }) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.Start
         ) {
-            item {
-                Spacer(Modifier.height(8.dp))
-                ElevatedCard(
-                    modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp)
-                ) {
-                    Column {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 14.dp)
-                        ) {
-                            Text("Sort by", style = MaterialTheme.typography.bodyLarge)
-                            Spacer(Modifier.height(8.dp))
-                            SortingSegmentedButton(
-                                selected = sortType, onSelected = { sortType ->
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                    setSortType(sortType)
-                                    analytics.logEvent(
-                                        "sort_type_changed", mapOf("sort_type" to sortType.name)
-                                    )
-                                })
-                        }
+            Text("Feed Options", style = MaterialTheme.typography.titleMedium)
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp)
+            ) {
+                Column {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                    ) {
+                        Text("Sort by", style = MaterialTheme.typography.bodyLarge)
+                        Spacer(Modifier.height(8.dp))
+                        SettingsegmentedButton(
+                            selected = sortType,
+                            options = SortType.entries.toImmutableList(),
+                            label = {
+                                when (it) {
+                                    SortType.Priority -> "Priority"
+                                    SortType.DESC -> "Descending"
+                                    SortType.ASC -> "Ascending"
+                                }
+                            },
+                            onSelected = { sortType ->
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                setSortType(sortType)
+                                analytics.logEvent(
+                                    "sort_type_changed", mapOf("sort_type" to sortType.name)
+                                )
+                            })
                     }
                 }
             }
 
-            item {
-                Text("Appearance", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(8.dp))
-                ElevatedCard(
-                    modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp)
-                ) {
-                    Column {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 14.dp)
-                        ) {
-                            Text("Theme", style = MaterialTheme.typography.bodyLarge)
-                            Spacer(Modifier.height(8.dp))
-                            ThemeSegmentedButton(
-                                selected = theme, onSelected = { theme ->
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                    setTheme(theme)
-                                    analytics.logEvent(
-                                        "theme_changed", mapOf("theme" to theme.name)
-                                    )
+            Text("Search Options", style = MaterialTheme.typography.titleMedium)
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp)
+            ) {
+                Column {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                    ) {
+                        Text("Search in", style = MaterialTheme.typography.bodyLarge)
+                        Spacer(Modifier.height(8.dp))
+                        SettingsegmentedButton(
+                            selected = searchScope,
+                            options = SearchScope.entries.toImmutableList(),
+                            label = {
+                                when (it) {
+                                    SearchScope.Title -> "Title"
+                                    SearchScope.Body -> "Body"
+                                    SearchScope.Title_And_Body -> "Both"
                                 }
+                            },
+                            onSelected = { searchScope ->
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                setSearchScope(searchScope)
+                                analytics.logEvent(
+                                    "search_scope_changed", mapOf("search_type" to searchScope.name)
+                                )
+                            })
+                    }
+                }
+            }
 
+
+
+            Text("Appearance", style = MaterialTheme.typography.titleMedium)
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp)
+            ) {
+                Column {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                    ) {
+                        Text("Theme", style = MaterialTheme.typography.bodyLarge)
+                        Spacer(Modifier.height(8.dp))
+                        SettingsegmentedButton(
+                            selected = theme,
+                            options = UserTheme.entries.toImmutableList(),
+                            label = {
+                                when (it) {
+                                    UserTheme.FOLLOW_SYSTEM -> "System"
+                                    UserTheme.LIGHT -> "Light"
+                                    UserTheme.DARK -> "Dark"
+                                }
+                            },
+                            onSelected = { theme ->
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                setTheme(theme)
+                                analytics.logEvent(
+                                    "theme_changed", mapOf("theme" to theme.name)
+                                )
+                            })
+                    }
+                    HorizontalDivider()
+                    SettingSwitchRow(
+                        title = "Dynamic color",
+                        subtitle = "Use colors from the wallpaper",
+                        checked = dynamicColor,
+                        onCheckedChange = { enabled ->
+                            if (enabled) {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                            } else {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                            }
+                            setDynamicColor(enabled)
+                            analytics.logEvent(
+                                "dynamic_color_changed",
+                                mapOf("dynamic_color_enabled" to enabled.toString())
                             )
-                        }
-                        HorizontalDivider()
-                        SettingSwitchRow(
-                            title = "Dynamic color",
-                            subtitle = "Use colors from the wallpaper",
-                            checked = dynamicColor,
-                            onCheckedChange = { enabled ->
-                                if (enabled) {
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                } else {
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                                }
-                                setDynamicColor(enabled)
-                                analytics.logEvent(
-                                    "dynamic_color_changed",
-                                    mapOf("dynamic_color_enabled" to enabled.toString())
-                                )
-                            })
-                    }
+                        })
                 }
             }
 
-            item {
-                Text("Notifications", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(8.dp))
-                ElevatedCard(
-                    modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp)
-                ) {
-                    Column {
-                        SettingSwitchRow(
-                            title = "Push notifications",
-                            subtitle = "Receive updates and announcements",
-                            checked = areNotificationGranted,
-                            onCheckedChange = {
-                                analytics.logEvent(
-                                    "push_notifications_changed",
-                                    mapOf("push_notifications_enabled" to it.toString())
-                                )
-                                val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                                    }
-                                } else {
-                                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                        data = Uri.fromParts("package", context.packageName, null)
-                                    }
+            Text("Notifications", style = MaterialTheme.typography.titleMedium)
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp)
+            ) {
+                Column {
+                    SettingSwitchRow(
+                        title = "Push notifications",
+                        subtitle = "Receive updates and announcements",
+                        checked = areNotificationGranted,
+                        onCheckedChange = {
+                            analytics.logEvent(
+                                "push_notifications_changed",
+                                mapOf("push_notifications_enabled" to it.toString())
+                            )
+                            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                                 }
-                                context.startActivity(intent)
-                            })
-                        HorizontalDivider()
-                        SettingSwitchRow(
-                            title = "Email updates",
-                            subtitle = "Send summaries to your inbox",
-                            checked = false,
-                            onCheckedChange = {
-                                val text = "Not implemented yet!"
-                                val duration = Toast.LENGTH_SHORT
-                                val toast = Toast.makeText(context, text, duration) // in Activity
-                                toast.show()
+                            } else {
+                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                    data = Uri.fromParts("package", context.packageName, null)
+                                }
+                            }
+                            context.startActivity(intent)
+                        })
+                    HorizontalDivider()
+                    SettingSwitchRow(
+                        title = "Email updates",
+                        subtitle = "Send summaries to your inbox",
+                        checked = false,
+                        onCheckedChange = {
+                            val text = "Not implemented yet!"
+                            val duration = Toast.LENGTH_SHORT
+                            val toast = Toast.makeText(context, text, duration) // in Activity
+                            toast.show()
 
-                            })
-                    }
+                        })
                 }
             }
 
-            item {
-                Text("About", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(8.dp))
-                ElevatedCard(
-                    modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp)
-                ) {
-                    Column {
-                        SettingNavigationRow(
-                            title = "About app", subtitle = "Version 1.0", onClick = {
-                                val text = "Not implemented yet!"
-                                val duration = Toast.LENGTH_SHORT
-                                val toast = Toast.makeText(context, text, duration) // in Activity
-                                toast.show()
+            Text("About", style = MaterialTheme.typography.titleMedium)
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp)
+            ) {
+                Column {
+                    SettingNavigationRow(
+                        title = "About app", subtitle = "Version 1.0", onClick = {
+                            val text = "Not implemented yet!"
+                            val duration = Toast.LENGTH_SHORT
+                            val toast = Toast.makeText(context, text, duration) // in Activity
+                            toast.show()
 
-                            })
-                        HorizontalDivider()
-                        SettingNavigationRow(
-                            title = "Open source licenses", onClick = {
-                                analytics.logEvent("open_source_licenses_clicked")
-                                navigateToLicenses()
-                            })
-                    }
+                        })
+                    HorizontalDivider()
+                    SettingNavigationRow(
+                        title = "Open source licenses", onClick = {
+                            analytics.logEvent("open_source_licenses_clicked")
+                            navigateToLicenses()
+                        })
                 }
             }
         }
     }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun <T> SettingsegmentedButton(
+    selected: T,
+    options: ImmutableList<T>,
+    label: (T) -> String,
+    onSelected: (T) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SingleChoiceSegmentedButtonRow(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        options.forEachIndexed { index, option ->
+            SegmentedButton(
+                selected = selected == option,
+                onClick = { onSelected(option) },
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)
+            ) {
+                Text(text = label(option))
+            }
+        }
+    }
 }
 
 @Composable
@@ -284,7 +358,11 @@ private fun SettingSwitchRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+            .toggleable(
+                value = checked,
+                onValueChange = onCheckedChange
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
@@ -298,7 +376,8 @@ private fun SettingSwitchRow(
             }
         }
         Switch(
-            checked = checked, onCheckedChange = onCheckedChange
+            checked = checked,
+            onCheckedChange = null
         )
     }
 }
@@ -328,73 +407,6 @@ private fun SettingNavigationRow(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ThemeSegmentedButton(
-    selected: UserTheme, onSelected: (UserTheme) -> Unit
-) {
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        SegmentedButton(
-            selected = selected == UserTheme.FOLLOW_SYSTEM,
-            onClick = { onSelected(UserTheme.FOLLOW_SYSTEM) },
-            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 3)
-        ) {
-            Text("System")
-        }
-
-        SegmentedButton(
-            selected = selected == UserTheme.LIGHT,
-            onClick = { onSelected(UserTheme.LIGHT) },
-            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 3)
-        ) {
-            Text("Light")
-        }
-
-        SegmentedButton(
-            selected = selected == UserTheme.DARK,
-            onClick = { onSelected(UserTheme.DARK) },
-            shape = SegmentedButtonDefaults.itemShape(index = 2, count = 3)
-        ) {
-            Text("Dark")
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SortingSegmentedButton(
-    selected: SortType, onSelected: (SortType) -> Unit
-) {
-    SingleChoiceSegmentedButtonRow(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        SegmentedButton(
-            selected = selected == SortType.Priority,
-            onClick = { onSelected(SortType.Priority) },
-            shape = SegmentedButtonDefaults.itemShape(index = 0, count = 3)
-        ) {
-            Text("Priority")
-        }
-
-        SegmentedButton(
-            selected = selected == SortType.DESC,
-            onClick = { onSelected(SortType.DESC) },
-            shape = SegmentedButtonDefaults.itemShape(index = 1, count = 3)
-        ) {
-            Text("Descending")
-        }
-        SegmentedButton(
-            selected = selected == SortType.ASC,
-            onClick = { onSelected(SortType.ASC) },
-            shape = SegmentedButtonDefaults.itemShape(index = 2, count = 3)
-        ) {
-            Text("Ascending")
-        }
-    }
-}
-
 @Preview
 @Composable
 fun SettingsScreenPreview() {
@@ -405,5 +417,6 @@ fun SettingsScreenPreview() {
         setDynamicColor = {},
         sortType = SortType.Priority,
         setSortType = {},
-    )
+        searchScope = SearchScope.Title,
+        setSearchScope = {})
 }

@@ -1,5 +1,7 @@
 package com.kastik.apps.core.data.repository
 
+import com.kastik.apps.core.data.mappers.toQueryScope
+import com.kastik.apps.core.data.mappers.toSearchScope
 import com.kastik.apps.core.data.mappers.toSort
 import com.kastik.apps.core.data.mappers.toSortType
 import com.kastik.apps.core.data.mappers.toTheme
@@ -7,6 +9,7 @@ import com.kastik.apps.core.data.mappers.toUserTheme
 import com.kastik.apps.core.datastore.PreferencesLocalDataSource
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -50,5 +53,13 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun setSortType(sortType: SortType) = withContext(Dispatchers.IO) {
         preferencesLocalDataSource.setSortType(sortType.toSort())
+    }
+
+    override fun getSearchScope(): Flow<SearchScope> {
+        return preferencesLocalDataSource.getSearchScope().map { it.toSearchScope() }
+    }
+
+    override suspend fun setSearchScope(searchScope: SearchScope) = withContext(Dispatchers.IO) {
+        preferencesLocalDataSource.setSearchScope(searchScope.toQueryScope())
     }
 }

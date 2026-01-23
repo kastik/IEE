@@ -7,6 +7,7 @@ message UserPreferences{
   bool enable_dynamic_color = 2;
   bool has_skipped_sign_in = 3;
   Sort sort_type = 4;
+  QueryScope query_scope = 5;
 }
 
 enum Theme {
@@ -19,4 +20,10 @@ enum Sort {
   Priority = 0;
   ASC = 1;
   DESC = 2;
+}
+
+enum QueryScope {
+  Title = 0;
+  Body = 1;
+  TITLE_AND_BODY = 2;
 }

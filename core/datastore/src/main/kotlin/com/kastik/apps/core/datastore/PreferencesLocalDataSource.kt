@@ -1,6 +1,7 @@
 package com.kastik.apps.core.datastore
 
 import androidx.datastore.core.DataStore
+import com.kastik.apps.core.datastore.proto.QueryScope
 import com.kastik.apps.core.datastore.proto.Sort
 import com.kastik.apps.core.datastore.proto.Theme
 import com.kastik.apps.core.datastore.proto.UserPreferences
@@ -18,6 +19,8 @@ interface PreferencesLocalDataSource {
     suspend fun setDynamicColor(value: Boolean)
     fun getSortType(): Flow<Sort>
     suspend fun setSortType(sortType: Sort)
+    fun getSearchScope(): Flow<QueryScope>
+    suspend fun setSearchScope(queryScope: QueryScope)
 
 }
 
@@ -67,6 +70,18 @@ internal class PreferencesLocalDataSourceImpl @Inject constructor(
         dataStore.updateData { prefs ->
             prefs.toBuilder()
                 .setSortType(sortType)
+                .build()
+        }
+    }
+
+    override fun getSearchScope(): Flow<QueryScope> =
+        dataStore.data.map { it.queryScope }
+
+
+    override suspend fun setSearchScope(queryScope: QueryScope) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setQueryScope(queryScope)
                 .build()
         }
     }
