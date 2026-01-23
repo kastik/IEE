@@ -46,7 +46,7 @@ fun QueryScope.toSearchScope(): SearchScope {
     return when (this) {
         QueryScope.Title -> SearchScope.Title
         QueryScope.Body -> SearchScope.Body
-        QueryScope.TITLE_AND_BODY -> SearchScope.Title_And_Body
+        QueryScope.TITLE_AND_BODY -> SearchScope.TitleAndBody
         QueryScope.UNRECOGNIZED -> SearchScope.Title
     }
 }
@@ -55,6 +55,6 @@ fun SearchScope.toQueryScope(): QueryScope {
     return when (this) {
         SearchScope.Title -> QueryScope.Title
         SearchScope.Body -> QueryScope.Body
-        SearchScope.Title_And_Body -> QueryScope.TITLE_AND_BODY
+        SearchScope.TitleAndBody -> QueryScope.TITLE_AND_BODY
     }
 }

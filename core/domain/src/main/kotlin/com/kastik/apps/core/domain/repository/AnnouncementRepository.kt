@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface AnnouncementRepository {
     fun getPagedAnnouncements(
         sortType: SortType,
-        query: String,
+        titleQuery: String,
+        bodyQuery: String,
         authorIds: List<Int>,
         tagIds: List<Int>
     ): Flow<PagingData<Announcement>>

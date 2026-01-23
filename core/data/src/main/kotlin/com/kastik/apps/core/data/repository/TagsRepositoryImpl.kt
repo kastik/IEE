@@ -30,7 +30,7 @@ internal class TagsRepositoryImpl @Inject constructor(
 
     override suspend fun refreshAnnouncementTags() = withContext(Dispatchers.IO) {
         val remoteTags = tagsRemoteDataSource.fetchAnnouncementTags().data.map { it.toTagEntity() }
-        announcementTagsLocalDataSource.insertOrReplaceTags(remoteTags)
+        announcementTagsLocalDataSource.upsertTags(remoteTags)
     }
 
     override fun getSubscribableTags(): Flow<List<SubscribableTag>> {

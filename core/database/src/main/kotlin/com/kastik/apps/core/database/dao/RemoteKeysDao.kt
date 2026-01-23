@@ -13,8 +13,9 @@ interface RemoteKeysDao {
         """
     SELECT * FROM remote_keys 
     WHERE sortType = :sortType
-    AND announcementId = :id 
-    AND searchQuery = :query 
+    AND announcementId = :id
+    AND titleQuery = :titleQuery
+    AND bodyQuery = :bodyQuery
     AND authorIds = :authorIds 
     AND tagIds = :tagIds
 """
@@ -22,7 +23,8 @@ interface RemoteKeysDao {
     suspend fun getKeyByAnnouncementId(
         id: Int,
         sortType: SortType,
-        query: String,
+        titleQuery: String,
+        bodyQuery: String,
         authorIds: List<Int>,
         tagIds: List<Int>
     ): RemoteKeys?
@@ -34,14 +36,16 @@ interface RemoteKeysDao {
         """
         DELETE FROM REMOTE_KEYS
         WHERE sortType = :sortType
-        AND searchQuery = :query 
+        AND titleQuery = :titleQuery 
+        AND bodyQuery = :bodyQuery 
         AND authorIds = :authorIds
         AND tagIds = :tagIds
     """
     )
     suspend fun clearKeys(
         sortType: SortType,
-        query: String,
+        titleQuery: String,
+        bodyQuery: String,
         authorIds: List<Int>,
         tagIds: List<Int>
     )

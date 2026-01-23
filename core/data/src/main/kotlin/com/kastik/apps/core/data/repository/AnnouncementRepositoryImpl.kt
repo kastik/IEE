@@ -42,7 +42,8 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
     @OptIn(ExperimentalPagingApi::class)
     override fun getPagedAnnouncements(
         sortType: SortType,
-        query: String,
+        titleQuery: String,
+        bodyQuery: String,
         authorIds: List<Int>,
         tagIds: List<Int>
     ) = Pager(
@@ -53,7 +54,8 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
             enablePlaceholders = true
         ), remoteMediator = AnnouncementRemoteMediator(
             sortType = sortType,
-            query = query,
+            titleQuery = titleQuery,
+            bodyQuery = bodyQuery,
             authorIds = authorIds,
             tagIds = tagIds,
             database = database,
@@ -62,7 +64,8 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         ), pagingSourceFactory = {
             announcementLocalDataSource.getPagedAnnouncements(
                 sortType = sortType,
-                query = query,
+                titleQuery = titleQuery,
+                bodyQuery = bodyQuery,
                 tagIds = tagIds,
                 authorIds = authorIds,
             )
@@ -94,18 +97,16 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         }
 
         database.withTransaction {
-            authorLocalDataSource.insertOrIgnoreAuthors(listOf(remote.author.toAuthorEntity()))
-            tagsLocalDataSource.insertOrIgnoreTags(remote.tags.map { it.toTagEntity() })
+            authorLocalDataSource.upsertAuthors(remote.author.toAuthorEntity())
+            tagsLocalDataSource.upsertTags(remote.tags.map { it.toTagEntity() })
 
-            announcementLocalDataSource.insertOrReplaceAnnouncement(remote.toAnnouncementEntity())
+            announcementLocalDataSource.upsertAnnouncements(remote.toAnnouncementEntity())
 
-            announcementLocalDataSource.insertOrReplaceTagCrossRefs(remote.toTagCrossRefs())
-            announcementLocalDataSource.insertOrReplaceAnnouncementBody(
-                remote.extractImages(
-                    base64ImageExtractor
-                ).toBodyEntity()
+            announcementLocalDataSource.upsertTagCrossRefs(remote.toTagCrossRefs())
+            announcementLocalDataSource.upsertBodies(
+                remote.extractImages(base64ImageExtractor).toBodyEntity()
             )
-            announcementLocalDataSource.insertOrReplaceAnnouncementAttachments(remote.attachments.map { it.toAttachmentEntity() })
+            announcementLocalDataSource.upsertAttachments(remote.attachments.map { it.toAttachmentEntity() })
         }
     }
 

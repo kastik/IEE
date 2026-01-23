@@ -19,11 +19,11 @@ import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
 import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
-import java.net.UnknownHostException
 
 @OptIn(ExperimentalPagingApi::class)
 class AnnouncementRemoteMediator(
-    private val query: String = "",
+    private val titleQuery: String = "",
+    private val bodyQuery: String = "",
     private val tagIds: List<Int> = emptyList(),
     private val authorIds: List<Int> = emptyList(),
     private val sortType: SortType = SortType.DESC,
@@ -43,7 +43,8 @@ class AnnouncementRemoteMediator(
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, AnnouncementPreviewRelation>
-    ): MediatorResult {
+    ): MediatorResult = try {
+
         val page = when (loadType) {
 
             LoadType.REFRESH -> 1
@@ -61,75 +62,73 @@ class AnnouncementRemoteMediator(
             }
         }
 
-        try {
-            val response = announcementRemoteDataSource.fetchPagedAnnouncements(
-                page = page,
-                title = query,
-                body = query,
-                tagId = tagIds,
-                authorId = authorIds,
-                perPage = state.config.pageSize,
-                sortBy = sortType
-            )
+        val response = announcementRemoteDataSource.fetchPagedAnnouncements(
+            page = page,
+            title = titleQuery,
+            body = bodyQuery,
+            tagId = tagIds,
+            authorId = authorIds,
+            perPage = state.config.pageSize,
+            sortBy = sortType
+        )
 
-            val endOfPaginationReached = response.data.isEmpty() || page >= response.meta.lastPage
+        val endOfPaginationReached = response.data.isEmpty() || page >= response.meta.lastPage
 
-            database.withTransaction {
-                if (loadType == LoadType.REFRESH) {
-                    remoteKeysDao.clearKeys(
-                        sortType = sortType,
-                        query = query,
-                        authorIds = authorIds,
-                        tagIds = tagIds,
-                    )
-                }
-
-                val prevKey = if (page == 1) null else page - 1
-                val nextKey = if (endOfPaginationReached) null else page + 1
-
-                val keys = response.data.map { dto ->
-                    RemoteKeys(
-                        announcementId = dto.id,
-                        searchQuery = query,
-                        authorIds = authorIds,
-                        tagIds = tagIds,
-                        sortType = sortType,
-                        prevKey = prevKey,
-                        nextKey = nextKey
-                    )
-                }
-
-                remoteKeysDao.insertOrReplaceKeys(keys)
-                insertAnnouncement(response)
+        database.withTransaction {
+            if (loadType == LoadType.REFRESH) {
+                remoteKeysDao.clearKeys(
+                    sortType = sortType,
+                    titleQuery = titleQuery,
+                    bodyQuery = bodyQuery,
+                    authorIds = authorIds,
+                    tagIds = tagIds,
+                )
             }
-            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
 
-        } catch (e: UnknownHostException) {
-            return MediatorResult.Error(e)
-        } catch (e: Exception) {
-            return MediatorResult.Error(e)
+            val prevKey = if (page == 1) null else page - 1
+            val nextKey = if (endOfPaginationReached) null else page + 1
+
+            val keys = response.data.map { dto ->
+                RemoteKeys(
+                    announcementId = dto.id,
+                    titleQuery = titleQuery,
+                    bodyQuery = bodyQuery,
+                    authorIds = authorIds,
+                    tagIds = tagIds,
+                    sortType = sortType,
+                    prevKey = prevKey,
+                    nextKey = nextKey
+                )
+            }
+
+            remoteKeysDao.insertOrReplaceKeys(keys)
+            insertAnnouncement(response)
         }
+        return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+
+    } catch (e: Exception) {
+        return MediatorResult.Error(e)
     }
 
     private suspend fun insertAnnouncement(dto: AnnouncementPageResponse) {
 
         val mappedAuthors = dto.data.map { it.author.toAuthorEntity() }
-        authorLocalDataSource.insertOrIgnoreAuthors(mappedAuthors)
+        authorLocalDataSource.upsertAuthors(mappedAuthors)
 
         val mappedAnnouncements = dto.data.map { it.toAnnouncementEntity() }
-        announcementLocalDataSource.insertOrIgnoreAnnouncements(mappedAnnouncements)
+        announcementLocalDataSource.upsertAnnouncements(mappedAnnouncements)
 
         val mappedBodies = dto.data.map { it.extractImages(base64ImageExtractor).toBodyEntity() }
-        announcementLocalDataSource.insertOrIgnoreAnnouncementBody(mappedBodies)
+        announcementLocalDataSource.upsertBodies(mappedBodies)
 
         val mappedAttachments = dto.data.flatMap { it.attachments.map { it.toAttachmentEntity() } }
-        announcementLocalDataSource.insertOrIgnoreAnnouncementAttachments(mappedAttachments)
+        announcementLocalDataSource.upsertAttachments(mappedAttachments)
 
         val mappedTags = dto.data.flatMap { it.tags.map { it.toTagEntity() } }
-        tagsLocalDataSource.insertOrIgnoreTags(mappedTags)
+        tagsLocalDataSource.upsertTags(mappedTags)
 
         val mappedTagCrossRefs = dto.data.flatMap { it.toTagCrossRefs() }
-        announcementLocalDataSource.insertOrIgnoreTagCrossRefs(mappedTagCrossRefs)
+        announcementLocalDataSource.upsertTagCrossRefs(mappedTagCrossRefs)
 
     }
 
@@ -138,7 +137,7 @@ class AnnouncementRemoteMediator(
             ?: return null
 
         return remoteKeysDao.getKeyByAnnouncementId(
-            lastItem.announcement.id, sortType, query, authorIds, tagIds
+            lastItem.announcement.id, sortType, titleQuery, bodyQuery, authorIds, tagIds
         )
     }
 }

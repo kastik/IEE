@@ -2,10 +2,9 @@ package com.kastik.apps.core.database.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.kastik.apps.core.database.entities.AnnouncementEntity
 import com.kastik.apps.core.database.entities.AttachmentEntity
 import com.kastik.apps.core.database.entities.BodyEntity
@@ -18,29 +17,23 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AnnouncementDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertOrIgnoreAnnouncements(announcements: List<AnnouncementEntity>)
+    @Upsert
+    suspend fun upsertAnnouncements(announcements: List<AnnouncementEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertOrIgnoreTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
+    @Upsert
+    suspend fun upsertAnnouncements(announcement: AnnouncementEntity)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertOrIgnoreAnnouncementBody(bodies: List<BodyEntity>)
+    @Upsert
+    suspend fun upsertTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertOrIgnoreAnnouncementAttachments(attachments: List<AttachmentEntity>)
+    @Upsert
+    suspend fun upsertBodies(bodies: List<BodyEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceAnnouncement(announcement: AnnouncementEntity)
+    @Upsert
+    suspend fun upsertBodies(body: BodyEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceAnnouncementBody(body: BodyEntity)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceAnnouncementAttachments(attachments: List<AttachmentEntity>)
+    @Upsert
+    suspend fun upsertAttachments(attachments: List<AttachmentEntity>)
 
     //TODO Add support for tags, authors
     @Transaction
@@ -54,9 +47,9 @@ interface AnnouncementDao {
     CASE WHEN :sortType = 'Priority' THEN 
         (CASE WHEN isPinned = 1 AND (pinnedUntil IS NULL OR pinnedUntil > strftime('%Y-%m-%d %H:%M', 'now', 'localtime')) THEN 1 ELSE 0 END)
     END DESC,
-    CASE WHEN :sortType = 'Priority' THEN createdAt END DESC,
-    CASE WHEN :sortType = 'ASC' THEN createdAt END ASC,
-    CASE WHEN :sortType = 'DESC' THEN createdAt END DESC
+    CASE WHEN :sortType = 'Priority' THEN updatedAt END DESC,
+    CASE WHEN :sortType = 'ASC' THEN updatedAt END ASC,
+    CASE WHEN :sortType = 'DESC' THEN updatedAt END DESC
     LIMIT 5
 """
     )
@@ -70,7 +63,8 @@ interface AnnouncementDao {
         """
         SELECT announcemententity.* FROM announcemententity
         INNER JOIN remote_keys ON announcemententity.id = remote_keys.announcementId
-        WHERE remote_keys.searchQuery = :query
+        WHERE remote_keys.titleQuery = :titleQuery
+        AND remote_keys.bodyQuery = :bodyQuery
         AND remote_keys.authorIds = :authorIds
         AND remote_keys.tagIds = :tagIds
         AND remote_keys.sortType = :sortType
@@ -78,13 +72,14 @@ interface AnnouncementDao {
             CASE WHEN :sortType = 'Priority' THEN 
             (CASE WHEN isPinned = 1 AND (pinnedUntil IS NULL OR pinnedUntil > strftime('%Y-%m-%d %H:%M', 'now', 'localtime')) THEN 1 ELSE 0 END)
             END DESC,
-        CASE WHEN :sortType = 'Priority' THEN createdAt END DESC,
-        CASE WHEN :sortType = 'ASC' THEN createdAt END ASC,
-        CASE WHEN :sortType = 'DESC' THEN createdAt END DESC
+        CASE WHEN :sortType = 'Priority' THEN updatedAt END DESC,
+        CASE WHEN :sortType = 'ASC' THEN updatedAt END ASC,
+        CASE WHEN :sortType = 'DESC' THEN updatedAt END DESC
     """
     )
     fun getPagedAnnouncements(
-        query: String = "",
+        titleQuery: String = "",
+        bodyQuery: String = "",
         tagIds: List<Int> = emptyList(),
         authorIds: List<Int> = emptyList(),
         sortType: SortType = SortType.DESC

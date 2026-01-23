@@ -25,6 +25,6 @@ internal class AuthorRepositoryImpl @Inject constructor(
 
     override suspend fun refreshAuthors() = withContext(Dispatchers.IO) {
         val authors = authorRemoteDataSource.fetchAuthors()
-        authorLocalDataSource.insertOrReplaceAuthors(authors.map { it.toAuthorEntity() })
+        authorLocalDataSource.upsertAuthors(authors.map { it.toAuthorEntity() })
     }
 }

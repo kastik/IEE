@@ -62,7 +62,3 @@ fun NavGraphBuilder.searchScreen(
         )
     }
 }
-
-
-
-

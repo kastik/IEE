@@ -8,6 +8,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -23,8 +24,9 @@ class GetPagedAnnouncementsUseCase @Inject constructor(
         return userPreferencesRepository.getSortType()
             .flatMapLatest { sortType ->
                 announcementRepository.getPagedAnnouncements(
-                    sortType,
-                    query = "",
+                    sortType = sortType,
+                    titleQuery = "",
+                    bodyQuery = "",
                     authorIds = emptyList(),
                     tagIds = emptyList(),
                 )
@@ -42,10 +44,20 @@ class GetPagedFilteredAnnouncementsUseCase @Inject constructor(
         authorIds: List<Int>,
         tagIds: List<Int>
     ): Flow<PagingData<Announcement>> =
-        userPreferencesRepository.getSortType()
-            .flatMapLatest { sortType ->
-                announcementRepository.getPagedAnnouncements(sortType, query, authorIds, tagIds)
-            }
+        combine(
+            userPreferencesRepository.getSortType(),
+            userPreferencesRepository.getSearchScope()
+        ) { sortType, searchScope ->
+            sortType to searchScope
+        }.flatMapLatest { (sortType, searchScope) ->
+            announcementRepository.getPagedAnnouncements(
+                sortType = sortType,
+                titleQuery = query.takeIf { searchScope.includesTitle } ?: "",
+                bodyQuery = query.takeIf { searchScope.includesBody } ?: "",
+                authorIds = authorIds,
+                tagIds = tagIds
+            )
+        }
 }
 
 class GetSearchQuickResultsAnnouncementsUseCase @Inject constructor(

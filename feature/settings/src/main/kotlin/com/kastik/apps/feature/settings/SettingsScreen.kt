@@ -193,7 +193,7 @@ private fun SettingsScreenContent(
                                 when (it) {
                                     SearchScope.Title -> "Title"
                                     SearchScope.Body -> "Body"
-                                    SearchScope.Title_And_Body -> "Both"
+                                    SearchScope.TitleAndBody -> "Both"
                                 }
                             },
                             onSelected = { searchScope ->

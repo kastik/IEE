@@ -6,7 +6,8 @@ import com.kastik.apps.core.model.aboard.SortType
 @Entity(
     tableName = "remote_keys",
     primaryKeys = [
-        "searchQuery",
+        "titleQuery",
+        "bodyQuery",
         "authorIds",
         "tagIds",
         "sortType",
@@ -15,7 +16,8 @@ import com.kastik.apps.core.model.aboard.SortType
 )
 data class RemoteKeys(
     val announcementId: Int,
-    val searchQuery: String,
+    val titleQuery: String,
+    val bodyQuery: String,
     val authorIds: List<Int>,
     val tagIds: List<Int>,
     val sortType: SortType,
