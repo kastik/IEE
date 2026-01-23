@@ -5,7 +5,8 @@ import com.kastik.apps.core.model.aboard.SortType
 
 val announcementOnePageOneNoFilter = RemoteKeys(
     announcementId = 1,
-    searchQuery = "",
+    titleQuery = "",
+    bodyQuery = "",
     authorIds = emptyList(),
     tagIds = emptyList(),
     sortType = SortType.DESC,
@@ -38,7 +39,8 @@ val noFilteredRemoteKeys = listOf(
 
 val announcementOnePageOneStringFilter = RemoteKeys(
     announcementId = 1,
-    searchQuery = "filter",
+    titleQuery = "filter",
+    bodyQuery = "",
     authorIds = emptyList(),
     tagIds = emptyList(),
     sortType = SortType.DESC,

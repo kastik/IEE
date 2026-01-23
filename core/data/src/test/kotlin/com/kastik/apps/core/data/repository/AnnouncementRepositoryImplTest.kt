@@ -12,6 +12,7 @@ import com.kastik.apps.core.testing.dao.FakeAnnouncementDao
 import com.kastik.apps.core.testing.datasource.remote.FakeAnnouncementRemoteDataSource
 import com.kastik.apps.core.testing.db.FakeAppDatabase
 import com.kastik.apps.core.testing.testdata.announcementDetailsRelationTestData
+import com.kastik.apps.core.testing.utils.FakeBase64ImageExtractor
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.mockkStatic
@@ -28,11 +29,14 @@ class AnnouncementRepositoryImplTest {
     private val fakeDatabase = FakeAppDatabase()
     private val announcementDao = fakeDatabase.announcementDao() as FakeAnnouncementDao
     private val fakeAnnouncementRemoteDataSource = FakeAnnouncementRemoteDataSource()
+    private val fakeBase64ImageExtractor = FakeBase64ImageExtractor()
+
 
     private val announcementRepoImpl =
         AnnouncementRepositoryImpl(
             database = fakeDatabase,
-            announcementRemoteDataSource = fakeAnnouncementRemoteDataSource
+            announcementRemoteDataSource = fakeAnnouncementRemoteDataSource,
+            base64ImageExtractor = fakeBase64ImageExtractor
         )
 
     @Before
@@ -62,7 +66,8 @@ class AnnouncementRepositoryImplTest {
         // This triggers the Pager -> Mediator -> DB -> UI flow and waits for data
         val result: List<Announcement> = announcementRepoImpl.getPagedAnnouncements(
             sortType = SortType.DESC,
-            query = "",
+            titleQuery = "",
+            bodyQuery = "",
             authorIds = emptyList(),
             tagIds = emptyList()
         ).asSnapshot()

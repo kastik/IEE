@@ -223,7 +223,8 @@ val announcementPageResponseTestData = listOf(
 val remoteKeys = baseAnnouncementPageResponseTestData.data.map { dto ->
     RemoteKeys(
         announcementId = dto.id,
-        searchQuery = "",
+        titleQuery = "",
+        bodyQuery = "",
         authorIds = emptyList(),
         tagIds = emptyList(),
         sortType = SortType.DESC,

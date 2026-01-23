@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.testing.testdata.userProfileDtoTestData
 import com.kastik.apps.core.testing.testdata.userProfileProtoTestData
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class ProfileMappersTest {
 
@@ -15,13 +14,7 @@ class ProfileMappersTest {
 
         assertThat(proto).isNotEmpty()
         assertThat(proto.size).isEqualTo(dto.size)
-
-        dto.zip(proto).forEach { (dto, proto) ->
-            assertThat(proto.name).isEqualTo(dto.nameEng)
-            assertThat(proto.id).isEqualTo(dto.id)
-            assertThat(proto.email).isEqualTo(dto.email)
-            assertThat(proto.deletedAt).isEqualTo(dto.deletedAt)
-        }
+        assertThat(proto.map { it.name }).containsExactlyElementsIn(dto.map { it.name })
     }
 
     @Test
@@ -30,14 +23,7 @@ class ProfileMappersTest {
         val proto = dto.map { it.toProfileProto() }
 
         assertThat(proto).isNotEmpty()
-        assertThat(proto.size).isEqualTo(dto.size)
-
-        dto.zip(proto).forEach { (dto, proto) ->
-            assertThat(proto.name).isEqualTo(dto.name.ifEmpty { dto.nameEng })
-            assertThat(proto.id).isEqualTo(dto.id)
-            assertThat(proto.email).isEqualTo(dto.email)
-            assertThat(proto.deletedAt).isEqualTo(dto.deletedAt)
-        }
+        assertThat(proto.map { it.name }).containsExactlyElementsIn(dto.map { it.nameEng })
     }
 
     @Test

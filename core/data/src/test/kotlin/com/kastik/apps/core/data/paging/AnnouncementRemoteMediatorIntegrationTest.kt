@@ -10,6 +10,7 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.testing.datasource.remote.FakeAnnouncementRemoteDataSource
 import com.kastik.apps.core.testing.db.MemoryDatabase
 import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
+import com.kastik.apps.core.testing.utils.FakeBase64ImageExtractor
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -22,15 +23,18 @@ class AnnouncementRemoteMediatorIntegrationTest : MemoryDatabase(
 ) {
 
     private val fakeAnnouncementRemoteDataSource = FakeAnnouncementRemoteDataSource()
+    private val fakeBase64ImageExtractor = FakeBase64ImageExtractor()
 
     private val announcementRemoteMediator =
         AnnouncementRemoteMediator(
-            query = "",
+            titleQuery = "",
+            bodyQuery = "",
             tagIds = emptyList(),
             authorIds = emptyList(),
             sortType = SortType.DESC,
             database = db,
             announcementRemoteDataSource = fakeAnnouncementRemoteDataSource,
+            base64ImageExtractor = fakeBase64ImageExtractor
         )
 
 

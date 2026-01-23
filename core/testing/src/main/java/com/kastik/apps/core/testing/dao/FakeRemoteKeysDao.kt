@@ -18,12 +18,13 @@ class FakeRemoteKeysDao : RemoteKeysDao {
     override suspend fun getKeyByAnnouncementId(
         id: Int,
         sortType: SortType,
-        query: String,
+        titleQuery: String,
+        bodyQuery: String,
         authorIds: List<Int>,
         tagIds: List<Int>
     ): RemoteKeys? {
         return _remoteKeys.value.find {
-            it.announcementId == id && it.sortType == sortType && it.searchQuery == query && it.authorIds == authorIds && it.tagIds == tagIds
+            it.announcementId == id && it.sortType == sortType && it.titleQuery == titleQuery && it.bodyQuery == bodyQuery && it.authorIds == authorIds && it.tagIds == tagIds
 
         }
     }
@@ -34,7 +35,8 @@ class FakeRemoteKeysDao : RemoteKeysDao {
                 keys.none { new ->
                     new.tagIds == existing.tagIds &&
                             new.authorIds == existing.authorIds &&
-                            new.searchQuery == existing.searchQuery &&
+                            new.titleQuery == existing.titleQuery &&
+                            new.bodyQuery == existing.bodyQuery &&
                             new.announcementId == existing.announcementId &&
                             new.prevKey == existing.prevKey &&
                             new.nextKey == existing.nextKey
@@ -46,13 +48,14 @@ class FakeRemoteKeysDao : RemoteKeysDao {
 
     override suspend fun clearKeys(
         sortType: SortType,
-        query: String,
+        titleQuery: String,
+        bodyQuery: String,
         authorIds: List<Int>,
         tagIds: List<Int>
     ) {
         clearKeysCalled = true
         _remoteKeys.update { current ->
-            current.filterNot { it.sortType == sortType && it.searchQuery == query && it.authorIds == authorIds && it.tagIds == tagIds }
+            current.filterNot { it.sortType == sortType && it.titleQuery == titleQuery && it.bodyQuery == bodyQuery && it.authorIds == authorIds && it.tagIds == tagIds }
         }
     }
 }

@@ -96,7 +96,8 @@ class FakeAnnouncementDao : AnnouncementDao {
 
 
     override fun getPagedAnnouncements(
-        query: String,
+        titleQuery: String,
+        bodyQuery: String,
         tagIds: List<Int>,
         authorIds: List<Int>,
         sortType: SortType
@@ -109,7 +110,7 @@ class FakeAnnouncementDao : AnnouncementDao {
 
                 // 2. Filter (mimic DB query)
                 val filtered = rawData.filter { announcement ->
-                    val matchesQuery = announcement.title.contains(query, ignoreCase = true)
+                    val matchesQuery = announcement.title.contains(titleQuery, ignoreCase = true)
                     val matchesAuthor =
                         if (authorIds.isNotEmpty()) announcement.authorId in authorIds else true
                     matchesQuery && matchesAuthor
@@ -164,14 +165,14 @@ class FakeAnnouncementDao : AnnouncementDao {
         return _attachments.value.first { it.id == id }.attachmentUrl
     }
 
-    override suspend fun insertOrIgnoreAnnouncementAttachments(attachments: List<AttachmentEntity>) {
+    override suspend fun upsertAttachments(attachments: List<AttachmentEntity>) {
         _attachments.update { currentList ->
             val existingIds = currentList.map { it.id }.toSet()
             currentList + attachments.filter { it.id !in existingIds }
         }
     }
 
-    override suspend fun insertOrIgnoreAnnouncements(announcements: List<AnnouncementEntity>) {
+    override suspend fun upsertAnnouncements(announcements: List<AnnouncementEntity>) {
         if (announcements.isEmpty()) return // 1. Fast exit for empty lists
 
         var hasChanged = false
@@ -193,14 +194,14 @@ class FakeAnnouncementDao : AnnouncementDao {
         }
     }
 
-    override suspend fun insertOrIgnoreTagCrossRefs(crossRefs: List<TagsCrossRefEntity>) {
+    override suspend fun upsertTagCrossRefs(crossRefs: List<TagsCrossRefEntity>) {
         _tagsCrossRefs.update { currentList ->
             val existingIds = currentList.map { it.announcementId to it.tagId }.toSet()
             currentList + crossRefs.filter { it.announcementId to it.tagId !in existingIds }
         }
     }
 
-    override suspend fun insertOrIgnoreAnnouncementBody(bodies: List<BodyEntity>) {
+    override suspend fun upsertBodies(bodies: List<BodyEntity>) {
         _bodies.update { currentList ->
             val existingIds = currentList.map { it.announcementId }.toSet()
             currentList + bodies.filter { it.announcementId !in existingIds }
@@ -209,29 +210,15 @@ class FakeAnnouncementDao : AnnouncementDao {
 
     // --- Updates ---
 
-    override suspend fun insertOrReplaceAnnouncement(announcement: AnnouncementEntity) {
+    override suspend fun upsertAnnouncements(announcement: AnnouncementEntity) {
         _announcements.update { currentList ->
             currentList.filterNot { it.id == announcement.id } + announcement
         }
     }
 
-    override suspend fun insertOrReplaceAnnouncementBody(body: BodyEntity) {
+    override suspend fun upsertBodies(body: BodyEntity) {
         _bodies.update { currentList ->
             currentList.filterNot { it.announcementId == body.announcementId } + body
-        }
-    }
-
-    override suspend fun insertOrReplaceAnnouncementAttachments(attachments: List<AttachmentEntity>) {
-        _attachments.update { currentList ->
-            val newIds = attachments.map { it.id }
-            currentList.filterNot { it.id in newIds } + attachments
-        }
-    }
-
-    override suspend fun insertOrReplaceTagCrossRefs(crossRefs: List<TagsCrossRefEntity>) {
-        _tagsCrossRefs.update { currentList ->
-            val newKeys = crossRefs.map { it.announcementId to it.tagId }.toSet()
-            currentList.filterNot { (it.announcementId to it.tagId) in newKeys } + crossRefs
         }
     }
 
@@ -268,9 +255,9 @@ class FakeAnnouncementDao : AnnouncementDao {
     }
 
     suspend fun insertTestData() {
-        insertOrIgnoreAnnouncements(announcementDtoTestData.map { it.toAnnouncementEntity() })
-        insertOrIgnoreAnnouncementBody(announcementDtoTestData.map { it.toBodyEntity() })
-        insertOrIgnoreTagCrossRefs(announcementDtoTestData.flatMap { it.toTagCrossRefs() })
-        insertOrIgnoreAnnouncementAttachments(announcementDtoTestData.flatMap { it.attachments.map { it.toAttachmentEntity() } })
+        upsertAnnouncements(announcementDtoTestData.map { it.toAnnouncementEntity() })
+        upsertBodies(announcementDtoTestData.map { it.toBodyEntity() })
+        upsertTagCrossRefs(announcementDtoTestData.flatMap { it.toTagCrossRefs() })
+        upsertAttachments(announcementDtoTestData.flatMap { it.attachments.map { it.toAttachmentEntity() } })
     }
 }

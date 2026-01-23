@@ -18,11 +18,12 @@ fun SearchBarFilters(
     selectedAuthorsCount: Int,
     openTagSheet: () -> Unit,
     openAuthorSheet: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 6.dp)
             .horizontalScroll(rememberScrollState())
@@ -31,7 +32,6 @@ fun SearchBarFilters(
             label = "Tags",
             selectedCount = selectedTagsCount,
             onClick = openTagSheet
-
         )
 
         IEEFilterChip(
@@ -40,5 +40,4 @@ fun SearchBarFilters(
             onClick = openAuthorSheet
         )
     }
-
 }

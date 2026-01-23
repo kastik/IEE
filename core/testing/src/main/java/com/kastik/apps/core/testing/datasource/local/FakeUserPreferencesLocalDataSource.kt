@@ -1,6 +1,7 @@
 package com.kastik.apps.core.testing.datasource.local
 
 import com.kastik.apps.core.datastore.PreferencesLocalDataSource
+import com.kastik.apps.core.datastore.proto.QueryScope
 import com.kastik.apps.core.datastore.proto.Sort
 import com.kastik.apps.core.datastore.proto.Theme
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,8 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
     var dynamicColor: Boolean = true
 
     var sortType: Sort = Sort.Priority
+
+    var queryScope: QueryScope = QueryScope.Title
 
 
     override fun getHasSkippedSignIn(): Flow<Boolean> = flowOf(skipped)
@@ -42,5 +45,13 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
 
     override suspend fun setSortType(sortType: Sort) {
         this.sortType = sortType
+    }
+
+    override fun getSearchScope(): Flow<QueryScope> {
+        return flowOf(queryScope)
+    }
+
+    override suspend fun setSearchScope(queryScope: QueryScope) {
+        this.queryScope = queryScope
     }
 }

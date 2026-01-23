@@ -22,8 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.common.extensions.removeAccents
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
@@ -33,6 +31,7 @@ import kotlinx.collections.immutable.toImmutableList
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun <T> GenericFilterSheet(
+    modifier: Modifier = Modifier,
     items: ImmutableList<T>,
     selectedIds: ImmutableList<Int>,
     onApply: (ImmutableList<Int>) -> Unit,
@@ -58,7 +57,6 @@ fun <T> GenericFilterSheet(
         }
     }
 
-    // If a groupProvider is passed, we group. If null, we don't.
     val groupedItems = remember(filteredItems, groupProvider) {
         if (groupProvider != null) {
             filteredItems.sortedBy { labelProvider(it) }
@@ -66,13 +64,11 @@ fun <T> GenericFilterSheet(
         } else emptyMap()
     }
 
-
-
     ModalBottomSheet(
+        modifier = modifier,
         onDismissRequest = onDismiss,
         sheetState = sheetState
     ) {
-
         OutlinedTextField(
             value = query,
             onValueChange = {
@@ -81,10 +77,7 @@ fun <T> GenericFilterSheet(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .semantics {
-                    contentDescription = "Some description"
-                },
+                .padding(16.dp),
             placeholder = { Text(titlePlaceholder) },
             singleLine = true
         )
@@ -95,7 +88,6 @@ fun <T> GenericFilterSheet(
                 .fillMaxWidth()
         ) {
             if (groupProvider != null) {
-                // GROUPED (Authors)
                 groupedItems.keys.sorted().forEach { header ->
                     stickyHeader { AlphabetHeader(header) }
                     items(groupedItems[header] ?: emptyList()) { item ->
@@ -103,7 +95,6 @@ fun <T> GenericFilterSheet(
                     }
                 }
             } else {
-                // FLAT (Tags)
                 items(filteredItems) { item ->
                     FilterRow(item, currentSelection, idProvider, labelProvider)
                 }
@@ -111,8 +102,6 @@ fun <T> GenericFilterSheet(
         }
 
         Spacer(Modifier.height(12.dp))
-
-        // Bottom apply button ALWAYS visible
         Button(
             onClick = {
                 onApply(currentSelection.toImmutableList())
@@ -157,12 +146,5 @@ private fun AlphabetHeader(char: Char) {
             modifier = Modifier.padding(8.dp)
         )
     }
-}
-
-private fun <T> groupByInitial(
-    items: List<T>, titleProvider: (T) -> String
-): Map<Char, List<T>> {
-    return items.sortedBy { titleProvider(it).lowercase() }
-        .groupBy { titleProvider(it).first().uppercaseChar() }
 }
 

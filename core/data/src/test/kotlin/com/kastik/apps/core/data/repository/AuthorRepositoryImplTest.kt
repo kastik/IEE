@@ -32,7 +32,7 @@ class AuthorRepositoryImplTest {
     @Test
     fun getAuthorsReturnsAuthorsWhenSaved() = runTest {
         val authors = authorEntitiesTestData
-        fakeAuthorLocalDataSource.insertOrIgnoreAuthors(authors)
+        fakeAuthorLocalDataSource.upsertAuthors(authors)
 
         assertThat(repository.getAuthors().first()).isNotEmpty()
 
@@ -79,7 +79,7 @@ class AuthorRepositoryImplTest {
         val result = repository.getAuthors().first()
         assertEquals(0, result.size)
         val test = fakeAuthorRemoteDataSource.fetchAuthors()
-        fakeAuthorLocalDataSource.insertOrIgnoreAuthors(test.map { it.toAuthorEntity() })
+        fakeAuthorLocalDataSource.upsertAuthors(test.map { it.toAuthorEntity() })
         assertEquals(test.size, result.size)
     }
 

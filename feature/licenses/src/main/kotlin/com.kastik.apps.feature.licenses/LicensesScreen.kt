@@ -1,6 +1,7 @@
 package com.kastik.apps.feature.licenses
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -20,6 +21,11 @@ internal fun LicensesRoute(
 internal fun LicensesScreen(
 ) {
     val libraries by produceLibraries(R.raw.aboutlibraries)
-    LibrariesContainer(libraries, Modifier.fillMaxSize())
-
+    Scaffold { paddingValues ->
+        LibrariesContainer(
+            modifier = Modifier.fillMaxSize(),
+            libraries = libraries,
+            contentPadding = paddingValues
+        )
+    }
 }

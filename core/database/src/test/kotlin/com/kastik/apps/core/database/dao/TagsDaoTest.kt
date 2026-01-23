@@ -1,13 +1,11 @@
 package com.kastik.apps.core.database.dao
 
+import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.testing.db.MemoryDatabase
-import com.kastik.apps.core.database.entities.TagEntity
 import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
 import com.kastik.apps.core.testing.testdata.announcementTagEntityTestData
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -15,22 +13,35 @@ import org.junit.runner.RunWith
 internal class TagsDaoTest : MemoryDatabase() {
 
     @Test
-    fun insertTagsInsertsOrIgnoreTags() = runTest {
+    fun upsertTagsAddsNewTag() = runTest {
         val tagEntities = announcementTagEntityTestData
-        tagsDao.insertOrIgnoreTags(tagEntities)
+        tagsDao.upsertTags(tagEntities)
 
         val result = tagsDao.getTags().first()
-        assertEquals(tagEntities, result)
+        assertThat(tagEntities).containsExactlyElementsIn(result)
     }
 
     @Test
-    fun clearTags_emptiesList() = runTest {
+    fun upsertTagsUpdatesExisting() = runTest {
         val tagEntities = announcementTagEntityTestData
-        tagsDao.insertOrIgnoreTags(tagEntities)
+        tagsDao.upsertTags(tagEntities)
+
+        val modifiedTags = tagEntities.map { it.copy(title = "New Name") }
+        tagsDao.upsertTags(modifiedTags)
+
+        val result = tagsDao.getTags().first()
+        assertThat(result).isNotEmpty()
+        assertThat(result).containsExactlyElementsIn(modifiedTags)
+    }
+
+    @Test
+    fun clearTagsClearsTagTable() = runTest {
+        val tagEntities = announcementTagEntityTestData
+        tagsDao.upsertTags(tagEntities)
 
         tagsDao.clearTags()
         val result = tagsDao.getTags().first()
 
-        assertEquals(emptyList<TagEntity>(), result)
+        assertThat(result).isEmpty()
     }
 }

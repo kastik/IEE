@@ -11,10 +11,15 @@ import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
-class Base64ImageExtractor @Inject constructor(
+interface Base64ImageExtractor {
+    suspend fun process(html: String): String
+}
+
+
+internal class Base64ImageExtractorImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) {
-    suspend fun process(html: String): String = withContext(Dispatchers.Default) {
+) : Base64ImageExtractor {
+    override suspend fun process(html: String): String = withContext(Dispatchers.Default) {
         val regex =
             "<img.+?src=\"(data:image/(.+?);base64,)(.+?)\".*?>".toRegex(RegexOption.DOT_MATCHES_ALL)
         val matches = regex.findAll(html).toList()

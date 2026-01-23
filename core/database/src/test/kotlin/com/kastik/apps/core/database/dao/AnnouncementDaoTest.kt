@@ -35,22 +35,24 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
         )
     }
 
-    //TODO Test for more pages and errors
     @Test
     fun getPagingAnnouncementPreviewsTest() = runTest {
         insertAnnouncements()
-        val announcement = announcementDao.getPagedAnnouncements(
-            query = "",
+
+        val pagingSource = announcementDao.getPagedAnnouncements(
+            titleQuery = "",
+            bodyQuery = "",
             authorIds = emptyList(),
             tagIds = emptyList(),
-            sortType = SortType.ASC,
+            sortType = SortType.DESC,
         )
-        val pager = TestPager(PagingConfig(pageSize = 20), announcement)
-        val result = pager.refresh() as PagingSource.LoadResult.Page
-        assertEquals(result.data.firstOrNull()?.announcement?.id ?: -10, 1)
 
-        assertThat(result.data.map { it.announcement.id }).containsExactlyElementsIn(
-            announcementEntityTestData.map { it.id }).inOrder()
+        val pager = TestPager(PagingConfig(pageSize = 20), pagingSource)
+        val result = pager.refresh() as PagingSource.LoadResult.Page
+
+        assertThat(result.data.map { it.announcement.id })
+            .containsExactlyElementsIn(announcementEntityTestData.map { it.id })
+            .inOrder()
     }
 
 
@@ -59,10 +61,10 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
         insertAnnouncements()
         announcementDao.clearAllAnnouncements()
         val announcement = announcementDao.getPagedAnnouncements(
-            query = "",
+            titleQuery = "",
             authorIds = emptyList(),
             tagIds = emptyList(),
-            sortType = SortType.Priority,
+            sortType = SortType.DESC,
         )
 
         val page = announcement.load(
@@ -77,14 +79,12 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
         }
     }
 
-    //TODO More robust testing with edge cases
-
     private suspend fun insertAnnouncements() {
         remoteKeysDao.insertOrReplaceKeys(remoteKeys)
-        tagsDao.insertOrIgnoreTags(tagEntitiesTestData)
-        authorsDao.insertOrIgnoreAuthors(authorEntitiesTestData)
-        announcementDao.insertOrIgnoreAnnouncements(announcementEntityTestData)
-        announcementDao.insertOrIgnoreAnnouncementBody(announcementBodyEntityTestData)
-        announcementDao.insertOrIgnoreTagCrossRefs(announcementTagsCrossRefEntityTestData)
+        tagsDao.upsertTags(tagEntitiesTestData)
+        authorsDao.upsertAuthors(authorEntitiesTestData)
+        announcementDao.upsertAnnouncements(announcementEntityTestData)
+        announcementDao.upsertBodies(announcementBodyEntityTestData)
+        announcementDao.upsertTagCrossRefs(announcementTagsCrossRefEntityTestData)
     }
 }

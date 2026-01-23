@@ -1,87 +1,76 @@
 package com.kastik.apps.core.database.dao
 
 import com.google.common.truth.Truth.assertThat
-import com.kastik.apps.core.database.entities.AuthorEntity
 import com.kastik.apps.core.testing.db.MemoryDatabase
 import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
 import com.kastik.apps.core.testing.testdata.announcementAuthorEntityTestData
 import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.test.assertNotEquals
 
 
 @RunWith(RoboDatabaseTestRunner::class)
 internal class AuthorsDaoTest : MemoryDatabase() {
 
     @Test
-    fun insertAuthorsListAddsAuthors() = runTest {
+    fun upsertListAuthorsInsertsNewAuthor() = runTest {
         val authorEntities = authorEntitiesTestData
-
-        authorsDao.insertOrIgnoreAuthors(authorEntities)
-
-        val result = authorsDao.getAuthors().first()
-        val uniqueAuthors = result.distinct()
-        assertThat(uniqueAuthors).containsExactlyElementsIn(result)
-    }
-
-    @Test
-    fun insertAuthorsListOverridesExistingOrIgnoreAuthors() = runTest {
-        val initialAuthors = announcementAuthorEntityTestData
-        val newAuthors = announcementAuthorEntityTestData.map { it.copy(id = 100) }
-
-        authorsDao.insertOrIgnoreAuthors(initialAuthors)
-        authorsDao.insertOrIgnoreAuthors(newAuthors)
+        authorsDao.upsertAuthors(authorEntities)
 
         val result = authorsDao.getAuthors().first()
 
-        assertThat(result).containsExactlyElementsIn(newAuthors)
-
-        initialAuthors.zip(newAuthors).forEach { (initial, new) ->
-            assertNotEquals(new.id, initial.id)
-            assertEquals(new.name, initial.name)
-        }
+        assertThat(result).isNotEmpty()
+        assertThat(result).containsExactlyElementsIn(result)
     }
 
     @Test
-    fun insertSingleAuthorInsertsAuthor() = runTest {
-        val authorEntities = authorEntitiesTestData
-        val firstAuthor = authorEntities.first()
-        authorsDao.insertOrIgnoreAuthors(listOf(firstAuthor))
+    fun upsertSingleAuthorInsertsNewAuthor() = runTest {
+        val authorEntity = authorEntitiesTestData.first()
+        authorsDao.upsertAuthors(authorEntity)
 
         val result = authorsDao.getAuthors().first()
 
-        assertEquals(authorEntitiesTestData.first(), result.first())
+        assertThat(result).hasSize(1)
+        assertThat(result.first()).isEqualTo(authorEntity)
     }
 
     @Test
-    fun insertSingleAuthorDoesNotOverrideAuthor() = runTest {
-        val authorEntities = authorEntitiesTestData
-        val firstAuthor = authorEntities.first()
-        authorsDao.insertOrIgnoreAuthors(listOf(firstAuthor))
+    fun upsertListAuthorsUpdatesExisting() = runTest {
+        val authorEntities = announcementAuthorEntityTestData
+        authorsDao.upsertAuthors(authorEntities)
 
-        val newAuthor = authorEntities.first().copy(
-            id = 100,
-            name = "Jane Dough"
-        )
+        val updatedAuthors =
+            announcementAuthorEntityTestData.map { it.copy(announcementCount = 500) }
+        authorsDao.upsertAuthors(updatedAuthors)
+
+        val result = authorsDao.getAuthors().first()
+        assertThat(result).isNotEmpty()
+        assertThat(result).containsExactlyElementsIn(updatedAuthors)
+    }
+
+    @Test
+    fun upsertSingleAuthorsUpdatesExisting() = runTest {
+        val authorEntity = announcementAuthorEntityTestData.first()
+        authorsDao.upsertAuthors(authorEntity)
+
+        val updatedAuthor = authorEntity.copy(announcementCount = 500)
+        authorsDao.upsertAuthors(updatedAuthor)
 
         val result = authorsDao.getAuthors().first()
 
-        assertNotEquals(newAuthor, result.first())
+        assertThat(result).hasSize(1)
+        assertThat(result.first()).isEqualTo(updatedAuthor)
     }
 
-
     @Test
-    fun clearAuthorsRemovesAuthors() = runTest {
+    fun clearAuthorsClearsAuthorTable() = runTest {
         val authorEntities = authorEntitiesTestData
-
-        authorsDao.insertOrIgnoreAuthors(authorEntities)
+        authorsDao.upsertAuthors(authorEntities)
         authorsDao.clearAuthors()
 
         val result = authorsDao.getAuthors().first()
-        assertEquals(emptyList<AuthorEntity>(), result)
+        assertThat(result).isEmpty()
     }
 }

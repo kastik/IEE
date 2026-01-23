@@ -70,6 +70,7 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun getAboardTokenReturnsTokenFromDataSourceTest() = runTest {
+        fakeAuthenticationRemoteDataSource.setAboardAccessTokenResponse(aboardAuthTokenDtoTestData)
         authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
         val result = authenticationRepositoryImpl.getAboardToken()
         assertNotNull(result)
@@ -91,6 +92,7 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun clearTokensClearsTokensFromDataSourceTest() = runTest {
+        fakeAuthenticationRemoteDataSource.setAboardAccessTokenResponse(aboardAuthTokenDtoTestData)
         authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
         authenticationRepositoryImpl.clearTokens()
         assertFalse(authenticationRepositoryImpl.checkAboardTokenValidity())

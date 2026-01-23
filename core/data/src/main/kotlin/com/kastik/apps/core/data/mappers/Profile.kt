@@ -7,7 +7,6 @@ import com.kastik.apps.core.network.model.aboard.UserProfileDto
 fun UserProfileDto.toProfileProto(): ProfileProto = let { dto ->
     ProfileProto.newBuilder().apply {
         setId(dto.id)
-        setName(dto.name)
         setName(dto.name.ifEmpty { nameEng })
         setEmail(dto.email)
         setCreatedAt(dto.createdAt)
