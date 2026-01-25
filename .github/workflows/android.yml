@@ -56,10 +56,19 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.RELEASE_KEYSTORE_BASE }}
+        run: echo $ENCODED_STRING | base64 -d > app/release.jks
+
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build with Gradle
+      - name: Build Release APK
+        env:
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: ./gradlew assembleRelease
 
       - name: Upload Release APK
