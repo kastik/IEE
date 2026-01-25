@@ -19,18 +19,22 @@ configure<ApplicationExtension> {
         versionCode = 8
         versionName = "1.1"
     }
-    val keystoreProperties = Properties()
-    val keystorePropertiesFile = rootProject.file("local.properties")
-    if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
+    val keystoreProperties = Properties().apply {
+        val propsFile = rootProject.file("local.properties")
+        if (propsFile.exists()) load(FileInputStream(propsFile))
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file(keystoreProperties["store.file"] as String)
-            storePassword = keystoreProperties["store.password"] as String
-            keyAlias = keystoreProperties["key.alias"] as String
-            keyPassword = keystoreProperties["key.password"] as String
+            val getSecret = { key: String, env: String ->
+                (keystoreProperties[key] as? String) ?: System.getenv(env)
+            }
+
+            storeFile = file(getSecret("store.file", "RELEASE_STORE_FILE") ?: "release.jks")
+            storePassword = getSecret("store.password", "RELEASE_STORE_PASSWORD")
+            keyAlias = getSecret("key.alias", "RELEASE_KEY_ALIAS")
+            keyPassword = getSecret("key.password", "RELEASE_KEY_PASSWORD")
         }
     }
 
@@ -87,7 +91,8 @@ baselineProfile {
     variants {
         create("release") {
             dexLayoutOptimization = true
-            automaticGenerationDuringBuild = true
+            //TODO Enable this once finished with github actions
+            automaticGenerationDuringBuild = false
         }
         create("debug") {
             dexLayoutOptimization = false
