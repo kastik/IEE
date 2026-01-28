@@ -10,6 +10,7 @@ import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetPagedAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshFilterOptionsUseCase
+import com.kastik.apps.core.domain.usecases.RefreshIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.SetUserHasSkippedSignInUseCase
 import com.kastik.apps.core.domain.usecases.ShowSignInNoticeRationalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,7 @@ class HomeScreenViewModel @Inject constructor(
     private val setUserHasSkippedSignInUseCase: SetUserHasSkippedSignInUseCase,
     private val refreshFilterOptionsUseCase: RefreshFilterOptionsUseCase,
     private val getQuickResultsUseCase: GetQuickResultsUseCase,
+    private val refreshIsSignedInUseCase: RefreshIsSignedInUseCase
 ) : ViewModel() {
 
     val searchBarTextFieldState = TextFieldState()
@@ -56,6 +58,7 @@ class HomeScreenViewModel @Inject constructor(
     }.onStart {
         viewModelScope.launch {
             runCatching { refreshFilterOptionsUseCase() }
+            runCatching { refreshIsSignedInUseCase }
         }
     }.stateIn(
         scope = viewModelScope, started = SharingStarted.Lazily, initialValue = UiState()

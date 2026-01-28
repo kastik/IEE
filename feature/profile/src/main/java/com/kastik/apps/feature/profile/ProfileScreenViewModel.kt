@@ -2,8 +2,9 @@ package com.kastik.apps.feature.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetSubscribableTagsUseCase
-import com.kastik.apps.core.domain.usecases.GetSubscriptionsUseCase
+import com.kastik.apps.core.domain.usecases.GetSubscribedTagsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserProfileUseCase
 import com.kastik.apps.core.domain.usecases.RefreshSubscribableTagsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshSubscriptionsUseCase
@@ -12,110 +13,83 @@ import com.kastik.apps.core.domain.usecases.SignOutUserUseCase
 import com.kastik.apps.core.domain.usecases.SubscribeToTagsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileScreenViewModel @Inject constructor(
-    private val getProfileUseCase: GetUserProfileUseCase,
+    getUserProfileUseCase: GetUserProfileUseCase,
+    getSubscribedTagsUseCase: GetSubscribedTagsUseCase,
+    getIsSignedInUseCase: GetIsSignedInUseCase,
+    getSubscribableTagsUseCase: GetSubscribableTagsUseCase,
     private val refreshUserProfileUseCase: RefreshUserProfileUseCase,
-    private val getSubscriptionsUseCase: GetSubscriptionsUseCase,
     private val refreshSubscriptionsUseCase: RefreshSubscriptionsUseCase,
-    private val getSubscribableTagsUseCase: GetSubscribableTagsUseCase,
     private val refreshSubscribableTagsUseCase: RefreshSubscribableTagsUseCase,
     private val subscribeToTagsUseCase: SubscribeToTagsUseCase,
     private val signOutUserUseCase: SignOutUserUseCase,
 ) : ViewModel() {
 
-    private val _uiState =
-        MutableStateFlow<UiState>(UiState.Loading(message = "Fetching your profile..."))
-    val uiState: StateFlow<UiState> = _uiState
-    private var profileCollectionJob: Job? = null
+    private val showTagSheet = MutableStateFlow(false)
 
-    init {
-        getProfile()
-        refreshData()
-    }
+    val uiState = combine(
+        getIsSignedInUseCase(),
+        getUserProfileUseCase(),
+        getSubscribedTagsUseCase(),
+        getSubscribableTagsUseCase(),
+        showTagSheet,
+    ) { isSignedIn, profile, subscribedTags, subscribableTags, showTagSheet ->
+        if (isSignedIn) {
+            UiState.Success(
+                profile = profile,
+                subscribedTags = subscribedTags,
+                subscribableTags = subscribableTags,
+                showTagSheet = showTagSheet,
+            )
+        } else {
+            UiState.SignedOut("You have beed logged out.")
+        }
+    }.onStart {
+        runCatching { refreshData() }
+    }.catch {
+        UiState.Error(it.message ?: "Something went wrong")
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+        initialValue = UiState.Loading(message = "Fetching your profile...")
+    )
 
     fun toggleTagsSheet(enabled: Boolean) {
-        val state = _uiState.value as? UiState.Success
-        state?.let {
-            _uiState.value = state.copy(
-                showTagSheet = enabled
-            )
+        showTagSheet.update {
+            enabled
         }
     }
 
     fun updateSelectedTagIds(newSubscribedTagsIds: ImmutableList<Int>) {
-        val state = _uiState.value as? UiState.Success
-        state?.let {
-            _uiState.value = state.copy(
-                selectedSubscribableTagsIds = newSubscribedTagsIds
-            )
+        viewModelScope.launch {
+            runCatching { subscribeToTagsUseCase(newSubscribedTagsIds) }
+            runCatching { refreshSubscriptionsUseCase() }
         }
     }
 
     fun onSignOutClick() {
-        profileCollectionJob?.cancel()
-        _uiState.value = UiState.Loading("Signing out...")
         viewModelScope.launch {
             signOutUserUseCase()
-            _uiState.value = UiState.SignedOut("You have successfully logged out")
         }
     }
 
-    fun onApplyTags() {
-        viewModelScope.launch {
-            val state = _uiState.value as? UiState.Success
-            state?.let {
-                subscribeToTagsUseCase(state.selectedSubscribableTagsIds)
-                async { refreshSubscriptionsUseCase() }.await()
-            }
-
-        }
-    }
-
-    private fun refreshData() {
-        viewModelScope.launch {
-            try {
-                coroutineScope {
-                    async { refreshUserProfileUseCase() }.await()
-                    async { refreshSubscriptionsUseCase() }.await()
-                    async { refreshSubscribableTagsUseCase() }.await()
-                }
-            } catch (e: UnknownHostException) {
-                //TODO soft error
-            } catch (e: Exception) {
-                //TODO We need to check if  it's an auth error and if so sign out
-            }
-        }
-    }
-
-    private fun getProfile() {
-        profileCollectionJob = viewModelScope.launch {
-            supervisorScope {
-                combine(
-                    getProfileUseCase(),
-                    getSubscriptionsUseCase(),
-                    getSubscribableTagsUseCase()
-                ) { profile, subscriptions, tags ->
-                    UiState.Success(
-                        profile = profile,
-                        subscribedTags = subscriptions,
-                        subscribableTags = tags
-                    )
-                }.collect { successState ->
-                    _uiState.value = successState
-                }
-            }
+    private suspend fun refreshData() {
+        coroutineScope {
+            launch { refreshUserProfileUseCase() }
+            launch { refreshSubscriptionsUseCase() }
+            launch { refreshSubscribableTagsUseCase() }
         }
     }
 }

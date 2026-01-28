@@ -1,6 +1,7 @@
 package com.kastik.apps.feature.profile
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -75,6 +77,7 @@ internal fun ProfileRoute(
                 modifier = Modifier.fillMaxSize(),
                 message = state.message,
             )
+
             is UiState.Error -> StatusContent(message = state.message)
             is UiState.SignedOut -> StatusContent(
                 message = state.message,
@@ -83,8 +86,7 @@ internal fun ProfileRoute(
 
             is UiState.Success -> SuccessState(
                 uiState = state,
-                applySelectedTags = viewModel::onApplyTags,
-                updateSelectedSubscribableTag = viewModel::updateSelectedTagIds,
+                applySelectedTags = viewModel::updateSelectedTagIds,
                 showTagSheet = viewModel::toggleTagsSheet,
                 onSignOutClick = viewModel::onSignOutClick
             )
@@ -94,12 +96,11 @@ internal fun ProfileRoute(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SuccessState(
     uiState: UiState.Success,
-    applySelectedTags: () -> Unit,
-    updateSelectedSubscribableTag: (ImmutableList<Int>) -> Unit,
+    applySelectedTags: (ImmutableList<Int>) -> Unit,
     showTagSheet: (Boolean) -> Unit,
     onSignOutClick: () -> Unit
 ) {
@@ -115,21 +116,17 @@ private fun SuccessState(
             )
         }) { innerPadding ->
 
-
         if (uiState.showTagSheet) {
-            uiState.subscribableTags?.let { tags ->
-                GenericRecursiveSheet(
-                    items = tags.toImmutableList(),
-                    applySelectedTags = applySelectedTags,
-                    selectedRootIds = persistentListOf(),
-                    updateSelectedTagsIds = updateSelectedSubscribableTag,
-                    sheetState = sheetState,
-                    onDismiss = { showTagSheet(false) },
-                    idProvider = { tag -> tag.id },
-                    labelProvider = { it.title },
-                    childrenProvider = { it.subTags }
-                )
-            }
+            GenericRecursiveSheet(
+                items = uiState.subscribableTags,
+                subscribedTags = uiState.subscribedTags.map { it.id }.toImmutableList(),
+                applySelectedTags = applySelectedTags,
+                sheetState = sheetState,
+                onDismiss = { showTagSheet(false) },
+                idProvider = { tag -> tag.id },
+                labelProvider = { it.title },
+                childrenProvider = { it.subTags }
+            )
         }
 
         Column(
@@ -161,10 +158,10 @@ private fun SuccessState(
                     .padding(12.dp)
                     .fillMaxWidth()
                     .height(46.dp),
-                shape = MaterialTheme.shapes.medium, // Expressive rounded shape
+                shape = MaterialTheme.shapes.medium,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onTertiary
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
                 ),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
             ) {
@@ -315,21 +312,30 @@ private fun ProfileSubscribedTags(
                 }
             }
 
-            if (subscribedTagTitles.isEmpty()) {
-                Text(
-                    "You haven’t subscribed to any tags yet.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            } else {
-                FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    subscribedTagTitles.forEach { tag ->
-                        IEETag(
-                            tag
+            AnimatedContent(
+                targetState = subscribedTagTitles.isEmpty(),
+            ) { isEmpty ->
+                when (isEmpty) {
+                    true -> {
+                        Text(
+                            "You haven’t subscribed to any tags yet.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                    }
+
+                    false -> {
+                        FlowRow(
+                            modifier = Modifier.animateContentSize(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            subscribedTagTitles.forEach { tag ->
+                                IEETag(
+                                    text = tag
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -357,10 +363,8 @@ fun ProfileSuccessStatePreview() {
             ),
 
             subscribedTags = persistentListOf(),
-            subscribableTags = null,
-            selectedSubscribableTagsIds = persistentListOf(),
+            subscribableTags = persistentListOf(),
         ),
-        updateSelectedSubscribableTag = {},
         applySelectedTags = {},
         showTagSheet = {},
         onSignOutClick = {},

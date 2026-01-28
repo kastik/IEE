@@ -9,9 +9,8 @@ import kotlinx.collections.immutable.persistentListOf
 sealed class UiState {
     data class Success(
         val profile: Profile,
-        val subscribedTags: ImmutableList<Tag>,
-        val subscribableTags: ImmutableList<SubscribableTag>? = null,
-        val selectedSubscribableTagsIds: ImmutableList<Int> = persistentListOf(),
+        val subscribedTags: ImmutableList<Tag> = persistentListOf(),
+        val subscribableTags: ImmutableList<SubscribableTag> = persistentListOf(),
         val showTagSheet: Boolean = false,
     ) : UiState()
 

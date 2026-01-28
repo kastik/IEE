@@ -29,9 +29,8 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun <T> GenericRecursiveSheet(
     items: ImmutableList<T>,
-    applySelectedTags: () -> Unit,
-    selectedRootIds: ImmutableList<Int>,
-    updateSelectedTagsIds: (ImmutableList<Int>) -> Unit,
+    subscribedTags: ImmutableList<Int>,
+    applySelectedTags: (ImmutableList<Int>) -> Unit,
     sheetState: SheetState,
     onDismiss: () -> Unit,
     idProvider: (T) -> Int,
@@ -39,7 +38,7 @@ fun <T> GenericRecursiveSheet(
     childrenProvider: (T) -> List<T>
 ) {
     var query by remember { mutableStateOf("") }
-    val selectedIds = remember { mutableStateListOf<Int>().apply { addAll(selectedRootIds) } }
+    val selectedIds = remember { mutableStateListOf<Int>().apply { addAll(subscribedTags) } }
 
     val flatList = remember(query, items) {
         val result = mutableListOf<FlatNode<T>>()
@@ -108,8 +107,7 @@ fun <T> GenericRecursiveSheet(
 
         Button(
             onClick = {
-                updateSelectedTagsIds(selectedIds.toImmutableList())
-                applySelectedTags()
+                applySelectedTags(selectedIds.toImmutableList())
                 onDismiss()
             }, modifier = Modifier
                 .fillMaxWidth()
