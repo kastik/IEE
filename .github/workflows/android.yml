@@ -27,8 +27,6 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
       - name: Make gradlew executable
         run: chmod +x gradlew
@@ -56,8 +54,6 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/master' }}
 
       - name: Decode Google Services
         env:
