@@ -24,3 +24,8 @@ fun Context.launchSignIn() {
 
     startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
 }
+
+
+fun Context.launchUrl(url: String) {
+    startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+}

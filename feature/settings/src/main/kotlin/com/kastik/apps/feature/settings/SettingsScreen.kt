@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -56,6 +56,7 @@ import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
+import com.kastik.apps.core.ui.extensions.launchUrl
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -122,6 +123,16 @@ private fun SettingsScreenContent(
         ).status.isGranted
     } else {
         true
+    }
+
+
+    val versionName = remember {
+        try {
+            val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            pInfo.versionName
+        } catch (e: Exception) {
+            "Unknown"
+        }
     }
 
     Scaffold(
@@ -287,18 +298,6 @@ private fun SettingsScreenContent(
                             }
                             context.startActivity(intent)
                         })
-                    HorizontalDivider()
-                    SettingSwitchRow(
-                        title = "Email updates",
-                        subtitle = "Send summaries to your inbox",
-                        checked = false,
-                        onCheckedChange = {
-                            val text = "Not implemented yet!"
-                            val duration = Toast.LENGTH_SHORT
-                            val toast = Toast.makeText(context, text, duration) // in Activity
-                            toast.show()
-
-                        })
                 }
             }
 
@@ -308,12 +307,8 @@ private fun SettingsScreenContent(
             ) {
                 Column {
                     SettingNavigationRow(
-                        title = "About app", subtitle = "Version 1.0", onClick = {
-                            val text = "Not implemented yet!"
-                            val duration = Toast.LENGTH_SHORT
-                            val toast = Toast.makeText(context, text, duration) // in Activity
-                            toast.show()
-
+                        title = "About app", subtitle = "Version $versionName", onClick = {
+                            context.launchUrl("https://github.com/kastik/IEE")
                         })
                     HorizontalDivider()
                     SettingNavigationRow(
