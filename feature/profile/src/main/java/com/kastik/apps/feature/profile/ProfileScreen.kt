@@ -313,28 +313,24 @@ private fun ProfileSubscribedTags(
             }
 
             AnimatedContent(
-                targetState = subscribedTagTitles.isEmpty(),
-            ) { isEmpty ->
-                when (isEmpty) {
-                    true -> {
-                        Text(
-                            "You haven’t subscribed to any tags yet.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    false -> {
-                        FlowRow(
-                            modifier = Modifier.animateContentSize(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            subscribedTagTitles.forEach { tag ->
-                                IEETag(
-                                    text = tag
-                                )
-                            }
+                targetState = subscribedTagTitles,
+            ) { tags ->
+                if (tags.isEmpty()) {
+                    Text(
+                        "You haven’t subscribed to any tags yet.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else {
+                    FlowRow(
+                        modifier = Modifier.animateContentSize(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        tags.forEach { tag ->
+                            IEETag(
+                                text = tag
+                            )
                         }
                     }
                 }
