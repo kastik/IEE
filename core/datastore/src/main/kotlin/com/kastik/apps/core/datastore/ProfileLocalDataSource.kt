@@ -31,8 +31,19 @@ internal class ProfileLocalDataSourceImpl @Inject constructor(
     }
 
     override suspend fun setProfile(userProfile: ProfileProto) {
-        profileDataStore.updateData {
-            userProfile
+        profileDataStore.updateData { currentProfile ->
+            currentProfile.toBuilder()
+                .setId(userProfile.id)
+                .setName(userProfile.name)
+                .setEmail(userProfile.email)
+                .setCreatedAt(userProfile.createdAt)
+                .setUpdatedAt(userProfile.updatedAt)
+                .setIsAuthor(userProfile.isAuthor)
+                .setIsAdmin(userProfile.isAdmin)
+                .setLastLoginAt(userProfile.lastLoginAt)
+                .setUid(userProfile.uid)
+                .setDeletedAt(userProfile.deletedAt)
+                .build()
         }
     }
 
