@@ -35,6 +35,12 @@ gradlePlugin {
                 "com.kastik.buildlogic.conventions.library.AndroidLibraryComposeConventionPlugin"
         }
 
+        create("jvmLibrary") {
+            id = "com.kastik.jvm.library"
+            implementationClass =
+                "com.kastik.buildlogic.conventions.library.JvmLibraryConventionPlugin"
+        }
+
         create("feature") {
             id = "com.kastik.library.feature"
             implementationClass =
