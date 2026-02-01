@@ -10,7 +10,7 @@ grant_type = client_credentials
     &
 scope = id,cn
 
-### Authenticate with apps token
+### Authenticate with login.iee.ihu.gr token
 GET https://{{aboard_server}}/api/v2/authenticate?code=YOUR_CODE
 
 
