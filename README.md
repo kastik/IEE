@@ -99,7 +99,3 @@ The codebase is organized into the following logical groups:
 3. Commit changes.
 4. Push to the branch.
 5. Open a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
