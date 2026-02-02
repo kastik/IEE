@@ -254,22 +254,24 @@ private fun SettingsScreenContent(
                             })
                     }
                     HorizontalDivider()
-                    SettingSwitchRow(
-                        title = "Dynamic color",
-                        subtitle = "Use colors from the wallpaper",
-                        checked = dynamicColor,
-                        onCheckedChange = { enabled ->
-                            if (enabled) {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            } else {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                            }
-                            setDynamicColor(enabled)
-                            analytics.logEvent(
-                                "dynamic_color_changed",
-                                mapOf("dynamic_color_enabled" to enabled.toString())
-                            )
-                        })
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        SettingSwitchRow(
+                            title = "Dynamic color",
+                            subtitle = "Use colors from the wallpaper",
+                            checked = dynamicColor,
+                            onCheckedChange = { enabled ->
+                                if (enabled) {
+                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                                } else {
+                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                                }
+                                setDynamicColor(enabled)
+                                analytics.logEvent(
+                                    "dynamic_color_changed",
+                                    mapOf("dynamic_color_enabled" to enabled.toString())
+                                )
+                            })
+                    }
                 }
             }
 
