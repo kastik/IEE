@@ -286,9 +286,9 @@ fun SuccessStatePreview() {
         prossedBodies = persistentListOf(ProcessedBody.Text(AnnotatedString.fromHtml("Announcement Body"))),
         date = "2/10/2025",
         tags = persistentListOf(
-            Tag(id = 1, title = "Tag 1"),
-            Tag(id = 2, title = "Tag 3"),
-            Tag(id = 3, title = "Tag 2"),
+            Tag(id = 1, title = "Tag 1", false),
+            Tag(id = 2, title = "Tag 3", false),
+            Tag(id = 3, title = "Tag 2", false),
         ),
         attachments = persistentListOf(
             Attachment(

@@ -2,7 +2,8 @@ package com.kastik.apps.core.model.aboard
 
 data class Tag(
     val id: Int,
-    val title: String
+    val title: String,
+    val isPublic: Boolean
 )
 
 data class SubscribableTag(
