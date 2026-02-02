@@ -20,6 +20,7 @@ fun AnnouncementTagDto.toTagEntity() = TagEntity(
 fun TagEntity.toTag() = Tag(
     id = id,
     title = title,
+    isPublic = isPublic
 )
 
 fun SubscribedTagDto.toSubscribedTagProto(): SubscribedTagProto = let { dto ->
@@ -32,6 +33,7 @@ fun SubscribedTagDto.toSubscribedTagProto(): SubscribedTagProto = let { dto ->
 fun SubscribedTagProto.toTag() = Tag(
     id = id,
     title = title,
+    isPublic = false
 )
 
 fun SubscribableTagsDto.toSubscribableTagProto(): SubscribableTagProto =

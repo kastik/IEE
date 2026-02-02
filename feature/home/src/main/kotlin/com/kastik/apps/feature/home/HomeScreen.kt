@@ -392,9 +392,9 @@ fun PreviewHomeScreenContent() {
 
 val FakeTags = listOf(
     Tag(
-        id = 1, title = "Tag1",
+        id = 1, title = "Tag1", false
     ), Tag(
-        id = 2, title = "Tag2",
+        id = 2, title = "Tag2", false
     )
 )
 
