@@ -21,7 +21,7 @@ internal class FileDownloaderImpl(
         val request = DownloadManager.Request(url.toUri()).apply {
             setTitle(fileName)
             setMimeType(mimeType)
-            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
             if (authToken != null) {
                 addRequestHeader("Authorization", "Bearer $authToken")
