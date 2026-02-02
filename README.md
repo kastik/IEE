@@ -16,54 +16,70 @@ The codebase is organized into the following logical groups:
 
 #### 🚀 Application & Build
 
-* **[:app](app)** - The main application entry point.
-* **[:build-logic](build-logic)** - Custom Gradle convention plugins for build configuration
-  sharing.
-* **[:benchmark](benchmark)** - Macrobenchmark tests for measuring application performance and
-  generation of baseline profiles..
+* **[:app](app)** - The application entry point and dependency graph root.
+* **[:build-logic](build-logic)** - Custom Gradle Convention Plugins for centralized build
+  configuration management.
+* **[:benchmark](benchmark)** - Macrobenchmark implementation for performance monitoring and
+  Baseline Profile generation.
 
 #### ✨ Features
 
-Independent functional modules containing UI and specific business logic:
-
-* **[:feature/announcement](feature/announcement)** - Announcement viewing.
-* **[:feature/auth](feature/auth)** - User authentication and login.
-* **[:feature/home](feature/home)** - Main announcement feed.
-* **[:feature/licenses](feature/licenses)** - Open source license display.
-* **[:feature/profile](feature/profile)** - User profile management.
-* **[:feature/search](feature/search)** - Search functionality.
-* **[:feature/settings](feature/settings)** - App configuration screens.
+* **[:feature/announcement](feature/announcement)** - Announcement details and interaction.
+* **[:feature/auth](feature/auth)** - Authentication flows (Login).
+* **[:feature/home](feature/home)** - Primary dashboard and feed aggregation.
+* **[:feature/profile](feature/profile)** - User profile and subscription management.
+* **[:feature/search](feature/search)** - Querying and filtering functionality.
+* **[:feature/settings](feature/settings)** - Application configuration and preferences.
+* **[:feature/licenses](feature/licenses)** - Open Source license attribution.
 
 #### 🧩 Core
 
-Shared components used across different features:
-
-* **[:core/analytics](core/analytics)** - Analytics reporting implementations.
+* **[:core/model](core/model)** - Canonical domain entities.
+* **[:core/domain](core/domain)** - Shared business use cases.
+* **[:core/data](core/data)** - Repository implementations and data arbitration
+* **[:core/network](core/network)** - Retrofit clients and API definitions.
+* **[:core/database](core/database)** -Local persistence (Room).
+* **[:core/datastore](core/datastore)** - Proto DataStore implementation.
+* **[:core/designsystem](core/designsystem)** - Material 3 Theme, iconography, and atomic UI
+  components.
+* **[:core/ui](core/ui)** - Generic UI widgets and Compose extensions.
 * **[:core/common](core/common)** - Utility classes and extensions.
-* **[:core/data](core/data)** - Repositories and data coordination.
-* **[:core/database](core/database)** - Room database storage.
-* **[:core/datastore](core/datastore)** - Proto Datastore storage.
-* **[:core/datastore-proto](core/datastore-proto)** - Module for compiling proto models.
-* **[:core/designsystem](core/designsystem)** - Theme, typography, colors and domain components.
-* **[:core/domain](core/domain)** - Shared use cases and business rules.
-* **[:core/downloader](core/downloader)** - Attachment download logic implementation.
-* **[:core/model](core/model)** - Domain entities and data classes.
-* **[:core/network](core/network)** - API clients and networking logic.
+* **[:core/analytics](core/analytics)** - Analytics reporting implementations.
 * **[:core/notifications](core/notifications)** - Push notification handling.
-* **[:core/tesing](core/testing)** - Push notification handling.
-* **[:core/ui](core/ui)** - Common UI widgets and composables.
+* **[:core/downloader](core/downloader)** - Attachment download management.
+* **[:core/tesing](core/testing)** - Shared test rules, fixtures, and utilities.
 
 ## 🛠 Tech Stack
 
-* **Language:** Kotlin
-* **UI:** Jetpack Compose (Material 3)
-* **Dependency Injection:** Hilt
-* **Asynchronicity:** Coroutines & Flow
-* **Networking:** Retrofit / OkHttp
-* **Persistence:** Room & DataStore
-* **Build System:** Gradle Kotlin DSL (with Version Catalogs)
+**Architecture**
+
+* **Pattern:** MVVM / MVI (Clean Architecture)
+* **DI:** Hilt (Dagger)
+* **Concurrency:** Kotlin Coroutines & Flow
+
+**User Interface**
+
+* **Toolkit:** Jetpack Compose
+* **Design:** Material Design 3
+
+**Data & Networking**
+
+* **Network:** Retrofit / OkHttp
+* **Serialization:** Kotlinx Serialization
+* **Persistence:** Room (SQLite) & Proto DataStore
+
+**Build & Tooling**
+
+* **Build System:** Gradle Kotlin DSL
+* **Dependency Management:** Version Catalogs (`libs.versions.toml`)
+* **CI/CD:** GitHub Actions (Implied)
 
 ## 🚀 Getting Started
+
+### Prerequisites
+
+* **Android Studio:** Panda.
+* **JDK:** Java 21 or higher.
 
 1. **Clone the repository:**
    ```bash
@@ -71,15 +87,12 @@ Shared components used across different features:
    ```
 
 2. **Open in Android Studio:**
-   Ensure you are using the latest stable version of Android Studio.
-
-3. **Sync Gradle:**
    Allow Gradle to download dependencies and configure the included builds.
 
-4. **Run:**
+3. **Run:**
    Select the `app` configuration and run on an emulator or physical device.
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the project.
 2. Create a feature branch (`git checkout -b feature/NewFeature`).
