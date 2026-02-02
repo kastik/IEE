@@ -36,6 +36,7 @@ jobs:
 
   build:
     needs: tests
+    if: github.event_name == 'push'
     name: Build Release
     runs-on: ubuntu-latest
     timeout-minutes: 120
