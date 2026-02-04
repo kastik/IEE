@@ -31,8 +31,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    getFilterOptionsUseCase: GetFilterOptionsUseCase,
     private val getQuickResultsUseCase: GetQuickResultsUseCase,
-    private val getFilterOptionsUseCase: GetFilterOptionsUseCase,
     private val refreshFilterOptionsUseCase: RefreshFilterOptionsUseCase,
     private val getFilteredAnnouncementsUseCase: GetPagedFilteredAnnouncementsUseCase,
 ) : ViewModel() {
@@ -91,7 +91,7 @@ class SearchScreenViewModel @Inject constructor(
 
     fun onSearch(
         query: String,
-        tagsId: ImmutableList<Int>,
+        tagIds: ImmutableList<Int>,
         authorIds: ImmutableList<Int>
     ) {
         searchBarTextFieldState.edit {
@@ -101,8 +101,8 @@ class SearchScreenViewModel @Inject constructor(
         _activeFeedFilters.update { filters ->
             filters.copy(
                 committedQuery = query,
-                selectedTagIds = tagsId,
-                selectedAuthorIds = authorIds
+                selectedTagIds = tagIds.distinct().toImmutableList(),
+                selectedAuthorIds = authorIds.distinct().toImmutableList()
             )
         }
     }
