@@ -7,11 +7,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.kastik.apps.core.domain.usecases.GetEnableForYouUseCase
 import com.kastik.apps.core.domain.usecases.GetFilterOptionsUseCase
+import com.kastik.apps.core.domain.usecases.GetForYouAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetPagedAnnouncementsUseCase
-import com.kastik.apps.core.domain.usecases.GetPagedFilteredAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
-import com.kastik.apps.core.domain.usecases.GetSubscribedTagsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshFilterOptionsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.SetUserHasSkippedSignInUseCase
@@ -33,8 +32,7 @@ class HomeScreenViewModel @Inject constructor(
     showSignInNoticeRationalUseCase: ShowSignInNoticeRationalUseCase,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
     getEnableForYouUseCase: GetEnableForYouUseCase,
-    getSubscribedTagsUseCase: GetSubscribedTagsUseCase,
-    private val getPagedFilteredAnnouncementsUseCase: GetPagedFilteredAnnouncementsUseCase,
+    getForYouAnnouncementsUseCase: GetForYouAnnouncementsUseCase,
     private val getPagedAnnouncements: GetPagedAnnouncementsUseCase,
     private val setUserHasSkippedSignInUseCase: SetUserHasSkippedSignInUseCase,
     private val refreshFilterOptionsUseCase: RefreshFilterOptionsUseCase,
@@ -75,18 +73,8 @@ class HomeScreenViewModel @Inject constructor(
     val homeFeedAnnouncements = uiState.map { it.isSignedIn }.distinctUntilChanged()
         .flatMapLatest { _ -> getPagedAnnouncements() }.cachedIn(viewModelScope)
 
-    val subscribedTags = getSubscribedTagsUseCase()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
-            emptyList()
-        )
-
-    val forYouFeedAnnouncements = subscribedTags.flatMapLatest { tags ->
-        getPagedFilteredAnnouncementsUseCase(
-            tagIds = tags.map { it.id }
-        )
-    }.cachedIn(viewModelScope)
+    val forYouFeedAnnouncements = getForYouAnnouncementsUseCase()
+        .cachedIn(viewModelScope)
 
 
     fun onSignInNoticeDismiss() {

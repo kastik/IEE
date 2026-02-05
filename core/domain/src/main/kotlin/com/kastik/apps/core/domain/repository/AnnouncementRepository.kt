@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface AnnouncementRepository {
     fun getPagedAnnouncements(
-        sortType: SortType,
-        titleQuery: String,
-        bodyQuery: String,
-        authorIds: List<Int>,
-        tagIds: List<Int>
+        sortType: SortType = SortType.Priority,
+        titleQuery: String = "",
+        bodyQuery: String = "",
+        authorIds: List<Int> = emptyList(),
+        tagIds: List<Int> = emptyList(),
     ): Flow<PagingData<Announcement>>
 
     fun getAnnouncementsQuickResults(

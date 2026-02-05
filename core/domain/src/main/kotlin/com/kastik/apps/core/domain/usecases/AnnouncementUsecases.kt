@@ -2,6 +2,7 @@ package com.kastik.apps.core.domain.usecases
 
 import androidx.paging.PagingData
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
+import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.aboard.Announcement
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -56,6 +57,25 @@ class GetPagedFilteredAnnouncementsUseCase @Inject constructor(
                 bodyQuery = query.takeIf { searchScope.includesBody } ?: "",
                 authorIds = authorIds,
                 tagIds = tagIds
+            )
+        }
+}
+
+@ViewModelScoped
+class GetForYouAnnouncementsUseCase @Inject constructor(
+    private val profileRepository: ProfileRepository,
+    private val announcementRepository: AnnouncementRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<PagingData<Announcement>> =
+        combine(
+            userPreferencesRepository.getSortType(),
+            profileRepository.getEmailSubscriptions(),
+            ::Pair
+        ).flatMapLatest { (sortType, subscribedTags) ->
+            announcementRepository.getPagedAnnouncements(
+                sortType = sortType,
+                tagIds = subscribedTags.map { it.id },
             )
         }
 }
