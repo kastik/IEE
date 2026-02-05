@@ -1,12 +1,11 @@
-package com.kastik.apps.core.network.model.aboard
+package com.kastik.apps.core.network.model.aboard.auth
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AboardAuthTokenDto(
+data class AboardTokenResponseDto(
     @SerialName("access_token") val accessToken: String,
     @SerialName("token_type") val tokenType: String,
-    @SerialName("user_data") val userData: UserDataDto,
     @SerialName("expires_in") val expiresIn: Int
 )

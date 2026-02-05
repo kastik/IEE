@@ -1,10 +1,10 @@
-package com.kastik.apps.core.network.model.aboard
+package com.kastik.apps.core.network.model.aboard.tags
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SubscribableTagsDto(
+data class SubscribableTagsResponseDto(
     val id: Int,
     val title: String,
     @SerialName("parent_id") val parentId: Int?,
@@ -13,5 +13,5 @@ data class SubscribableTagsDto(
     @SerialName("updated_at") val updatedAt: String?,
     @SerialName("deleted_at") val deletedAt: String?,
     @SerialName("maillist_name") val mailListName: String,
-    @SerialName("childrensub_recursive") val subTags: List<SubscribableTagsDto>
+    @SerialName("childrensub_recursive") val subTags: List<SubscribableTagsResponseDto>
 )

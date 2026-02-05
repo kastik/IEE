@@ -3,18 +3,18 @@ package com.kastik.apps.core.testing.api
 
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.api.AboardApiClient
-import com.kastik.apps.core.network.model.aboard.AboardAuthTokenDto
-import com.kastik.apps.core.network.model.aboard.AnnouncementDto
-import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
-import com.kastik.apps.core.network.model.aboard.AuthorDto
-import com.kastik.apps.core.network.model.aboard.SingleAnnouncementResponse
-import com.kastik.apps.core.network.model.aboard.SubscribableTagsDto
-import com.kastik.apps.core.network.model.aboard.SubscribedTagDto
-import com.kastik.apps.core.network.model.aboard.TagsResponseDto
-import com.kastik.apps.core.network.model.aboard.Token
-import com.kastik.apps.core.network.model.aboard.UpdateUserSubscriptionsDto
-import com.kastik.apps.core.network.model.aboard.UserProfileDto
-import com.kastik.apps.core.testing.testdata.aboardAuthTokenDtoTestData
+import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementDto
+import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
+import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import com.kastik.apps.core.network.model.aboard.auth.AboardTokenRefreshRequestDto
+import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
+import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
+import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribeToTagsRequestDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.TagsResponseDto
+import com.kastik.apps.core.testing.testdata.aboardTokenResponseDtoTestData
 import com.kastik.apps.core.testing.testdata.announcementPageResponseTestData
 import com.kastik.apps.core.testing.testdata.authorDtoTestData
 import com.kastik.apps.core.testing.testdata.subscribableTagsDtoTestData
@@ -44,46 +44,46 @@ class FakeAboardApiClient : AboardApiClient {
         tagsIds: List<Int>?,
         title: String?,
         body: String?
-    ): AnnouncementPageResponse {
+    ): PagedAnnouncementsResponseDto {
         return announcementPageResponseTestData[page - 1]
     }
 
 
-    override suspend fun getAnnouncement(id: Int): SingleAnnouncementResponse {
+    override suspend fun getAnnouncement(id: Int): AnnouncementResponseDto {
         announcementPageResponseTestData.forEach { page ->
             page.data.forEach { announcement ->
                 if (announcement.id == id) {
-                    return SingleAnnouncementResponse(data = announcement)
+                    return AnnouncementResponseDto(data = announcement)
                 }
             }
         }
         throw Exception("Announcement not found")
     }
 
-    override suspend fun exchangeCodeForAboardToken(code: String): AboardAuthTokenDto {
-        return aboardAuthTokenDtoTestData
+    override suspend fun exchangeCodeForAboardToken(code: String): AboardTokenResponseDto {
+        return aboardTokenResponseDtoTestData
     }
 
-    override suspend fun refreshToken(token: Token): AboardAuthTokenDto {
-        return aboardAuthTokenDtoTestData
+    override suspend fun refreshToken(aboardTokenRefreshRequestDto: AboardTokenRefreshRequestDto): AboardTokenResponseDto {
+        return aboardTokenResponseDtoTestData
     }
 
-    override suspend fun getUserInfo(): UserProfileDto {
+    override suspend fun getUserInfo(): ProfileResponseDto {
         throwOnApiCall?.let {
             throw it
         }
         return userProfileDtoTestData.first()
     }
 
-    override suspend fun getUserSubscriptions(): List<SubscribedTagDto> {
+    override suspend fun getUserSubscriptions(): List<SubscribedTagResponseDto> {
         return subscribedTagDtoTestData
     }
 
-    override suspend fun getUserSubscribableTags(): List<SubscribableTagsDto> {
+    override suspend fun getUserSubscribableTags(): List<SubscribableTagsResponseDto> {
         return subscribableTagsDtoTestData
     }
 
-    override suspend fun subscribeToTags(updatedTags: UpdateUserSubscriptionsDto) {
+    override suspend fun subscribeToTags(updatedTags: SubscribeToTagsRequestDto) {
         subscribedIds.update { updatedTags.tags }
     }
 
@@ -107,7 +107,7 @@ class FakeAboardApiClient : AboardApiClient {
         return tagsResponseDtoTestData
     }
 
-    override suspend fun getAuthors(): List<AuthorDto> {
+    override suspend fun getAuthors(): List<AuthorResponseDto> {
         return authorDtoTestData
     }
 

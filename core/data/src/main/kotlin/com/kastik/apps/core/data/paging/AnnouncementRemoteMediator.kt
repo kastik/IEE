@@ -18,7 +18,7 @@ import com.kastik.apps.core.database.entities.RemoteKeys
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
-import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
+import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
 
 @OptIn(ExperimentalPagingApi::class)
 class AnnouncementRemoteMediator(
@@ -110,7 +110,7 @@ class AnnouncementRemoteMediator(
         return MediatorResult.Error(e)
     }
 
-    private suspend fun insertAnnouncement(dto: AnnouncementPageResponse) {
+    private suspend fun insertAnnouncement(dto: PagedAnnouncementsResponseDto) {
 
         val mappedAuthors = dto.data.map { it.author.toAuthorEntity() }
         authorLocalDataSource.upsertAuthors(mappedAuthors)

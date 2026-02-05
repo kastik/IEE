@@ -1,5 +1,8 @@
-package com.kastik.apps.core.network.model.aboard
+package com.kastik.apps.core.network.model.aboard.announcement
 
+import com.kastik.apps.core.network.model.aboard.attachment.AttachmentResponseDto
+import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.TagResponseDto
 import com.kastik.apps.core.network.serializers.IntAsBooleanSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -33,9 +36,9 @@ data class AnnouncementDto(
     val gmaps: String? = null,
 
 
-    val tags: List<AnnouncementTagDto> = emptyList(),
-    val attachments: List<AttachmentDto> = emptyList(),
-    val author: AnnouncementAuthorDto,
+    val tags: List<TagResponseDto> = emptyList(),
+    val attachments: List<AttachmentResponseDto> = emptyList(),
+    val author: AuthorResponseDto,
 
 
     @SerialName("announcement_url") val announcementUrl: String

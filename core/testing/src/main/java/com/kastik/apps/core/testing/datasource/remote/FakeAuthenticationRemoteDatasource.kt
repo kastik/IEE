@@ -1,15 +1,15 @@
 package com.kastik.apps.core.testing.datasource.remote
 
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
-import com.kastik.apps.core.network.model.aboard.AboardAuthTokenDto
+import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
 
 class FakeAuthenticationRemoteDatasource : AuthenticationRemoteDataSource {
 
     var isTokenValid: Boolean = false
     var throwOnApiRequest: Throwable? = null
-    var aboardAccessTokenResponse: AboardAuthTokenDto? = null
+    var aboardAccessTokenResponse: AboardTokenResponseDto? = null
 
-    override suspend fun exchangeCodeForAboardToken(code: String): AboardAuthTokenDto {
+    override suspend fun exchangeCodeForAboardToken(code: String): AboardTokenResponseDto {
         throwOnApiRequest?.let { throw it }
         aboardAccessTokenResponse?.let {
             return it
@@ -17,7 +17,7 @@ class FakeAuthenticationRemoteDatasource : AuthenticationRemoteDataSource {
         throw IllegalStateException("Aboard Access Token Response is null")
     }
 
-    override suspend fun refreshAboardToken(token: String): AboardAuthTokenDto {
+    override suspend fun refreshAboardToken(token: String): AboardTokenResponseDto {
         throwOnApiRequest?.let { throw it }
         aboardAccessTokenResponse?.let {
             return it

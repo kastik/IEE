@@ -1,11 +1,11 @@
-package com.kastik.apps.core.network.model.aboard
+package com.kastik.apps.core.network.model.aboard.tags
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class SubscribedTagDto(
+data class SubscribedTagResponseDto(
     val id: Int,
     val title: String,
     @SerialName("parent_id") val parentId: Int?,
@@ -14,5 +14,4 @@ data class SubscribedTagDto(
     @SerialName("updated_at") val updatedAt: String?,
     @SerialName("deleted_at") val deletedAt: String?,
     @SerialName("maillist_name") val mailListName: String,
-    val pivot: PivotDto,
 )

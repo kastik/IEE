@@ -7,7 +7,7 @@ import com.kastik.apps.core.database.entities.TagsCrossRefEntity
 import com.kastik.apps.core.database.relations.AnnouncementDetailRelation
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.Announcement
-import com.kastik.apps.core.network.model.aboard.AnnouncementDto
+import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementDto
 
 fun AnnouncementDto.toAnnouncementEntity() = AnnouncementEntity(
     id = id,

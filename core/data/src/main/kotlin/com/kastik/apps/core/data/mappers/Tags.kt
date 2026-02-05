@@ -5,11 +5,11 @@ import com.kastik.apps.core.datastore.proto.SubscribableTagProto
 import com.kastik.apps.core.datastore.proto.SubscribedTagProto
 import com.kastik.apps.core.model.aboard.SubscribableTag
 import com.kastik.apps.core.model.aboard.Tag
-import com.kastik.apps.core.network.model.aboard.AnnouncementTagDto
-import com.kastik.apps.core.network.model.aboard.SubscribableTagsDto
-import com.kastik.apps.core.network.model.aboard.SubscribedTagDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.TagResponseDto
 
-fun AnnouncementTagDto.toTagEntity() = TagEntity(
+fun TagResponseDto.toTagEntity() = TagEntity(
     id = id,
     title = title,
     parentId = parentId,
@@ -23,7 +23,7 @@ fun TagEntity.toTag() = Tag(
     isPublic = isPublic
 )
 
-fun SubscribedTagDto.toSubscribedTagProto(): SubscribedTagProto = let { dto ->
+fun SubscribedTagResponseDto.toSubscribedTagProto(): SubscribedTagProto = let { dto ->
     SubscribedTagProto.newBuilder().apply {
         setId(dto.id)
         setTitle(dto.title)
@@ -36,7 +36,7 @@ fun SubscribedTagProto.toTag() = Tag(
     isPublic = false
 )
 
-fun SubscribableTagsDto.toSubscribableTagProto(): SubscribableTagProto =
+fun SubscribableTagsResponseDto.toSubscribableTagProto(): SubscribableTagProto =
     SubscribableTagProto.newBuilder()
         .setId(id)
         .setTitle(title)

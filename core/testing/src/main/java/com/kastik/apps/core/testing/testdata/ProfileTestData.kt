@@ -1,9 +1,9 @@
 package com.kastik.apps.core.testing.testdata
 
 import com.kastik.apps.core.data.mappers.toProfileProto
-import com.kastik.apps.core.network.model.aboard.UserProfileDto
+import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
 
-private val baseUserProfileDto = UserProfileDto(
+private val baseProfileResponseDto = ProfileResponseDto(
     id = 0,
     name = "Some Name",
     nameEng = "Eng name",
@@ -17,10 +17,10 @@ private val baseUserProfileDto = UserProfileDto(
     deletedAt = ""
 )
 val userProfileDtoTestData = listOf(
-    baseUserProfileDto.copy(id = 1),
-    baseUserProfileDto.copy(id = 2, isAuthor = true),
-    baseUserProfileDto.copy(id = 3, isAdmin = true),
-    baseUserProfileDto.copy(id = 4, deletedAt = null)
+    baseProfileResponseDto.copy(id = 1),
+    baseProfileResponseDto.copy(id = 2, isAuthor = true),
+    baseProfileResponseDto.copy(id = 3, isAdmin = true),
+    baseProfileResponseDto.copy(id = 4, deletedAt = null)
 )
 
 val userProfileProtoTestData = userProfileDtoTestData.map { it.toProfileProto() }

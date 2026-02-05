@@ -1,10 +1,10 @@
-package com.kastik.apps.core.network.model.aboard
+package com.kastik.apps.core.network.model.aboard.attachment
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AttachmentDto(
+data class AttachmentResponseDto(
     val id: Int,
     @SerialName("announcement_id") val announcementId: Int,
     val filename: String,

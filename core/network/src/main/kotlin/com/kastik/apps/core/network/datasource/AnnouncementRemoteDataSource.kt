@@ -3,8 +3,8 @@ package com.kastik.apps.core.network.datasource
 import com.kastik.apps.core.di.AnnRetrofit
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.api.AboardApiClient
-import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
-import com.kastik.apps.core.network.model.aboard.SingleAnnouncementResponse
+import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
+import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
 
 interface AnnouncementRemoteDataSource {
     suspend fun fetchPagedAnnouncements(
@@ -15,9 +15,9 @@ interface AnnouncementRemoteDataSource {
         body: String? = null,
         authorId: List<Int>? = null,
         tagId: List<Int>? = null
-    ): AnnouncementPageResponse
+    ): PagedAnnouncementsResponseDto
 
-    suspend fun fetchAnnouncementWithId(id: Int): SingleAnnouncementResponse
+    suspend fun fetchAnnouncementWithId(id: Int): AnnouncementResponseDto
 }
 
 internal class AnnouncementRemoteDataSourceImpl(
@@ -31,7 +31,7 @@ internal class AnnouncementRemoteDataSourceImpl(
         body: String?,
         authorId: List<Int>?,
         tagId: List<Int>?
-    ): AnnouncementPageResponse = aboardApiClient.getAnnouncements(
+    ): PagedAnnouncementsResponseDto = aboardApiClient.getAnnouncements(
         page = page,
         perPage = perPage,
         sortType = sortBy,
@@ -41,7 +41,7 @@ internal class AnnouncementRemoteDataSourceImpl(
         tagsIds = tagId
     )
 
-    override suspend fun fetchAnnouncementWithId(id: Int): SingleAnnouncementResponse =
+    override suspend fun fetchAnnouncementWithId(id: Int): AnnouncementResponseDto =
         aboardApiClient.getAnnouncement(id)
 
 }

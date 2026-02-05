@@ -2,17 +2,17 @@ package com.kastik.apps.core.network.api
 
 
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.network.model.aboard.AboardAuthTokenDto
-import com.kastik.apps.core.network.model.aboard.AnnouncementDto
-import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
-import com.kastik.apps.core.network.model.aboard.AuthorDto
-import com.kastik.apps.core.network.model.aboard.SingleAnnouncementResponse
-import com.kastik.apps.core.network.model.aboard.SubscribableTagsDto
-import com.kastik.apps.core.network.model.aboard.SubscribedTagDto
-import com.kastik.apps.core.network.model.aboard.TagsResponseDto
-import com.kastik.apps.core.network.model.aboard.Token
-import com.kastik.apps.core.network.model.aboard.UpdateUserSubscriptionsDto
-import com.kastik.apps.core.network.model.aboard.UserProfileDto
+import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementDto
+import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
+import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import com.kastik.apps.core.network.model.aboard.auth.AboardTokenRefreshRequestDto
+import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
+import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
+import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribeToTagsRequestDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.TagsResponseDto
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -33,12 +33,12 @@ interface AboardApiClient {
         @Query("tags[]") tagsIds: List<Int>? = null,
         @Query("title") title: String? = null,
         @Query("body") body: String? = null,
-    ): AnnouncementPageResponse
+    ): PagedAnnouncementsResponseDto
 
     @GET("announcements/{id}")
     suspend fun getAnnouncement(
         @Path("id") id: Int
-    ): SingleAnnouncementResponse
+    ): AnnouncementResponseDto
 
     @Streaming
     @GET("announcements/{id}/attachments/{attachmentId}")
@@ -68,31 +68,31 @@ interface AboardApiClient {
 
     @GET("authors")
     suspend fun getAuthors(
-    ): List<AuthorDto>
+    ): List<AuthorResponseDto>
 
 
     @GET("authenticate")
     suspend fun exchangeCodeForAboardToken(
         @Query("code") code: String,
-    ): AboardAuthTokenDto
+    ): AboardTokenResponseDto
 
     @POST("auth/token")
     suspend fun refreshToken(
-        @Body token: Token
-    ): AboardAuthTokenDto
+        @Body aboardTokenRefreshRequestDto: AboardTokenRefreshRequestDto
+    ): AboardTokenResponseDto
 
     @GET("auth/whoami")
-    suspend fun getUserInfo(): UserProfileDto
+    suspend fun getUserInfo(): ProfileResponseDto
 
     @GET("auth/subscriptions")
-    suspend fun getUserSubscriptions(): List<SubscribedTagDto>
+    suspend fun getUserSubscriptions(): List<SubscribedTagResponseDto>
 
     @GET("subscribetags")
-    suspend fun getUserSubscribableTags(): List<SubscribableTagsDto>
+    suspend fun getUserSubscribableTags(): List<SubscribableTagsResponseDto>
 
     @POST("auth/subscribe")
     suspend fun subscribeToTags(
-        @Body updatedTags: UpdateUserSubscriptionsDto
+        @Body updatedTags: SubscribeToTagsRequestDto
     )
 
 }
