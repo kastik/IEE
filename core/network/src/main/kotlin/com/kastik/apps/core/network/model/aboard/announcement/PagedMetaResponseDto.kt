@@ -1,10 +1,10 @@
-package com.kastik.apps.core.network.model.aboard
+package com.kastik.apps.core.network.model.aboard.announcement
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AnnouncementMeta(
+data class PagedMetaResponseDto(
     @SerialName("current_page") val currentPage: Int,
     val from: Int,
     @SerialName("last_page") val lastPage: Int,

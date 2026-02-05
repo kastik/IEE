@@ -2,17 +2,17 @@ package com.kastik.apps.core.testing.datasource.remote
 
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
-import com.kastik.apps.core.network.model.aboard.AnnouncementMeta
-import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
-import com.kastik.apps.core.network.model.aboard.SingleAnnouncementResponse
+import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
+import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import com.kastik.apps.core.network.model.aboard.announcement.PagedMetaResponseDto
 import com.kastik.apps.core.testing.testdata.announcementPageResponseTestData
 
 class FakeAnnouncementRemoteDataSource(
-    val fakeAnnouncementResponses: List<AnnouncementPageResponse> = announcementPageResponseTestData
+    val fakeAnnouncementResponses: List<PagedAnnouncementsResponseDto> = announcementPageResponseTestData
 ) : AnnouncementRemoteDataSource {
 
     var throwOnApiRequest: Throwable? = null
-    var pagedAnnouncementResponseOverride: AnnouncementPageResponse? = null
+    var pagedAnnouncementResponseOverride: PagedAnnouncementsResponseDto? = null
 
     //TODO IMPLEMENT FILTERING
     override suspend fun fetchPagedAnnouncements(
@@ -23,7 +23,7 @@ class FakeAnnouncementRemoteDataSource(
         body: String?,
         authorId: List<Int>?,
         tagId: List<Int>?
-    ): AnnouncementPageResponse {
+    ): PagedAnnouncementsResponseDto {
         throwOnApiRequest?.let { throw it }
         pagedAnnouncementResponseOverride?.let { return it }
 
@@ -74,9 +74,9 @@ class FakeAnnouncementRemoteDataSource(
         }
 
         // 5. Return Dynamic Response
-        return AnnouncementPageResponse(
+        return PagedAnnouncementsResponseDto(
             data = pagedData,
-            meta = AnnouncementMeta(
+            meta = PagedMetaResponseDto(
                 currentPage = page,
                 from = if (pagedData.isNotEmpty()) fromIndex + 1 else 0,
                 to = toIndex,
@@ -88,12 +88,12 @@ class FakeAnnouncementRemoteDataSource(
         )
     }
 
-    override suspend fun fetchAnnouncementWithId(id: Int): SingleAnnouncementResponse {
+    override suspend fun fetchAnnouncementWithId(id: Int): AnnouncementResponseDto {
         throwOnApiRequest?.let { throw it }
 
         val found = fakeAnnouncementResponses.flatMap { it.data }.firstOrNull { it.id == id }
 
-        return found?.let { SingleAnnouncementResponse(it) }
+        return found?.let { AnnouncementResponseDto(it) }
             ?: throw NoSuchElementException("Announcement $id not found in Fake")
     }
 }

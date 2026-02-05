@@ -1,10 +1,10 @@
-package com.kastik.apps.core.network.model.aboard
+package com.kastik.apps.core.network.model.aboard.tags
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AnnouncementTagDto(
+data class TagResponseDto(
     val id: Int,
     val title: String,
     @SerialName("parent_id") val parentId: Int? = null,

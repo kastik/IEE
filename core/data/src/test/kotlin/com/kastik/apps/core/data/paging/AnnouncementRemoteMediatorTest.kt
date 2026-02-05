@@ -15,8 +15,8 @@ import com.kastik.apps.core.data.mappers.toAttachmentEntity
 import com.kastik.apps.core.data.mappers.toAuthorEntity
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.network.model.aboard.AnnouncementMeta
-import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
+import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import com.kastik.apps.core.network.model.aboard.announcement.PagedMetaResponseDto
 import com.kastik.apps.core.testing.datasource.remote.FakeAnnouncementRemoteDataSource
 import com.kastik.apps.core.testing.db.FakeAppDatabase
 import com.kastik.apps.core.testing.testdata.announcementDtoTestData
@@ -113,9 +113,9 @@ class AnnouncementRemoteMediatorTest {
     @Test
     fun refreshWithEmptyDataReturnsSuccessAndEndOfPagination() = runTest {
         fakeAnnouncementRemoteDataSource.pagedAnnouncementResponseOverride =
-            AnnouncementPageResponse(
+            PagedAnnouncementsResponseDto(
                 data = emptyList(),
-                meta = AnnouncementMeta(
+                meta = PagedMetaResponseDto(
                     currentPage = 1,
                     from = 1,
                     lastPage = 1,
@@ -189,9 +189,9 @@ class AnnouncementRemoteMediatorTest {
     @Test
     fun appendReturnsEndOfPaginationWhenNoMoreDataIsAvailable() = runTest {
         fakeAnnouncementRemoteDataSource.pagedAnnouncementResponseOverride =
-            AnnouncementPageResponse(
+            PagedAnnouncementsResponseDto(
                 data = announcementDtoTestData,
-                meta = AnnouncementMeta(
+                meta = PagedMetaResponseDto(
                     currentPage = 1,
                     from = 1,
                     lastPage = 1,

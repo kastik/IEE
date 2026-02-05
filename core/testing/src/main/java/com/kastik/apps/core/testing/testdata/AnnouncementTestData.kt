@@ -10,9 +10,9 @@ import com.kastik.apps.core.database.entities.RemoteKeys
 import com.kastik.apps.core.database.relations.AnnouncementDetailRelation
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.network.model.aboard.AnnouncementDto
-import com.kastik.apps.core.network.model.aboard.AnnouncementMeta
-import com.kastik.apps.core.network.model.aboard.AnnouncementPageResponse
+import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementDto
+import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import com.kastik.apps.core.network.model.aboard.announcement.PagedMetaResponseDto
 
 private val baseAnnouncementDto = AnnouncementDto(
     id = 1,
@@ -185,9 +185,9 @@ val announcementDtoTestData = listOf(
 )
 
 
-private val baseAnnouncementPageResponseTestData = AnnouncementPageResponse(
+private val basePagedAnnouncementsResponseDtoTestData = PagedAnnouncementsResponseDto(
     data = announcementDtoTestData,
-    meta = AnnouncementMeta(
+    meta = PagedMetaResponseDto(
         currentPage = 1,
         from = 1,
         lastPage = 100,
@@ -199,28 +199,28 @@ private val baseAnnouncementPageResponseTestData = AnnouncementPageResponse(
 )
 
 val announcementPageResponseTestData = listOf(
-    baseAnnouncementPageResponseTestData,
-    baseAnnouncementPageResponseTestData.copy(
-        data = baseAnnouncementPageResponseTestData.data.map { it.copy(id = it.id + 20) },
-        meta = baseAnnouncementPageResponseTestData.meta.copy(
+    basePagedAnnouncementsResponseDtoTestData,
+    basePagedAnnouncementsResponseDtoTestData.copy(
+        data = basePagedAnnouncementsResponseDtoTestData.data.map { it.copy(id = it.id + 20) },
+        meta = basePagedAnnouncementsResponseDtoTestData.meta.copy(
             currentPage = 2
         )
     ),
-    baseAnnouncementPageResponseTestData.copy(
-        data = baseAnnouncementPageResponseTestData.data.map { it.copy(id = it.id + 40) },
-        meta = baseAnnouncementPageResponseTestData.meta.copy(
+    basePagedAnnouncementsResponseDtoTestData.copy(
+        data = basePagedAnnouncementsResponseDtoTestData.data.map { it.copy(id = it.id + 40) },
+        meta = basePagedAnnouncementsResponseDtoTestData.meta.copy(
             currentPage = 3
         )
     ),
-    baseAnnouncementPageResponseTestData.copy(
-        data = baseAnnouncementPageResponseTestData.data.map { it.copy(id = it.id + 60) },
-        meta = baseAnnouncementPageResponseTestData.meta.copy(
+    basePagedAnnouncementsResponseDtoTestData.copy(
+        data = basePagedAnnouncementsResponseDtoTestData.data.map { it.copy(id = it.id + 60) },
+        meta = basePagedAnnouncementsResponseDtoTestData.meta.copy(
             currentPage = 4
         )
     ),
 )
 
-val remoteKeys = baseAnnouncementPageResponseTestData.data.map { dto ->
+val remoteKeys = basePagedAnnouncementsResponseDtoTestData.data.map { dto ->
     RemoteKeys(
         announcementId = dto.id,
         titleQuery = "",
@@ -257,6 +257,6 @@ val announcementDetailsRelationTestData = announcementDtoTestData.map { announce
 }
 
 val tagEntitiesTestData =
-    baseAnnouncementPageResponseTestData.data.flatMap { dto -> dto.tags.map { it.toTagEntity() } }
+    basePagedAnnouncementsResponseDtoTestData.data.flatMap { dto -> dto.tags.map { it.toTagEntity() } }
 val authorEntitiesTestData =
-    baseAnnouncementPageResponseTestData.data.map { dto -> dto.author.toAuthorEntity() }
+    basePagedAnnouncementsResponseDtoTestData.data.map { dto -> dto.author.toAuthorEntity() }

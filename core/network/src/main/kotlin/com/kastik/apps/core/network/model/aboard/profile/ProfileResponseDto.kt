@@ -1,11 +1,11 @@
-package com.kastik.apps.core.network.model.aboard
+package com.kastik.apps.core.network.model.aboard.profile
 
 import com.kastik.apps.core.network.serializers.IntAsBooleanSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserProfileDto(
+data class ProfileResponseDto(
     val id: Int,
     val name: String,
     @SerialName("name_eng") val nameEng: String,

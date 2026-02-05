@@ -3,13 +3,13 @@ package com.kastik.apps.core.network.datasource
 
 import com.kastik.apps.core.di.AnnRetrofit
 import com.kastik.apps.core.network.api.AboardApiClient
-import com.kastik.apps.core.network.model.aboard.SubscribedTagDto
-import com.kastik.apps.core.network.model.aboard.UpdateUserSubscriptionsDto
-import com.kastik.apps.core.network.model.aboard.UserProfileDto
+import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribeToTagsRequestDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
 
 interface ProfileRemoteDataSource {
-    suspend fun getProfile(): UserProfileDto
-    suspend fun getEmailSubscriptions(): List<SubscribedTagDto>
+    suspend fun getProfile(): ProfileResponseDto
+    suspend fun getEmailSubscriptions(): List<SubscribedTagResponseDto>
     suspend fun subscribeToEmailTags(tags: List<Int>)
 }
 
@@ -17,16 +17,16 @@ internal class ProfileRemoteDataSourceImpl(
     @AnnRetrofit private val aboardApiClient: AboardApiClient,
 ) : ProfileRemoteDataSource {
 
-    override suspend fun getProfile(): UserProfileDto {
+    override suspend fun getProfile(): ProfileResponseDto {
         return aboardApiClient.getUserInfo()
     }
 
-    override suspend fun getEmailSubscriptions(): List<SubscribedTagDto> {
+    override suspend fun getEmailSubscriptions(): List<SubscribedTagResponseDto> {
         return aboardApiClient.getUserSubscriptions()
     }
 
     override suspend fun subscribeToEmailTags(tags: List<Int>) {
-        aboardApiClient.subscribeToTags(UpdateUserSubscriptionsDto(tags))
+        aboardApiClient.subscribeToTags(SubscribeToTagsRequestDto(tags))
     }
 
 }

@@ -2,12 +2,12 @@ package com.kastik.apps.core.network.datasource
 
 import com.kastik.apps.core.di.AnnRetrofit
 import com.kastik.apps.core.network.api.AboardApiClient
-import com.kastik.apps.core.network.model.aboard.SubscribableTagsDto
-import com.kastik.apps.core.network.model.aboard.TagsResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDto
+import com.kastik.apps.core.network.model.aboard.tags.TagsResponseDto
 
 interface TagsRemoteDataSource {
     suspend fun fetchAnnouncementTags(): TagsResponseDto
-    suspend fun fetchSubscribableTags(): List<SubscribableTagsDto>
+    suspend fun fetchSubscribableTags(): List<SubscribableTagsResponseDto>
 }
 
 internal class TagsRemoteDataSourceImpl(
@@ -16,7 +16,7 @@ internal class TagsRemoteDataSourceImpl(
     override suspend fun fetchAnnouncementTags(): TagsResponseDto =
         aboardApiClient.getTags()
 
-    override suspend fun fetchSubscribableTags(): List<SubscribableTagsDto> {
+    override suspend fun fetchSubscribableTags(): List<SubscribableTagsResponseDto> {
         return aboardApiClient.getUserSubscribableTags()
     }
 

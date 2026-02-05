@@ -2,9 +2,9 @@ package com.kastik.apps.core.data.mappers
 
 import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.model.aboard.Profile
-import com.kastik.apps.core.network.model.aboard.UserProfileDto
+import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
 
-fun UserProfileDto.toProfileProto(): ProfileProto = let { dto ->
+fun ProfileResponseDto.toProfileProto(): ProfileProto = let { dto ->
     ProfileProto.newBuilder().apply {
         setId(dto.id)
         setName(dto.name.ifEmpty { nameEng })

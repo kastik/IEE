@@ -40,9 +40,9 @@ class GetPagedFilteredAnnouncementsUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(
-        query: String,
-        authorIds: List<Int>,
-        tagIds: List<Int>
+        query: String = "",
+        authorIds: List<Int> = emptyList(),
+        tagIds: List<Int> = emptyList()
     ): Flow<PagingData<Announcement>> =
         combine(
             userPreferencesRepository.getSortType(),

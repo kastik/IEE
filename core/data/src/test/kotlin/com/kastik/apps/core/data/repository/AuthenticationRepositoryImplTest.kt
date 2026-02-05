@@ -3,7 +3,7 @@ package com.kastik.apps.core.data.repository
 import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.testing.datasource.local.FakeAuthenticationLocalDataSource
 import com.kastik.apps.core.testing.datasource.remote.FakeAuthenticationRemoteDatasource
-import com.kastik.apps.core.testing.testdata.aboardAuthTokenDtoTestData
+import com.kastik.apps.core.testing.testdata.aboardTokenResponseDtoTestData
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -26,7 +26,7 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun exchangeCodeForAboardTokenSavesResponseLocallyTest() = runTest {
-        val response = aboardAuthTokenDtoTestData
+        val response = aboardTokenResponseDtoTestData
         fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
         authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
         assertThat(fakeAuthenticationLocalDataSource.aboardToken.value).isEqualTo(response.accessToken)
@@ -35,7 +35,7 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun exchangeCodeForAboardUpdatesIsSignInTest() = runTest {
-        val response = aboardAuthTokenDtoTestData
+        val response = aboardTokenResponseDtoTestData
         fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
         authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
         assertThat(fakeAuthenticationLocalDataSource.isSignedIn.value).isTrue()
@@ -51,7 +51,7 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun getAboardTokenReturnsTokenFromDataSourceTest() = runTest {
-        val response = aboardAuthTokenDtoTestData
+        val response = aboardTokenResponseDtoTestData
         fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
         authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
 
@@ -75,7 +75,7 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun clearTokensClearsLocalDataFromDataSourceTest() = runTest {
-        val response = aboardAuthTokenDtoTestData
+        val response = aboardTokenResponseDtoTestData
         fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
         authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
         authenticationRepositoryImpl.clearAuthenticationData()
