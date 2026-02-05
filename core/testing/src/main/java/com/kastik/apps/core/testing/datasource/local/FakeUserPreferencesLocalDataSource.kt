@@ -14,6 +14,7 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
 
     var sortType: Sort = Sort.Priority
 
+    var enableForYou = false
     var queryScope: QueryScope = QueryScope.Title
 
 
@@ -54,4 +55,13 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
     override suspend fun setSearchScope(queryScope: QueryScope) {
         this.queryScope = queryScope
     }
+
+    override fun getEnableForYou(): Flow<Boolean> {
+        return flowOf(enableForYou)
+    }
+
+    override suspend fun setEnableForYou(value: Boolean) {
+        this.enableForYou = value
+    }
+
 }

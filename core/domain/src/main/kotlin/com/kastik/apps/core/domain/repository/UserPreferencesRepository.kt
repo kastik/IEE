@@ -16,4 +16,6 @@ interface UserPreferencesRepository {
     suspend fun setSortType(sortType: SortType)
     fun getSearchScope(): Flow<SearchScope>
     suspend fun setSearchScope(searchScope: SearchScope)
+    fun getEnableForYou(): Flow<Boolean>
+    suspend fun setEnableForYou(value: Boolean)
 }

@@ -21,6 +21,8 @@ interface PreferencesLocalDataSource {
     suspend fun setSortType(sortType: Sort)
     fun getSearchScope(): Flow<QueryScope>
     suspend fun setSearchScope(queryScope: QueryScope)
+    fun getEnableForYou(): Flow<Boolean>
+    suspend fun setEnableForYou(value: Boolean)
 
 }
 
@@ -85,4 +87,16 @@ internal class PreferencesLocalDataSourceImpl @Inject constructor(
                 .build()
         }
     }
+
+    override fun getEnableForYou(): Flow<Boolean> =
+        dataStore.data.map { it.enableForYou }
+
+    override suspend fun setEnableForYou(value: Boolean) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setEnableForYou(value)
+                .build()
+        }
+    }
+
 }

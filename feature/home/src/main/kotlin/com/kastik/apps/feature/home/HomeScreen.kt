@@ -3,6 +3,8 @@ package com.kastik.apps.feature.home
 import android.Manifest
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -10,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material.icons.Icons
@@ -27,7 +31,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarValue
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.LoadingIndicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -37,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -92,6 +100,7 @@ internal fun HomeScreenRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val homeFeedAnnouncements = viewModel.homeFeedAnnouncements.collectAsLazyPagingItems()
+    val forYouAnnouncements = viewModel.forYouFeedAnnouncements.collectAsLazyPagingItems()
     val textFieldState = viewModel.searchBarTextFieldState
 
     TrackScreenViewEvent("home_screen")
@@ -100,6 +109,7 @@ internal fun HomeScreenRoute(
         uiState = uiState,
         searchBarTextFieldState = textFieldState,
         homeFeedAnnouncements = homeFeedAnnouncements,
+        forYouAnnouncements = forYouAnnouncements,
         navigateToSearch = navigateToSearch,
         navigateToProfile = navigateToProfile,
         navigateToSettings = navigateToSettings,
@@ -114,6 +124,7 @@ private fun HomeScreenContent(
     uiState: UiState,
     searchBarTextFieldState: TextFieldState,
     homeFeedAnnouncements: LazyPagingItems<Announcement>,
+    forYouAnnouncements: LazyPagingItems<Announcement>,
     navigateToAnnouncement: (Int) -> Unit,
     navigateToSearch: (query: String, tagIds: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
     navigateToProfile: () -> Unit,
@@ -125,13 +136,20 @@ private fun HomeScreenContent(
     val analytics = LocalAnalytics.current
     val scope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
-    val pullToRefreshState = rememberPullToRefreshState()
+    val forYouLazyListState = rememberLazyListState()
+    val homeFeedPullToRefreshState = rememberPullToRefreshState()
+    val forYouFeedPullToRefreshState = rememberPullToRefreshState()
     val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
     val tagSheetState = rememberModalBottomSheetState()
     val showTagSheet = rememberSaveable { mutableStateOf(false) }
     val authorSheetState = rememberModalBottomSheetState()
     val showAuthorSheet = rememberSaveable { mutableStateOf(false) }
     val searchBarState = rememberSearchBarState()
+    val pageCount = if (uiState.enableForYou) 2 else 1
+    val pagerState = rememberPagerState(pageCount = { pageCount })
+    val titles = remember(uiState.enableForYou) {
+        if (uiState.enableForYou) listOf("Home", "For You") else listOf("Home")
+    }
 
     AnimatedVisibility(uiState.showSignInNotice) {
         IEEDialog(
@@ -151,7 +169,14 @@ private fun HomeScreenContent(
 
 
     LaunchedEffect(Unit) {
-        snapshotFlow { pullToRefreshState.distanceFraction > 1f }.distinctUntilChanged()
+        snapshotFlow { homeFeedPullToRefreshState.distanceFraction > 1f }.distinctUntilChanged()
+            .filter { it }.collect {
+                vibrator.performHapticFeedback(HapticFeedbackType.GestureEnd)
+            }
+    }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { forYouFeedPullToRefreshState.distanceFraction > 1f }.distinctUntilChanged()
             .filter { it }.collect {
                 vibrator.performHapticFeedback(HapticFeedbackType.GestureEnd)
             }
@@ -164,24 +189,28 @@ private fun HomeScreenContent(
     }
 
     Scaffold(contentWindowInsets = WindowInsets.safeDrawing, floatingActionButton = {
-        IEEFloatingToolBar(
-            expanded = (lazyListState.isScrollingUp()),
-            expandedAction = {
-                analytics.logEvent("scroll_up_clicked")
-                scope.launch {
-                    searchScroll.scrollOffset = 0f
-                    lazyListState.animateScrollToItem(0)
-                }
-            },
-            collapsedAction = {
-                analytics.logEvent("search_clicked")
-                navigateToSearch(
-                    "", persistentListOf(), persistentListOf()
-                )
-            },
-            expandedIcon = { Icon(Icons.Filled.ArrowUpward, "Scroll to top") },
-            collapsedIcon = { Icon(Icons.Filled.Search, "Go to search") },
-        )
+        AnimatedVisibility(
+            visible = pagerState.currentPage == 0, enter = scaleIn(), exit = scaleOut()
+        ) {
+            IEEFloatingToolBar(
+                expanded = (lazyListState.isScrollingUp()),
+                expandedAction = {
+                    analytics.logEvent("scroll_up_clicked")
+                    scope.launch {
+                        searchScroll.scrollOffset = 0f
+                        lazyListState.animateScrollToItem(0)
+                    }
+                },
+                collapsedAction = {
+                    analytics.logEvent("search_clicked")
+                    navigateToSearch(
+                        "", persistentListOf(), persistentListOf()
+                    )
+                },
+                expandedIcon = { Icon(Icons.Filled.ArrowUpward, "Scroll to top") },
+                collapsedIcon = { Icon(Icons.Filled.Search, "Go to search") },
+            )
+        }
 
 
     }, topBar = {
@@ -209,6 +238,27 @@ private fun HomeScreenContent(
                     selectedAuthorsCount = 0,
                     openTagSheet = { showTagSheet.value = true },
                     openAuthorSheet = { showAuthorSheet.value = true })
+            },
+            collapsedSecondaryActions = {
+                if (uiState.enableForYou) {
+                    SecondaryTabRow(
+                        selectedTabIndex = pagerState.currentPage,
+                    ) {
+                        titles.forEachIndexed { index, title ->
+                            Tab(
+                                selected = pagerState.currentPage == index,
+                                selectedContentColor = MaterialTheme.colorScheme.primary,
+                                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
+                                text = {
+                                    Text(
+                                        text = title,
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
+                                })
+                        }
+                    }
+                }
             },
             navigationIcon = {
                 IconButton(
@@ -247,42 +297,80 @@ private fun HomeScreenContent(
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
         ) {
-            val refreshState = homeFeedAnnouncements.loadState.refresh
+            HorizontalPager(
+                state = pagerState,
+            ) { page ->
+                when (page) {
+                    0 -> {
+                        val refreshState = homeFeedAnnouncements.loadState.refresh
 
-            PullToRefreshBox(
-                isRefreshing = refreshState is LoadState.Loading,
-                state = pullToRefreshState,
-                onRefresh = { homeFeedAnnouncements.refresh() },
-                indicator = {
-                    LoadingIndicator(
-                        modifier = Modifier.align(Alignment.TopCenter),
-                        state = pullToRefreshState,
-                        isRefreshing = refreshState is LoadState.Loading,
-                    )
-                }) {
-                AnnouncementFeed(
-                    announcements = homeFeedAnnouncements,
-                    lazyListState = lazyListState,
-                    scrollBehavior = searchScroll,
-                    onAnnouncementClick = { announcementId ->
-                        analytics.logEvent(
-                            "announcement_clicked",
-                            mapOf("announcement_id" to announcementId)
-                        )
-                        navigateToAnnouncement(announcementId)
-                    },
-                    onAnnouncementLongClick = { announcementId ->
-                        analytics.logEvent(
-                            "announcement_shared",
-                            mapOf("announcement_id" to announcementId)
-                        )
-                        context.shareAnnouncement(announcementId)
-                    },
-                    contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
-                )
+                        PullToRefreshBox(
+                            isRefreshing = refreshState is LoadState.Loading,
+                            state = homeFeedPullToRefreshState,
+                            onRefresh = { homeFeedAnnouncements.refresh() },
+                            indicator = {
+                                LoadingIndicator(
+                                    modifier = Modifier.align(Alignment.TopCenter),
+                                    state = homeFeedPullToRefreshState,
+                                    isRefreshing = refreshState is LoadState.Loading,
+                                )
+                            }) {
+                            AnnouncementFeed(
+                                announcements = homeFeedAnnouncements,
+                                lazyListState = lazyListState,
+                                scrollBehavior = searchScroll,
+                                onAnnouncementClick = { announcementId ->
+                                    analytics.logEvent(
+                                        "announcement_clicked",
+                                        mapOf("announcement_id" to announcementId)
+                                    )
+                                    navigateToAnnouncement(announcementId)
+                                },
+                                onAnnouncementLongClick = { announcementId ->
+                                    analytics.logEvent(
+                                        "announcement_shared",
+                                        mapOf("announcement_id" to announcementId)
+                                    )
+                                    context.shareAnnouncement(announcementId)
+                                },
+                                contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                            )
+                        }
+
+                    }
+
+                    1 -> {
+                        val refreshState = forYouAnnouncements.loadState.refresh
+
+                        PullToRefreshBox(
+                            isRefreshing = refreshState is LoadState.Loading,
+                            state = forYouFeedPullToRefreshState,
+                            onRefresh = { forYouAnnouncements.refresh() },
+                            indicator = {
+                                LoadingIndicator(
+                                    modifier = Modifier.align(Alignment.TopCenter),
+                                    state = forYouFeedPullToRefreshState,
+                                    isRefreshing = refreshState is LoadState.Loading,
+                                )
+                            },
+                            content = {
+                                AnnouncementFeed(
+                                    announcements = forYouAnnouncements, // Connected your ForYou data
+                                    lazyListState = forYouLazyListState, // Using the separate list state
+                                    scrollBehavior = searchScroll,
+                                    onAnnouncementClick = { announcementId ->
+                                        navigateToAnnouncement(announcementId)
+                                    },
+                                    onAnnouncementLongClick = { announcementId ->
+                                        context.shareAnnouncement(announcementId)
+                                    },
+                                    contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
+                                )
+                            })
+                    }
+                }
             }
         }
-
     }
 
     if (showTagSheet.value) {
@@ -315,7 +403,7 @@ private fun HomeScreenContent(
             selectedIds = persistentListOf(),
             idProvider = { it.id },
             labelProvider = { "${it.name} [${it.announcementCount}]" },
-            groupProvider = { it.name.first().uppercaseChar() }, // Turns on grouping
+            groupProvider = { it.name.first().uppercaseChar() },
             titlePlaceholder = "Search Authors...",
             applyText = "Apply Authors",
             onApply = { newAuthorIds ->
@@ -379,6 +467,7 @@ fun PreviewHomeScreenContent() {
             HomeScreenContent(
                 uiState = UiState(),
                 homeFeedAnnouncements = pagedAnnouncements,
+                forYouAnnouncements = pagedAnnouncements,
                 navigateToAnnouncement = {},
                 navigateToSettings = {},
                 navigateToProfile = {},

@@ -2,11 +2,9 @@ package com.kastik.apps.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kastik.apps.core.domain.usecases.GetDynamicColorUseCase
-import com.kastik.apps.core.domain.usecases.GetSearchScopeUseCase
-import com.kastik.apps.core.domain.usecases.GetSortTypeUseCase
-import com.kastik.apps.core.domain.usecases.GetUserThemeUseCase
+import com.kastik.apps.core.domain.usecases.GetUserPreferencesUseCase
 import com.kastik.apps.core.domain.usecases.SetDynamicColorUseCase
+import com.kastik.apps.core.domain.usecases.SetEnableForYouUseCase
 import com.kastik.apps.core.domain.usecases.SetSearchScopeUseCase
 import com.kastik.apps.core.domain.usecases.SetSortTypeUseCase
 import com.kastik.apps.core.domain.usecases.SetUserThemeUseCase
@@ -14,6 +12,7 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -23,26 +22,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
+    getUserPreferencesUseCase: GetUserPreferencesUseCase,
     private val setSearchScopeUseCase: SetSearchScopeUseCase,
     private val setDynamicColorUseCase: SetDynamicColorUseCase,
     private val setUserThemeUseCase: SetUserThemeUseCase,
     private val setSortTypeUseCase: SetSortTypeUseCase,
-    getSearchScopeUseCase: GetSearchScopeUseCase,
-    getDynamicColorUseCase: GetDynamicColorUseCase,
-    getUserThemeUseCase: GetUserThemeUseCase,
-    getSortTypeUseCase: GetSortTypeUseCase,
+    private val setEnableForYouUseCase: SetEnableForYouUseCase,
 ) : ViewModel() {
+
+    private val errorState = MutableStateFlow<String?>(null)
+
     val uiState: StateFlow<UiState> = combine(
-        getUserThemeUseCase(),
-        getDynamicColorUseCase(),
-        getSortTypeUseCase(),
-        getSearchScopeUseCase(),
-    ) { theme, dynamicColor, sortType, searchScope ->
+        errorState,
+        getUserPreferencesUseCase(),
+    ) { error, preferences ->
         UiState.Success(
-            theme = theme,
-            sortType = sortType,
-            dynamicColor = dynamicColor,
-            searchScope = searchScope
+            theme = preferences.theme,
+            sortType = preferences.sortType,
+            dynamicColor = preferences.dynamicColor,
+            searchScope = preferences.searchScope,
+            forYou = preferences.enableForYou
         )
     }.stateIn(
         scope = viewModelScope,
@@ -71,6 +70,12 @@ class SettingsScreenViewModel @Inject constructor(
     fun setSearchScope(searchScope: SearchScope) {
         viewModelScope.launch {
             setSearchScopeUseCase(searchScope)
+        }
+    }
+
+    fun setEnableForYou(value: Boolean) {
+        viewModelScope.launch {
+            setEnableForYouUseCase(value)
         }
     }
 }

@@ -10,6 +10,7 @@ sealed class UiState {
         val theme: UserTheme,
         val sortType: SortType,
         val dynamicColor: Boolean,
-        val searchScope: SearchScope
+        val searchScope: SearchScope,
+        val forYou: Boolean
     ) : UiState()
 }
