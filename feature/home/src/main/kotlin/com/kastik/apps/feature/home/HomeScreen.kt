@@ -135,7 +135,7 @@ private fun HomeScreenContent(
     val vibrator = LocalHapticFeedback.current
     val analytics = LocalAnalytics.current
     val scope = rememberCoroutineScope()
-    val lazyListState = rememberLazyListState()
+    val homeFeedLazyListState = rememberLazyListState()
     val forYouLazyListState = rememberLazyListState()
     val homeFeedPullToRefreshState = rememberPullToRefreshState()
     val forYouFeedPullToRefreshState = rememberPullToRefreshState()
@@ -193,12 +193,12 @@ private fun HomeScreenContent(
             visible = pagerState.currentPage == 0, enter = scaleIn(), exit = scaleOut()
         ) {
             IEEFloatingToolBar(
-                expanded = (lazyListState.isScrollingUp()),
+                expanded = (homeFeedLazyListState.isScrollingUp()),
                 expandedAction = {
                     analytics.logEvent("scroll_up_clicked")
                     scope.launch {
                         searchScroll.scrollOffset = 0f
-                        lazyListState.animateScrollToItem(0)
+                        homeFeedLazyListState.animateScrollToItem(0)
                     }
                 },
                 collapsedAction = {
@@ -317,7 +317,7 @@ private fun HomeScreenContent(
                             }) {
                             AnnouncementFeed(
                                 announcements = homeFeedAnnouncements,
-                                lazyListState = lazyListState,
+                                lazyListState = homeFeedLazyListState,
                                 scrollBehavior = searchScroll,
                                 onAnnouncementClick = { announcementId ->
                                     analytics.logEvent(
@@ -355,8 +355,8 @@ private fun HomeScreenContent(
                             },
                             content = {
                                 AnnouncementFeed(
-                                    announcements = forYouAnnouncements, // Connected your ForYou data
-                                    lazyListState = forYouLazyListState, // Using the separate list state
+                                    announcements = forYouAnnouncements,
+                                    lazyListState = forYouLazyListState,
                                     scrollBehavior = searchScroll,
                                     onAnnouncementClick = { announcementId ->
                                         navigateToAnnouncement(announcementId)
