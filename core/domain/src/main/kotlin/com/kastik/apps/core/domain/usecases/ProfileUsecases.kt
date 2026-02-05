@@ -3,7 +3,7 @@ package com.kastik.apps.core.domain.usecases
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
-import com.kastik.apps.core.domain.service.TokenRefreshScheduler
+import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.aboard.Profile
 import com.kastik.apps.core.model.aboard.Tag
 import kotlinx.collections.immutable.ImmutableList
@@ -85,13 +85,13 @@ class SignOutUserUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val announcementRepository: AnnouncementRepository,
     private val authenticationRepository: AuthenticationRepository,
-    private val tokenScheduler: TokenRefreshScheduler
+    private val workScheduler: WorkScheduler
 ) {
     suspend operator fun invoke() {
         profileRepository.clearLocalData()
         authenticationRepository.clearAuthenticationData()
         announcementRepository.clearAnnouncementCache()
-        tokenScheduler.cancelRefresh()
+        workScheduler.cancelTokenRefresh()
         try {
             profileRepository.unsubscribeFromAllTopics()
         } catch (e: ExecutionException) {

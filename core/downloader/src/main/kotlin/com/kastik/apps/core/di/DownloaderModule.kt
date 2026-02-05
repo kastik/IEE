@@ -1,23 +1,20 @@
 package com.kastik.apps.core.di
 
-import android.content.Context
 import com.kastik.apps.core.domain.service.FileDownloader
 import com.kastik.apps.core.downloader.FileDownloaderImpl
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DownloaderModule {
+abstract class DownloaderModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideFileDownloader(
-        @ApplicationContext context: Context,
-    ): FileDownloader = FileDownloaderImpl(context)
+    internal abstract fun provideFileDownloader(
+        fileDownloaderImpl: FileDownloaderImpl
+    ): FileDownloader
 }
-

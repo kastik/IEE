@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
 interface PushNotificationsDatasource {
     suspend fun subscribeToTopics(ids: List<Int>)
@@ -12,7 +13,7 @@ interface PushNotificationsDatasource {
 }
 
 
-internal class PushNotificationsDatasourceImpl(
+internal class PushNotificationsDatasourceImpl @Inject constructor(
     private val firebaseMessaging: FirebaseMessaging
 ) : PushNotificationsDatasource {
 

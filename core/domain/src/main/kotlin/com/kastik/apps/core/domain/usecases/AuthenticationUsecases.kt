@@ -1,7 +1,7 @@
 package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
-import com.kastik.apps.core.domain.service.TokenRefreshScheduler
+import com.kastik.apps.core.domain.service.WorkScheduler
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -27,7 +27,7 @@ class ExchangeCodeForAboardTokenUseCase @Inject constructor(
 }
 
 class StartTokenRefreshScheduleUseCase @Inject constructor(
-    private val tokenScheduler: TokenRefreshScheduler
+    private val workScheduler: WorkScheduler
 ) {
-    operator fun invoke() = tokenScheduler.scheduleRefresh()
+    operator fun invoke() = workScheduler.scheduleTokenRefresh()
 }

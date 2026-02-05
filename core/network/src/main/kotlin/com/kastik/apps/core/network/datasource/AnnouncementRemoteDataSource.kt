@@ -1,10 +1,10 @@
 package com.kastik.apps.core.network.datasource
 
-import com.kastik.apps.core.di.AnnRetrofit
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
 import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import javax.inject.Inject
 
 interface AnnouncementRemoteDataSource {
     suspend fun fetchPagedAnnouncements(
@@ -20,8 +20,8 @@ interface AnnouncementRemoteDataSource {
     suspend fun fetchAnnouncementWithId(id: Int): AnnouncementResponseDto
 }
 
-internal class AnnouncementRemoteDataSourceImpl(
-    @AnnRetrofit private val aboardApiClient: AboardApiClient
+internal class AnnouncementRemoteDataSourceImpl @Inject constructor(
+    private val aboardApiClient: AboardApiClient
 ) : AnnouncementRemoteDataSource {
     override suspend fun fetchPagedAnnouncements(
         page: Int,

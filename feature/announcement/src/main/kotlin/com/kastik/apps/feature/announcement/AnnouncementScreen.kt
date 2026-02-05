@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.kastik.apps.core.common.extensions.shareAnnouncement
 import com.kastik.apps.core.designsystem.component.IEEDotDivider
 import com.kastik.apps.core.designsystem.component.IEETag
 import com.kastik.apps.core.model.aboard.Attachment
@@ -55,7 +56,6 @@ import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackAnnouncementOpened
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
-import com.kastik.apps.core.ui.extensions.shareAnnouncement
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import kotlinx.collections.immutable.ImmutableList

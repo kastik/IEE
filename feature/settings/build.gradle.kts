@@ -8,5 +8,6 @@ configure<LibraryExtension> {
     namespace = "com.kastik.apps.feature.settings"
 }
 dependencies {
+    implementation(project(":core:common"))
     implementation(libs.accompanist.permissions)
 }

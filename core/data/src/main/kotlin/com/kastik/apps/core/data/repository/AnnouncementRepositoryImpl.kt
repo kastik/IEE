@@ -6,6 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.map
 import androidx.room.withTransaction
+import com.kastik.apps.core.common.di.IoDispatcher
 import com.kastik.apps.core.data.mappers.extractImages
 import com.kastik.apps.core.data.mappers.toAnnouncement
 import com.kastik.apps.core.data.mappers.toAnnouncementEntity
@@ -21,7 +22,7 @@ import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -34,6 +35,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
     private val database: AppDatabase,
     private val announcementRemoteDataSource: AnnouncementRemoteDataSource,
     private val base64ImageExtractor: Base64ImageExtractor,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : AnnouncementRepository {
     private val announcementLocalDataSource = database.announcementDao()
     private val tagsLocalDataSource = database.tagsDao()
@@ -85,7 +87,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshAnnouncementWithId(id: Int) = withContext(Dispatchers.IO) {
+    override suspend fun refreshAnnouncementWithId(id: Int) = withContext(ioDispatcher) {
         val remote = try {
             announcementRemoteDataSource.fetchAnnouncementWithId(id).data
         } catch (e: HttpException) {
@@ -119,7 +121,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         return announcementLocalDataSource.getAttachmentWithId(attachmentId)
     }
 
-    override suspend fun clearAnnouncementCache() = withContext(Dispatchers.IO) {
+    override suspend fun clearAnnouncementCache() = withContext(ioDispatcher) {
         announcementLocalDataSource.clearAllAnnouncements()
         announcementLocalDataSource.clearBodies()
         announcementLocalDataSource.clearAttachments()

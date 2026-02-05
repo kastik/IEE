@@ -1,4 +1,4 @@
-package com.kastik.apps.core.ui.extensions
+package com.kastik.apps.core.common.extensions
 
 import android.content.Context
 import android.content.Intent
