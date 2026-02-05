@@ -89,6 +89,8 @@ internal fun SettingsRoute(
                     setSearchScope = viewModel::setSearchScope,
                     dynamicColor = state.dynamicColor,
                     setDynamicColor = viewModel::setDynamicColor,
+                    forYou = state.forYou,
+                    setForYou = viewModel::setEnableForYou,
                     navigateToLicenses = navigateToLicenses
                 )
             }
@@ -110,6 +112,8 @@ private fun SettingsScreenContent(
     setSearchScope: (SearchScope) -> Unit = {},
     dynamicColor: Boolean,
     setDynamicColor: (Boolean) -> Unit = {},
+    forYou: Boolean,
+    setForYou: (Boolean) -> Unit = {},
     navigateToLicenses: () -> Unit = {}
 ) {
 
@@ -185,6 +189,23 @@ private fun SettingsScreenContent(
                                 )
                             })
                     }
+                    HorizontalDivider()
+                    SettingSwitchRow(
+                        title = "For You",
+                        subtitle = "Show announcements from subscribed tags",
+                        checked = forYou,
+                        onCheckedChange = { enabled ->
+                            if (enabled) {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                            } else {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                            }
+                            setForYou(enabled)
+                            analytics.logEvent(
+                                "for_you_changed",
+                                mapOf("for_you_enabled" to enabled.toString())
+                            )
+                        })
                 }
             }
 
@@ -418,5 +439,9 @@ fun SettingsScreenPreview() {
         sortType = SortType.Priority,
         setSortType = {},
         searchScope = SearchScope.Title,
-        setSearchScope = {})
+        setSearchScope = {},
+        forYou = false,
+        setForYou = {},
+        navigateToLicenses = {},
+    )
 }

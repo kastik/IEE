@@ -5,10 +5,13 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.kastik.apps.core.domain.usecases.GetEnableForYouUseCase
 import com.kastik.apps.core.domain.usecases.GetFilterOptionsUseCase
 import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetPagedAnnouncementsUseCase
+import com.kastik.apps.core.domain.usecases.GetPagedFilteredAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
+import com.kastik.apps.core.domain.usecases.GetSubscribedTagsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshFilterOptionsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.SetUserHasSkippedSignInUseCase
@@ -29,6 +32,9 @@ class HomeScreenViewModel @Inject constructor(
     isSignedInUseCase: GetIsSignedInUseCase,
     showSignInNoticeRationalUseCase: ShowSignInNoticeRationalUseCase,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
+    getEnableForYouUseCase: GetEnableForYouUseCase,
+    getSubscribedTagsUseCase: GetSubscribedTagsUseCase,
+    private val getPagedFilteredAnnouncementsUseCase: GetPagedFilteredAnnouncementsUseCase,
     private val getPagedAnnouncements: GetPagedAnnouncementsUseCase,
     private val setUserHasSkippedSignInUseCase: SetUserHasSkippedSignInUseCase,
     private val refreshFilterOptionsUseCase: RefreshFilterOptionsUseCase,
@@ -48,12 +54,14 @@ class HomeScreenViewModel @Inject constructor(
         showSignInNoticeRationalUseCase(),
         getFilterOptionsUseCase(),
         _quickSearchResultsState,
-    ) { isSignedIn, showSignInNotice, availableFilters, quickResults ->
+        getEnableForYouUseCase(),
+    ) { isSignedIn, showSignInNotice, availableFilters, quickResults, enableForYou ->
         UiState(
             isSignedIn = isSignedIn,
             showSignInNotice = showSignInNotice,
             availableFilters = availableFilters,
-            quickResults = quickResults
+            quickResults = quickResults,
+            enableForYou = enableForYou
         )
     }.onStart {
         viewModelScope.launch {
@@ -66,6 +74,19 @@ class HomeScreenViewModel @Inject constructor(
 
     val homeFeedAnnouncements = uiState.map { it.isSignedIn }.distinctUntilChanged()
         .flatMapLatest { _ -> getPagedAnnouncements() }.cachedIn(viewModelScope)
+
+    val subscribedTags = getSubscribedTagsUseCase()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+            emptyList()
+        )
+
+    val forYouFeedAnnouncements = subscribedTags.flatMapLatest { tags ->
+        getPagedFilteredAnnouncementsUseCase(
+            tagIds = tags.map { it.id }
+        )
+    }.cachedIn(viewModelScope)
 
 
     fun onSignInNoticeDismiss() {

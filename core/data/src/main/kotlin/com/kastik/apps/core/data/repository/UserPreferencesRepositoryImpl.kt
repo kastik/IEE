@@ -62,4 +62,11 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun setSearchScope(searchScope: SearchScope) = withContext(Dispatchers.IO) {
         preferencesLocalDataSource.setSearchScope(searchScope.toQueryScope())
     }
+
+    override fun getEnableForYou(): Flow<Boolean> =
+        preferencesLocalDataSource.getEnableForYou()
+
+    override suspend fun setEnableForYou(value: Boolean) {
+        preferencesLocalDataSource.setEnableForYou(value)
+    }
 }

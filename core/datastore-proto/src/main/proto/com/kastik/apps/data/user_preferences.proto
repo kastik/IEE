@@ -8,6 +8,7 @@ message UserPreferences{
   bool has_skipped_sign_in = 3;
   Sort sort_type = 4;
   QueryScope query_scope = 5;
+  bool enable_for_you = 6;
 }
 
 enum Theme {
