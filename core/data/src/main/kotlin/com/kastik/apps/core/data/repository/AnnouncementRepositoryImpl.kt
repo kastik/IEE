@@ -1,6 +1,5 @@
 package com.kastik.apps.core.data.repository
 
-import android.accounts.AuthenticatorException
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -13,11 +12,13 @@ import com.kastik.apps.core.data.mappers.toAnnouncementEntity
 import com.kastik.apps.core.data.mappers.toAttachmentEntity
 import com.kastik.apps.core.data.mappers.toAuthorEntity
 import com.kastik.apps.core.data.mappers.toBodyEntity
+import com.kastik.apps.core.data.mappers.toPrivateRefreshError
 import com.kastik.apps.core.data.mappers.toTagCrossRefs
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.data.paging.AnnouncementRemoteMediator
 import com.kastik.apps.core.data.utils.Base64ImageExtractor
 import com.kastik.apps.core.database.db.AppDatabase
+import com.kastik.apps.core.domain.Result
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
@@ -26,7 +27,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -88,27 +88,26 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refreshAnnouncementWithId(id: Int) = withContext(ioDispatcher) {
-        val remote = try {
-            announcementRemoteDataSource.fetchAnnouncementWithId(id).data
-        } catch (e: HttpException) {
-            if (e.code() == 401) {
-                throw AuthenticatorException()
-            } else {
-                throw e
+        try {
+            val remote = announcementRemoteDataSource.fetchAnnouncementWithId(id).data
+
+            database.withTransaction {
+                authorLocalDataSource.upsertAuthors(remote.author.toAuthorEntity())
+                tagsLocalDataSource.upsertTags(remote.tags.map { it.toTagEntity() })
+
+                announcementLocalDataSource.upsertAnnouncements(remote.toAnnouncementEntity())
+
+                announcementLocalDataSource.upsertTagCrossRefs(remote.toTagCrossRefs())
+                announcementLocalDataSource.upsertBodies(
+                    remote.extractImages(base64ImageExtractor).toBodyEntity()
+                )
+                announcementLocalDataSource.upsertAttachments(remote.attachments.map { it.toAttachmentEntity() })
             }
-        }
 
-        database.withTransaction {
-            authorLocalDataSource.upsertAuthors(remote.author.toAuthorEntity())
-            tagsLocalDataSource.upsertTags(remote.tags.map { it.toTagEntity() })
+            Result.Success(Unit)
 
-            announcementLocalDataSource.upsertAnnouncements(remote.toAnnouncementEntity())
-
-            announcementLocalDataSource.upsertTagCrossRefs(remote.toTagCrossRefs())
-            announcementLocalDataSource.upsertBodies(
-                remote.extractImages(base64ImageExtractor).toBodyEntity()
-            )
-            announcementLocalDataSource.upsertAttachments(remote.attachments.map { it.toAttachmentEntity() })
+        } catch (e: Exception) {
+            Result.Error(e.toPrivateRefreshError())
         }
     }
 

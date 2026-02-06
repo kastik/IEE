@@ -1,12 +1,14 @@
 package com.kastik.apps.feature.announcement
 
-import android.accounts.AuthenticatorException
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.kastik.apps.core.domain.PrivateRefreshError
+import com.kastik.apps.core.domain.Result
+import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.DownloadAttachmentUseCase
 import com.kastik.apps.core.domain.usecases.GetAnnouncementWithIdUseCase
 import com.kastik.apps.core.domain.usecases.RefreshAnnouncementWithIdUseCase
@@ -23,12 +25,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
 class AnnouncementScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val notifier: Notifier,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
     private val refreshAnnouncementWithIdUseCase: RefreshAnnouncementWithIdUseCase,
     private val getAnnouncementWithIdUseCase: GetAnnouncementWithIdUseCase,
@@ -56,19 +58,33 @@ class AnnouncementScreenViewModel @Inject constructor(
         initialValue = UiState.Loading
     )
 
-    //TODO Clean this up
     fun refreshAnnouncement() {
         viewModelScope.launch {
-            try {
-                refreshAnnouncementWithIdUseCase(args.id)
-                errorState.update { null }
-            } catch (e: Exception) {
-                val msg = when (e) {
-                    is AuthenticatorException -> "Sign in required"
-                    is UnknownHostException -> "No internet connection"
-                    else -> "Something went wrong while refreshing."
+            //TODO WIP
+            when (val result = refreshAnnouncementWithIdUseCase(args.id)) {
+                is Result.Success -> {
+                    errorState.update { null }
                 }
-                errorState.update { msg }
+
+                is Result.Error -> {
+                    when (result.error) {
+                        PrivateRefreshError.Authentication -> {
+                            errorState.update { "Sign in required" }
+                        }
+
+                        PrivateRefreshError.NoConnection -> {
+                            notifier.sendToastNotification("No internet connection.")
+                        }
+
+                        PrivateRefreshError.Server -> {
+                            notifier.sendToastNotification("There was an error while contacting the server")
+                        }
+
+                        PrivateRefreshError.Storage -> errorState.update { "Something went wrong while refreshing." }
+                        PrivateRefreshError.Timeout -> errorState.update { "Timed out while refreshing." }
+                        PrivateRefreshError.Unknown -> errorState.update { "Something went wrong while refreshing." }
+                    }
+                }
             }
         }
     }
@@ -111,6 +127,6 @@ class AnnouncementScreenViewModel @Inject constructor(
                     parts.add(ProcessedBody.Text(AnnotatedString.fromHtml(remainingText)))
                 }
             }
-            return@withContext parts
+            parts
         }
 }

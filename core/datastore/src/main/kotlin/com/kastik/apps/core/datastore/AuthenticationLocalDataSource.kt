@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.kastik.apps.core.di.AuthDatastore
 import kotlinx.coroutines.flow.Flow
@@ -17,11 +18,11 @@ interface AuthenticationLocalDataSource {
     fun getIsSignedIn(): Flow<Boolean>
     fun getAboardAccessToken(): Flow<String?>
     fun getAboardTokenExpiration(): Flow<Int?>
-    fun getAboardTokenLastRefreshTime(): Flow<Int?>
+    fun getAboardTokenLastRefreshTime(): Flow<Long?>
     suspend fun setIsSignedIn(isSignedIn: Boolean)
     suspend fun setAboardAccessToken(accessToken: String)
     suspend fun setAboardTokenExpiration(expiration: Int)
-    suspend fun setAboardTokenLastRefreshTime(lastRefreshTime: Int)
+    suspend fun setAboardTokenLastRefreshTime(lastRefreshTime: Long)
     suspend fun clearAuthenticationData()
 
 }
@@ -36,8 +37,7 @@ internal class AuthenticationLocalDataSourceImpl @Inject constructor(
         val ABOARD_ACCESS_TOKEN_KEY = stringPreferencesKey("aboard_access_token")
         val ABOARD_ACCESS_TOKEN_EXPIRATION = intPreferencesKey("aboard_access_token_expiration")
         val ABOARD_ACCESS_TOKEN_LAST_REFRESH_TIME =
-            intPreferencesKey("aboard_access_token_last_refresh_time")
-
+            longPreferencesKey("aboard_access_token_last_refresh_time")
     }
 
     override fun getIsSignedIn(): Flow<Boolean> =
@@ -65,7 +65,7 @@ internal class AuthenticationLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun setAboardTokenLastRefreshTime(lastRefreshTime: Int) {
+    override suspend fun setAboardTokenLastRefreshTime(lastRefreshTime: Long) {
         dataStore.edit {
             it[ABOARD_ACCESS_TOKEN_LAST_REFRESH_TIME] = lastRefreshTime
         }

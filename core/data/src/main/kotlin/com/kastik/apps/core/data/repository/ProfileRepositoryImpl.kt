@@ -1,11 +1,13 @@
 package com.kastik.apps.core.data.repository
 
 import com.kastik.apps.core.common.di.IoDispatcher
+import com.kastik.apps.core.data.mappers.toPrivateRefreshError
 import com.kastik.apps.core.data.mappers.toProfile
 import com.kastik.apps.core.data.mappers.toProfileProto
 import com.kastik.apps.core.data.mappers.toSubscribedTagProto
 import com.kastik.apps.core.data.mappers.toTag
 import com.kastik.apps.core.datastore.ProfileLocalDataSource
+import com.kastik.apps.core.domain.Result
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.model.aboard.Profile
 import com.kastik.apps.core.model.aboard.Tag
@@ -31,8 +33,14 @@ internal class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refreshProfile() = withContext(ioDispatcher) {
-        val userProfile = profileRemoteDataSource.getProfile()
-        profileLocalDataSource.setProfile(userProfile.toProfileProto())
+        try {
+            val userProfile = profileRemoteDataSource.getProfile()
+            profileLocalDataSource.setProfile(userProfile.toProfileProto())
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.toPrivateRefreshError())
+        }
+
     }
 
     override fun getEmailSubscriptions(): Flow<List<Tag>> {
@@ -41,12 +49,22 @@ internal class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refreshEmailSubscriptions() = withContext(ioDispatcher) {
-        val subscribedTags = profileRemoteDataSource.getEmailSubscriptions()
-        profileLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
+        try {
+            val subscribedTags = profileRemoteDataSource.getEmailSubscriptions()
+            profileLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.toPrivateRefreshError())
+        }
     }
 
     override suspend fun subscribeToEmailTags(tagIds: List<Int>) = withContext(ioDispatcher) {
-        profileRemoteDataSource.subscribeToEmailTags(tagIds)
+        try {
+            profileRemoteDataSource.subscribeToEmailTags(tagIds)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.toPrivateRefreshError())
+        }
     }
 
     override suspend fun subscribeToTopics(tagIds: List<Int>) = withContext(ioDispatcher) {

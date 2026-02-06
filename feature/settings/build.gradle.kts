@@ -9,5 +9,6 @@ configure<LibraryExtension> {
 }
 dependencies {
     implementation(project(":core:common"))
+    implementation(project(":core:notifications"))
     implementation(libs.accompanist.permissions)
 }

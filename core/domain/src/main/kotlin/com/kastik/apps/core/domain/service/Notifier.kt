@@ -7,4 +7,5 @@ interface Notifier {
     suspend fun sendPushNotification(title: String, body: String)
     suspend fun sendAnnouncementNotification(announcement: Announcement)
     suspend fun sendToastNotification(message: String)
+    suspend fun sendToastNotification(resId: Int)
 }

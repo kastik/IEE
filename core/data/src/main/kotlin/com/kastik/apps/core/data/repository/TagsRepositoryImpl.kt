@@ -1,12 +1,14 @@
 package com.kastik.apps.core.data.repository
 
 import com.kastik.apps.core.common.di.IoDispatcher
+import com.kastik.apps.core.data.mappers.toPublicRefreshError
 import com.kastik.apps.core.data.mappers.toSubscribableTag
 import com.kastik.apps.core.data.mappers.toSubscribableTagProto
 import com.kastik.apps.core.data.mappers.toTag
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.database.dao.TagsDao
 import com.kastik.apps.core.datastore.TagsLocalDataSource
+import com.kastik.apps.core.domain.Result
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.model.aboard.SubscribableTag
 import com.kastik.apps.core.model.aboard.Tag
@@ -31,8 +33,14 @@ internal class TagsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refreshAnnouncementTags() = withContext(ioDispatcher) {
-        val remoteTags = tagsRemoteDataSource.fetchAnnouncementTags().data.map { it.toTagEntity() }
-        announcementTagsLocalDataSource.upsertTags(remoteTags)
+        try {
+            val remoteTags =
+                tagsRemoteDataSource.fetchAnnouncementTags().data.map { it.toTagEntity() }
+            announcementTagsLocalDataSource.upsertTags(remoteTags)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.toPublicRefreshError())
+        }
     }
 
     override fun getSubscribableTags(): Flow<List<SubscribableTag>> {
@@ -41,7 +49,12 @@ internal class TagsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refreshSubscribableTags() = withContext(ioDispatcher) {
-        val subscribableTags = tagsRemoteDataSource.fetchSubscribableTags()
-        subscribableTagsLocalDataSource.setSubscribableTags(subscribableTags.map { tag -> tag.toSubscribableTagProto() })
+        try {
+            val subscribableTags = tagsRemoteDataSource.fetchSubscribableTags()
+            subscribableTagsLocalDataSource.setSubscribableTags(subscribableTags.map { tag -> tag.toSubscribableTagProto() })
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.toPublicRefreshError())
+        }
     }
 }

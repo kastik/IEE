@@ -1,6 +1,8 @@
 package com.kastik.apps.core.domain.repository
 
 import androidx.paging.PagingData
+import com.kastik.apps.core.domain.PrivateRefreshError
+import com.kastik.apps.core.domain.Result
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +23,6 @@ interface AnnouncementRepository {
 
     fun getAnnouncementWithId(id: Int): Flow<Announcement?>
     suspend fun getAttachmentUrl(attachmentId: Int): String
-    suspend fun refreshAnnouncementWithId(id: Int)
+    suspend fun refreshAnnouncementWithId(id: Int): Result<Unit, PrivateRefreshError>
     suspend fun clearAnnouncementCache()
 }
