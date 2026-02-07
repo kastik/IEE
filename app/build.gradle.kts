@@ -54,9 +54,23 @@ configure<ApplicationExtension> {
             manifestPlaceholders["crashlyticsCollectionEnabled"] = "false"
         }
     }
+
+    productFlavors {
+        named("local") {
+            applicationIdSuffix = ".local"
+            versionNameSuffix = "-local"
+        }
+
+        named("production") {
+            isDefault = true
+        }
+    }
 }
 
 dependencies {
+    implementation(project(":core:network"))
+    implementation(project(":core:data"))
+    implementation(project(":core:work"))
     implementation(project(":core:analytics"))
     implementation(project(":core:notifications"))
     implementation(project(":core:downloader"))
@@ -87,15 +101,7 @@ dependencies {
 
 baselineProfile {
     saveInSrc = true
-    mergeIntoMain = false
-    variants {
-        create("release") {
-            dexLayoutOptimization = true
-            automaticGenerationDuringBuild = false
-        }
-        create("debug") {
-            dexLayoutOptimization = false
-            automaticGenerationDuringBuild = false
-        }
-    }
+    mergeIntoMain = true
+    dexLayoutOptimization = true
+    automaticGenerationDuringBuild = false
 }
