@@ -72,6 +72,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:work"))
     implementation(project(":core:analytics"))
+    implementation(project(":core:crashlytics"))
     implementation(project(":core:notifications"))
     implementation(project(":core:downloader"))
     implementation(project(":core:domain"))
@@ -85,15 +86,7 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:licenses"))
     implementation(project(":feature:search"))
-
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.crashlytics.ndk)
-    implementation(libs.firebase.performance) {
-        exclude(group = "com.google.protobuf", module = "protobuf-javalite")
-        exclude(group = "com.google.firebase", module = "protolite-well-known-types")
-    }
 
     baselineProfile(project(":benchmark"))
     implementation(libs.androidx.profileinstaller)
