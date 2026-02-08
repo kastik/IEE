@@ -3,9 +3,9 @@ package com.kastik.apps.core.model.error
 sealed interface GeneralRefreshError
 sealed interface AuthenticatedRefreshError
 
-data object NoConnection : GeneralRefreshError, AuthenticatedRefreshError
-data object Server : GeneralRefreshError, AuthenticatedRefreshError
-data object Timeout : GeneralRefreshError, AuthenticatedRefreshError
-data object Storage : GeneralRefreshError, AuthenticatedRefreshError
-data object Unknown : GeneralRefreshError, AuthenticatedRefreshError
-data object Authentication : AuthenticatedRefreshError
+data object AuthenticationError : AuthenticatedRefreshError
+data object ConnectionError : GeneralRefreshError, AuthenticatedRefreshError
+data object ServerError : GeneralRefreshError, AuthenticatedRefreshError
+data object TimeoutError : GeneralRefreshError, AuthenticatedRefreshError
+data object StorageError : GeneralRefreshError, AuthenticatedRefreshError
+data object UnknownError : GeneralRefreshError, AuthenticatedRefreshError

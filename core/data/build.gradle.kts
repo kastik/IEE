@@ -15,6 +15,7 @@ configure<LibraryExtension> {
 
 
 dependencies {
+    implementation(project(":core:crashlytics"))
     implementation(project(":core:common"))
     implementation(project(":core:work"))
     implementation(project(":core:domain"))

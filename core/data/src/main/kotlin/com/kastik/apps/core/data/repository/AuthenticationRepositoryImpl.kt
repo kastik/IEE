@@ -1,10 +1,12 @@
 package com.kastik.apps.core.data.repository
 
 import com.kastik.apps.core.common.di.IoDispatcher
+import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.toPrivateRefreshError
 import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
-import com.kastik.apps.core.domain.Result
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
+import com.kastik.apps.core.model.error.StorageError
+import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class AuthenticationRepositoryImpl @Inject constructor(
+    private val crashlytics: Crashlytics,
     private val authenticationLocalDataSource: AuthenticationLocalDataSource,
     private val authenticationRemoteDataSource: AuthenticationRemoteDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
@@ -25,14 +28,20 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
 
     override suspend fun refreshIsSignedIn() =
         try {
-            authenticationRemoteDataSource.checkIfTokenIsValid().let {
-                authenticationLocalDataSource.setIsSignedIn(it)
+            val hasToken = authenticationLocalDataSource.getAboardAccessToken().first() == null
+            if (!hasToken) {
+                authenticationLocalDataSource.setIsSignedIn(false)
+                Result.Success(Unit)
             }
+
+            val isAuthenticated = authenticationRemoteDataSource.checkIfTokenIsValid()
+            authenticationLocalDataSource.setIsSignedIn(isAuthenticated)
+
             Result.Success(Unit)
         } catch (e: Exception) {
+            crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
-
 
     override suspend fun exchangeCodeForAbroadToken(code: String) = withContext(ioDispatcher) {
         try {
@@ -43,6 +52,7 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             authenticationLocalDataSource.setIsSignedIn(true)
             Result.Success(Unit)
         } catch (e: Exception) {
+            crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
 
@@ -58,11 +68,18 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             authenticationLocalDataSource.setAboardTokenLastRefreshTime(System.currentTimeMillis())
             Result.Success(Unit)
         } catch (e: Exception) {
+            crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
 
 
     override suspend fun clearAuthenticationData() = withContext(ioDispatcher) {
-        authenticationLocalDataSource.clearAuthenticationData()
+        try {
+            authenticationLocalDataSource.clearAuthenticationData()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            crashlytics.recordException(e)
+            Result.Error(StorageError)
+        }
     }
 }

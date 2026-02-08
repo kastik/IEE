@@ -1,13 +1,14 @@
 package com.kastik.apps.core.data.repository
 
 import com.kastik.apps.core.common.di.IoDispatcher
+import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.toAuthor
 import com.kastik.apps.core.data.mappers.toAuthorEntity
 import com.kastik.apps.core.data.mappers.toPublicRefreshError
 import com.kastik.apps.core.database.dao.AuthorsDao
-import com.kastik.apps.core.domain.Result
 import com.kastik.apps.core.domain.repository.AuthorRepository
 import com.kastik.apps.core.model.aboard.Author
+import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AuthorRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class AuthorRepositoryImpl @Inject constructor(
+    private val crashlytics: Crashlytics,
     private val authorLocalDataSource: AuthorsDao,
     private val authorRemoteDataSource: AuthorRemoteDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
@@ -33,6 +35,7 @@ internal class AuthorRepositoryImpl @Inject constructor(
             authorLocalDataSource.upsertAuthors(authors.map { it.toAuthorEntity() })
             Result.Success(Unit)
         } catch (e: Exception) {
+            crashlytics.recordException(e)
             Result.Error(e.toPublicRefreshError())
         }
     }

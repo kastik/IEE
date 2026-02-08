@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.map
 import androidx.room.withTransaction
 import com.kastik.apps.core.common.di.IoDispatcher
+import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.extractImages
 import com.kastik.apps.core.data.mappers.toAnnouncement
 import com.kastik.apps.core.data.mappers.toAnnouncementEntity
@@ -18,10 +19,11 @@ import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.data.paging.AnnouncementRemoteMediator
 import com.kastik.apps.core.data.utils.Base64ImageExtractor
 import com.kastik.apps.core.database.db.AppDatabase
-import com.kastik.apps.core.domain.Result
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.model.error.StorageError
+import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +34,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class AnnouncementRepositoryImpl @Inject constructor(
+    private val crashlytics: Crashlytics,
     private val database: AppDatabase,
     private val announcementRemoteDataSource: AnnouncementRemoteDataSource,
     private val base64ImageExtractor: Base64ImageExtractor,
@@ -103,10 +106,9 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
                 )
                 announcementLocalDataSource.upsertAttachments(remote.attachments.map { it.toAttachmentEntity() })
             }
-
             Result.Success(Unit)
-
         } catch (e: Exception) {
+            crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
     }
@@ -121,9 +123,15 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearAnnouncementCache() = withContext(ioDispatcher) {
-        announcementLocalDataSource.clearAllAnnouncements()
-        announcementLocalDataSource.clearBodies()
-        announcementLocalDataSource.clearAttachments()
-        announcementLocalDataSource.clearTagCrossRefs()
+        try {
+            announcementLocalDataSource.clearAllAnnouncements()
+            announcementLocalDataSource.clearBodies()
+            announcementLocalDataSource.clearAttachments()
+            announcementLocalDataSource.clearTagCrossRefs()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            crashlytics.recordException(e)
+            Result.Error(StorageError)
+        }
     }
 }

@@ -9,7 +9,6 @@ configure<LibraryExtension> {
 }
 
 dependencies {
-    implementation(project(":core:data"))
     implementation(project(":core:common"))
     implementation(libs.paging.runtime)
     implementation(libs.paging.compose)

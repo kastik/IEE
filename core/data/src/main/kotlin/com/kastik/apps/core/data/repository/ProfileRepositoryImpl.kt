@@ -1,16 +1,18 @@
 package com.kastik.apps.core.data.repository
 
 import com.kastik.apps.core.common.di.IoDispatcher
+import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.toPrivateRefreshError
 import com.kastik.apps.core.data.mappers.toProfile
 import com.kastik.apps.core.data.mappers.toProfileProto
 import com.kastik.apps.core.data.mappers.toSubscribedTagProto
 import com.kastik.apps.core.data.mappers.toTag
 import com.kastik.apps.core.datastore.ProfileLocalDataSource
-import com.kastik.apps.core.domain.Result
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.model.aboard.Profile
 import com.kastik.apps.core.model.aboard.Tag
+import com.kastik.apps.core.model.error.StorageError
+import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.ProfileRemoteDataSource
 import com.kastik.apps.core.notifications.PushNotificationsDatasource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,6 +24,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class ProfileRepositoryImpl @Inject constructor(
+    private val crashlytics: Crashlytics,
     private val profileLocalDataSource: ProfileLocalDataSource,
     private val profileRemoteDataSource: ProfileRemoteDataSource,
     private val pushNotificationsDatasource: PushNotificationsDatasource,
@@ -38,6 +41,7 @@ internal class ProfileRepositoryImpl @Inject constructor(
             profileLocalDataSource.setProfile(userProfile.toProfileProto())
             Result.Success(Unit)
         } catch (e: Exception) {
+            crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
 
@@ -54,6 +58,7 @@ internal class ProfileRepositoryImpl @Inject constructor(
             profileLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
             Result.Success(Unit)
         } catch (e: Exception) {
+            crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
     }
@@ -63,6 +68,7 @@ internal class ProfileRepositoryImpl @Inject constructor(
             profileRemoteDataSource.subscribeToEmailTags(tagIds)
             Result.Success(Unit)
         } catch (e: Exception) {
+            crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
     }
@@ -80,7 +86,13 @@ internal class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearLocalData() = withContext(ioDispatcher) {
-        profileLocalDataSource.clearProfile()
-        profileLocalDataSource.clearSubscriptions()
+        try {
+            profileLocalDataSource.clearProfile()
+            profileLocalDataSource.clearSubscriptions()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            crashlytics.recordException(e)
+            Result.Error(StorageError)
+        }
     }
 }
