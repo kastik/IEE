@@ -16,6 +16,7 @@ configure<LibraryExtension> {
 
 dependencies {
     implementation(project(":core:model"))
+    implementation(project(":core:domain"))
     testImplementation(project(":core:testing"))
 
     implementation(libs.retrofit)

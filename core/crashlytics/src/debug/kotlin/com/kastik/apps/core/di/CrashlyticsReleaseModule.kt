@@ -1,11 +1,9 @@
 package com.kastik.apps.core.di
 
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kastik.apps.core.crashlytics.Crashlytics
-import com.kastik.apps.core.crashlytics.CrashlyticsReleaseImpl
+import com.kastik.apps.core.crashlytics.CrashlyticsDebugImpl
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton

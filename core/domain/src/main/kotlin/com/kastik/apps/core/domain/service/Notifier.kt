@@ -1,11 +1,9 @@
 package com.kastik.apps.core.domain.service
 
-import com.kastik.apps.core.model.aboard.Announcement
-
 interface Notifier {
-    suspend fun sendPushNotification(title: String)
-    suspend fun sendPushNotification(title: String, body: String)
-    suspend fun sendAnnouncementNotification(announcement: Announcement)
+    fun sendPushNotification(title: String)
+    fun sendPushNotification(title: String, body: String?)
+    fun sendPushNotification(announcementId: Int, title: String, body: String?)
     suspend fun sendToastNotification(message: String)
     suspend fun sendToastNotification(resId: Int)
 }

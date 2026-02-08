@@ -1,17 +1,18 @@
 package com.kastik.apps.core.notifications
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.kastik.apps.core.common.di.MainDispatcher
 import com.kastik.apps.core.domain.service.Notifier
-import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.notifications.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,14 +25,16 @@ class NotifierImpl @Inject constructor(
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
 ) : Notifier {
     private val notificationManager by lazy {
-        context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val manager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        createNotificationChannels(manager)
+        manager
     }
 
-    override suspend fun sendPushNotification(title: String) {
+    override fun sendPushNotification(title: String) {
         sendPushNotification("IEE", title)
     }
 
-    override suspend fun sendPushNotification(title: String, body: String) {
+    override fun sendPushNotification(title: String, body: String?) {
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
@@ -42,7 +45,7 @@ class NotifierImpl @Inject constructor(
 
         val builder = NotificationCompat.Builder(
             context,
-            context.getString(R.string.fcm_announcement_channel_id)
+            context.getString(R.string.fcm_default_channel_id)
         ).apply {
             setSmallIcon(R.drawable.ic_notification_icon)
             setContentTitle(title)
@@ -54,9 +57,9 @@ class NotifierImpl @Inject constructor(
         notificationManager.notify(Random.nextInt(), builder.build())
     }
 
-    override suspend fun sendAnnouncementNotification(announcement: Announcement) {
+    override fun sendPushNotification(announcementId: Int, title: String, body: String?) {
 
-        val deepLinkUri = "com.kastik.apps://announcement?id=${announcement.id}".toUri()
+        val deepLinkUri = "com.kastik.apps://announcement?id=$announcementId".toUri()
 
 
         val intent = Intent(Intent.ACTION_VIEW, deepLinkUri).apply {
@@ -73,13 +76,13 @@ class NotifierImpl @Inject constructor(
             )
                 .apply {
                     setSmallIcon(R.drawable.ic_notification_icon)
-                    setContentTitle(announcement.title)
-                    setContentText(announcement.body)
+                    setContentTitle(title)
+                    setContentText(body)
                     setAutoCancel(true)
                     setContentIntent(pendingIntent)
                 }
 
-        notificationManager.notify(announcement.id, builder.build())
+        notificationManager.notify(announcementId, builder.build())
     }
 
     override suspend fun sendToastNotification(message: String) {
@@ -92,5 +95,31 @@ class NotifierImpl @Inject constructor(
         withContext(mainDispatcher) {
             Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun createNotificationChannels(manager: NotificationManager) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+
+        val announcementChannel = NotificationChannel(
+            context.getString(R.string.fcm_announcement_channel_id),
+            context.getString(R.string.fcm_announcement_channel_name),
+            NotificationManager.IMPORTANCE_HIGH
+        )
+
+        val fcmDefaultChannel = NotificationChannel(
+            context.getString(R.string.fcm_default_channel_id),
+            context.getString(R.string.fcm_default_channel_name),
+            NotificationManager.IMPORTANCE_HIGH
+        )
+
+        val generalChannel = NotificationChannel(
+            context.getString(R.string.general_channel_id),
+            context.getString(R.string.general_channel_name),
+            NotificationManager.IMPORTANCE_HIGH
+        )
+
+        manager.createNotificationChannel(announcementChannel)
+        manager.createNotificationChannel(fcmDefaultChannel)
+        manager.createNotificationChannel(generalChannel)
     }
 }
