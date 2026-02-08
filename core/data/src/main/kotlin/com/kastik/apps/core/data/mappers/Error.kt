@@ -1,32 +1,38 @@
 package com.kastik.apps.core.data.mappers
 
 import android.database.sqlite.SQLiteException
-import com.kastik.apps.core.domain.PrivateRefreshError
-import com.kastik.apps.core.domain.PublicRefreshError
+import com.kastik.apps.core.model.error.AuthenticatedRefreshError
+import com.kastik.apps.core.model.error.Authentication
+import com.kastik.apps.core.model.error.GeneralRefreshError
+import com.kastik.apps.core.model.error.NoConnection
+import com.kastik.apps.core.model.error.Server
+import com.kastik.apps.core.model.error.Storage
+import com.kastik.apps.core.model.error.Timeout
+import com.kastik.apps.core.model.error.Unknown
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
 
-fun Throwable.toPublicRefreshError(): PublicRefreshError {
+fun Throwable.toPublicRefreshError(): GeneralRefreshError {
     return when (this) {
-        is SocketTimeoutException -> PublicRefreshError.Timeout
-        is IOException -> PublicRefreshError.NoConnection
-        is HttpException -> PublicRefreshError.Server
-        is SQLiteException -> PublicRefreshError.Storage
-        else -> PublicRefreshError.Unknown
+        is SocketTimeoutException -> Timeout
+        is IOException -> NoConnection
+        is HttpException -> Server
+        is SQLiteException -> Storage
+        else -> Unknown
     }
 }
 
-fun Throwable.toPrivateRefreshError(): PrivateRefreshError {
+fun Throwable.toPrivateRefreshError(): AuthenticatedRefreshError {
     return when (this) {
-        is SocketTimeoutException -> PrivateRefreshError.Timeout
-        is IOException -> PrivateRefreshError.NoConnection
+        is SocketTimeoutException -> Timeout
+        is IOException -> NoConnection
         is HttpException -> {
-            if (this.code() == 401) PrivateRefreshError.Authentication
-            else PrivateRefreshError.Server
+            if (this.code() == 401) Authentication
+            else Server
         }
 
-        is SQLiteException -> PrivateRefreshError.Storage
-        else -> PrivateRefreshError.Unknown
+        is SQLiteException -> Storage
+        else -> Unknown
     }
 }
