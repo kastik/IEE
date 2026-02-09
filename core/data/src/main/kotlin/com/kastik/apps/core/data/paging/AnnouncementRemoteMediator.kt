@@ -5,6 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.extractImages
 import com.kastik.apps.core.data.mappers.toAnnouncementEntity
 import com.kastik.apps.core.data.mappers.toAttachmentEntity
@@ -27,6 +28,7 @@ class AnnouncementRemoteMediator(
     private val tagIds: List<Int> = emptyList(),
     private val authorIds: List<Int> = emptyList(),
     private val sortType: SortType = SortType.DESC,
+    private val crashlytics: Crashlytics,
     private val database: AppDatabase,
     private val announcementRemoteDataSource: AnnouncementRemoteDataSource,
     private val base64ImageExtractor: Base64ImageExtractor
@@ -107,6 +109,7 @@ class AnnouncementRemoteMediator(
         return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
 
     } catch (e: Exception) {
+        crashlytics.recordException(e)
         return MediatorResult.Error(e)
     }
 

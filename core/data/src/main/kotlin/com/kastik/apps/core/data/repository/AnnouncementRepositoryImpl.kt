@@ -63,6 +63,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
             bodyQuery = bodyQuery,
             authorIds = authorIds,
             tagIds = tagIds,
+            crashlytics = crashlytics,
             database = database,
             announcementRemoteDataSource = announcementRemoteDataSource,
             base64ImageExtractor = base64ImageExtractor

@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import androidx.paging.cachedIn
 import com.kastik.apps.core.domain.usecases.GetFilterOptionsUseCase
-import com.kastik.apps.core.domain.usecases.GetPagedFilteredAnnouncementsUseCase
+import com.kastik.apps.core.domain.usecases.GetFilteredAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshFilterOptionsUseCase
 import com.kastik.apps.core.ui.topbar.ActiveFilters
@@ -34,7 +34,7 @@ class SearchScreenViewModel @Inject constructor(
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
     private val getQuickResultsUseCase: GetQuickResultsUseCase,
     private val refreshFilterOptionsUseCase: RefreshFilterOptionsUseCase,
-    private val getFilteredAnnouncementsUseCase: GetPagedFilteredAnnouncementsUseCase,
+    private val getFilteredAnnouncementsUseCase: GetFilteredAnnouncementsUseCase,
 ) : ViewModel() {
 
     private val args = savedStateHandle.toRoute<SearchRoute>()

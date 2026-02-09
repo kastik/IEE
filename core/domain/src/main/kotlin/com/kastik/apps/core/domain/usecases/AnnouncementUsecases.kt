@@ -2,6 +2,7 @@ package com.kastik.apps.core.domain.usecases
 
 import androidx.paging.PagingData
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
+import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.aboard.Announcement
@@ -17,26 +18,31 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetPagedAnnouncementsUseCase @Inject constructor(
+class GetHomeAnnouncementsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val authenticationRepository: AuthenticationRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     operator fun invoke(): Flow<PagingData<Announcement>> {
-        return userPreferencesRepository.getSortType()
-            .flatMapLatest { sortType ->
-                announcementRepository.getPagedAnnouncements(
-                    sortType = sortType,
-                    titleQuery = "",
-                    bodyQuery = "",
-                    authorIds = emptyList(),
-                    tagIds = emptyList(),
-                )
-            }
+        return combine(
+            authenticationRepository.getIsSignedIn(),
+            userPreferencesRepository.getSortType()
+        ) { _, sortType ->
+            sortType
+        }.flatMapLatest { sortType ->
+            announcementRepository.getPagedAnnouncements(
+                sortType = sortType,
+                titleQuery = "",
+                bodyQuery = "",
+                authorIds = emptyList(),
+                tagIds = emptyList(),
+            )
+        }
     }
 }
 
 @ViewModelScoped
-class GetPagedFilteredAnnouncementsUseCase @Inject constructor(
+class GetFilteredAnnouncementsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {

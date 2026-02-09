@@ -4,12 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.kastik.apps.core.domain.usecases.ExchangeCodeForAboardTokenUseCase
-import com.kastik.apps.core.domain.usecases.RefreshSubscriptionsUseCase
-import com.kastik.apps.core.domain.usecases.RefreshUserProfileUseCase
+import com.kastik.apps.core.domain.usecases.LoginUserUseCase
 import com.kastik.apps.core.domain.usecases.SignOutUserUseCase
-import com.kastik.apps.core.domain.usecases.StartTokenRefreshScheduleUseCase
-import com.kastik.apps.core.domain.usecases.SubscribeToTagsUseCase
 import com.kastik.apps.feature.auth.navigation.AuthRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,11 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthenticationScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val exchangeCodeForToken: ExchangeCodeForAboardTokenUseCase,
-    private val refreshUserProfileUseCase: RefreshUserProfileUseCase,
-    private val refreshSubscriptionsUseCase: RefreshSubscriptionsUseCase,
-    private val subscribeToTagsUseCase: SubscribeToTagsUseCase,
-    private val startTokenRefreshScheduleUseCase: StartTokenRefreshScheduleUseCase,
+    private val loginUserUseCase: LoginUserUseCase,
     private val signOutUserUseCase: SignOutUserUseCase
 ) : ViewModel() {
 
@@ -43,10 +35,8 @@ class AuthenticationScreenViewModel @Inject constructor(
             return@flow
         }
 
-        exchangeCodeForToken(args.code)
-        refreshUserProfileUseCase()
-        refreshSubscriptionsUseCase()
-        startTokenRefreshScheduleUseCase()
+        loginUserUseCase(args.code)
+
         emit(UiState.Success)
 
     }.catch {

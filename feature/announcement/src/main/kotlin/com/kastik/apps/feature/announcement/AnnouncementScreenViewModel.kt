@@ -6,12 +6,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.kastik.apps.core.domain.PrivateRefreshError
-import com.kastik.apps.core.domain.Result
 import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.DownloadAttachmentUseCase
 import com.kastik.apps.core.domain.usecases.GetAnnouncementWithIdUseCase
 import com.kastik.apps.core.domain.usecases.RefreshAnnouncementWithIdUseCase
+import com.kastik.apps.core.model.error.AuthenticatedRefreshError
+import com.kastik.apps.core.model.error.AuthenticationError
+import com.kastik.apps.core.model.error.ConnectionError
+import com.kastik.apps.core.model.error.ServerError
+import com.kastik.apps.core.model.error.TimeoutError
+import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.feature.announcement.navigation.AnnouncementRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toImmutableList
@@ -30,25 +34,25 @@ import javax.inject.Inject
 @HiltViewModel
 class AnnouncementScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    getAnnouncementWithIdUseCase: GetAnnouncementWithIdUseCase,
     private val notifier: Notifier,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
     private val refreshAnnouncementWithIdUseCase: RefreshAnnouncementWithIdUseCase,
-    private val getAnnouncementWithIdUseCase: GetAnnouncementWithIdUseCase,
 ) : ViewModel() {
-
     val args = savedStateHandle.toRoute<AnnouncementRoute>()
-    private val errorState = MutableStateFlow<String?>(null)
+    private val errorMessage = MutableStateFlow<String?>(null)
     val uiState: StateFlow<UiState> = combine(
-        getAnnouncementWithIdUseCase(args.id),
-        errorState
+        getAnnouncementWithIdUseCase(args.id), errorMessage
     ) { announcement, errorMsg ->
-        if (announcement != null) {
-            val parts = parseHtmlWithImages(announcement.body).toImmutableList()
-            UiState.Success(announcement, parts)
-        } else if (errorMsg != null) {
-            UiState.Error(errorMsg)
-        } else {
-            UiState.Loading
+        when {
+            announcement != null -> {
+                val parts = parseHtmlWithImages(announcement.body).toImmutableList()
+                UiState.Success(announcement, parts)
+            }
+
+            errorMsg != null -> UiState.Error(errorMsg)
+
+            else -> UiState.Loading
         }
     }.onStart {
         refreshAnnouncement()
@@ -60,31 +64,20 @@ class AnnouncementScreenViewModel @Inject constructor(
 
     fun refreshAnnouncement() {
         viewModelScope.launch {
-            //TODO WIP
-            when (val result = refreshAnnouncementWithIdUseCase(args.id)) {
-                is Result.Success -> {
-                    errorState.update { null }
-                }
+            val result = refreshAnnouncementWithIdUseCase(args.id)
 
-                is Result.Error -> {
-                    when (result.error) {
-                        PrivateRefreshError.Authentication -> {
-                            errorState.update { "Sign in required" }
-                        }
+            if (result is Result.Success) {
+                errorMessage.update { null }
+                return@launch
+            }
 
-                        PrivateRefreshError.NoConnection -> {
-                            notifier.sendToastNotification("No internet connection.")
-                        }
+            val error = (result as Result.Error).error
 
-                        PrivateRefreshError.Server -> {
-                            notifier.sendToastNotification("There was an error while contacting the server")
-                        }
-
-                        PrivateRefreshError.Storage -> errorState.update { "Something went wrong while refreshing." }
-                        PrivateRefreshError.Timeout -> errorState.update { "Timed out while refreshing." }
-                        PrivateRefreshError.Unknown -> errorState.update { "Something went wrong while refreshing." }
-                    }
-                }
+            val message = error.toUserMessage()
+            if (uiState.value is UiState.Success) {
+                notifier.sendToastNotification(message)
+            } else {
+                errorMessage.update { message }
             }
         }
     }
@@ -129,4 +122,12 @@ class AnnouncementScreenViewModel @Inject constructor(
             }
             parts
         }
+}
+
+private fun AuthenticatedRefreshError.toUserMessage(): String = when (this) {
+    AuthenticationError -> "Sign in required"
+    ConnectionError -> "No internet connection"
+    ServerError -> "Couldn't refresh the announcement."
+    TimeoutError -> "Timed out while refreshing."
+    else -> "Something went wrong while refreshing."
 }
