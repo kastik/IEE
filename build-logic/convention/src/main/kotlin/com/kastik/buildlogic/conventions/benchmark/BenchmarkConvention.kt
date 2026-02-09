@@ -2,6 +2,7 @@ package com.kastik.buildlogic.conventions.benchmark
 
 import com.android.build.api.dsl.TestExtension
 import com.kastik.buildlogic.conventions.config.AppConfig
+import com.kastik.buildlogic.conventions.extensions.configureFlavors
 import com.kastik.buildlogic.conventions.extensions.configureKotlinJvm
 import com.kastik.buildlogic.conventions.extensions.libs
 import org.gradle.api.Plugin
@@ -28,6 +29,7 @@ class BenchmarkConventionPlugin : Plugin<Project> {
                     sourceCompatibility = AppConfig.sourceCompatibility
                     targetCompatibility = AppConfig.targetCompatibility
                 }
+                configureFlavors(this)
             }
 
             extensions.configure<JavaPluginExtension> {

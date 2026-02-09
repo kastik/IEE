@@ -6,6 +6,7 @@ import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.error.AuthenticatedRefreshError
+import com.kastik.apps.core.model.error.AuthenticationError
 import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -61,5 +62,18 @@ class SignOutUserUseCase @Inject constructor(
         workScheduler.cancelTokenRefresh()
         workScheduler.cancelAnnouncementAlerts()
         profileRepository.unsubscribeFromAllTopics()
+    }
+}
+
+class RefreshTokenUseCase @Inject constructor(
+    private val repository: AuthenticationRepository,
+    private val signOutUserUseCase: SignOutUserUseCase
+) {
+    suspend operator fun invoke(): Result<Unit, AuthenticatedRefreshError> {
+        val result = repository.refreshAboardToken()
+        if (result is Result.Error && result.error is AuthenticationError) {
+            signOutUserUseCase()
+        }
+        return result
     }
 }

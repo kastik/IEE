@@ -30,8 +30,8 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
 
     override suspend fun setHasSkippedSignIn(hasSkippedSignIn: Boolean) =
         withContext(ioDispatcher) {
-        preferencesLocalDataSource.setHasSkippedSignIn(hasSkippedSignIn)
-    }
+            preferencesLocalDataSource.setHasSkippedSignIn(hasSkippedSignIn)
+        }
 
     override fun getUserTheme(): Flow<UserTheme> {
         return preferencesLocalDataSource.getUserTheme().map { it.toUserTheme() }
@@ -71,4 +71,12 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun setEnableForYou(value: Boolean) = withContext(ioDispatcher) {
         preferencesLocalDataSource.setEnableForYou(value)
     }
+
+    override fun getNotifiedAnnouncementIds(): Flow<List<Int>> =
+        preferencesLocalDataSource.getNotifiedAnnouncementIds()
+
+    override suspend fun setNotifiedAnnouncementIds(notificationIds: List<Int>) =
+        withContext(ioDispatcher) {
+            preferencesLocalDataSource.setNotifiedAnnouncementIds(notificationIds)
+        }
 }

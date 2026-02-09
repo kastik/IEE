@@ -79,6 +79,26 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         pagingData.map { it.toAnnouncement() }
     }
 
+    override suspend fun fetchAnnouncements(
+        page: Int,
+        perPage: Int,
+        sortType: SortType,
+        titleQuery: String,
+        bodyQuery: String,
+        authorIds: List<Int>,
+        tagIds: List<Int>
+    ): List<Announcement> =
+        announcementRemoteDataSource.fetchPagedAnnouncements(
+            page = page,
+            perPage = perPage,
+            sortBy = sortType,
+            title = titleQuery,
+            body = bodyQuery,
+            tagId = tagIds,
+            authorId = authorIds,
+        ).data.map { it.toAnnouncement() }
+
+
     override fun getAnnouncementsQuickResults(
         sortType: SortType,
         query: String

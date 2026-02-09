@@ -17,6 +17,16 @@ interface AnnouncementRepository {
         tagIds: List<Int> = emptyList(),
     ): Flow<PagingData<Announcement>>
 
+    suspend fun fetchAnnouncements(
+        page: Int,
+        perPage: Int,
+        sortType: SortType = SortType.Priority,
+        titleQuery: String = "",
+        bodyQuery: String = "",
+        authorIds: List<Int> = emptyList(),
+        tagIds: List<Int> = emptyList(),
+    ): List<Announcement>
+
     fun getAnnouncementsQuickResults(
         sortType: SortType,
         query: String

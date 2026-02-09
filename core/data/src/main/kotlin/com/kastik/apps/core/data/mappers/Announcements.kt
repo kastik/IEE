@@ -9,6 +9,16 @@ import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementDto
 
+fun AnnouncementDto.toAnnouncement() = Announcement(
+    id = id,
+    title = title,
+    preview = preview,
+    body = body,
+    author = author.name,
+    date = updatedAt,
+    pinned = isPinned,
+)
+
 fun AnnouncementDto.toAnnouncementEntity() = AnnouncementEntity(
     id = id,
     title = title,

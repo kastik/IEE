@@ -36,10 +36,12 @@ class AnnouncementAlertWorker @AssistedInject constructor(
         const val MAX_HISTORY_SIZE = 50
     }
 
+    //TODO Store and check last sync time
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result {
         return try {
             val storedIds = userPreferences.getNotifiedAnnouncementIds().first().toMutableSet()
+            val coldStart = storedIds.isEmpty()
 
             val profile = profileLocalDataSource.getProfile().firstOrNull()
                 ?: return Result.failure()
@@ -66,12 +68,15 @@ class AnnouncementAlertWorker @AssistedInject constructor(
                 val newAnnouncements = announcements.filter { !storedIds.contains(it.id) }
 
                 if (newAnnouncements.isNotEmpty()) {
+
                     newAnnouncements.forEach { announcement ->
-                        notifier.sendPushNotification(
-                            announcementId = announcement.id,
-                            title = announcement.title,
-                            body = announcement.preview
-                        )
+                        if (!coldStart) {
+                            notifier.sendPushNotification(
+                                announcementId = announcement.id,
+                                title = announcement.title,
+                                body = announcement.preview
+                            )
+                        }
 
                         storedIds.add(announcement.id)
                     }

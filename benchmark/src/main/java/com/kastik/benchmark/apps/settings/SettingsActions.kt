@@ -14,6 +14,11 @@ fun MacrobenchmarkScope.toggleSortingOptions() {
     onElement(timeoutMs = 2000) { textAsString() == "Priority" }.click()
 }
 
+fun MacrobenchmarkScope.toggleForYou() {
+    onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
+    onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
+}
+
 
 fun MacrobenchmarkScope.toggleSearchFieldOptions() {
     onElement(timeoutMs = 2000) { textAsString() == "Body" }.click()
@@ -37,10 +42,6 @@ fun MacrobenchmarkScope.toggleNotifications() {
     onElement(timeoutMs = 2000) { textAsString() == "Push notifications" }.click()
     waitForStableInActiveWindow()
     device.pressBack()
-}
-
-fun MacrobenchmarkScope.toggleEmailUpdates() {
-    onElement(timeoutMs = 2000) { textAsString() == "Email updates" }.click()
 }
 
 fun MacrobenchmarkScope.toggleAboutApp() {
