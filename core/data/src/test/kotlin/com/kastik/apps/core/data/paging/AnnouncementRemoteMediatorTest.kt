@@ -24,6 +24,7 @@ import com.kastik.apps.core.testing.testdata.announcementPageResponseTestData
 import com.kastik.apps.core.testing.testdata.announcementPreviewRelationTestData
 import com.kastik.apps.core.testing.testdata.tagEntitiesTestData
 import com.kastik.apps.core.testing.utils.FakeBase64ImageExtractor
+import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.mockkStatic
@@ -47,6 +48,7 @@ class AnnouncementRemoteMediatorTest {
     )
 
     private val announcementRemoteMediator = AnnouncementRemoteMediator(
+        crashlytics = FakeCrashlytics(),
         database = fakeAppDatabase,
         announcementRemoteDataSource = fakeAnnouncementRemoteDataSource,
         base64ImageExtractor = fakeBase64ImageExtractor
@@ -75,6 +77,7 @@ class AnnouncementRemoteMediatorTest {
         coEvery { fakeAppDatabase.withTransaction(capture(transactionLambda)) } coAnswers {
             transactionLambda.captured.invoke()
         }
+
     }
 
     @Test

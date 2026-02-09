@@ -8,29 +8,33 @@ import com.kastik.apps.core.testing.dao.FakeAuthorsDao
 import com.kastik.apps.core.testing.datasource.remote.FakeAuthorRemoteDataSource
 import com.kastik.apps.core.testing.testdata.authorDtoTestData
 import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
+import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.test.assertEquals
 
 class AuthorRepositoryImplTest {
-
+    private val testDispatcher = StandardTestDispatcher()
     private val fakeAuthorLocalDataSource = FakeAuthorsDao()
     private val fakeAuthorRemoteDataSource = FakeAuthorRemoteDataSource()
     private val repository = AuthorRepositoryImpl(
+        crashlytics = FakeCrashlytics(),
         authorLocalDataSource = fakeAuthorLocalDataSource,
         authorRemoteDataSource = fakeAuthorRemoteDataSource,
+        ioDispatcher = testDispatcher,
     )
 
     @Test
-    fun getAuthorsReturnsEmptyWhenNoAuthorsSaved() = runTest {
+    fun getAuthorsReturnsEmptyWhenNoAuthorsSaved() = runTest(testDispatcher) {
         assertThat(repository.getAuthors().first()).isEmpty()
     }
 
     @Test
-    fun getAuthorsReturnsAuthorsWhenSaved() = runTest {
+    fun getAuthorsReturnsAuthorsWhenSaved() = runTest(testDispatcher) {
         val authors = authorEntitiesTestData
         fakeAuthorLocalDataSource.upsertAuthors(authors)
 
@@ -41,7 +45,7 @@ class AuthorRepositoryImplTest {
     }
 
     @Test
-    fun refreshAuthorsFetchesFromRemoteAndSavesToLocal() = runTest {
+    fun refreshAuthorsFetchesFromRemoteAndSavesToLocal() = runTest(testDispatcher) {
         val authors = authorDtoTestData
         fakeAuthorRemoteDataSource.authorsToReturn = authors
         repository.refreshAuthors()
@@ -52,7 +56,7 @@ class AuthorRepositoryImplTest {
     }
 
     @Test
-    fun getAuthorsFlowEmitsUpdatesWhenDataChanges() = runTest {
+    fun getAuthorsFlowEmitsUpdatesWhenDataChanges() = runTest(testDispatcher) {
         val emissions = mutableListOf<List<Author>>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             repository.getAuthors().collect { authors ->
@@ -75,7 +79,7 @@ class AuthorRepositoryImplTest {
 
 
     @Test
-    fun `getAnnouncementTags emits mapped data from local source`() = runTest {
+    fun `getAnnouncementTags emits mapped data from local source`() = runTest(testDispatcher) {
         val result = repository.getAuthors().first()
         assertEquals(0, result.size)
         val test = fakeAuthorRemoteDataSource.fetchAuthors()
@@ -84,7 +88,7 @@ class AuthorRepositoryImplTest {
     }
 
     @Test
-    fun `refreshAnnouncementTags fetches remote and saves to local`() = runTest {
+    fun `refreshAnnouncementTags fetches remote and saves to local`() = runTest(testDispatcher) {
         val test = fakeAuthorRemoteDataSource.fetchAuthors()
         repository.refreshAuthors()
         assertEquals(test.size, repository.getAuthors().first().size)

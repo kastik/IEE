@@ -1,13 +1,12 @@
 package com.kastik.apps.core.network.interceptor
 
 
+import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.testing.interseptor.FakeInterceptorChain
 import com.kastik.apps.core.testing.interseptor.FakeTokenProvider
 import okhttp3.Request
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 
 class TokenInterceptorTest {
@@ -18,8 +17,8 @@ class TokenInterceptorTest {
 
     @Before
     fun setUp() {
-        tokenProvider = FakeTokenProvider(initial = null)
-        interceptor = TokenInterceptor(tokenProvider.provider)
+        tokenProvider = FakeTokenProvider()
+        interceptor = TokenInterceptor(tokenProvider)
         interceptor.intercept(chain)
 
     }
@@ -27,29 +26,33 @@ class TokenInterceptorTest {
     @Test
     fun skipHeaderWhenTokenIsNullTest() {
         interceptor.intercept(chain)
-        assertNull(chain.proceededRequest!!.header("Authorization"))
+        assertThat(chain.proceededRequest).isNotNull()
+        assertThat(chain.proceededRequest!!.header("Authorization")).isNull()
     }
 
 
     @Test
     fun addHeaderWhenTokenIsAvailableTest() {
-        tokenProvider.emit("token")
+        tokenProvider.token.value = "token"
         interceptor.intercept(chain)
-        assertEquals(
-            "Bearer token",
-            chain.proceededRequest!!.header("Authorization")
-        )
+        assertThat(chain.proceededRequest).isNotNull()
+        assertThat(chain.proceededRequest!!.header("Authorization")).isNotNull()
+        assertThat(chain.proceededRequest!!.header("Authorization")).isEqualTo("Bearer token")
     }
 
 
     @Test
     fun reactsToTokenUpdatesTest() {
         interceptor.intercept(chain)
-        assertNull(chain.proceededRequest!!.header("Authorization"))
+        assertThat(chain.proceededRequest).isNotNull()
+        assertThat(chain.proceededRequest!!.header("Authorization")).isNull()
 
-        tokenProvider.emit("token")
+        tokenProvider.token.value = "token"
 
         interceptor.intercept(chain)
-        assertEquals("Bearer token", chain.proceededRequest!!.header("Authorization"))
+
+        assertThat(chain.proceededRequest).isNotNull()
+        assertThat(chain.proceededRequest!!.header("Authorization")).isNotNull()
+        assertThat(chain.proceededRequest!!.header("Authorization")).isEqualTo("Bearer token")
     }
 }

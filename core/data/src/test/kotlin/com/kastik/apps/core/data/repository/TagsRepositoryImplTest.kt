@@ -13,13 +13,15 @@ import com.kastik.apps.core.testing.datasource.local.FakeTagsLocalDataSource
 import com.kastik.apps.core.testing.datasource.remote.FakeTagsRemoteDataSource
 import com.kastik.apps.core.testing.testdata.announcementTagDtoTestData
 import com.kastik.apps.core.testing.testdata.subscribableTagsProtoTestData
+import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
 class TagsRepositoryImplTest {
-
+    private val testDispatcher = StandardTestDispatcher()
     private val announcementTagsLocalDataSource: TagsDao = FakeTagsDao()
     private val subscribableTagsLocalDataSource: TagsLocalDataSource = FakeTagsLocalDataSource()
     private val tagsRemoteDataSource: TagsRemoteDataSource = FakeTagsRemoteDataSource()
@@ -29,20 +31,22 @@ class TagsRepositoryImplTest {
     @Before
     fun setUp() {
         repository = TagsRepositoryImpl(
+            crashlytics = FakeCrashlytics(),
             announcementTagsLocalDataSource = announcementTagsLocalDataSource,
             subscribableTagsLocalDataSource = subscribableTagsLocalDataSource,
             tagsRemoteDataSource = tagsRemoteDataSource,
+            ioDispatcher = testDispatcher,
         )
     }
 
     @Test
-    fun getAnnouncementTagsReturnsEmptyWhenNotSet() = runTest {
+    fun getAnnouncementTagsReturnsEmptyWhenNotSet() = runTest(testDispatcher) {
         val result = repository.getAnnouncementTags().first()
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun getAnnouncementTagsEmitsFromLocalSource() = runTest {
+    fun getAnnouncementTagsEmitsFromLocalSource() = runTest(testDispatcher) {
         val tags = announcementTagDtoTestData
         announcementTagsLocalDataSource.upsertTags(tags.map { it.toTagEntity() })
 
@@ -52,7 +56,7 @@ class TagsRepositoryImplTest {
     }
 
     @Test
-    fun refreshAnnouncementTagsFetchesRemoteTagsAndSavesToLocal() = runTest {
+    fun refreshAnnouncementTagsFetchesRemoteTagsAndSavesToLocal() = runTest(testDispatcher) {
         val remote = tagsRemoteDataSource.fetchAnnouncementTags().data
         repository.refreshAnnouncementTags()
         val result = repository.getAnnouncementTags().first()
@@ -61,13 +65,13 @@ class TagsRepositoryImplTest {
     }
 
     @Test
-    fun getSubscribableTagsReturnsEmptyWhenNotSet() = runTest {
+    fun getSubscribableTagsReturnsEmptyWhenNotSet() = runTest(testDispatcher) {
         val result = repository.getSubscribableTags().first()
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun getSubscribableTagsEmitsFromLocalSource() = runTest {
+    fun getSubscribableTagsEmitsFromLocalSource() = runTest(testDispatcher) {
         val subscribableTags = subscribableTagsProtoTestData
         subscribableTagsLocalDataSource.setSubscribableTags(subscribableTags.tagsList)
 
@@ -78,7 +82,7 @@ class TagsRepositoryImplTest {
 
 
     @Test
-    fun refreshSubscribableTagsFetchesRemoteTagsAndSavesToLocal() = runTest {
+    fun refreshSubscribableTagsFetchesRemoteTagsAndSavesToLocal() = runTest(testDispatcher) {
         val remote = tagsRemoteDataSource.fetchSubscribableTags()
         repository.refreshSubscribableTags()
 

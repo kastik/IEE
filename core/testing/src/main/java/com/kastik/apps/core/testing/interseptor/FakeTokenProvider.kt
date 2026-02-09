@@ -1,11 +1,7 @@
 package com.kastik.apps.core.testing.interseptor
 
-import com.kastik.apps.core.di.TokenProvider
-import com.kastik.apps.core.testing.datasource.local.FakeAuthenticationLocalDataSource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.runBlocking
+import com.kastik.apps.core.network.interceptor.TokenProvider
+import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.Call
 import okhttp3.Connection
 import okhttp3.Interceptor
@@ -14,29 +10,8 @@ import okhttp3.Request
 import okhttp3.Response
 
 
-class FakeTokenProvider(initial: String? = null) {
-
-    private val fakeLocal = FakeAuthenticationLocalDataSource()
-
-    private val scope = CoroutineScope(Dispatchers.Unconfined + SupervisorJob())
-
-    val provider = TokenProvider(
-        localDataSource = fakeLocal,
-        appScope = scope
-    )
-
-    init {
-        runBlocking {
-            initial?.let {
-                fakeLocal.setAboardAccessToken(initial)
-            }
-        }
-
-    }
-
-    fun emit(value: String?) {
-        fakeLocal.emitToken(value)
-    }
+class FakeTokenProvider : TokenProvider {
+    override val token: MutableStateFlow<String?> = MutableStateFlow(null)
 }
 
 class FakeInterceptorChain(
@@ -49,12 +24,8 @@ class FakeInterceptorChain(
 
     override fun proceed(request: Request): Response {
         proceededRequest = request
-        return Response.Builder()
-            .code(200)
-            .message("OK")
-            .protocol(Protocol.HTTP_1_1)
-            .request(request)
-            .build()
+        return Response.Builder().code(200).message("OK").protocol(Protocol.HTTP_1_1)
+            .request(request).build()
     }
 
     override fun connection(): Connection? = null
