@@ -33,7 +33,7 @@ class NetworkModuleLocal {
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl("https://192.168.1.17/api/v2/")
+            .baseUrl("https://kastik-pc.local/api/v2/")
             .addConverterFactory(SortTypeQueryConverterFactory())
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(json.asConverterFactory(contentType))
