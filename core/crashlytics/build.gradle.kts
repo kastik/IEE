@@ -11,7 +11,7 @@ configure<LibraryExtension> {
 
 
 dependencies {
-    //TODO Create a firebase Convention and apply these and the crashlitycs plugin conditionally
+    //TODO Create a firebase Convention and apply these and the crashlytics gradle plugin conditionally
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
