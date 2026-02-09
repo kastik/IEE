@@ -1,7 +1,7 @@
 package com.kastik.apps.core.di
 
 import com.kastik.apps.core.domain.service.WorkScheduler
-import com.kastik.apps.core.work.sheculer.WorkSchedulerImpl
+import com.kastik.apps.core.work.scheduler.WorkSchedulerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

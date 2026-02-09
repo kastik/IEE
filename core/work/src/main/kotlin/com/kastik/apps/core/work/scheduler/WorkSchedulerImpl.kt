@@ -1,4 +1,4 @@
-package com.kastik.apps.core.work.sheculer
+package com.kastik.apps.core.work.scheduler
 
 import android.content.Context
 import androidx.work.BackoffPolicy
