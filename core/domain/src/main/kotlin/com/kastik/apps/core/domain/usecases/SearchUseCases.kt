@@ -1,11 +1,14 @@
 package com.kastik.apps.core.domain.usecases
 
+import com.kastik.apps.core.model.error.GeneralRefreshError
+import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.model.search.FilterOptions
 import com.kastik.apps.core.model.search.QuickResults
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class GetQuickResultsUseCase @Inject constructor(
@@ -49,12 +52,17 @@ class RefreshFilterOptionsUseCase @Inject constructor(
     private val refreshAuthorsUseCase: RefreshAuthorsUseCase,
     private val refreshAnnouncementTagsUseCase: RefreshAnnouncementTagsUseCase,
 ) {
-    suspend operator fun invoke() = coroutineScope {
-        launch {
-            refreshAuthorsUseCase()
+    suspend operator fun invoke(): Result<Unit, GeneralRefreshError> = coroutineScope {
+        val authorsDeferred = async { refreshAuthorsUseCase() }
+        val tagsDeferred = async { refreshAnnouncementTagsUseCase() }
+        val (authorsSuccess, tagsSuccess) = awaitAll(authorsDeferred, tagsDeferred)
+        if (authorsSuccess !is Result.Success) {
+            return@coroutineScope authorsSuccess
         }
-        launch {
-            refreshAnnouncementTagsUseCase()
+        if (tagsSuccess !is Result.Success) {
+            return@coroutineScope tagsSuccess
         }
+        return@coroutineScope Result.Success(Unit)
+
     }
 }

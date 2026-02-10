@@ -1,100 +1,59 @@
 package com.kastik.apps.core.domain.usecases
 
-import com.kastik.apps.core.domain.repository.AnnouncementRepository
-import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
-import com.kastik.apps.core.domain.service.TokenRefreshScheduler
-import com.kastik.apps.core.model.aboard.Profile
-import com.kastik.apps.core.model.aboard.Tag
-import kotlinx.collections.immutable.ImmutableList
+import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import java.util.concurrent.ExecutionException
 import javax.inject.Inject
 
 class GetUserProfileUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    operator fun invoke(): Flow<Profile> = profileRepository.getProfile()
+    operator fun invoke() = profileRepository.getProfile()
 }
 
 class GetSubscribedTagsUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    operator fun invoke(): Flow<ImmutableList<Tag>> =
-        profileRepository.getEmailSubscriptions().map { it.toImmutableList() }
+    operator fun invoke() = profileRepository.getEmailSubscriptions().map { it.toImmutableList() }
 }
 
 class RefreshUserProfileUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    suspend operator fun invoke() {
-        try {
-            profileRepository.refreshProfile()
-        } catch (e: Exception) {
-            //firebaseRepo.unsubscribeFromAllTopics()
-            throw e
-        }
-    }
+    suspend operator fun invoke() = profileRepository.refreshProfile()
 }
 
 class RefreshSubscriptionsUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    suspend operator fun invoke() {
-        try {
-            profileRepository.refreshEmailSubscriptions()
-        } catch (e: Exception) {
-            //firebaseRepo.unsubscribeFromAllTopics()
-            throw e
-        }
-    }
+    suspend operator fun invoke() = profileRepository.refreshEmailSubscriptions()
 }
 
 
 class SubscribeToTagsUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     suspend operator fun invoke(newTagIds: List<Int>) = coroutineScope {
-        val currentTags = profileRepository.getEmailSubscriptions()
-            .firstOrNull() ?: emptyList()
+        val _ = profileRepository.getEmailSubscriptions().firstOrNull() ?: emptyList()
 
-        val currentTagIds = currentTags.map { it.id }.toSet()
-        val newTagIdsSet = newTagIds.toSet()
+        val result = profileRepository.subscribeToEmailTags(newTagIds)
 
-        val idsToSubscribe = newTagIdsSet - currentTagIds
-        val idsToUnsubscribe = currentTagIds - newTagIdsSet
+        //val currentTagIds = currentTags.map { it.id }.toSet()
+        //val newTagIdsSet = newTagIds.toSet()
 
-        launch {
-            profileRepository.subscribeToEmailTags(newTagIds)
-        }
-        launch {
-            profileRepository.subscribeToTopics(idsToSubscribe.toList())
-        }
-        launch {
-            profileRepository.unsubscribeFromTopics(idsToUnsubscribe.toList())
-        }
-    }
-}
+        //val idsToSubscribe = newTagIdsSet - currentTagIds
+        //val idsToUnsubscribe = currentTagIds - newTagIdsSet
 
-class SignOutUserUseCase @Inject constructor(
-    private val profileRepository: ProfileRepository,
-    private val announcementRepository: AnnouncementRepository,
-    private val authenticationRepository: AuthenticationRepository,
-    private val tokenScheduler: TokenRefreshScheduler
-) {
-    suspend operator fun invoke() {
-        profileRepository.clearLocalData()
-        authenticationRepository.clearAuthenticationData()
-        announcementRepository.clearAnnouncementCache()
-        tokenScheduler.cancelRefresh()
-        try {
-            profileRepository.unsubscribeFromAllTopics()
-        } catch (e: ExecutionException) {
-        }
+        userPreferencesRepository.setNotifiedAnnouncementId(emptyList())
+
+        profileRepository.unsubscribeFromAllTopics()
+        // val subscribeToTopicsDeferred = async { profileRepository.subscribeToTopics(idsToSubscribe.toList()) }
+        //val unsubscribeFromTopicsDeferred = async { profileRepository.unsubscribeFromTopics(idsToUnsubscribe.toList()) }
+        //awaitAll(subscribeToTopicsDeferred, unsubscribeFromTopicsDeferred)
+        result
     }
 }

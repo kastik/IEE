@@ -1,5 +1,8 @@
 package com.kastik.apps.core.data.repository
 
+import com.kastik.apps.core.common.di.IoDispatcher
+import com.kastik.apps.core.crashlytics.Crashlytics
+import com.kastik.apps.core.data.mappers.toPrivateRefreshError
 import com.kastik.apps.core.data.mappers.toProfile
 import com.kastik.apps.core.data.mappers.toProfileProto
 import com.kastik.apps.core.data.mappers.toSubscribedTagProto
@@ -8,9 +11,11 @@ import com.kastik.apps.core.datastore.ProfileLocalDataSource
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.model.aboard.Profile
 import com.kastik.apps.core.model.aboard.Tag
+import com.kastik.apps.core.model.error.StorageError
+import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.ProfileRemoteDataSource
 import com.kastik.apps.core.notifications.PushNotificationsDatasource
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -19,18 +24,27 @@ import javax.inject.Singleton
 
 @Singleton
 internal class ProfileRepositoryImpl @Inject constructor(
+    private val crashlytics: Crashlytics,
     private val profileLocalDataSource: ProfileLocalDataSource,
     private val profileRemoteDataSource: ProfileRemoteDataSource,
     private val pushNotificationsDatasource: PushNotificationsDatasource,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ProfileRepository {
 
     override fun getProfile(): Flow<Profile> {
         return profileLocalDataSource.getProfile().map { profile -> profile.toProfile() }
     }
 
-    override suspend fun refreshProfile() = withContext(Dispatchers.IO) {
-        val userProfile = profileRemoteDataSource.getProfile()
-        profileLocalDataSource.setProfile(userProfile.toProfileProto())
+    override suspend fun refreshProfile() = withContext(ioDispatcher) {
+        try {
+            val userProfile = profileRemoteDataSource.getProfile()
+            profileLocalDataSource.setProfile(userProfile.toProfileProto())
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            crashlytics.recordException(e)
+            Result.Error(e.toPrivateRefreshError())
+        }
+
     }
 
     override fun getEmailSubscriptions(): Flow<List<Tag>> {
@@ -38,29 +52,47 @@ internal class ProfileRepositoryImpl @Inject constructor(
             .map { tagList -> tagList.subscribedTagsList.map { it.toTag() } }
     }
 
-    override suspend fun refreshEmailSubscriptions() = withContext(Dispatchers.IO) {
-        val subscribedTags = profileRemoteDataSource.getEmailSubscriptions()
-        profileLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
+    override suspend fun refreshEmailSubscriptions() = withContext(ioDispatcher) {
+        try {
+            val subscribedTags = profileRemoteDataSource.getEmailSubscriptions()
+            profileLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            crashlytics.recordException(e)
+            Result.Error(e.toPrivateRefreshError())
+        }
     }
 
-    override suspend fun subscribeToEmailTags(tagIds: List<Int>) = withContext(Dispatchers.IO) {
-        profileRemoteDataSource.subscribeToEmailTags(tagIds)
+    override suspend fun subscribeToEmailTags(tagIds: List<Int>) = withContext(ioDispatcher) {
+        try {
+            profileRemoteDataSource.subscribeToEmailTags(tagIds)
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            crashlytics.recordException(e)
+            Result.Error(e.toPrivateRefreshError())
+        }
     }
 
-    override suspend fun subscribeToTopics(tagIds: List<Int>) = withContext(Dispatchers.IO) {
+    override suspend fun subscribeToTopics(tagIds: List<Int>) = withContext(ioDispatcher) {
         pushNotificationsDatasource.subscribeToTopics(tagIds)
     }
 
-    override suspend fun unsubscribeFromTopics(tagIds: List<Int>) = withContext(Dispatchers.IO) {
+    override suspend fun unsubscribeFromTopics(tagIds: List<Int>) = withContext(ioDispatcher) {
         pushNotificationsDatasource.unsubscribeFromTopics(tagIds)
     }
 
-    override suspend fun unsubscribeFromAllTopics() = withContext(Dispatchers.IO) {
+    override suspend fun unsubscribeFromAllTopics() = withContext(ioDispatcher) {
         pushNotificationsDatasource.unsubscribeFromAllTopics()
     }
 
-    override suspend fun clearLocalData() = withContext(Dispatchers.IO) {
-        profileLocalDataSource.clearProfile()
-        profileLocalDataSource.clearSubscriptions()
+    override suspend fun clearLocalData() = withContext(ioDispatcher) {
+        try {
+            profileLocalDataSource.clearProfile()
+            profileLocalDataSource.clearSubscriptions()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            crashlytics.recordException(e)
+            Result.Error(StorageError)
+        }
     }
 }

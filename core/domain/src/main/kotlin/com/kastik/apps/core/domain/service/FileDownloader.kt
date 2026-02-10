@@ -5,6 +5,5 @@ interface FileDownloader {
         url: String,
         fileName: String,
         mimeType: String,
-        authToken: String?
     )
 }

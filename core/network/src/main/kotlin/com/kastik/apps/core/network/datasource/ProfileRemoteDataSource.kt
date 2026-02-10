@@ -1,11 +1,11 @@
 package com.kastik.apps.core.network.datasource
 
 
-import com.kastik.apps.core.di.AnnRetrofit
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
 import com.kastik.apps.core.network.model.aboard.tags.SubscribeToTagsRequestDto
 import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
+import javax.inject.Inject
 
 interface ProfileRemoteDataSource {
     suspend fun getProfile(): ProfileResponseDto
@@ -13,8 +13,8 @@ interface ProfileRemoteDataSource {
     suspend fun subscribeToEmailTags(tags: List<Int>)
 }
 
-internal class ProfileRemoteDataSourceImpl(
-    @AnnRetrofit private val aboardApiClient: AboardApiClient,
+internal class ProfileRemoteDataSourceImpl @Inject constructor(
+    private val aboardApiClient: AboardApiClient,
 ) : ProfileRemoteDataSource {
 
     override suspend fun getProfile(): ProfileResponseDto {

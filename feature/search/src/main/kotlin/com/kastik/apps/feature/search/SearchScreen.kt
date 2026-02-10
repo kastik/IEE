@@ -36,10 +36,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.kastik.apps.core.common.extensions.shareAnnouncement
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
-import com.kastik.apps.core.ui.extensions.shareAnnouncement
 import com.kastik.apps.core.ui.paging.AnnouncementFeed
 import com.kastik.apps.core.ui.sheet.GenericFilterSheet
 import com.kastik.apps.core.ui.topbar.SearchBar

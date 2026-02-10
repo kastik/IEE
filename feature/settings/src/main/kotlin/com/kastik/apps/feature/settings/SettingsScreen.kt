@@ -51,12 +51,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.kastik.apps.core.common.extensions.launchUrl
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
-import com.kastik.apps.core.ui.extensions.launchUrl
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

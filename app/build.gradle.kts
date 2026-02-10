@@ -16,8 +16,8 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 19
-        versionName = "1.4.1"
+        versionCode = 24
+        versionName = "1.5.4"
     }
 
     val keystoreProperties = Properties().apply {
@@ -54,10 +54,25 @@ configure<ApplicationExtension> {
             manifestPlaceholders["crashlyticsCollectionEnabled"] = "false"
         }
     }
+
+    productFlavors {
+        named("local") {
+            applicationIdSuffix = ".local"
+            versionNameSuffix = "-local"
+        }
+
+        named("production") {
+            isDefault = true
+        }
+    }
 }
 
 dependencies {
+    implementation(project(":core:network"))
+    implementation(project(":core:data"))
+    implementation(project(":core:work"))
     implementation(project(":core:analytics"))
+    implementation(project(":core:crashlytics"))
     implementation(project(":core:notifications"))
     implementation(project(":core:downloader"))
     implementation(project(":core:domain"))
@@ -71,15 +86,7 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:licenses"))
     implementation(project(":feature:search"))
-
     implementation(libs.androidx.work.runtime.ktx)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.crashlytics.ndk)
-    implementation(libs.firebase.performance) {
-        exclude(group = "com.google.protobuf", module = "protobuf-javalite")
-        exclude(group = "com.google.firebase", module = "protolite-well-known-types")
-    }
 
     baselineProfile(project(":benchmark"))
     implementation(libs.androidx.profileinstaller)
@@ -87,15 +94,7 @@ dependencies {
 
 baselineProfile {
     saveInSrc = true
-    mergeIntoMain = false
-    variants {
-        create("release") {
-            dexLayoutOptimization = true
-            automaticGenerationDuringBuild = false
-        }
-        create("debug") {
-            dexLayoutOptimization = false
-            automaticGenerationDuringBuild = false
-        }
-    }
+    mergeIntoMain = true
+    dexLayoutOptimization = true
+    automaticGenerationDuringBuild = false
 }

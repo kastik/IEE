@@ -2,6 +2,7 @@ package com.kastik.buildlogic.conventions.library
 
 import com.android.build.api.dsl.LibraryExtension
 import com.kastik.buildlogic.conventions.config.AppConfig
+import com.kastik.buildlogic.conventions.extensions.configureFlavors
 import com.kastik.buildlogic.conventions.extensions.configureKotlinJvm
 import com.kastik.buildlogic.conventions.extensions.libs
 import org.gradle.api.Plugin
@@ -27,6 +28,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     sourceCompatibility = AppConfig.sourceCompatibility
                     targetCompatibility = AppConfig.targetCompatibility
                 }
+
+                configureFlavors(this)
             }
 
             dependencies {

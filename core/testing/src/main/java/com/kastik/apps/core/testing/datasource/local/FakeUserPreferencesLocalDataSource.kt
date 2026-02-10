@@ -17,6 +17,8 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
     var enableForYou = false
     var queryScope: QueryScope = QueryScope.Title
 
+    var notifiedAnnouncementIds: List<Int> = emptyList()
+
 
     override fun getHasSkippedSignIn(): Flow<Boolean> = flowOf(skipped)
 
@@ -62,6 +64,21 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
 
     override suspend fun setEnableForYou(value: Boolean) {
         this.enableForYou = value
+    }
+
+    override fun getNotifiedAnnouncementIds(): Flow<List<Int>> =
+        flowOf(notifiedAnnouncementIds)
+
+    override suspend fun setNotifiedAnnouncementId(notificationId: Int) {
+        notifiedAnnouncementIds = notifiedAnnouncementIds + notificationId
+    }
+
+    override suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>) {
+        notifiedAnnouncementIds = notificationIds
+    }
+
+    override suspend fun clearNotifiedAnnouncementIds() {
+        notifiedAnnouncementIds = emptyList()
     }
 
 }

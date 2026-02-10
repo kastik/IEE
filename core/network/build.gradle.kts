@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.kastik.library.testing)
     alias(libs.plugins.kastik.hilt)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.power.assert)
 }
 
 configure<LibraryExtension> {
@@ -16,14 +15,13 @@ configure<LibraryExtension> {
 }
 
 dependencies {
-    implementation(project(":core:domain"))
     implementation(project(":core:model"))
-    implementation(project(":core:datastore"))
+    implementation(project(":core:domain"))
+    testImplementation(project(":core:testing"))
+
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.scalars)
     implementation(libs.retrofit.kotlinx.serialization)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
-
-    testImplementation(project(":core:testing"))
 }

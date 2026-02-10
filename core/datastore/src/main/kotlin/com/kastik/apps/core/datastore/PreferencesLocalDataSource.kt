@@ -23,7 +23,10 @@ interface PreferencesLocalDataSource {
     suspend fun setSearchScope(queryScope: QueryScope)
     fun getEnableForYou(): Flow<Boolean>
     suspend fun setEnableForYou(value: Boolean)
-
+    fun getNotifiedAnnouncementIds(): Flow<List<Int>>
+    suspend fun setNotifiedAnnouncementId(notificationId: Int)
+    suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>)
+    suspend fun clearNotifiedAnnouncementIds()
 }
 
 internal class PreferencesLocalDataSourceImpl @Inject constructor(
@@ -99,4 +102,31 @@ internal class PreferencesLocalDataSourceImpl @Inject constructor(
         }
     }
 
+    override fun getNotifiedAnnouncementIds(): Flow<List<Int>> =
+        dataStore.data.map { it.notifiedAnnouncementIdsList }
+
+    override suspend fun setNotifiedAnnouncementId(notificationId: Int) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .addNotifiedAnnouncementIds(notificationId)
+                .build()
+        }
+    }
+
+    override suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .clearNotifiedAnnouncementIds()
+                .addAllNotifiedAnnouncementIds(notificationIds)
+                .build()
+        }
+    }
+
+    override suspend fun clearNotifiedAnnouncementIds() {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .clearNotifiedAnnouncementIds()
+                .build()
+        }
+    }
 }

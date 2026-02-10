@@ -2,8 +2,10 @@ package com.kastik.apps.core.data.utils
 
 import android.content.Context
 import android.util.Base64
+import com.kastik.apps.core.common.di.DefaultDispatcher
+import com.kastik.apps.core.common.di.IoDispatcher
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
@@ -17,9 +19,11 @@ interface Base64ImageExtractor {
 
 
 internal class Base64ImageExtractorImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : Base64ImageExtractor {
-    override suspend fun process(html: String): String = withContext(Dispatchers.Default) {
+    override suspend fun process(html: String): String = withContext(defaultDispatcher) {
         val regex =
             "<img.+?src=\"(data:image/(.+?);base64,)(.+?)\".*?>".toRegex(RegexOption.DOT_MATCHES_ALL)
         val matches = regex.findAll(html).toList()
@@ -57,7 +61,7 @@ internal class Base64ImageExtractorImpl @Inject constructor(
     }
 
     private suspend fun generateFilename(imageBytes: ByteArray, extension: String): String =
-        withContext(Dispatchers.Default) {
+        withContext(defaultDispatcher) {
             val messageDigest = java.security.MessageDigest.getInstance("SHA-256")
             val hashBytes = messageDigest.digest(imageBytes)
             val hexString = hashBytes.joinToString("") { "%02x".format(it) }
@@ -65,7 +69,7 @@ internal class Base64ImageExtractorImpl @Inject constructor(
         }
 
     private suspend fun saveFile(filename: String, bytes: ByteArray): File? =
-        withContext(Dispatchers.IO) {
+        withContext(ioDispatcher) {
             try {
                 val dir = File("${context.cacheDir}/announcementImage/")
                 if (!dir.exists()) dir.mkdirs()

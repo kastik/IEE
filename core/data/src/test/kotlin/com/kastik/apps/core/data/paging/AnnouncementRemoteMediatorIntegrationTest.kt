@@ -11,6 +11,7 @@ import com.kastik.apps.core.testing.datasource.remote.FakeAnnouncementRemoteData
 import com.kastik.apps.core.testing.db.MemoryDatabase
 import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
 import com.kastik.apps.core.testing.utils.FakeBase64ImageExtractor
+import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -32,6 +33,7 @@ class AnnouncementRemoteMediatorIntegrationTest : MemoryDatabase(
             tagIds = emptyList(),
             authorIds = emptyList(),
             sortType = SortType.DESC,
+            crashlytics = FakeCrashlytics(),
             database = db,
             announcementRemoteDataSource = fakeAnnouncementRemoteDataSource,
             base64ImageExtractor = fakeBase64ImageExtractor

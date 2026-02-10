@@ -11,4 +11,5 @@ configure<LibraryExtension> {
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:network"))
 }

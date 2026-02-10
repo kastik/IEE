@@ -1,10 +1,14 @@
 package com.kastik.apps.core.network.interceptor
 
-import com.kastik.apps.core.di.TokenProvider
+import kotlinx.coroutines.flow.StateFlow
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
+
+interface TokenProvider {
+    val token: StateFlow<String?>
+}
 
 class TokenInterceptor @Inject constructor(
     private val tokenProvider: TokenProvider

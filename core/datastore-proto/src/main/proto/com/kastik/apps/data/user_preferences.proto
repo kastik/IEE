@@ -9,6 +9,7 @@ message UserPreferences{
   Sort sort_type = 4;
   QueryScope query_scope = 5;
   bool enable_for_you = 6;
+  repeated int32 notified_announcement_ids = 7;
 }
 
 enum Theme {

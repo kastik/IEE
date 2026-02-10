@@ -4,8 +4,8 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class AnnRetrofit
+annotation class AboardRetrofit
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class AnnOkHttp
+annotation class AboardOkHttp

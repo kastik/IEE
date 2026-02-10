@@ -17,8 +17,8 @@ class FakeAuthenticationLocalDataSource : AuthenticationLocalDataSource {
     private val _aboardTokenExpiration = MutableStateFlow<Int?>(null)
     val aboardTokenExpiration: StateFlow<Int?> = _aboardTokenExpiration.asStateFlow()
 
-    private val _aboardTokenLastRefreshTime = MutableStateFlow<Int?>(null)
-    val aboardTokenLastRefreshTime: StateFlow<Int?> = _aboardTokenLastRefreshTime.asStateFlow()
+    private val _aboardTokenLastRefreshTime = MutableStateFlow<Long?>(null)
+    val aboardTokenLastRefreshTime: StateFlow<Long?> = _aboardTokenLastRefreshTime.asStateFlow()
 
     override fun getIsSignedIn(): Flow<Boolean> {
         return isSignedIn
@@ -34,7 +34,7 @@ class FakeAuthenticationLocalDataSource : AuthenticationLocalDataSource {
         _aboardTokenExpiration.value = expiration
     }
 
-    override suspend fun setAboardTokenLastRefreshTime(lastRefreshTime: Int) {
+    override suspend fun setAboardTokenLastRefreshTime(lastRefreshTime: Long) {
         _aboardTokenLastRefreshTime.value = lastRefreshTime
     }
 
@@ -42,7 +42,7 @@ class FakeAuthenticationLocalDataSource : AuthenticationLocalDataSource {
         return aboardTokenExpiration
     }
 
-    override fun getAboardTokenLastRefreshTime(): Flow<Int?> {
+    override fun getAboardTokenLastRefreshTime(): Flow<Long?> {
         return aboardTokenLastRefreshTime
     }
 

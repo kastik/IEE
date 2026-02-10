@@ -18,4 +18,8 @@ interface UserPreferencesRepository {
     suspend fun setSearchScope(searchScope: SearchScope)
     fun getEnableForYou(): Flow<Boolean>
     suspend fun setEnableForYou(value: Boolean)
+    fun getNotifiedAnnouncementIds(): Flow<List<Int>>
+    suspend fun setNotifiedAnnouncementId(notificationIds: Int)
+    suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>)
+    suspend fun clearNotifiedAnnouncementId()
 }

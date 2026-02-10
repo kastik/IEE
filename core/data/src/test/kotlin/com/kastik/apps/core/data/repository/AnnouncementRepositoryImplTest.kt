@@ -13,12 +13,14 @@ import com.kastik.apps.core.testing.datasource.remote.FakeAnnouncementRemoteData
 import com.kastik.apps.core.testing.db.FakeAppDatabase
 import com.kastik.apps.core.testing.testdata.announcementDetailsRelationTestData
 import com.kastik.apps.core.testing.utils.FakeBase64ImageExtractor
+import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.mockkStatic
 import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -26,6 +28,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalPagingApi::class, ExperimentalCoroutinesApi::class)
 class AnnouncementRepositoryImplTest {
+    private val testDispatcher = StandardTestDispatcher()
     private val fakeDatabase = FakeAppDatabase()
     private val announcementDao = fakeDatabase.announcementDao() as FakeAnnouncementDao
     private val fakeAnnouncementRemoteDataSource = FakeAnnouncementRemoteDataSource()
@@ -34,9 +37,11 @@ class AnnouncementRepositoryImplTest {
 
     private val announcementRepoImpl =
         AnnouncementRepositoryImpl(
+            crashlytics = FakeCrashlytics(),
             database = fakeDatabase,
             announcementRemoteDataSource = fakeAnnouncementRemoteDataSource,
-            base64ImageExtractor = fakeBase64ImageExtractor
+            base64ImageExtractor = fakeBase64ImageExtractor,
+            ioDispatcher = testDispatcher,
         )
 
     @Before
@@ -53,17 +58,7 @@ class AnnouncementRepositoryImplTest {
 
 
     @Test
-    fun getPagedAnnouncements_returnsMappedData() = runTest {
-        // 1. Setup: Ensure remote source has data to load
-        // Assuming your fake remote has a method to add test data
-
-        val firstItems = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
-            1,
-            perPage = 20,
-            sortBy = SortType.DESC
-        )
-        // 2. Act: Collect the flow using asSnapshot()
-        // This triggers the Pager -> Mediator -> DB -> UI flow and waits for data
+    fun getPagedAnnouncements_returnsMappedData() = runTest(testDispatcher) {
         val result: List<Announcement> = announcementRepoImpl.getPagedAnnouncements(
             sortType = SortType.DESC,
             titleQuery = "",
@@ -72,15 +67,12 @@ class AnnouncementRepositoryImplTest {
             tagIds = emptyList()
         ).asSnapshot()
 
-        // 3. Assert: Verify the result is mapped and correct
-        println(firstItems)
-        println(result)
         assertThat(result).isNotEmpty()
         assertThat(result.first().id).isEqualTo(announcementDetailsRelationTestData.first().announcement.id)
     }
 
     @Test
-    fun getAnnouncementWithIdFetchesTheCorrectDataTest() = runTest {
+    fun getAnnouncementWithIdFetchesTheCorrectDataTest() = runTest(testDispatcher) {
         announcementDao.insertTestData()
         announcementDetailsRelationTestData.forEach { announcementDetail ->
             val result =
@@ -96,7 +88,7 @@ class AnnouncementRepositoryImplTest {
 
     //TODO Create test for sorting, limiting, etc
     @Test
-    fun getAnnouncementsQuickResultsReturnsQuickResults() = runTest {
+    fun getAnnouncementsQuickResultsReturnsQuickResults() = runTest(testDispatcher) {
         announcementDao.insertTestData()
         val result =
             announcementRepoImpl.getAnnouncementsQuickResults(SortType.DESC, "Test").first()
@@ -105,7 +97,7 @@ class AnnouncementRepositoryImplTest {
 
 
     @Test
-    fun getAttachmentUrlReturnsAttachmentUrl() = runTest {
+    fun getAttachmentUrlReturnsAttachmentUrl() = runTest(testDispatcher) {
         announcementDao.insertTestData()
         val attachments = announcementDao.attachments.value
 
@@ -119,7 +111,7 @@ class AnnouncementRepositoryImplTest {
 
 
     @Test
-    fun clearAnnouncementCacheClearsLocallyStoredAnnouncements() = runTest {
+    fun clearAnnouncementCacheClearsLocallyStoredAnnouncements() = runTest(testDispatcher) {
         announcementDao.insertTestData()
         announcementRepoImpl.clearAnnouncementCache()
         val result = announcementDao.announcements.value

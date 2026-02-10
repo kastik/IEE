@@ -10,45 +10,48 @@ import com.kastik.apps.core.testing.datasource.remote.FakeProfileRemoteDataSourc
 import com.kastik.apps.core.testing.testdata.subscribedTagProtoTestData
 import com.kastik.apps.core.testing.testdata.userProfileDtoTestData
 import com.kastik.apps.core.testing.testdata.userProfileProtoTestData
+import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockkClass
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 
 class ProfileRepositoryImplTest {
-
+    private val testDispatcher = StandardTestDispatcher()
     private val profileLocalDataSource = FakeProfileLocalDataSource()
     private val profileRemoteDataSource = FakeProfileRemoteDataSource()
     private val pushNotificationsDatasource = mockkClass(PushNotificationsDatasource::class)
 
     private val profileRepository = ProfileRepositoryImpl(
+        crashlytics = FakeCrashlytics(),
         profileLocalDataSource = profileLocalDataSource,
         profileRemoteDataSource = profileRemoteDataSource,
         pushNotificationsDatasource = pushNotificationsDatasource,
+        ioDispatcher = testDispatcher,
     )
 
     @Before
     fun setup() {
-        // Stub void methods for the mock to prevent "no answer found" errors
         coEvery { pushNotificationsDatasource.subscribeToTopics(any()) } just Runs
         coEvery { pushNotificationsDatasource.unsubscribeFromAllTopics() } just Runs
     }
 
     //TODO Consider if we need to throw here instead
     @Test
-    fun getProfileReturnsEmptyWhenNoProfileSaved() = runTest {
+    fun getProfileReturnsEmptyWhenNoProfileSaved() = runTest(testDispatcher) {
         val result = profileRepository.getProfile().first()
         val emptyProfile = ProfileProto.getDefaultInstance().toProfile()
         assertThat(result).isEqualTo(emptyProfile)
     }
 
     @Test
-    fun getProfileReturnsProfileWhenProfileSaved() = runTest {
+    fun getProfileReturnsProfileWhenProfileSaved() = runTest(testDispatcher) {
         val profile = userProfileProtoTestData.first()
         profileLocalDataSource.setProfile(profile)
 
@@ -57,7 +60,7 @@ class ProfileRepositoryImplTest {
     }
 
     @Test
-    fun refreshProfileRefreshesProfile() = runTest {
+    fun refreshProfileRefreshesProfile() = runTest(testDispatcher) {
         val freshRemoteProfile = userProfileDtoTestData.last()
         profileRemoteDataSource.profileToReturn = freshRemoteProfile
 
@@ -78,13 +81,13 @@ class ProfileRepositoryImplTest {
     }
 
     @Test
-    fun getEmailSubscriptionsAreEmptyWhenNotSet() = runTest {
+    fun getEmailSubscriptionsAreEmptyWhenNotSet() = runTest(testDispatcher) {
         val result = profileRepository.getEmailSubscriptions().first()
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun getEmailSubscriptionsReturnsSubscribedTagsWhenSet() = runTest {
+    fun getEmailSubscriptionsReturnsSubscribedTagsWhenSet() = runTest(testDispatcher) {
         val tags = subscribedTagProtoTestData
         profileLocalDataSource.setSubscriptions(tags)
         val result = profileRepository.getEmailSubscriptions().first()
@@ -102,18 +105,15 @@ class ProfileRepositoryImplTest {
      */
 
     @Test
-    fun `refreshEmailSubscriptionsFetchesFromRemoteAnd savesToLocal`() = runTest {
-        // Act: Trigger refresh (Fetch Remote -> Save Local)
+    fun `refreshEmailSubscriptionsFetchesFromRemoteAnd savesToLocal`() = runTest(testDispatcher) {
         profileRepository.refreshEmailSubscriptions()
 
-        // Assert: Check if data is now available in the local flow
         val result = profileRepository.getEmailSubscriptions().first()
         assertThat(result).isNotEmpty()
-        // Note: This assumes FakeProfileRemoteDataSource returns default test data
     }
 
     @Test
-    fun subscribeToTopicsCallsPushDatasource() = runTest {
+    fun subscribeToTopicsCallsPushDatasource() = runTest(testDispatcher) {
         val tags = listOf(1, 2, 3)
 
         profileRepository.subscribeToTopics(tags)
@@ -122,22 +122,19 @@ class ProfileRepositoryImplTest {
     }
 
     @Test
-    fun unsubscribeFromAllTopicsCallsPushDatasource() = runTest {
+    fun unsubscribeFromAllTopicsCallsPushDatasource() = runTest(testDispatcher) {
         profileRepository.unsubscribeFromAllTopics()
 
         coVerify { pushNotificationsDatasource.unsubscribeFromAllTopics() }
     }
 
     @Test
-    fun clearLocalDataClearsProfileAndSubscriptions() = runTest {
-        // Arrange: Seed local data
+    fun clearLocalDataClearsProfileAndSubscriptions() = runTest(testDispatcher) {
         profileLocalDataSource.setProfile(userProfileProtoTestData.first())
         profileLocalDataSource.setSubscriptions(subscribedTagProtoTestData)
 
-        // Act
         profileRepository.clearLocalData()
 
-        // Assert: Verify Profile is empty (id 0) and Subscriptions are empty
         val profileResult = profileRepository.getProfile().first()
         val subsResult = profileRepository.getEmailSubscriptions().first()
 
@@ -145,18 +142,12 @@ class ProfileRepositoryImplTest {
         assertThat(subsResult).isEmpty()
     }
 
-    // Note: To test `subscribeToEmailTags`, you would typically verify the
-    // FakeProfileRemoteDataSource state, or use a Mock if the Fake doesn't expose state.
     @Test
-    fun subscribeToEmailTagsDelegatesToRemote() = runTest {
+    fun subscribeToEmailTagsDelegatesToRemote() = runTest(testDispatcher) {
         val tags = listOf(10, 20)
 
-        // Act
         profileRepository.subscribeToEmailTags(tags)
-
-        // Assert: Assuming your FakeProfileRemoteDataSource has a way to verify calls,
-        // e.g., val lastSubscribed = profileRemoteDataSource.lastSubscribedTags
-        // assertThat(lastSubscribed).isEqualTo(tags)
+        //TODO
     }
 
 }
