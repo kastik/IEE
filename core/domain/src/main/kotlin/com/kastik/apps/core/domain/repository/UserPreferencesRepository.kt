@@ -19,5 +19,7 @@ interface UserPreferencesRepository {
     fun getEnableForYou(): Flow<Boolean>
     suspend fun setEnableForYou(value: Boolean)
     fun getNotifiedAnnouncementIds(): Flow<List<Int>>
-    suspend fun setNotifiedAnnouncementIds(notificationIds: List<Int>)
+    suspend fun setNotifiedAnnouncementId(notificationIds: Int)
+    suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>)
+    suspend fun clearNotifiedAnnouncementId()
 }

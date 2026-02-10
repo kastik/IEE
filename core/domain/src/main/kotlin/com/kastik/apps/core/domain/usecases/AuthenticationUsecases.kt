@@ -52,6 +52,7 @@ class SignOutUserUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val announcementRepository: AnnouncementRepository,
     private val authenticationRepository: AuthenticationRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val workScheduler: WorkScheduler
 ) {
     suspend operator fun invoke() {
@@ -59,6 +60,7 @@ class SignOutUserUseCase @Inject constructor(
         profileRepository.clearLocalData()
         authenticationRepository.clearAuthenticationData()
         announcementRepository.clearAnnouncementCache()
+        userPreferencesRepository.clearNotifiedAnnouncementId()
         workScheduler.cancelTokenRefresh()
         workScheduler.cancelAnnouncementAlerts()
         profileRepository.unsubscribeFromAllTopics()

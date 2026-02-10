@@ -15,7 +15,7 @@ fun AnnouncementDto.toAnnouncement() = Announcement(
     preview = preview,
     body = body,
     author = author.name,
-    date = updatedAt,
+    date = createdAt,
     pinned = isPinned,
 )
 

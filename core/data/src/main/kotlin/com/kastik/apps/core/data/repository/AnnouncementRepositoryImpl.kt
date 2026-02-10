@@ -14,6 +14,7 @@ import com.kastik.apps.core.data.mappers.toAttachmentEntity
 import com.kastik.apps.core.data.mappers.toAuthorEntity
 import com.kastik.apps.core.data.mappers.toBodyEntity
 import com.kastik.apps.core.data.mappers.toPrivateRefreshError
+import com.kastik.apps.core.data.mappers.toPublicRefreshError
 import com.kastik.apps.core.data.mappers.toTagCrossRefs
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.data.paging.AnnouncementRemoteMediator
@@ -22,6 +23,7 @@ import com.kastik.apps.core.database.db.AppDatabase
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.model.error.GeneralRefreshError
 import com.kastik.apps.core.model.error.StorageError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
@@ -87,16 +89,22 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         bodyQuery: String,
         authorIds: List<Int>,
         tagIds: List<Int>
-    ): List<Announcement> =
-        announcementRemoteDataSource.fetchPagedAnnouncements(
-            page = page,
-            perPage = perPage,
-            sortBy = sortType,
-            title = titleQuery,
-            body = bodyQuery,
-            tagId = tagIds,
-            authorId = authorIds,
-        ).data.map { it.toAnnouncement() }
+    ): Result<List<Announcement>, GeneralRefreshError> =
+        try {
+            Result.Success(
+                announcementRemoteDataSource.fetchPagedAnnouncements(
+                    page = page,
+                    perPage = perPage,
+                    sortBy = sortType,
+                    title = titleQuery,
+                    body = bodyQuery,
+                    tagId = tagIds,
+                    authorId = authorIds,
+                ).data.map { it.toAnnouncement() }
+            )
+        } catch (e: Exception) {
+            Result.Error(e.toPublicRefreshError())
+        }
 
 
     override fun getAnnouncementsQuickResults(

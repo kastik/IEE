@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.error.AuthenticatedRefreshError
+import com.kastik.apps.core.model.error.GeneralRefreshError
 import com.kastik.apps.core.model.error.StorageError
 import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +26,7 @@ interface AnnouncementRepository {
         bodyQuery: String = "",
         authorIds: List<Int> = emptyList(),
         tagIds: List<Int> = emptyList(),
-    ): List<Announcement>
+    ): Result<List<Announcement>, GeneralRefreshError>
 
     fun getAnnouncementsQuickResults(
         sortType: SortType,

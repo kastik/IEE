@@ -75,8 +75,21 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
     override fun getNotifiedAnnouncementIds(): Flow<List<Int>> =
         preferencesLocalDataSource.getNotifiedAnnouncementIds()
 
-    override suspend fun setNotifiedAnnouncementIds(notificationIds: List<Int>) =
+    override suspend fun setNotifiedAnnouncementId(notificationIds: Int) {
         withContext(ioDispatcher) {
-            preferencesLocalDataSource.setNotifiedAnnouncementIds(notificationIds)
+            preferencesLocalDataSource.setNotifiedAnnouncementId(notificationIds)
         }
+    }
+
+    override suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>) =
+        withContext(ioDispatcher) {
+            preferencesLocalDataSource.setNotifiedAnnouncementId(notificationIds)
+        }
+
+    override suspend fun clearNotifiedAnnouncementId() {
+        withContext(ioDispatcher) {
+            preferencesLocalDataSource.clearNotifiedAnnouncementIds()
+        }
+    }
+
 }

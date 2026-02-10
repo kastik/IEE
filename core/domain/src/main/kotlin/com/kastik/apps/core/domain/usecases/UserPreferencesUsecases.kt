@@ -136,3 +136,15 @@ class GetUserPreferencesUseCase @Inject constructor(
             UserPreferences(theme, dynamicColor, sortType, searchScope, enableForYou)
         }
 }
+
+class StoreNotifiedAnnouncementIdsUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository,
+) {
+    suspend operator fun invoke(ids: List<Int>) {
+        userPreferencesRepository.setNotifiedAnnouncementId(ids)
+    }
+
+    suspend operator fun invoke(id: Int) {
+        userPreferencesRepository.setNotifiedAnnouncementId(id)
+    }
+}
