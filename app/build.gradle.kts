@@ -68,6 +68,8 @@ configure<ApplicationExtension> {
 }
 
 dependencies {
+    implementation(project(":core:common"))
+    implementation(project(":core:config"))
     implementation(project(":core:network"))
     implementation(project(":core:data"))
     implementation(project(":core:work"))
