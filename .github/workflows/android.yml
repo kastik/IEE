@@ -32,7 +32,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Unit Tests
-        run: ./gradlew :core:data:testDebugUnitTest :core:database:testDebugUnitTest
+        run: ./gradlew :core:data:testProductionDebugUnitTest :core:database:testProductionDebugUnitTest
 
   build:
     needs: tests
@@ -74,7 +74,7 @@ jobs:
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleProductionRelease
 
       - name: Upload Release APK
         env:
@@ -82,5 +82,5 @@ jobs:
         run: |
           VERSION="v$(date +'%Y.%m.%d-%H%M')"
           gh release create "$VERSION" \
-            app/build/outputs/apk/release/*.apk \
+            app/build/outputs/apk/production/release/*.apk \
             --generate-notes
