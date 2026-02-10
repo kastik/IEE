@@ -69,9 +69,16 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
     override fun getNotifiedAnnouncementIds(): Flow<List<Int>> =
         flowOf(notifiedAnnouncementIds)
 
+    override suspend fun setNotifiedAnnouncementId(notificationId: Int) {
+        notifiedAnnouncementIds = notifiedAnnouncementIds + notificationId
+    }
 
-    override suspend fun setNotifiedAnnouncementIds(notificationIds: List<Int>) {
+    override suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>) {
         notifiedAnnouncementIds = notificationIds
+    }
+
+    override suspend fun clearNotifiedAnnouncementIds() {
+        notifiedAnnouncementIds = emptyList()
     }
 
 }
