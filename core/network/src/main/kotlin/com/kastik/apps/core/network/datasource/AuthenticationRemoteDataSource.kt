@@ -24,9 +24,8 @@ internal class AuthenticationRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun checkIfTokenIsValid(): Boolean {
-        return runCatching {
-            aboardApiClient.getUserInfo()
-        }.isSuccess
+        aboardApiClient.getUserInfo()
+        return true
     }
 
 }

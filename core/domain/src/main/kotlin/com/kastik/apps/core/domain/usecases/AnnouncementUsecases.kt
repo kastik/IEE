@@ -164,14 +164,17 @@ class CheckNewAnnouncementsUseCase @Inject constructor(
 
             when (announcementResult) {
                 is Result.Success -> {
-                    val notNotifiedAnnouncements =
-                        announcementResult.data.filter { !notifiedAnnouncementIds.contains(it.id) }
+                    val firstKnownIndex =
+                        announcementResult.data.indexOfFirst { notifiedAnnouncementIds.contains(it.id) }
 
-                    if (notNotifiedAnnouncements.isNotEmpty()) {
-                        announcementsToNotify.addAll(notNotifiedAnnouncements)
+                    if (firstKnownIndex == -1) {
+                        announcementsToNotify.addAll(announcementResult.data)
+                        page++
+                    } else {
+                        val trulyNewItems = announcementResult.data.subList(0, firstKnownIndex)
+                        announcementsToNotify.addAll(trulyNewItems)
+                        break
                     }
-
-                    page++
                 }
 
                 is Result.Error -> {

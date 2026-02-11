@@ -5,12 +5,15 @@ import android.content.Context
 import androidx.annotation.RequiresPermission
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.kastik.apps.core.domain.repository.RemoteConfigRepository
 import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.CheckNewAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.StoreNotifiedAnnouncementIdsUseCase
 import com.kastik.apps.core.model.result.Result.Error
 import com.kastik.apps.core.model.result.Result.Success
+import com.kastik.apps.core.work.scheduler.WorkSchedulerImpl.Companion.ANNOUNCEMENT_REFRESH_WORK_NAME
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -22,11 +25,18 @@ class AnnouncementAlertWorker @AssistedInject constructor(
     private val notifier: Notifier,
     private val checkNewAnnouncementsUseCase: CheckNewAnnouncementsUseCase,
     private val storeNotifiedAnnouncementIdsUseCase: StoreNotifiedAnnouncementIdsUseCase,
+    private val remoteConfigRepository: RemoteConfigRepository
 ) : CoroutineWorker(context, workerParams) {
 
     //TODO Store and check last sync time
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result {
+
+        if (remoteConfigRepository.isFcmEnabled()) {
+            WorkManager.getInstance(applicationContext)
+                .cancelUniqueWork(ANNOUNCEMENT_REFRESH_WORK_NAME)
+            return Result.success()
+        }
 
         when (val newAnnouncements = checkNewAnnouncementsUseCase()) {
             is Success -> {
