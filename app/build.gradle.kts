@@ -51,6 +51,7 @@ configure<ApplicationExtension> {
             manifestPlaceholders["crashlyticsCollectionEnabled"] = "true"
         }
         debug {
+            applicationIdSuffix = ".debug"
             manifestPlaceholders["crashlyticsCollectionEnabled"] = "false"
         }
     }
