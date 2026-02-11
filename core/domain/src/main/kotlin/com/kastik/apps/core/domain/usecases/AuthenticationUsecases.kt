@@ -3,6 +3,7 @@ package com.kastik.apps.core.domain.usecases
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
+import com.kastik.apps.core.domain.repository.RemoteConfigRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.error.AuthenticatedRefreshError
@@ -37,6 +38,7 @@ class RefreshIsSignedInUseCase @Inject constructor(
 class LoginUserUseCase @Inject constructor(
     private val workScheduler: WorkScheduler,
     private val profileRepository: ProfileRepository,
+    private val remoteConfigRepository: RemoteConfigRepository,
     private val authenticationRepository: AuthenticationRepository
 ) {
     suspend operator fun invoke(code: String) {
@@ -44,7 +46,9 @@ class LoginUserUseCase @Inject constructor(
         profileRepository.refreshProfile()
         profileRepository.refreshEmailSubscriptions()
         workScheduler.scheduleTokenRefresh()
-        workScheduler.scheduleAnnouncementAlerts()
+        if (!remoteConfigRepository.isFcmEnabled()) {
+            workScheduler.scheduleAnnouncementAlerts()
+        }
     }
 }
 

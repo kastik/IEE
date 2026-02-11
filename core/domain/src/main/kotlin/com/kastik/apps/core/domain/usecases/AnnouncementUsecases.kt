@@ -186,7 +186,7 @@ class CheckNewAnnouncementsUseCase @Inject constructor(
 
         if (coldStart) {
             val updatedHistory = announcementsToNotify.toList().takeLast(MAX_HISTORY_SIZE)
-            userPreferencesRepository.replaceNotifiedAnnouncementId(updatedHistory.map { it.id })
+            userPreferencesRepository.setNotifiedAnnouncementId(updatedHistory.map { it.id })
             return Result.Success(emptyList())
         } else {
             return Result.Success(announcementsToNotify)
