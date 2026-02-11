@@ -5,6 +5,7 @@ import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.toPrivateRefreshError
 import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
+import com.kastik.apps.core.model.error.AuthenticatedRefreshError
 import com.kastik.apps.core.model.error.StorageError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
@@ -26,12 +27,12 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
     override fun getIsSignedIn(): Flow<Boolean> =
         authenticationLocalDataSource.getIsSignedIn()
 
-    override suspend fun refreshIsSignedIn() =
+    override suspend fun refreshIsSignedIn(): Result<Unit, AuthenticatedRefreshError> =
         try {
-            val hasToken = authenticationLocalDataSource.getAboardAccessToken().first() == null
+            val hasToken = authenticationLocalDataSource.getAboardAccessToken().first() != null
             if (!hasToken) {
                 authenticationLocalDataSource.setIsSignedIn(false)
-                Result.Success(Unit)
+                return Result.Success(Unit)
             }
 
             val isAuthenticated = authenticationRemoteDataSource.checkIfTokenIsValid()
