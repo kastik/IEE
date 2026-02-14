@@ -89,9 +89,13 @@ private fun SearchScreenContent(
     val scope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
-    val tagSheetState = rememberModalBottomSheetState()
+    val tagSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
     val showTagSheet = rememberSaveable { mutableStateOf(false) }
-    val authorSheetState = rememberModalBottomSheetState()
+    val authorSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
     val showAuthorSheet = rememberSaveable { mutableStateOf(false) }
     val searchBarState = rememberSearchBarState()
 

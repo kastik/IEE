@@ -21,8 +21,10 @@ import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -140,9 +142,13 @@ private fun HomeScreenContent(
     val homeFeedPullToRefreshState = rememberPullToRefreshState()
     val forYouFeedPullToRefreshState = rememberPullToRefreshState()
     val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
-    val tagSheetState = rememberModalBottomSheetState()
+    val tagSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
     val showTagSheet = rememberSaveable { mutableStateOf(false) }
-    val authorSheetState = rememberModalBottomSheetState()
+    val authorSheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
     val showAuthorSheet = rememberSaveable { mutableStateOf(false) }
     val searchBarState = rememberSearchBarState()
     val pageCount = if (uiState.enableForYou) 2 else 1
@@ -203,9 +209,9 @@ private fun HomeScreenContent(
                 },
                 collapsedAction = {
                     analytics.logEvent("search_clicked")
-                    navigateToSearch(
-                        "", persistentListOf(), persistentListOf()
-                    )
+                    scope.launch {
+                        searchBarState.animateToExpanded()
+                    }
                 },
                 expandedIcon = { Icon(Icons.Filled.ArrowUpward, "Scroll to top") },
                 collapsedIcon = { Icon(Icons.Filled.Search, "Go to search") },
