@@ -402,7 +402,13 @@ private fun HomeScreenContent(
             items = uiState.availableFilters.authors,
             selectedIds = persistentListOf(),
             idProvider = { it.id },
-            labelProvider = { "${it.name} [${it.announcementCount}]" },
+            labelProvider = {
+                if (it.announcementCount > 0) {
+                    "${it.name} [${it.announcementCount}]"
+                } else {
+                    it.name
+                }
+            },
             groupProvider = { it.name.first().uppercaseChar() },
             titlePlaceholder = "Search Authors...",
             applyText = "Apply Authors",
