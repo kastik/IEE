@@ -14,6 +14,8 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
 
     var sortType: Sort = Sort.Priority
 
+    var fabFiltersEnabled: Boolean = false
+
     var enableForYou = false
     var queryScope: QueryScope = QueryScope.Title
 
@@ -79,6 +81,14 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
 
     override suspend fun clearNotifiedAnnouncementIds() {
         notifiedAnnouncementIds = emptyList()
+    }
+
+    override fun areFabFiltersEnabled(): Flow<Boolean> =
+        flowOf(fabFiltersEnabled)
+
+
+    override suspend fun setAreFabFiltersEnabled(value: Boolean) {
+        fabFiltersEnabled = value
     }
 
 }

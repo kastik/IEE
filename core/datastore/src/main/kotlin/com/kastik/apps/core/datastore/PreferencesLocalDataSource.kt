@@ -27,6 +27,8 @@ interface PreferencesLocalDataSource {
     suspend fun setNotifiedAnnouncementId(notificationId: Int)
     suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>)
     suspend fun clearNotifiedAnnouncementIds()
+    fun areFabFiltersEnabled(): Flow<Boolean>
+    suspend fun setAreFabFiltersEnabled(value: Boolean)
 }
 
 internal class PreferencesLocalDataSourceImpl @Inject constructor(
@@ -126,6 +128,17 @@ internal class PreferencesLocalDataSourceImpl @Inject constructor(
         dataStore.updateData { prefs ->
             prefs.toBuilder()
                 .clearNotifiedAnnouncementIds()
+                .build()
+        }
+    }
+
+    override fun areFabFiltersEnabled(): Flow<Boolean> =
+        dataStore.data.map { it.enableFabFilters }
+
+    override suspend fun setAreFabFiltersEnabled(value: Boolean) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setEnableFabFilters(value)
                 .build()
         }
     }

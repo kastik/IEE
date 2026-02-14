@@ -5,16 +5,18 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.kastik.apps.core.common.extensions.combine
 import com.kastik.apps.core.domain.service.Notifier
-import com.kastik.apps.core.domain.usecases.GetEnableForYouUseCase
+import com.kastik.apps.core.domain.usecases.AreFabFiltersEnabledUseCase
 import com.kastik.apps.core.domain.usecases.GetFilterOptionsUseCase
 import com.kastik.apps.core.domain.usecases.GetForYouAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetHomeAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
+import com.kastik.apps.core.domain.usecases.IsForYouEnabledUseCase
 import com.kastik.apps.core.domain.usecases.RefreshAnnouncementTagsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshAuthorsUseCase
-import com.kastik.apps.core.domain.usecases.SetUserHasSkippedSignInUseCase
+import com.kastik.apps.core.domain.usecases.SetHasSkippedSignInUseCase
 import com.kastik.apps.core.domain.usecases.ShowSignInNoticeRationalUseCase
 import com.kastik.apps.core.model.error.ConnectionError
 import com.kastik.apps.core.model.error.GeneralRefreshError
@@ -27,7 +29,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -40,11 +41,12 @@ class HomeScreenViewModel @Inject constructor(
     isSignedInUseCase: GetIsSignedInUseCase,
     showSignInNoticeRationalUseCase: ShowSignInNoticeRationalUseCase,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
-    getEnableForYouUseCase: GetEnableForYouUseCase,
+    isForYouEnabledUseCase: IsForYouEnabledUseCase,
     getForYouAnnouncementsUseCase: GetForYouAnnouncementsUseCase,
     getHomeAnnouncementsUseCase: GetHomeAnnouncementsUseCase,
+    areFabFiltersEnabledUseCase: AreFabFiltersEnabledUseCase,
     private val notifier: Notifier,
-    private val setUserHasSkippedSignInUseCase: SetUserHasSkippedSignInUseCase,
+    private val setHasSkippedSignInUseCase: SetHasSkippedSignInUseCase,
     private val refreshAuthorsUseCase: RefreshAuthorsUseCase,
     private val refreshAnnouncementTagsUseCase: RefreshAnnouncementTagsUseCase,
     private val getQuickResultsUseCase: GetQuickResultsUseCase,
@@ -62,14 +64,16 @@ class HomeScreenViewModel @Inject constructor(
         showSignInNoticeRationalUseCase(),
         getFilterOptionsUseCase(),
         _quickSearchResultsState,
-        getEnableForYouUseCase(),
-    ) { isSignedIn, showSignInNotice, availableFilters, quickResults, enableForYou ->
+        isForYouEnabledUseCase(),
+        areFabFiltersEnabledUseCase(),
+    ) { isSignedIn, showSignInNotice, availableFilters, quickResults, enableForYou, enableFabFilters ->
         UiState(
             isSignedIn = isSignedIn,
             showSignInNotice = showSignInNotice,
             availableFilters = availableFilters,
             quickResults = quickResults,
-            enableForYou = enableForYou
+            enableForYou = enableForYou,
+            enableFabFilters = enableFabFilters
         )
     }.onStart {
         refreshFilters()
@@ -95,7 +99,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun onSignInNoticeDismiss() {
         viewModelScope.launch {
-            setUserHasSkippedSignInUseCase(true)
+            setHasSkippedSignInUseCase(true)
         }
     }
 

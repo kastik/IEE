@@ -215,6 +215,28 @@ private fun HomeScreenContent(
                 },
                 expandedIcon = { Icon(Icons.Filled.ArrowUpward, "Scroll to top") },
                 collapsedIcon = { Icon(Icons.Filled.Search, "Go to search") },
+                collapsedSecondaryIcons = if (uiState.enableFabFilters) {
+                    {
+                        IconButton(onClick = {
+                            showTagSheet.value = true
+                        }) {
+                            Icon(
+                                Icons.Filled.Tag,
+                                "Filter",
+                            )
+                        }
+                        IconButton(onClick = {
+                            showAuthorSheet.value = true
+                        }) {
+                            Icon(
+                                Icons.Filled.Person,
+                                "Filter",
+                            )
+                        }
+
+                    }
+                } else null
+
             )
         }
 

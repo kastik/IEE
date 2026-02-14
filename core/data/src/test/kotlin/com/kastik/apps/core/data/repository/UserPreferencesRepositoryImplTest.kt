@@ -28,35 +28,35 @@ class UserPreferencesRepositoryImplTest {
     @Test
     fun getHasSkippedSignInSetsAndReturnsTheProperValueTest() = runTest(testDispatcher) {
         preferencesRepositoryImpl.setHasSkippedSignIn(true)
-        assertThat(preferencesRepositoryImpl.getHasSkippedSignIn().first()).isTrue()
+        assertThat(preferencesRepositoryImpl.hasSkippedSignIn().first()).isTrue()
         preferencesRepositoryImpl.setHasSkippedSignIn(false)
-        assertThat(preferencesRepositoryImpl.getHasSkippedSignIn().first()).isFalse()
+        assertThat(preferencesRepositoryImpl.hasSkippedSignIn().first()).isFalse()
     }
 
     @Test
     fun getHasSkippedSignInReturnsFalseWhenNoValueIsSet() = runTest(testDispatcher) {
-        assertThat(preferencesRepositoryImpl.getHasSkippedSignIn().first()).isFalse()
+        assertThat(preferencesRepositoryImpl.hasSkippedSignIn().first()).isFalse()
     }
 
     @Test
     fun getUserThemeSetsAndReturnsTheProperValueTest() = runTest(testDispatcher) {
-        preferencesRepositoryImpl.setUserTheme(UserTheme.DARK)
-        assertThat(preferencesRepositoryImpl.getUserTheme().first()).isEqualTo(UserTheme.DARK)
-        preferencesRepositoryImpl.setUserTheme(UserTheme.LIGHT)
-        assertThat(preferencesRepositoryImpl.getUserTheme().first()).isEqualTo(UserTheme.LIGHT)
-        preferencesRepositoryImpl.setUserTheme(UserTheme.FOLLOW_SYSTEM)
+        preferencesRepositoryImpl.setTheme(UserTheme.DARK)
+        assertThat(preferencesRepositoryImpl.getTheme().first()).isEqualTo(UserTheme.DARK)
+        preferencesRepositoryImpl.setTheme(UserTheme.LIGHT)
+        assertThat(preferencesRepositoryImpl.getTheme().first()).isEqualTo(UserTheme.LIGHT)
+        preferencesRepositoryImpl.setTheme(UserTheme.FOLLOW_SYSTEM)
         assertThat(
-            preferencesRepositoryImpl.getUserTheme().first()
+            preferencesRepositoryImpl.getTheme().first()
         ).isEqualTo(UserTheme.FOLLOW_SYSTEM)
     }
 
     @Test
     fun getDynamicColorSetsAndReturnsTheProperValueTest() = runTest(testDispatcher) {
-        preferencesRepositoryImpl.setDynamicColor(true)
-        assertThat(preferencesRepositoryImpl.getDynamicColor().first()).isTrue()
+        preferencesRepositoryImpl.setDynamicColorEnabled(true)
+        assertThat(preferencesRepositoryImpl.isDynamicColorEnabled().first()).isTrue()
 
-        preferencesRepositoryImpl.setDynamicColor(false)
-        assertThat(preferencesRepositoryImpl.getDynamicColor().first()).isFalse()
+        preferencesRepositoryImpl.setDynamicColorEnabled(false)
+        assertThat(preferencesRepositoryImpl.isDynamicColorEnabled().first()).isFalse()
     }
 
     @Test

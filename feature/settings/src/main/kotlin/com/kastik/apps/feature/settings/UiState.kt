@@ -9,8 +9,9 @@ sealed class UiState {
     data class Success(
         val theme: UserTheme,
         val sortType: SortType,
-        val dynamicColor: Boolean,
         val searchScope: SearchScope,
-        val forYou: Boolean
+        val isDynamicColorEnabled: Boolean,
+        val isForYouEnabled: Boolean,
+        val areFabFiltersEnabled: Boolean
     ) : UiState()
 }

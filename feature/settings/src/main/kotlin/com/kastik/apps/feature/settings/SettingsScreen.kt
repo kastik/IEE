@@ -82,15 +82,17 @@ internal fun SettingsRoute(
             is UiState.Success -> {
                 SettingsScreenContent(
                     theme = state.theme,
-                    setTheme = viewModel::setTheme,
+                    onThemeChange = viewModel::setTheme,
                     sortType = state.sortType,
-                    setSortType = viewModel::setSortType,
+                    onSortTypeChange = viewModel::setSortType,
                     searchScope = state.searchScope,
-                    setSearchScope = viewModel::setSearchScope,
-                    dynamicColor = state.dynamicColor,
-                    setDynamicColor = viewModel::setDynamicColor,
-                    forYou = state.forYou,
-                    setForYou = viewModel::setEnableForYou,
+                    onSearchScopeChange = viewModel::setSearchScope,
+                    dynamicColor = state.isDynamicColorEnabled,
+                    onDynamicColorChange = viewModel::setDynamicColor,
+                    forYouEnabled = state.isForYouEnabled,
+                    onForYouChange = viewModel::setEnableForYou,
+                    fabFiltersDisabled = state.areFabFiltersEnabled,
+                    onFabFiltersChange = viewModel::setFabFilters,
                     navigateToLicenses = navigateToLicenses
                 )
             }
@@ -105,15 +107,17 @@ internal fun SettingsRoute(
 @Composable
 private fun SettingsScreenContent(
     theme: UserTheme,
-    setTheme: (UserTheme) -> Unit = {},
+    onThemeChange: (UserTheme) -> Unit = {},
     sortType: SortType,
-    setSortType: (SortType) -> Unit = {},
+    onSortTypeChange: (SortType) -> Unit = {},
     searchScope: SearchScope,
-    setSearchScope: (SearchScope) -> Unit = {},
+    onSearchScopeChange: (SearchScope) -> Unit = {},
     dynamicColor: Boolean,
-    setDynamicColor: (Boolean) -> Unit = {},
-    forYou: Boolean,
-    setForYou: (Boolean) -> Unit = {},
+    onDynamicColorChange: (Boolean) -> Unit = {},
+    forYouEnabled: Boolean,
+    onForYouChange: (Boolean) -> Unit = {},
+    fabFiltersDisabled: Boolean,
+    onFabFiltersChange: (Boolean) -> Unit = {},
     navigateToLicenses: () -> Unit = {}
 ) {
 
@@ -183,7 +187,7 @@ private fun SettingsScreenContent(
                             },
                             onSelected = { sortType ->
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                setSortType(sortType)
+                                onSortTypeChange(sortType)
                                 analytics.logEvent(
                                     "sort_type_changed", mapOf("sort_type" to sortType.name)
                                 )
@@ -193,17 +197,34 @@ private fun SettingsScreenContent(
                     SettingSwitchRow(
                         title = "For You",
                         subtitle = "Show announcements from subscribed tags",
-                        checked = forYou,
+                        checked = forYouEnabled,
                         onCheckedChange = { enabled ->
                             if (enabled) {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
                             } else {
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
                             }
-                            setForYou(enabled)
+                            onForYouChange(enabled)
                             analytics.logEvent(
                                 "for_you_changed",
                                 mapOf("for_you_enabled" to enabled.toString())
+                            )
+                        })
+                    HorizontalDivider()
+                    SettingSwitchRow(
+                        title = "FAB filters",
+                        subtitle = "Show filters in the FAB button",
+                        checked = fabFiltersDisabled,
+                        onCheckedChange = { enabled ->
+                            if (enabled) {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                            } else {
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                            }
+                            onFabFiltersChange(enabled)
+                            analytics.logEvent(
+                                "fab_filters_changed",
+                                mapOf("fab_filters_enabled" to enabled.toString())
                             )
                         })
                 }
@@ -233,7 +254,7 @@ private fun SettingsScreenContent(
                             },
                             onSelected = { searchScope ->
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                setSearchScope(searchScope)
+                                onSearchScopeChange(searchScope)
                                 analytics.logEvent(
                                     "search_scope_changed", mapOf("search_type" to searchScope.name)
                                 )
@@ -268,7 +289,7 @@ private fun SettingsScreenContent(
                             },
                             onSelected = { theme ->
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                setTheme(theme)
+                                onThemeChange(theme)
                                 analytics.logEvent(
                                     "theme_changed", mapOf("theme" to theme.name)
                                 )
@@ -286,7 +307,7 @@ private fun SettingsScreenContent(
                                 } else {
                                     hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
                                 }
-                                setDynamicColor(enabled)
+                                onDynamicColorChange(enabled)
                                 analytics.logEvent(
                                     "dynamic_color_changed",
                                     mapOf("dynamic_color_enabled" to enabled.toString())
@@ -433,15 +454,17 @@ private fun SettingNavigationRow(
 fun SettingsScreenPreview() {
     SettingsScreenContent(
         theme = UserTheme.FOLLOW_SYSTEM,
-        setTheme = {},
+        onThemeChange = {},
         dynamicColor = true,
-        setDynamicColor = {},
+        onDynamicColorChange = {},
         sortType = SortType.Priority,
-        setSortType = {},
+        onSortTypeChange = {},
         searchScope = SearchScope.Title,
-        setSearchScope = {},
-        forYou = false,
-        setForYou = {},
+        onSearchScopeChange = {},
+        forYouEnabled = false,
+        onForYouChange = {},
+        fabFiltersDisabled = false,
+        onFabFiltersChange = {},
         navigateToLicenses = {},
     )
 }
