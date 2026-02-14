@@ -10,6 +10,7 @@ import com.kastik.apps.core.model.error.StorageError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -47,7 +48,8 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             Result.Error(e.toPrivateRefreshError())
         }
 
-    override suspend fun exchangeCodeForAbroadToken(code: String) = withContext(ioDispatcher) {
+    override suspend fun exchangeCodeForAbroadToken(code: String) =
+        withContext(NonCancellable + ioDispatcher) {
         try {
             val response = authenticationRemoteDataSource.exchangeCodeForAboardToken(code)
             authenticationLocalDataSource.setAboardAccessToken((response.accessToken))
@@ -64,7 +66,7 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun refreshAboardToken() =
+    override suspend fun refreshAboardToken() = withContext(NonCancellable + ioDispatcher) {
         try {
             val currentToken = authenticationLocalDataSource.getAboardAccessToken().first()
                 ?: throw IllegalStateException("Aboard token is null")
@@ -79,9 +81,10 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
+    }
 
 
-    override suspend fun clearAuthenticationData() = withContext(ioDispatcher) {
+    override suspend fun clearAuthenticationData() = withContext(NonCancellable + ioDispatcher) {
         try {
             authenticationLocalDataSource.clearAuthenticationData()
             Result.Success(Unit)
