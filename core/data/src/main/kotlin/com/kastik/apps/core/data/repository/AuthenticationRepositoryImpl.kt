@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 internal class AuthenticationRepositoryImpl @Inject constructor(
@@ -39,6 +40,8 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             authenticationLocalDataSource.setIsSignedIn(isAuthenticated)
 
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
@@ -52,6 +55,8 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             authenticationLocalDataSource.setAboardTokenLastRefreshTime(System.currentTimeMillis())
             authenticationLocalDataSource.setIsSignedIn(true)
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
@@ -68,6 +73,8 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             authenticationLocalDataSource.setAboardTokenExpiration(response.expiresIn)
             authenticationLocalDataSource.setAboardTokenLastRefreshTime(System.currentTimeMillis())
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
@@ -78,6 +85,8 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
         try {
             authenticationLocalDataSource.clearAuthenticationData()
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(StorageError)

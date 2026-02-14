@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 internal class AnnouncementRepositoryImpl @Inject constructor(
@@ -102,6 +103,8 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
                     authorId = authorIds,
                 ).data.map { it.toAnnouncement() }
             )
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Result.Error(e.toPublicRefreshError())
         }
@@ -136,6 +139,8 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
                 announcementLocalDataSource.upsertAttachments(remote.attachments.map { it.toAttachmentEntity() })
             }
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
@@ -158,6 +163,8 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
             announcementLocalDataSource.clearAttachments()
             announcementLocalDataSource.clearTagCrossRefs()
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(StorageError)

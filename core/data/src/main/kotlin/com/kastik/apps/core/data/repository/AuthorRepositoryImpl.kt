@@ -10,6 +10,7 @@ import com.kastik.apps.core.domain.repository.AuthorRepository
 import com.kastik.apps.core.model.aboard.Author
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AuthorRemoteDataSource
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -34,6 +35,8 @@ internal class AuthorRepositoryImpl @Inject constructor(
             val authors = authorRemoteDataSource.fetchAuthors()
             authorLocalDataSource.upsertAuthors(authors.map { it.toAuthorEntity() })
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPublicRefreshError())

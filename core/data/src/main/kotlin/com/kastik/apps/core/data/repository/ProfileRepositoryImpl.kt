@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 internal class ProfileRepositoryImpl @Inject constructor(
@@ -40,6 +41,8 @@ internal class ProfileRepositoryImpl @Inject constructor(
             val userProfile = profileRemoteDataSource.getProfile()
             profileLocalDataSource.setProfile(userProfile.toProfileProto())
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
@@ -57,6 +60,8 @@ internal class ProfileRepositoryImpl @Inject constructor(
             val subscribedTags = profileRemoteDataSource.getEmailSubscriptions()
             profileLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
@@ -67,6 +72,8 @@ internal class ProfileRepositoryImpl @Inject constructor(
         try {
             profileRemoteDataSource.subscribeToEmailTags(tagIds)
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
@@ -90,6 +97,8 @@ internal class ProfileRepositoryImpl @Inject constructor(
             profileLocalDataSource.clearProfile()
             profileLocalDataSource.clearSubscriptions()
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(StorageError)
