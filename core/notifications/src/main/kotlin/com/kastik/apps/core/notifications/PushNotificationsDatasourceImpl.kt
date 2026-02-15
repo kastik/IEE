@@ -21,7 +21,7 @@ internal class PushNotificationsDatasourceImpl @Inject constructor(
         coroutineScope {
             ids.forEach { id ->
                 launch {
-                    firebaseMessaging.subscribeToTopic(id.toString())
+                    firebaseMessaging.subscribeToTopic("tag-$id")
                 }
             }
         }
@@ -31,7 +31,7 @@ internal class PushNotificationsDatasourceImpl @Inject constructor(
         coroutineScope {
             ids.forEach { id ->
                 launch {
-                    firebaseMessaging.unsubscribeFromTopic(id.toString())
+                    firebaseMessaging.unsubscribeFromTopic("tag-$id")
                 }
             }
         }

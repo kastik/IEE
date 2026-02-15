@@ -3,7 +3,8 @@ package com.kastik.apps.core.datastore
 import androidx.datastore.core.DataStore
 import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.datastore.proto.SubscribedTagProto
-import com.kastik.apps.core.datastore.proto.SubscribedTagsProto
+import com.kastik.apps.core.datastore.proto.SubscribedTopicProto
+import com.kastik.apps.core.datastore.proto.SubscriptionsProto
 import com.kastik.apps.core.di.UserProfileDatastore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -11,9 +12,10 @@ import javax.inject.Inject
 
 interface ProfileLocalDataSource {
     fun getProfile(): Flow<ProfileProto>
-    fun getSubscriptions(): Flow<SubscribedTagsProto>
+    fun getSubscriptions(): Flow<SubscriptionsProto>
     suspend fun setProfile(userProfile: ProfileProto)
-    suspend fun setSubscriptions(userSubscriptions: List<SubscribedTagProto>)
+    suspend fun setTagSubscriptions(userSubscriptions: List<SubscribedTagProto>)
+    suspend fun setTopicSubscriptions(userSubscriptions: List<SubscribedTopicProto>)
     suspend fun clearProfile()
     suspend fun clearSubscriptions()
 }
@@ -26,8 +28,8 @@ internal class ProfileLocalDataSourceImpl @Inject constructor(
         return profileDataStore.data
     }
 
-    override fun getSubscriptions(): Flow<SubscribedTagsProto> {
-        return profileDataStore.data.map { it.subscribedTags }
+    override fun getSubscriptions(): Flow<SubscriptionsProto> {
+        return profileDataStore.data.map { it.subscriptions }
     }
 
     override suspend fun setProfile(userProfile: ProfileProto) {
@@ -47,13 +49,34 @@ internal class ProfileLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun setSubscriptions(userSubscriptions: List<SubscribedTagProto>) {
+    override suspend fun setTagSubscriptions(userSubscriptions: List<SubscribedTagProto>) {
         profileDataStore.updateData { currentProfile ->
-            val tags = SubscribedTagsProto.newBuilder()
+
+            val existingSubsBuilder = currentProfile.subscriptions.toBuilder()
+
+            val updatedSubs = existingSubsBuilder
+                .clearSubscribedTags()
                 .addAllSubscribedTags(userSubscriptions)
                 .build()
+
             currentProfile.toBuilder()
-                .setSubscribedTags(tags)
+                .setSubscriptions(updatedSubs)
+                .build()
+        }
+    }
+
+    override suspend fun setTopicSubscriptions(userSubscriptions: List<SubscribedTopicProto>) {
+        profileDataStore.updateData { currentProfile ->
+
+            val existingSubsBuilder = currentProfile.subscriptions.toBuilder()
+
+            val updatedSubs = existingSubsBuilder
+                .clearSubscribedTopics()
+                .addAllSubscribedTopics(userSubscriptions)
+                .build()
+
+            currentProfile.toBuilder()
+                .setSubscriptions(updatedSubs)
                 .build()
         }
     }
@@ -65,6 +88,7 @@ internal class ProfileLocalDataSourceImpl @Inject constructor(
     }
 
     override suspend fun clearSubscriptions() {
-        setSubscriptions(emptyList())
+        setTagSubscriptions(emptyList())
+        setTopicSubscriptions(emptyList())
     }
 }

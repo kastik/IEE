@@ -39,6 +39,7 @@ class ProfileRepositoryImplTest {
     @Before
     fun setup() {
         coEvery { pushNotificationsDatasource.subscribeToTopics(any()) } just Runs
+        coEvery { pushNotificationsDatasource.unsubscribeFromTopics(any()) } just Runs
         coEvery { pushNotificationsDatasource.unsubscribeFromAllTopics() } just Runs
     }
 
@@ -89,7 +90,7 @@ class ProfileRepositoryImplTest {
     @Test
     fun getEmailSubscriptionsReturnsSubscribedTagsWhenSet() = runTest(testDispatcher) {
         val tags = subscribedTagProtoTestData
-        profileLocalDataSource.setSubscriptions(tags)
+        profileLocalDataSource.setTagSubscriptions(tags)
         val result = profileRepository.getEmailSubscriptions().first()
         assertThat(result).isNotEmpty()
         assertThat(result.size).isEqualTo(tags.size)
@@ -116,7 +117,7 @@ class ProfileRepositoryImplTest {
     fun subscribeToTopicsCallsPushDatasource() = runTest(testDispatcher) {
         val tags = listOf(1, 2, 3)
 
-        profileRepository.subscribeToTopics(tags)
+        profileRepository.syncTopicSubscriptions()
 
         coVerify { pushNotificationsDatasource.subscribeToTopics(tags) }
     }
@@ -131,7 +132,7 @@ class ProfileRepositoryImplTest {
     @Test
     fun clearLocalDataClearsProfileAndSubscriptions() = runTest(testDispatcher) {
         profileLocalDataSource.setProfile(userProfileProtoTestData.first())
-        profileLocalDataSource.setSubscriptions(subscribedTagProtoTestData)
+        profileLocalDataSource.setTagSubscriptions(subscribedTagProtoTestData)
 
         profileRepository.clearLocalData()
 

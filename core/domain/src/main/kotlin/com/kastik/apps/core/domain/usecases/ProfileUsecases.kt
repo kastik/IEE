@@ -2,12 +2,10 @@ package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
+import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.result.Result
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -29,33 +27,45 @@ class RefreshUserProfileUseCase @Inject constructor(
     suspend operator fun invoke() = profileRepository.refreshProfile()
 }
 
-class RefreshSubscriptionsUseCase @Inject constructor(
+class RefreshEmailSubscriptionsUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    suspend operator fun invoke() = profileRepository.refreshEmailSubscriptions()
+    suspend operator fun invoke() =
+        profileRepository.refreshEmailSubscriptions()
+}
+
+class SyncTopicSubscriptionsUseCase @Inject constructor(
+    private val profileRepository: ProfileRepository,
+) {
+    suspend operator fun invoke() = profileRepository.syncTopicSubscriptions()
 }
 
 
-class SubscribeToTagsUseCase @Inject constructor(
+class SubscribeToEmailTagsUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     suspend operator fun invoke(newTagIds: List<Int>) = coroutineScope {
-        val currentTags = profileRepository.getEmailSubscriptions().firstOrNull() ?: emptyList()
         val result = profileRepository.subscribeToEmailTags(newTagIds)
-
         if (result is Result.Success) {
             userPreferencesRepository.setNotifiedAnnouncementId(emptyList())
-            val currentTagIds = currentTags.map { it.id }.toSet()
-            val newTagIdsSet = newTagIds.toSet()
-            val idsToSubscribe = newTagIdsSet - currentTagIds
-            val idsToUnsubscribe = currentTagIds - newTagIdsSet
-            val subscribeToTopicsDeferred =
-                async { profileRepository.subscribeToTopics(idsToSubscribe.toList()) }
-            val unsubscribeFromTopicsDeferred =
-                async { profileRepository.unsubscribeFromTopics(idsToUnsubscribe.toList()) }
-            awaitAll(subscribeToTopicsDeferred, unsubscribeFromTopicsDeferred)
         }
         result
     }
+}
+
+class ScheduleSubscribeToTagsUseCase @Inject constructor(
+    private val workScheduler: WorkScheduler
+) {
+    operator fun invoke(newTagIds: List<Int>) {
+        workScheduler.scheduleSubscribeToTags(newTagIds)
+    }
+}
+
+class GetSubscribeToTagsWorkInfoUseCase @Inject constructor(
+    private val workScheduler: WorkScheduler
+) {
+    operator fun invoke() =
+        workScheduler.getSubscribeToTagsWorkInfo()
+
 }

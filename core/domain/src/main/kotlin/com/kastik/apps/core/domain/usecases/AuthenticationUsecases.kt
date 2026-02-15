@@ -39,13 +39,14 @@ class LoginUserUseCase @Inject constructor(
     private val workScheduler: WorkScheduler,
     private val profileRepository: ProfileRepository,
     private val remoteConfigRepository: RemoteConfigRepository,
-    private val authenticationRepository: AuthenticationRepository
+    private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke(code: String) {
         authenticationRepository.exchangeCodeForAbroadToken(code)
         profileRepository.refreshProfile()
         profileRepository.refreshEmailSubscriptions()
         workScheduler.scheduleTokenRefresh()
+        workScheduler.scheduleTopicsSync()
         if (!remoteConfigRepository.isFcmEnabled()) {
             workScheduler.scheduleAnnouncementAlerts()
         }

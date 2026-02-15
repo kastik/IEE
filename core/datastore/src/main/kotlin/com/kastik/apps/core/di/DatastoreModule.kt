@@ -17,7 +17,7 @@ import com.kastik.apps.core.datastore.TagsLocalDataSource
 import com.kastik.apps.core.datastore.TagsLocalDataSourceImpl
 import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.datastore.proto.SubscribableTagsProto
-import com.kastik.apps.core.datastore.proto.SubscribedTagsProto
+import com.kastik.apps.core.datastore.proto.SubscriptionsProto
 import com.kastik.apps.core.datastore.proto.UserPreferences
 import com.kastik.apps.core.datastore.serializers.ProfileSerializer
 import com.kastik.apps.core.datastore.serializers.SubscribableTagsSerializer
@@ -95,7 +95,7 @@ abstract class DataStoreModule {
         @UserSubscriptionsDatastore
         fun provideUserSubscriptionsDatastore(
             @ApplicationContext context: Context
-        ): DataStore<SubscribedTagsProto> = DataStoreFactory.create(
+        ): DataStore<SubscriptionsProto> = DataStoreFactory.create(
             serializer = SubscribedTagsSerializer,
             produceFile = { context.dataStoreFile("user_subscriptions.pb") }
         )
