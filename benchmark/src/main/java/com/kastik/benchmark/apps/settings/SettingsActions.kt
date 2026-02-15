@@ -1,7 +1,6 @@
 package com.kastik.benchmark.apps.settings
 
 import androidx.benchmark.macro.MacrobenchmarkScope
-import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.textAsString
 
 fun MacrobenchmarkScope.navigateToSettings() {
@@ -15,6 +14,11 @@ fun MacrobenchmarkScope.toggleSortingOptions() {
 }
 
 fun MacrobenchmarkScope.toggleForYou() {
+    onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
+    onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
+}
+
+fun MacrobenchmarkScope.toggleFabFilters() {
     onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
     onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
 }
@@ -43,15 +47,6 @@ fun MacrobenchmarkScope.toggleNotifications() {
     waitForStableInActiveWindow()
     device.pressBack()
 }
-
-fun MacrobenchmarkScope.toggleAboutApp() {
-    onElement(timeoutMs = 2000) { contentDescription == "settings:content" }.scroll(
-        Direction.DOWN,
-        1f
-    )
-    onElement(timeoutMs = 2000) { textAsString() == "About app" }.click()
-}
-
 
 
 
