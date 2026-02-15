@@ -13,6 +13,12 @@ scope = id,cn
 ### Authenticate with login.iee.ihu.gr token
 GET https://{{aboard_server}}/api/v2/authenticate?code=YOUR_CODE
 
+### Authenticate with static code ( Warning this needs a local setup to work! )
+GET https://{{aboard_server}}/api/v2/authenticate?code=DEBUG_CODE
+
+### Authenticate with static code ( Warning this needs a local setup to work! )
+GET https://{{aboard_server}}/api/v2/authenticate?code=AUTHOR_CODE
+
 
 ###Refresh an active token
 POST {{aboard_server}}/api/v2/auth/token
@@ -142,7 +148,7 @@ https://{{aboard_server}}/api/v2/announcements?sortId=1&perPage=20&title=test&pa
     updatedAfter=2023-06-05T00%3A00%3A00.000Z&updatedBefore=2023-06-30T00%3A00%3A00.000Z
 authorization: Bearer {{bearer}}
 
-###Post Announcement
+###POST ANNOUNCEMENT
 POST https://{{aboard_server}}/api/v2/announcements/
 Authorization: Bearer {{bearer}}
 Accept: application/json
@@ -151,11 +157,11 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 --WebAppBoundary
 Content-Disposition: form-data; name="title"
 
-Αναβολή Μαθήματος "Μηχανική Λογισμικού" Πέμπτη 30/10
+Announcement Title
 --WebAppBoundary
 Content-Disposition: form-data; name="body"
 
-<p>Αγαπητοί φοιτητές και αγαπητές φοιτήτριες,σας ενημερώνω ότι το μάθημα Μηχανική Λογισμικού δεν θα πραγματοποιηθεί αύριο Πέμπτη 30/10 λόγω</p>
+<p>Announcement Body</p>
 --WebAppBoundary--
 
 1
