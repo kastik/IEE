@@ -2,8 +2,8 @@ package com.kastik.apps.core.network.interceptor
 
 
 import com.google.common.truth.Truth.assertThat
-import com.kastik.apps.core.testing.interseptor.FakeInterceptorChain
-import com.kastik.apps.core.testing.interseptor.FakeTokenProvider
+import com.kastik.apps.core.data.provider.FakeInterceptorChain
+import com.kastik.apps.core.data.provider.FakeTokenProvider
 import okhttp3.Request
 import org.junit.Before
 import org.junit.Test

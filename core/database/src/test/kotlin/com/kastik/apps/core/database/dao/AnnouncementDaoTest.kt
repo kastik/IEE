@@ -11,7 +11,7 @@ import com.kastik.apps.core.testing.testdata.announcementBodyEntityTestData
 import com.kastik.apps.core.testing.testdata.announcementEntityTestData
 import com.kastik.apps.core.testing.testdata.announcementTagsCrossRefEntityTestData
 import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
-import com.kastik.apps.core.testing.testdata.remoteKeys
+import com.kastik.apps.core.testing.testdata.noFilteredRemoteKeys
 import com.kastik.apps.core.testing.testdata.tagEntitiesTestData
 import junit.framework.TestCase
 import kotlinx.coroutines.flow.first
@@ -80,7 +80,7 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
     }
 
     private suspend fun insertAnnouncements() {
-        remoteKeysDao.insertOrReplaceKeys(remoteKeys)
+        remoteKeysDao.insertOrReplaceKeys(noFilteredRemoteKeys)
         tagsDao.upsertTags(tagEntitiesTestData)
         authorsDao.upsertAuthors(authorEntitiesTestData)
         announcementDao.upsertAnnouncements(announcementEntityTestData)

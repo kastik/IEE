@@ -1,16 +1,16 @@
 package com.kastik.apps.core.data.repository
 
 import com.google.common.truth.Truth.assertThat
+import com.kastik.apps.core.crashlytics.FakeCrashlytics
 import com.kastik.apps.core.data.mappers.toProfile
 import com.kastik.apps.core.data.mappers.toProfileProto
+import com.kastik.apps.core.datastore.datasource.FakeProfileLocalDataSource
 import com.kastik.apps.core.datastore.proto.ProfileProto
+import com.kastik.apps.core.datastore.testdata.subscribedTagProtoTestData
+import com.kastik.apps.core.datastore.testdata.userProfileProtoTestData
+import com.kastik.apps.core.network.datasource.FakeProfileRemoteDataSource
+import com.kastik.apps.core.network.testdata.userProfileDtoTestData
 import com.kastik.apps.core.notifications.PushNotificationsDatasource
-import com.kastik.apps.core.testing.datasource.local.FakeProfileLocalDataSource
-import com.kastik.apps.core.testing.datasource.remote.FakeProfileRemoteDataSource
-import com.kastik.apps.core.testing.testdata.subscribedTagProtoTestData
-import com.kastik.apps.core.testing.testdata.userProfileDtoTestData
-import com.kastik.apps.core.testing.testdata.userProfileProtoTestData
-import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify

@@ -1,8 +1,8 @@
 package com.kastik.apps.core.data.mappers
 
 import com.google.common.truth.Truth.assertThat
+import com.kastik.apps.core.network.testdata.announcementDtoTestData
 import com.kastik.apps.core.testing.testdata.announcementDetailsRelationTestData
-import com.kastik.apps.core.testing.testdata.announcementDtoTestData
 import com.kastik.apps.core.testing.testdata.announcementPreviewRelationTestData
 import org.junit.Test
 

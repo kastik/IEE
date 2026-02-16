@@ -1,14 +1,14 @@
 package com.kastik.apps.core.data.repository
 
 import com.google.common.truth.Truth.assertThat
+import com.kastik.apps.core.crashlytics.FakeCrashlytics
 import com.kastik.apps.core.data.mappers.toAuthor
 import com.kastik.apps.core.data.mappers.toAuthorEntity
 import com.kastik.apps.core.model.aboard.Author
+import com.kastik.apps.core.network.datasource.FakeAuthorRemoteDataSource
+import com.kastik.apps.core.network.testdata.authorDtoTestData
 import com.kastik.apps.core.testing.dao.FakeAuthorsDao
-import com.kastik.apps.core.testing.datasource.remote.FakeAuthorRemoteDataSource
-import com.kastik.apps.core.testing.testdata.authorDtoTestData
 import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
-import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher

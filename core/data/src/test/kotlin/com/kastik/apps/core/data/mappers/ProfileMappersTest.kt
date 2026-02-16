@@ -1,8 +1,8 @@
 package com.kastik.apps.core.data.mappers
 
 import com.google.common.truth.Truth.assertThat
-import com.kastik.apps.core.testing.testdata.userProfileDtoTestData
-import com.kastik.apps.core.testing.testdata.userProfileProtoTestData
+import com.kastik.apps.core.datastore.testdata.userProfileProtoTestData
+import com.kastik.apps.core.network.testdata.userProfileDtoTestData
 import org.junit.Test
 
 class ProfileMappersTest {

@@ -5,13 +5,13 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.testing.asSnapshot
 import com.google.common.truth.Truth.assertThat
+import com.kastik.apps.core.crashlytics.FakeCrashlytics
+import com.kastik.apps.core.data.util.FakeBase64ImageExtractor
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.testing.datasource.remote.FakeAnnouncementRemoteDataSource
+import com.kastik.apps.core.network.datasource.FakeAnnouncementRemoteDataSource
 import com.kastik.apps.core.testing.db.MemoryDatabase
 import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
-import com.kastik.apps.core.testing.utils.FakeBase64ImageExtractor
-import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test

@@ -1,6 +1,6 @@
 package com.kastik.apps.core.network.datasource
 
-import com.kastik.apps.core.testing.api.FakeAboardApiClient
+import com.kastik.apps.core.network.api.FakeAboardApiClient
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test

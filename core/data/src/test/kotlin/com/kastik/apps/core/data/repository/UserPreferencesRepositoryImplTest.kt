@@ -2,9 +2,9 @@ package com.kastik.apps.core.data.repository
 
 
 import com.google.common.truth.Truth.assertThat
+import com.kastik.apps.core.datastore.datasource.FakeUserPreferencesLocalDataSource
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.UserTheme
-import com.kastik.apps.core.testing.datasource.local.FakeUserPreferencesLocalDataSource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
