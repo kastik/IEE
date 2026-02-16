@@ -29,6 +29,10 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     targetCompatibility = AppConfig.targetCompatibility
                 }
 
+                testFixtures {
+                    enable = true
+                }
+
                 configureFlavors(this)
             }
 

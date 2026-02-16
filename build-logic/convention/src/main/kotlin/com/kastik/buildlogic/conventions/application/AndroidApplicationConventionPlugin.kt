@@ -31,6 +31,10 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     targetCompatibility = AppConfig.targetCompatibility
                 }
 
+                testFixtures {
+                    enable = true
+                }
+
                 configureFlavors(this)
                 configureAndroidCompose(this)
 
