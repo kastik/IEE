@@ -1,20 +1,10 @@
-package com.kastik.apps.core.testing.testdata
+package com.kastik.apps.core.network.testdata
 
-import com.kastik.apps.core.data.mappers.toAnnouncementEntity
-import com.kastik.apps.core.data.mappers.toAttachmentEntity
-import com.kastik.apps.core.data.mappers.toAuthorEntity
-import com.kastik.apps.core.data.mappers.toBodyEntity
-import com.kastik.apps.core.data.mappers.toTagCrossRefs
-import com.kastik.apps.core.data.mappers.toTagEntity
-import com.kastik.apps.core.database.entities.RemoteKeys
-import com.kastik.apps.core.database.relations.AnnouncementDetailRelation
-import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
-import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementDto
 import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
 import com.kastik.apps.core.network.model.aboard.announcement.PagedMetaResponseDto
 
-private val baseAnnouncementDto = AnnouncementDto(
+internal val baseAnnouncementDto = AnnouncementDto(
     id = 1,
     title = "Test Announcement",
     engTitle = null,
@@ -185,7 +175,7 @@ val announcementDtoTestData = listOf(
 )
 
 
-private val basePagedAnnouncementsResponseDtoTestData = PagedAnnouncementsResponseDto(
+internal val basePagedAnnouncementsResponseDtoTestData = PagedAnnouncementsResponseDto(
     data = announcementDtoTestData,
     meta = PagedMetaResponseDto(
         currentPage = 1,
@@ -219,44 +209,3 @@ val announcementPageResponseTestData = listOf(
         )
     ),
 )
-
-val remoteKeys = basePagedAnnouncementsResponseDtoTestData.data.map { dto ->
-    RemoteKeys(
-        announcementId = dto.id,
-        titleQuery = "",
-        bodyQuery = "",
-        authorIds = emptyList(),
-        tagIds = emptyList(),
-        sortType = SortType.DESC,
-        prevKey = null,
-        nextKey = 2
-    )
-}
-
-val announcementEntityTestData = announcementDtoTestData.map { it.toAnnouncementEntity() }
-val announcementBodyEntityTestData = announcementDtoTestData.map { it.toBodyEntity() }
-val announcementTagsCrossRefEntityTestData = announcementDtoTestData.flatMap { it.toTagCrossRefs() }
-
-
-val announcementPreviewRelationTestData = announcementDtoTestData.map { announcementDto ->
-    AnnouncementPreviewRelation(
-        announcement = announcementDto.toAnnouncementEntity(),
-        author = announcementDto.author.toAuthorEntity(),
-        tags = announcementDto.tags.map { it.toTagEntity() },
-        attachments = announcementDto.attachments.map { it.toAttachmentEntity() }
-    )
-}
-val announcementDetailsRelationTestData = announcementDtoTestData.map { announcementDto ->
-    AnnouncementDetailRelation(
-        announcement = announcementDto.toAnnouncementEntity(),
-        body = announcementDto.toBodyEntity(),
-        author = announcementDto.author.toAuthorEntity(),
-        tags = announcementDto.tags.map { it.toTagEntity() },
-        attachments = announcementDto.attachments.map { it.toAttachmentEntity() },
-    )
-}
-
-val tagEntitiesTestData =
-    basePagedAnnouncementsResponseDtoTestData.data.flatMap { dto -> dto.tags.map { it.toTagEntity() } }
-val authorEntitiesTestData =
-    basePagedAnnouncementsResponseDtoTestData.data.map { dto -> dto.author.toAuthorEntity() }

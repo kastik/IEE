@@ -1,15 +1,11 @@
-package com.kastik.apps.core.testing.testdata
+package com.kastik.apps.core.network.testdata
 
-import com.kastik.apps.core.data.mappers.toSubscribableTagProto
-import com.kastik.apps.core.data.mappers.toSubscribedTagProto
-import com.kastik.apps.core.data.mappers.toTagEntity
-import com.kastik.apps.core.datastore.proto.SubscribableTagsProto
 import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDto
 import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
 import com.kastik.apps.core.network.model.aboard.tags.TagResponseDto
 import com.kastik.apps.core.network.model.aboard.tags.TagsResponseDto
 
-val baseTagResponseDtoTestData = TagResponseDto(
+internal val baseTagResponseDtoTestData = TagResponseDto(
     id = 1,
     title = "Root Tag",
     parentId = null,
@@ -27,10 +23,8 @@ val announcementTagDtoTestData = listOf(
 val tagsResponseDtoTestData = TagsResponseDto(
     data = announcementTagDtoTestData
 )
-val announcementTagEntityTestData = announcementTagDtoTestData.map { it.toTagEntity() }
 
-
-private val baseSubscribableTagsResponseDtoTestData = SubscribableTagsResponseDto(
+internal val baseSubscribableTagsResponseDtoTestData = SubscribableTagsResponseDto(
     id = 0,
     title = "",
     parentId = null,
@@ -75,7 +69,7 @@ val subscribableTagsDtoTestData = listOf(
     )
 )
 
-val baseSubscribedTagResponseDto = SubscribedTagResponseDto(
+internal val baseSubscribedTagResponseDto = SubscribedTagResponseDto(
     id = 0,
     title = "Root tag",
     parentId = null,
@@ -93,12 +87,3 @@ val subscribedTagDtoTestData = listOf(
     baseSubscribedTagResponseDto.copy(id = 4, title = "Tag 4", updatedAt = "20-12-2025"),
     baseSubscribedTagResponseDto.copy(id = 5, title = "Tag 5", deletedAt = "20-12-2025"),
 )
-
-val subscribedTagProtoTestData = subscribedTagDtoTestData.map { it.toSubscribedTagProto() }
-
-
-val subscribableTagProtoTestData = subscribableTagsDtoTestData.map { it.toSubscribableTagProto() }
-val subscribableTagsProtoTestData =
-    SubscribableTagsProto.newBuilder()
-        .addAllTags(subscribableTagProtoTestData)
-        .build()

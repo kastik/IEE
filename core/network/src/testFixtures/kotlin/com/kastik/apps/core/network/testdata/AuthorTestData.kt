@@ -1,10 +1,8 @@
-package com.kastik.apps.core.testing.testdata
+package com.kastik.apps.core.network.testdata
 
-import com.kastik.apps.core.data.mappers.toAuthorEntity
-import com.kastik.apps.core.database.entities.AuthorEntity
 import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
 
-private val baseAuthorResponseDto = AuthorResponseDto(
+internal val baseAuthorResponseDto = AuthorResponseDto(
     id = 0,
     name = "John",
     announcementCount = 0
@@ -17,7 +15,7 @@ val authorDtoTestData = listOf(
     baseAuthorResponseDto.copy(id = 4),
 )
 
-private val baseAnnouncementAuthorResponseDto = AuthorResponseDto(
+internal val baseAnnouncementAuthorResponseDto = AuthorResponseDto(
     id = 0,
     name = "John",
 )
@@ -28,6 +26,3 @@ val announcementAuthorDtoTestData = listOf(
     baseAnnouncementAuthorResponseDto.copy(id = 3),
     baseAnnouncementAuthorResponseDto.copy(id = 4),
 )
-
-val announcementAuthorEntityTestData =
-    authorDtoTestData.map { it.toAuthorEntity() } + AuthorEntity(id = 999, name = "Kostas")

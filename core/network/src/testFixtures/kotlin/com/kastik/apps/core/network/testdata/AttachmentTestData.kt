@@ -1,9 +1,9 @@
-package com.kastik.apps.core.testing.testdata
+package com.kastik.apps.core.network.testdata
 
-import com.kastik.apps.core.data.mappers.toAttachmentEntity
 import com.kastik.apps.core.network.model.aboard.attachment.AttachmentResponseDto
 
-private val baseAttachmentResponseDto = AttachmentResponseDto(
+
+internal val baseAttachmentResponseDto = AttachmentResponseDto(
     id = 0,
     announcementId = 1,
     filename = "dilosi.pdf",
@@ -21,4 +21,3 @@ val attachmentDtoTestData = listOf(
     baseAttachmentResponseDto.copy(id = 5),
 )
 
-val attachmentEntityTestData = attachmentDtoTestData.map { it.toAttachmentEntity() }

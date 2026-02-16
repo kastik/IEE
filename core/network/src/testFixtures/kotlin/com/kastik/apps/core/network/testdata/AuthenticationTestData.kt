@@ -1,4 +1,4 @@
-package com.kastik.apps.core.testing.testdata
+package com.kastik.apps.core.network.testdata
 
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
 
