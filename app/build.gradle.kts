@@ -61,10 +61,6 @@ configure<ApplicationExtension> {
             applicationIdSuffix = ".local"
             versionNameSuffix = "-local"
         }
-
-        named("production") {
-            isDefault = true
-        }
     }
 }
 
