@@ -15,6 +15,8 @@ configure<LibraryExtension> {
 
 
 dependencies {
+    ksp(libs.room.compiler)
+
     implementation(project(":core:crashlytics"))
     implementation(project(":core:common"))
     implementation(project(":core:work"))
@@ -24,17 +26,22 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:model"))
     implementation(project(":core:notifications"))
-    testImplementation(project(":core:testing"))
-
-    ksp(libs.room.compiler)
     implementation(libs.room.ktx)
     implementation(libs.room.paging)
     implementation(libs.room.runtime)
     implementation(libs.paging.common)
     implementation(libs.retrofit)
     implementation(libs.androidx.work.runtime.ktx)
+
+    testImplementation(testFixtures(project(":core:crashlytics")))
+    testImplementation(testFixtures(project(":core:datastore")))
+    testImplementation(testFixtures(project(":core:database")))
+    testImplementation(testFixtures(project(":core:network")))
     testImplementation(libs.androidx.paging.testing)
     testImplementation(libs.androidx.runner)
     testImplementation(libs.io.mockk)
     testImplementation(libs.robolectric)
+
+    testFixturesImplementation(project(":core:network"))
+    testFixturesImplementation(libs.androidx.test.core.ktx)
 }

@@ -17,11 +17,13 @@ configure<LibraryExtension> {
 dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:domain"))
-    testImplementation(project(":core:testing"))
-
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.scalars)
     implementation(libs.retrofit.kotlinx.serialization)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
+
+    testFixturesImplementation(project(":core:model"))
+    testFixturesImplementation(libs.androidx.test.core.ktx)
+    testFixturesImplementation(libs.okhttp.logging.interceptor)
 }

@@ -19,16 +19,24 @@ room {
 }
 
 dependencies {
-
     ksp(libs.room.compiler)
+
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.room.paging)
     implementation(project(":core:model"))
 
+    testFixturesImplementation(project(":core:model"))
+    testFixturesImplementation(libs.androidx.test.core.ktx)
+    testFixturesImplementation(libs.io.mockk)
+    testFixturesImplementation(libs.room.ktx)
+    testFixturesImplementation(libs.room.paging)
+    testFixturesImplementation(libs.room.runtime)
+    testFixturesImplementation(libs.paging.common)
+    testFixturesImplementation(libs.robolectric)
+    testFixturesImplementation(libs.androidx.runner)
+
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.paging.testing)
     testImplementation(project(":core:domain"))
-    testImplementation(project(":core:testing"))
-
 }
