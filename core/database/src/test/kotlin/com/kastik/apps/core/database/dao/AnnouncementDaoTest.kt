@@ -7,12 +7,12 @@ import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.testing.db.MemoryDatabase
 import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
+import com.kastik.apps.core.testing.testdata.announcementAuthorEntityTestData
 import com.kastik.apps.core.testing.testdata.announcementBodyEntityTestData
 import com.kastik.apps.core.testing.testdata.announcementEntityTestData
+import com.kastik.apps.core.testing.testdata.announcementTagEntityTestData
 import com.kastik.apps.core.testing.testdata.announcementTagsCrossRefEntityTestData
-import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
 import com.kastik.apps.core.testing.testdata.noFilteredRemoteKeys
-import com.kastik.apps.core.testing.testdata.tagEntitiesTestData
 import junit.framework.TestCase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -81,8 +81,8 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
 
     private suspend fun insertAnnouncements() {
         remoteKeysDao.insertOrReplaceKeys(noFilteredRemoteKeys)
-        tagsDao.upsertTags(tagEntitiesTestData)
-        authorsDao.upsertAuthors(authorEntitiesTestData)
+        tagsDao.upsertTags(announcementTagEntityTestData)
+        authorsDao.upsertAuthors(announcementAuthorEntityTestData)
         announcementDao.upsertAnnouncements(announcementEntityTestData)
         announcementDao.upsertBodies(announcementBodyEntityTestData)
         announcementDao.upsertTagCrossRefs(announcementTagsCrossRefEntityTestData)

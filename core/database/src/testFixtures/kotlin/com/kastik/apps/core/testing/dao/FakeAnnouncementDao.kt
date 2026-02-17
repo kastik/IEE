@@ -10,13 +10,12 @@ import com.kastik.apps.core.database.entities.TagsCrossRefEntity
 import com.kastik.apps.core.database.relations.AnnouncementDetailRelation
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.testing.testdata.announcementAuthorEntityTestData
 import com.kastik.apps.core.testing.testdata.announcementBodyEntityTestData
 import com.kastik.apps.core.testing.testdata.announcementEntityTestData
 import com.kastik.apps.core.testing.testdata.announcementTagEntityTestData
 import com.kastik.apps.core.testing.testdata.announcementTagsCrossRefEntityTestData
 import com.kastik.apps.core.testing.testdata.attachmentEntityTestData
-import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
-import com.kastik.apps.core.testing.testdata.tagEntitiesTestData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,7 +53,7 @@ class FakeAnnouncementDao : AnnouncementDao {
             val announcement = announcements.first { it.id == id }
             val body = bodies.first { it.announcementId == id }
 
-            val author = authorEntitiesTestData.first { it.id == announcement.authorId }
+            val author = announcementAuthorEntityTestData.first { it.id == announcement.authorId }
             val tagIds = tagsCrossRefs.filter { it.announcementId == id }.map { it.tagId }.toSet()
             val specificTags = announcementTagEntityTestData.filter { it.id in tagIds }
             val specificAttachments = attachments.filter { it.announcementId == id }
@@ -78,7 +77,7 @@ class FakeAnnouncementDao : AnnouncementDao {
                 .map { announcement ->
                     AnnouncementPreviewRelation(
                         announcement = announcement,
-                        author = authorEntitiesTestData.first { it.id == announcement.authorId },
+                        author = announcementAuthorEntityTestData.first { it.id == announcement.authorId },
                         tags = announcementTagEntityTestData.filter { it.id == announcement.authorId }, // check if this should be announcementId
                         attachments = attachmentEntityTestData.filter { it.announcementId == announcement.id }
                     )
@@ -127,8 +126,8 @@ class FakeAnnouncementDao : AnnouncementDao {
                 val mappedData = pageSegment.map { announcement ->
                     AnnouncementPreviewRelation(
                         announcement = announcement,
-                        author = authorEntitiesTestData.first { it.id == announcement.authorId },
-                        tags = tagEntitiesTestData,
+                        author = announcementAuthorEntityTestData.first { it.id == announcement.authorId },
+                        tags = announcementTagEntityTestData,
                         attachments = attachmentEntityTestData.filter { it.announcementId == announcement.id }
                     )
                 }

@@ -12,6 +12,7 @@ internal val baseTagEntity = TagEntity(
 )
 
 val announcementTagEntityTestData = listOf(
+    baseTagEntity,
     baseTagEntity.copy(id = 2, parentId = 1, title = "Sub Tag 1"),
     baseTagEntity.copy(id = 3, parentId = 1, title = "Sub Tag 2"),
     baseTagEntity.copy(id = 4, parentId = 2, title = "Sub Tag 3"),

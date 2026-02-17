@@ -8,7 +8,7 @@ import com.kastik.apps.core.model.aboard.Author
 import com.kastik.apps.core.network.datasource.FakeAuthorRemoteDataSource
 import com.kastik.apps.core.network.testdata.authorDtoTestData
 import com.kastik.apps.core.testing.dao.FakeAuthorsDao
-import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
+import com.kastik.apps.core.testing.testdata.announcementAuthorEntityTestData
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -35,7 +35,7 @@ class AuthorRepositoryImplTest {
 
     @Test
     fun getAuthorsReturnsAuthorsWhenSaved() = runTest(testDispatcher) {
-        val authors = authorEntitiesTestData
+        val authors = announcementAuthorEntityTestData
         fakeAuthorLocalDataSource.upsertAuthors(authors)
 
         assertThat(repository.getAuthors().first()).isNotEmpty()

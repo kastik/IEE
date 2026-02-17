@@ -24,7 +24,7 @@ import com.kastik.apps.core.network.testdata.announcementDtoTestData
 import com.kastik.apps.core.network.testdata.announcementPageResponseTestData
 import com.kastik.apps.core.testing.db.FakeAppDatabase
 import com.kastik.apps.core.testing.testdata.announcementPreviewRelationTestData
-import com.kastik.apps.core.testing.testdata.tagEntitiesTestData
+import com.kastik.apps.core.testing.testdata.announcementTagEntityTestData
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.mockkStatic
@@ -167,7 +167,7 @@ class AnnouncementRemoteMediatorTest {
                     AnnouncementPreviewRelation(
                         announcement = announcementDto.toAnnouncementEntity(),
                         author = announcementDto.author.toAuthorEntity(),
-                        tags = tagEntitiesTestData, //TODO Get tags from DAO
+                        tags = announcementTagEntityTestData, //TODO Get tags from DAO
                         attachments = announcementDto.attachments.map { it.toAttachmentEntity() },
                     )
                 },

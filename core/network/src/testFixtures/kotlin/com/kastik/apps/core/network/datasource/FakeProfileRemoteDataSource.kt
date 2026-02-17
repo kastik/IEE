@@ -4,12 +4,10 @@ import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
 import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
 import com.kastik.apps.core.network.testdata.baseSubscribedTagResponseDto
 import com.kastik.apps.core.network.testdata.userProfileDtoTestData
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 
 class FakeProfileRemoteDataSource : ProfileRemoteDataSource {
 
-    private val _subscribableTags = MutableStateFlow<List<Int>>(emptyList())
+    private val _subscribableTags = mutableListOf<Int>()
     var profileToReturn: ProfileResponseDto = userProfileDtoTestData.first()
 
     override suspend fun getProfile(): ProfileResponseDto {
@@ -21,8 +19,7 @@ class FakeProfileRemoteDataSource : ProfileRemoteDataSource {
     }
 
     override suspend fun subscribeToEmailTags(tags: List<Int>) {
-        _subscribableTags.update {
-            tags
-        }
+        _subscribableTags.clear()
+        _subscribableTags.addAll(tags)
     }
 }

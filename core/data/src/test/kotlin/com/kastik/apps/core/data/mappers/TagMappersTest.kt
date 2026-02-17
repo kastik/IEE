@@ -93,13 +93,6 @@ class TagMappersTest {
 
         assertThat(domain).isNotEmpty()
         assertThat(domain.size).isEqualTo(proto.size)
-
-
-        proto.zip(domain).forEach { (proto, domain) ->
-            assertThat(domain.id).isEqualTo(proto.id)
-            assertThat(domain.parentId ?: 0).isEqualTo(proto.parentId)
-            assertThat(domain.title).isEqualTo(proto.title)
-            assertThat(domain.deletedAt).isEqualTo(proto.deletedAt)
-        }
+        assertThat(domain).containsExactlyElementsIn(proto.map { it.toSubscribableTag() })
     }
 }

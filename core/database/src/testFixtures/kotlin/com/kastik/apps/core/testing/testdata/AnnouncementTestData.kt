@@ -27,14 +27,6 @@ internal val baseAnnouncementEntity = AnnouncementEntity(
     authorId = 1
 )
 
-internal val baseBodyEntity = BodyEntity(
-    announcementId = 1,
-    body = "Test Body",
-    engBody = ""
-)
-
-internal val commonTagEntities = listOf(baseTagEntity)
-internal val commonAttachmentEntities = listOf(baseAttachmentEntity)
 
 val announcementEntityTestData = listOf(
     baseAnnouncementEntity,
@@ -52,8 +44,12 @@ val announcementEntityTestData = listOf(
         eventLocation = "IHU-Campus",
         gmaps = "https://www.google.com/maps/something"
     ),
-    baseAnnouncementEntity.copy(id = 4),
-    baseAnnouncementEntity.copy(id = 5),
+    baseAnnouncementEntity.copy(
+        id = 4
+    ),
+    baseAnnouncementEntity.copy(
+        id = 5
+    ),
     baseAnnouncementEntity.copy(
         id = 6,
         engTitle = "Test Announcement Eng",
@@ -76,68 +72,59 @@ val announcementEntityTestData = listOf(
         eventLocation = "IHU-Campus",
         gmaps = "https://www.google.com/maps/something"
     ),
-    *(8..20).map { id ->
-        baseAnnouncementEntity.copy(
-            id = id,
-            engTitle = "Test Announcement Eng",
-            engPreview = "Test Preview Eng",
-            hasEng = true
-        )
-    }.toTypedArray()
+    baseAnnouncementEntity.copy(
+        id = 8,
+    ),
+    baseAnnouncementEntity.copy(
+        id = 9,
+    ),
+    baseAnnouncementEntity.copy(
+        id = 10,
+    )
+)
+
+internal val baseBodyEntity = BodyEntity(
+    announcementId = 1,
+    body = "Test Body",
+    engBody = ""
 )
 
 val announcementBodyEntityTestData = announcementEntityTestData.map { entity ->
     baseBodyEntity.copy(
         announcementId = entity.id,
-        engBody = if (entity.hasEng) "Test Body Eng" else ""
     )
 }
 
-val announcementTagsCrossRefEntityTestData = announcementEntityTestData.flatMap { entity ->
-    if (entity.id in listOf(5, 6, 7)) {
-        commonTagEntities.map { tag ->
-            TagsCrossRefEntity(announcementId = entity.id, tagId = tag.id)
-        }
-    } else {
-        emptyList()
-    }
-}
+val announcementTagsCrossRefEntityTestData = listOf(
+    TagsCrossRefEntity(announcementId = 1, tagId = 1),
+    TagsCrossRefEntity(announcementId = 1, tagId = 2),
+    TagsCrossRefEntity(announcementId = 2, tagId = 1),
+    TagsCrossRefEntity(announcementId = 2, tagId = 2),
+    TagsCrossRefEntity(announcementId = 3, tagId = 1),
+    TagsCrossRefEntity(announcementId = 3, tagId = 2),
+    TagsCrossRefEntity(announcementId = 4, tagId = 1),
+    TagsCrossRefEntity(announcementId = 4, tagId = 2),
+    TagsCrossRefEntity(announcementId = 5, tagId = 1),
+    TagsCrossRefEntity(announcementId = 5, tagId = 2)
+)
 
 val announcementPreviewRelationTestData = announcementEntityTestData.map { entity ->
-    val tags = if (entity.id in listOf(5, 6, 7)) commonTagEntities else emptyList()
-    val attachments = if (entity.id in listOf(4, 6, 7)) {
-        commonAttachmentEntities.map { it.copy(announcementId = entity.id) }
-    } else {
-        emptyList()
-    }
-
     AnnouncementPreviewRelation(
         announcement = entity,
         author = baseAuthorEntity,
-        tags = tags,
-        attachments = attachments
+        tags = announcementTagEntityTestData,
+        attachments = attachmentEntityTestData
     )
 }
 
 val announcementDetailsRelationTestData = announcementEntityTestData.map { entity ->
-    val tags = if (entity.id in listOf(5, 6, 7)) commonTagEntities else emptyList()
-    val attachments = if (entity.id in listOf(4, 6, 7)) {
-        commonAttachmentEntities.map { it.copy(announcementId = entity.id) }
-    } else {
-        emptyList()
-    }
-
     AnnouncementDetailRelation(
         announcement = entity,
         body = baseBodyEntity.copy(
-            announcementId = entity.id,
-            engBody = if (entity.hasEng) "Test Body Eng" else ""
+            announcementId = entity.id
         ),
         author = baseAuthorEntity,
-        tags = tags,
-        attachments = attachments,
+        tags = announcementTagEntityTestData,
+        attachments = attachmentEntityTestData,
     )
 }
-
-val tagEntitiesTestData = commonTagEntities
-val authorEntitiesTestData = listOf(baseAuthorEntity)

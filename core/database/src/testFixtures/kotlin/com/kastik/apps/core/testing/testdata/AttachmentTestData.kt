@@ -13,9 +13,15 @@ internal val baseAttachmentEntity = AttachmentEntity(
 )
 
 val attachmentEntityTestData = listOf(
-    baseAttachmentEntity.copy(id = 1),
-    baseAttachmentEntity.copy(id = 2),
-    baseAttachmentEntity.copy(id = 3),
+    baseAttachmentEntity,
+    baseAttachmentEntity.copy(
+        id = 2,
+        announcementId = 2,
+    ),
+    baseAttachmentEntity.copy(
+        id = 3,
+        announcementId = 2
+    ),
     baseAttachmentEntity.copy(id = 4),
     baseAttachmentEntity.copy(id = 5),
 )

@@ -14,5 +14,4 @@ val announcementAuthorEntityTestData = listOf(
     baseAuthorEntity.copy(id = 2),
     baseAuthorEntity.copy(id = 3),
     baseAuthorEntity.copy(id = 4),
-    AuthorEntity(id = 999, name = "Kostas")
 )

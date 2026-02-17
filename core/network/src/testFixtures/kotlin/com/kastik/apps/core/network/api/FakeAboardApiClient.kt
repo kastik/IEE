@@ -20,17 +20,15 @@ import com.kastik.apps.core.network.testdata.subscribableTagsDtoTestData
 import com.kastik.apps.core.network.testdata.subscribedTagDtoTestData
 import com.kastik.apps.core.network.testdata.tagsResponseDtoTestData
 import com.kastik.apps.core.network.testdata.userProfileDtoTestData
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import okhttp3.ResponseBody
 
 
 class FakeAboardApiClient : AboardApiClient {
 
     private var throwOnApiCall: Exception? = null
-    private val subscribedIds = MutableStateFlow<List<Int>>(emptyList())
+    private val _subscribedIds = mutableListOf<Int>()
 
-    fun getSubscribedIds(): MutableStateFlow<List<Int>> = subscribedIds
+    fun getSubscribedIds(): List<Int> = _subscribedIds
     fun setThrowOnGetUserInfo(exception: Exception) {
         throwOnApiCall = exception
     }
@@ -83,7 +81,8 @@ class FakeAboardApiClient : AboardApiClient {
     }
 
     override suspend fun subscribeToTags(updatedTags: SubscribeToTagsRequestDto) {
-        subscribedIds.update { updatedTags.tags }
+        _subscribedIds.clear()
+        _subscribedIds.addAll(updatedTags.tags)
     }
 
     override suspend fun searchAnnouncements(id: Int, attachmentId: Int): ResponseBody {

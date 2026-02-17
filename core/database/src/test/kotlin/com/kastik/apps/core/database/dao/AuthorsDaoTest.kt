@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.testing.db.MemoryDatabase
 import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
 import com.kastik.apps.core.testing.testdata.announcementAuthorEntityTestData
-import com.kastik.apps.core.testing.testdata.authorEntitiesTestData
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -16,7 +15,7 @@ internal class AuthorsDaoTest : MemoryDatabase() {
 
     @Test
     fun upsertListAuthorsInsertsNewAuthor() = runTest {
-        val authorEntities = authorEntitiesTestData
+        val authorEntities = announcementAuthorEntityTestData
         authorsDao.upsertAuthors(authorEntities)
 
         val result = authorsDao.getAuthors().first()
@@ -27,7 +26,7 @@ internal class AuthorsDaoTest : MemoryDatabase() {
 
     @Test
     fun upsertSingleAuthorInsertsNewAuthor() = runTest {
-        val authorEntity = authorEntitiesTestData.first()
+        val authorEntity = announcementAuthorEntityTestData.first()
         authorsDao.upsertAuthors(authorEntity)
 
         val result = authorsDao.getAuthors().first()
@@ -66,7 +65,7 @@ internal class AuthorsDaoTest : MemoryDatabase() {
 
     @Test
     fun clearAuthorsClearsAuthorTable() = runTest {
-        val authorEntities = authorEntitiesTestData
+        val authorEntities = announcementAuthorEntityTestData
         authorsDao.upsertAuthors(authorEntities)
         authorsDao.clearAuthors()
 

@@ -5,6 +5,7 @@ import com.kastik.apps.core.network.api.FakeAboardApiClient
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertFailsWith
 
 class AuthenticationRemoteDataSourceImplTest {
 
@@ -28,8 +29,10 @@ class AuthenticationRemoteDataSourceImplTest {
     @Test
     fun checkIfTokenIsValidReturnsFalseWhenGetUserThrowsTest() = runTest {
         aboardClient.setThrowOnGetUserInfo(exception = IllegalStateException())
-        val result = authDatasource.checkIfTokenIsValid()
-        assertThat(result).isFalse()
+
+        assertFailsWith<IllegalStateException> {
+            authDatasource.checkIfTokenIsValid()
+        }
     }
 
 }
