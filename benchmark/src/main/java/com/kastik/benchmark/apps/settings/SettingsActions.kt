@@ -13,11 +13,6 @@ fun MacrobenchmarkScope.toggleSortingOptions() {
     onElement(timeoutMs = 2000) { textAsString() == "Priority" }.click()
 }
 
-fun MacrobenchmarkScope.toggleForYou() {
-    onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
-    onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
-}
-
 fun MacrobenchmarkScope.toggleFabFilters() {
     onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
     onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
@@ -41,18 +36,3 @@ fun MacrobenchmarkScope.toggleDynamicTheme() {
         onElement(timeoutMs = 2000) { textAsString() == "Dynamic color" }.click()
     }
 }
-
-fun MacrobenchmarkScope.toggleNotifications() {
-    onElement(timeoutMs = 2000) { textAsString() == "Push notifications" }.click()
-    waitForStableInActiveWindow()
-    device.pressBack()
-}
-
-
-
-
-
-
-
-
-

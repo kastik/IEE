@@ -1,4 +1,3 @@
-import com.android.build.api.dsl.ManagedVirtualDevice
 import com.android.build.api.dsl.TestExtension
 
 plugins {
@@ -17,13 +16,17 @@ configure<TestExtension> {
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
 
-    testOptions.managedDevices.allDevices {
-        maybeCreate<ManagedVirtualDevice>("pixel6Api34").apply {
-            device = "Pixel 6"
-            apiLevel = 34
-            testedAbi = "x86_64"
-            systemImageSource = "google"
-            require64Bit = true
+    testOptions {
+        managedDevices {
+            localDevices {
+                create("pixel6Api34") {
+                    device = "Pixel 6"
+                    apiLevel = 34
+                    testedAbi = "x86_64"
+                    systemImageSource = "aosp-atd"
+                    require64Bit = true
+                }
+            }
         }
     }
 }
@@ -31,6 +34,7 @@ configure<TestExtension> {
 baselineProfile {
     managedDevices += "pixel6Api34"
     useConnectedDevices = false
+    skipBenchmarksOnEmulator = true
 }
 
 dependencies {
