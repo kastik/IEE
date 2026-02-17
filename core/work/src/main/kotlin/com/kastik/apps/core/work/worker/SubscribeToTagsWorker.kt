@@ -32,6 +32,7 @@ class SubscribeToTagsWorker @AssistedInject constructor(
                 if (subscribeResult is ResultDomain.Success && refreshResult is ResultDomain.Success) {
                     Result.success()
                 } else {
+                    //TODO Check for auth and cancel
                     Result.retry()
                 }
             }

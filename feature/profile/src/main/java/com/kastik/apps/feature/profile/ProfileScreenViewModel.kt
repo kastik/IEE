@@ -2,17 +2,19 @@ package com.kastik.apps.feature.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.WorkInfo
 import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetSubscribableTagsUseCase
+import com.kastik.apps.core.domain.usecases.GetSubscribeToTagsWorkInfoUseCase
 import com.kastik.apps.core.domain.usecases.GetSubscribedTagsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserProfileUseCase
+import com.kastik.apps.core.domain.usecases.RefreshEmailSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.RefreshSubscribableTagsUseCase
-import com.kastik.apps.core.domain.usecases.RefreshSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshUserProfileUseCase
+import com.kastik.apps.core.domain.usecases.ScheduleSubscribeToTagsUseCase
 import com.kastik.apps.core.domain.usecases.SignOutUserUseCase
-import com.kastik.apps.core.domain.usecases.SubscribeToTagsUseCase
 import com.kastik.apps.core.model.error.AuthenticatedRefreshError
 import com.kastik.apps.core.model.error.AuthenticationError
 import com.kastik.apps.core.model.error.ConnectionError
@@ -43,9 +45,10 @@ class ProfileScreenViewModel @Inject constructor(
     getSubscribableTagsUseCase: GetSubscribableTagsUseCase,
     private val notifier: Notifier,
     private val refreshUserProfileUseCase: RefreshUserProfileUseCase,
-    private val refreshSubscriptionsUseCase: RefreshSubscriptionsUseCase,
+    private val refreshEmailSubscriptionsUseCase: RefreshEmailSubscriptionsUseCase,
     private val refreshSubscribableTagsUseCase: RefreshSubscribableTagsUseCase,
-    private val subscribeToTagsUseCase: SubscribeToTagsUseCase,
+    private val scheduleSubscribeToTagsUseCase: ScheduleSubscribeToTagsUseCase,
+    private val getSubscribeToTagsWorkInfoUseCase: GetSubscribeToTagsWorkInfoUseCase,
     private val signOutUserUseCase: SignOutUserUseCase,
     private val refreshIsSignedInUseCase: RefreshIsSignedInUseCase,
 ) : ViewModel() {
@@ -85,15 +88,24 @@ class ProfileScreenViewModel @Inject constructor(
 
     fun updateSelectedTagIds(newSubscribedTagsIds: ImmutableList<Int>) {
         viewModelScope.launch {
-            val subscribeToTagsResult = subscribeToTagsUseCase(newSubscribedTagsIds)
-            val refreshSubscriptionsResult = refreshSubscriptionsUseCase()
+            scheduleSubscribeToTagsUseCase(newSubscribedTagsIds)
+            //TODO This won't sendToast when no connection exists
+            getSubscribeToTagsWorkInfoUseCase().collect { workInfo ->
+                val state = workInfo?.state
+                val runCount = workInfo?.runAttemptCount ?: 0
 
-            listOf(subscribeToTagsResult, refreshSubscriptionsResult)
-                .filterIsInstance<Result.Error<AuthenticatedRefreshError>>()
-                .firstOrNull()
-                ?.let { refreshError ->
-                    notifier.sendToastNotification(refreshError.error.toUserMessage())
+                when {
+                    state == WorkInfo.State.FAILED -> {
+                        notifier.sendToastNotification("Update failed. Please try again.")
+                    }
+
+                    state == WorkInfo.State.ENQUEUED && runCount > 0 -> {
+                        notifier.sendToastNotification("Connection issue. We will try again automatically.")
+                    }
+
+                    state == WorkInfo.State.ENQUEUED && runCount == 0 -> Unit
                 }
+            }
         }
     }
 
@@ -107,7 +119,7 @@ class ProfileScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val refreshSignedInDeferred = async { refreshIsSignedInUseCase() }
             val refreshProfileDeferred = async { refreshUserProfileUseCase() }
-            val refreshSubscriptionsDeferred = async { refreshSubscriptionsUseCase() }
+            val refreshSubscriptionsDeferred = async { refreshEmailSubscriptionsUseCase() }
             val refreshSubscribableTagsDeferred = async { refreshSubscribableTagsUseCase() }
 
             listOf(
