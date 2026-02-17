@@ -21,6 +21,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -80,16 +81,16 @@ internal class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun subscribeToEmailTags(tagIds: List<Int>) =
         withContext(NonCancellable + ioDispatcher) {
-        try {
-            profileRemoteDataSource.subscribeToEmailTags(tagIds)
-            Result.Success(Unit)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            crashlytics.recordException(e)
-            Result.Error(e.toPrivateRefreshError())
+            try {
+                profileRemoteDataSource.subscribeToEmailTags(tagIds)
+                Result.Success(Unit)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                crashlytics.recordException(e)
+                Result.Error(e.toPrivateRefreshError())
+            }
         }
-    }
 
     override suspend fun syncTopicSubscriptions() = withContext(NonCancellable + ioDispatcher) {
         val emailSubscriptionIds =
@@ -116,7 +117,12 @@ internal class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun unsubscribeFromAllTopics() = withContext(ioDispatcher) {
-        pushNotificationsDatasource.unsubscribeFromAllTopics()
+        val subscribedTopicIds =
+            profileLocalDataSource.getSubscriptions().map { it.subscribedTopicsList.map { it.id } }
+                .first()
+
+        pushNotificationsDatasource.unsubscribeFromTopics(subscribedTopicIds.toList())
+        profileLocalDataSource.setTopicSubscriptions(emptyList())
     }
 
     override suspend fun clearLocalData() = withContext(ioDispatcher) {
