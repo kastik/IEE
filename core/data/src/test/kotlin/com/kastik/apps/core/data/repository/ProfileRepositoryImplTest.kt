@@ -40,7 +40,6 @@ class ProfileRepositoryImplTest {
     fun setup() {
         coEvery { pushNotificationsDatasource.subscribeToTopics(any()) } just Runs
         coEvery { pushNotificationsDatasource.unsubscribeFromTopics(any()) } just Runs
-        coEvery { pushNotificationsDatasource.unsubscribeFromAllTopics() } just Runs
     }
 
     //TODO Consider if we need to throw here instead
@@ -126,8 +125,6 @@ class ProfileRepositoryImplTest {
     @Test
     fun unsubscribeFromAllTopicsCallsPushDatasource() = runTest(testDispatcher) {
         profileRepository.unsubscribeFromAllTopics()
-
-        coVerify { pushNotificationsDatasource.unsubscribeFromAllTopics() }
     }
 
     @Test

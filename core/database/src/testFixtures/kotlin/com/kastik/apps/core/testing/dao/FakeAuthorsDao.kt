@@ -19,7 +19,12 @@ class FakeAuthorsDao : AuthorsDao {
     }
 
     override suspend fun insertOrIgnoreAuthors(authors: List<AuthorEntity>) {
-        TODO("Not yet implemented")
+        _authors.update { current ->
+            val newUniqueAuthors = authors.filter { newAuthor ->
+                current.none { existingAuthor -> existingAuthor.id == newAuthor.id }
+            }
+            current + newUniqueAuthors
+        }
     }
 
     override suspend fun upsertAuthors(authors: List<AuthorEntity>) {
