@@ -9,13 +9,17 @@ import kotlinx.coroutines.flow.update
 class FakeAuthorsDao : AuthorsDao {
     private val _authors: MutableStateFlow<List<AuthorEntity>> = MutableStateFlow(emptyList())
 
-    override suspend fun upsertAuthors(authors: AuthorEntity) {
+    override suspend fun upsertAuthors(author: AuthorEntity) {
         _authors.update { current ->
             val nonDuplicates = current.filter { new ->
                 current.none { existing -> existing.id == new.id }
             }
             current + nonDuplicates
         }
+    }
+
+    override suspend fun insertOrIgnoreAuthors(authors: List<AuthorEntity>) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun upsertAuthors(authors: List<AuthorEntity>) {
