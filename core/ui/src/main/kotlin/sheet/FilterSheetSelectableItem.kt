@@ -35,11 +35,11 @@ internal fun SelectableTagItem(
 ) {
     val shape = RoundedCornerShape(20)
     val containerColor by animateColorAsState(
-        if (isSelected) MaterialTheme.colorScheme.secondaryContainer
-        else MaterialTheme.colorScheme.surface
+        if (isSelected) MaterialTheme.colorScheme.primaryContainer
+        else MaterialTheme.colorScheme.surfaceContainer
     )
     val contentColor by animateColorAsState(
-        if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer
+        if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
         else MaterialTheme.colorScheme.onSurface
     )
 
@@ -61,7 +61,7 @@ internal fun SelectableTagItem(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.labelLarge,
                 color = contentColor,
                 modifier = Modifier.weight(1f)
             )

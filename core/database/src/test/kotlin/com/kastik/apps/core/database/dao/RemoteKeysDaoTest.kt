@@ -4,7 +4,6 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.testing.db.MemoryDatabase
 import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
 import com.kastik.apps.core.testing.testdata.noFilteredRemoteKeys
-import com.kastik.apps.core.testing.testdata.stringFilteredRemoteKeys
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -17,7 +16,7 @@ internal class RemoteKeysDaoTest : MemoryDatabase() {
     @Test
     fun insertAndGetKey_returnsCorrectData() = runTest {
         remoteKeysDao.insertOrReplaceKeys(noFilteredRemoteKeys)
-        remoteKeysDao.insertOrReplaceKeys(stringFilteredRemoteKeys)
+        remoteKeysDao.insertOrReplaceKeys(noFilteredRemoteKeys)
 
         val test = noFilteredRemoteKeys.find { it.announcementId == 1 }
 

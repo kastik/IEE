@@ -4,10 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kastik.apps.core.domain.usecases.GetUserPreferencesUseCase
 import com.kastik.apps.core.domain.usecases.SetDynamicColorUseCase
-import com.kastik.apps.core.domain.usecases.SetEnableForYouUseCase
+import com.kastik.apps.core.domain.usecases.SetFabFiltersEnabledUseCase
+import com.kastik.apps.core.domain.usecases.SetForYouEnabledUseCase
 import com.kastik.apps.core.domain.usecases.SetSearchScopeUseCase
 import com.kastik.apps.core.domain.usecases.SetSortTypeUseCase
-import com.kastik.apps.core.domain.usecases.SetUserThemeUseCase
+import com.kastik.apps.core.domain.usecases.SetThemeUseCase
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
@@ -25,9 +26,10 @@ class SettingsScreenViewModel @Inject constructor(
     getUserPreferencesUseCase: GetUserPreferencesUseCase,
     private val setSearchScopeUseCase: SetSearchScopeUseCase,
     private val setDynamicColorUseCase: SetDynamicColorUseCase,
-    private val setUserThemeUseCase: SetUserThemeUseCase,
+    private val setThemeUseCase: SetThemeUseCase,
     private val setSortTypeUseCase: SetSortTypeUseCase,
-    private val setEnableForYouUseCase: SetEnableForYouUseCase,
+    private val setForYouEnabledUseCase: SetForYouEnabledUseCase,
+    private val setFabFiltersEnabledUseCase: SetFabFiltersEnabledUseCase,
 ) : ViewModel() {
 
     private val errorState = MutableStateFlow<String?>(null)
@@ -39,9 +41,10 @@ class SettingsScreenViewModel @Inject constructor(
         UiState.Success(
             theme = preferences.theme,
             sortType = preferences.sortType,
-            dynamicColor = preferences.dynamicColor,
+            isDynamicColorEnabled = preferences.dynamicColor,
             searchScope = preferences.searchScope,
-            forYou = preferences.enableForYou
+            isForYouEnabled = preferences.enableForYou,
+            areFabFiltersEnabled = preferences.disableFabFilters
         )
     }.stateIn(
         scope = viewModelScope,
@@ -57,7 +60,7 @@ class SettingsScreenViewModel @Inject constructor(
 
     fun setTheme(theme: UserTheme) {
         viewModelScope.launch {
-            setUserThemeUseCase(theme)
+            setThemeUseCase(theme)
         }
     }
 
@@ -75,7 +78,13 @@ class SettingsScreenViewModel @Inject constructor(
 
     fun setEnableForYou(value: Boolean) {
         viewModelScope.launch {
-            setEnableForYouUseCase(value)
+            setForYouEnabledUseCase(value)
+        }
+    }
+
+    fun setFabFilters(value: Boolean) {
+        viewModelScope.launch {
+            setFabFiltersEnabledUseCase(value)
         }
     }
 }

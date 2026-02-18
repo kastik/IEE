@@ -1,5 +1,6 @@
 package com.kastik.apps.core.domain.usecases
 
+import com.kastik.apps.core.common.extensions.combine
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
@@ -11,32 +12,32 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-class GetUserHasSkippedSignInUseCase @Inject constructor(
+class HasSkippedSignInUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<Boolean> =
-        userPreferencesRepository.getHasSkippedSignIn()
+        userPreferencesRepository.hasSkippedSignIn()
 }
 
-class SetUserHasSkippedSignInUseCase @Inject constructor(
+class SetHasSkippedSignInUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(hasSkippedSignIn: Boolean) =
         userPreferencesRepository.setHasSkippedSignIn(hasSkippedSignIn)
 }
 
-class GetUserThemeUseCase @Inject constructor(
+class GetThemeUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<UserTheme> =
-        userPreferencesRepository.getUserTheme()
+        userPreferencesRepository.getTheme()
 }
 
-class SetUserThemeUseCase @Inject constructor(
+class SetThemeUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(theme: UserTheme) =
-        userPreferencesRepository.setUserTheme(theme)
+        userPreferencesRepository.setTheme(theme)
 }
 
 
@@ -44,14 +45,14 @@ class GetDynamicColorUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<Boolean> =
-        userPreferencesRepository.getDynamicColor()
+        userPreferencesRepository.isDynamicColorEnabled()
 }
 
 class SetDynamicColorUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(enabled: Boolean) =
-        userPreferencesRepository.setDynamicColor(enabled)
+        userPreferencesRepository.setDynamicColorEnabled(enabled)
 }
 
 class ShowSignInNoticeRationalUseCase @Inject constructor(
@@ -61,7 +62,7 @@ class ShowSignInNoticeRationalUseCase @Inject constructor(
     operator fun invoke(): Flow<Boolean> {
         return combine(
             authenticationRepository.getIsSignedIn(),
-            userPreferencesRepository.getHasSkippedSignIn()
+            userPreferencesRepository.hasSkippedSignIn()
         ) { isSignedIn, hasSkipped ->
             !isSignedIn && !hasSkipped
         }
@@ -98,42 +99,65 @@ class SetSearchScopeUseCase @Inject constructor(
 }
 
 
-class GetEnableForYouUseCase @Inject constructor(
+class IsForYouEnabledUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<Boolean> =
         combine(
             profileRepository.getEmailSubscriptions(),
-            userPreferencesRepository.getEnableForYou()
+            userPreferencesRepository.isForYouEnabled()
         ) { subscriptions, enableForYou ->
             subscriptions.isNotEmpty() && enableForYou
         }
 }
 
-class SetEnableForYouUseCase @Inject constructor(
+class SetForYouEnabledUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(value: Boolean) =
-        userPreferencesRepository.setEnableForYou(value)
+        userPreferencesRepository.setForYouEnabled(value)
+}
+
+class AreFabFiltersEnabledUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<Boolean> =
+        userPreferencesRepository.areFabFiltersEnabled()
+}
+
+class SetFabFiltersEnabledUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke(value: Boolean) =
+        userPreferencesRepository.setFabFiltersEnabled(value)
 }
 
 class GetUserPreferencesUseCase @Inject constructor(
-    private val getUserThemeUseCase: GetUserThemeUseCase,
+    private val getThemeUseCase: GetThemeUseCase,
     private val getDynamicColorUseCase: GetDynamicColorUseCase,
     private val getSortTypeUseCase: GetSortTypeUseCase,
     private val getSearchScopeUseCase: GetSearchScopeUseCase,
-    private val getEnableForYouUseCase: GetEnableForYouUseCase,
+    private val isForYouEnabledUseCase: IsForYouEnabledUseCase,
+    private val areFabFiltersEnabledUseCase: AreFabFiltersEnabledUseCase,
 ) {
     operator fun invoke() =
         combine(
-            getUserThemeUseCase(),
+            getThemeUseCase(),
             getDynamicColorUseCase(),
             getSortTypeUseCase(),
             getSearchScopeUseCase(),
-            getEnableForYouUseCase(),
-        ) { theme, dynamicColor, sortType, searchScope, enableForYou ->
-            UserPreferences(theme, dynamicColor, sortType, searchScope, enableForYou)
+            isForYouEnabledUseCase(),
+            areFabFiltersEnabledUseCase(),
+        ) { theme, dynamicColor, sortType, searchScope, enableForYou, disableFabFilters ->
+            UserPreferences(
+                theme,
+                dynamicColor,
+                sortType,
+                searchScope,
+                enableForYou,
+                disableFabFilters
+            )
         }
 }
 

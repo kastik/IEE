@@ -1,19 +1,19 @@
 package com.kastik.apps.core.data.repository
 
 import com.google.common.truth.Truth.assertThat
+import com.kastik.apps.core.crashlytics.FakeCrashlytics
 import com.kastik.apps.core.data.mappers.toSubscribableTag
 import com.kastik.apps.core.data.mappers.toSubscribableTagProto
 import com.kastik.apps.core.data.mappers.toTag
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.database.dao.TagsDao
 import com.kastik.apps.core.datastore.TagsLocalDataSource
+import com.kastik.apps.core.datastore.datasource.FakeTagsLocalDataSource
+import com.kastik.apps.core.datastore.testdata.subscribableTagsProtoTestData
+import com.kastik.apps.core.network.datasource.FakeTagsRemoteDataSource
 import com.kastik.apps.core.network.datasource.TagsRemoteDataSource
+import com.kastik.apps.core.network.testdata.announcementTagDtoTestData
 import com.kastik.apps.core.testing.dao.FakeTagsDao
-import com.kastik.apps.core.testing.datasource.local.FakeTagsLocalDataSource
-import com.kastik.apps.core.testing.datasource.remote.FakeTagsRemoteDataSource
-import com.kastik.apps.core.testing.testdata.announcementTagDtoTestData
-import com.kastik.apps.core.testing.testdata.subscribableTagsProtoTestData
-import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest

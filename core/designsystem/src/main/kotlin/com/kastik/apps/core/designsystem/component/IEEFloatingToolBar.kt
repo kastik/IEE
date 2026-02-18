@@ -27,6 +27,7 @@ fun IEEFloatingToolBar(
     collapsedAction: () -> Unit,
     expandedIcon: @Composable () -> Unit,
     collapsedIcon: @Composable () -> Unit,
+    collapsedSecondaryIcons: (@Composable () -> Unit)? = null,
 ) {
     val vibrator = LocalHapticFeedback.current
 
@@ -34,7 +35,10 @@ fun IEEFloatingToolBar(
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 12.dp),
         expanded = expanded,
-        contentPadding = PaddingValues(0.dp),
+        colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
+        contentPadding = if (collapsedSecondaryIcons == null) PaddingValues(0.dp) else PaddingValues(
+            horizontal = 16.dp
+        ),
         floatingActionButton = {
             FloatingToolbarDefaults.VibrantFloatingActionButton(
                 onClick = {
@@ -48,7 +52,9 @@ fun IEEFloatingToolBar(
             }
         }
     ) {
-
+        collapsedSecondaryIcons?.let {
+            it()
+        }
     }
 }
 

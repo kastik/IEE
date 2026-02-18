@@ -7,5 +7,6 @@ data class UserPreferences(
     val dynamicColor: Boolean,
     val sortType: SortType,
     val searchScope: SearchScope,
-    val enableForYou: Boolean
+    val enableForYou: Boolean,
+    val disableFabFilters: Boolean,
 )

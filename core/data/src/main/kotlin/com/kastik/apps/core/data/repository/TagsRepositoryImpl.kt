@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 internal class TagsRepositoryImpl @Inject constructor(
@@ -40,6 +41,8 @@ internal class TagsRepositoryImpl @Inject constructor(
                 tagsRemoteDataSource.fetchAnnouncementTags().data.map { it.toTagEntity() }
             announcementTagsLocalDataSource.upsertTags(remoteTags)
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPublicRefreshError())
@@ -56,6 +59,8 @@ internal class TagsRepositoryImpl @Inject constructor(
             val subscribableTags = tagsRemoteDataSource.fetchSubscribableTags()
             subscribableTagsLocalDataSource.setSubscribableTags(subscribableTags.map { tag -> tag.toSubscribableTagProto() })
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPublicRefreshError())

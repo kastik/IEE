@@ -10,11 +10,13 @@ import com.kastik.apps.core.model.error.StorageError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 internal class AuthenticationRepositoryImpl @Inject constructor(
@@ -39,12 +41,15 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             authenticationLocalDataSource.setIsSignedIn(isAuthenticated)
 
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
 
-    override suspend fun exchangeCodeForAbroadToken(code: String) = withContext(ioDispatcher) {
+    override suspend fun exchangeCodeForAbroadToken(code: String) =
+        withContext(NonCancellable + ioDispatcher) {
         try {
             val response = authenticationRemoteDataSource.exchangeCodeForAboardToken(code)
             authenticationLocalDataSource.setAboardAccessToken((response.accessToken))
@@ -52,6 +57,8 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             authenticationLocalDataSource.setAboardTokenLastRefreshTime(System.currentTimeMillis())
             authenticationLocalDataSource.setIsSignedIn(true)
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
@@ -59,7 +66,7 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun refreshAboardToken() =
+    override suspend fun refreshAboardToken() = withContext(NonCancellable + ioDispatcher) {
         try {
             val currentToken = authenticationLocalDataSource.getAboardAccessToken().first()
                 ?: throw IllegalStateException("Aboard token is null")
@@ -68,16 +75,21 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
             authenticationLocalDataSource.setAboardTokenExpiration(response.expiresIn)
             authenticationLocalDataSource.setAboardTokenLastRefreshTime(System.currentTimeMillis())
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(e.toPrivateRefreshError())
         }
+    }
 
 
-    override suspend fun clearAuthenticationData() = withContext(ioDispatcher) {
+    override suspend fun clearAuthenticationData() = withContext(NonCancellable + ioDispatcher) {
         try {
             authenticationLocalDataSource.clearAuthenticationData()
             Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
             Result.Error(StorageError)

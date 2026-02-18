@@ -83,7 +83,7 @@ The codebase is organized into the following logical groups:
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/kastik/IEE.git](https://github.com/kastik/IEE.git)
+   git clone https://github.com/kastik/IEE.git](https://github.com/kastik/IEE.git
    ```
 
 2. **Open in Android Studio:**

@@ -1,10 +1,10 @@
 package com.kastik.apps.core.data.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.kastik.apps.core.testing.datasource.local.FakeAuthenticationLocalDataSource
-import com.kastik.apps.core.testing.datasource.remote.FakeAuthenticationRemoteDatasource
-import com.kastik.apps.core.testing.testdata.aboardTokenResponseDtoTestData
-import com.kastik.apps.core.testing.utils.FakeCrashlytics
+import com.kastik.apps.core.crashlytics.FakeCrashlytics
+import com.kastik.apps.core.datastore.datasource.FakeAuthenticationLocalDataSource
+import com.kastik.apps.core.network.datasource.FakeAuthenticationRemoteDatasource
+import com.kastik.apps.core.network.testdata.aboardTokenResponseDtoTestData
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

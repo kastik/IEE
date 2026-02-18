@@ -6,14 +6,14 @@ import androidx.paging.testing.R
 import androidx.paging.testing.asSnapshot
 import androidx.room.withTransaction
 import com.google.common.truth.Truth.assertThat
+import com.kastik.apps.core.crashlytics.FakeCrashlytics
+import com.kastik.apps.core.data.util.FakeBase64ImageExtractor
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.network.datasource.FakeAnnouncementRemoteDataSource
 import com.kastik.apps.core.testing.dao.FakeAnnouncementDao
-import com.kastik.apps.core.testing.datasource.remote.FakeAnnouncementRemoteDataSource
 import com.kastik.apps.core.testing.db.FakeAppDatabase
 import com.kastik.apps.core.testing.testdata.announcementDetailsRelationTestData
-import com.kastik.apps.core.testing.utils.FakeBase64ImageExtractor
-import com.kastik.apps.core.testing.utils.FakeCrashlytics
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.mockkStatic

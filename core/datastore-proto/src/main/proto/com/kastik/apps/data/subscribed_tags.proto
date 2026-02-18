@@ -3,11 +3,16 @@ option java_package = "com.kastik.apps.core.datastore.proto";
 option java_multiple_files = true;
 
 
-message SubscribedTagsProto{
+message SubscriptionsProto{
   repeated SubscribedTagProto subscribedTags = 1;
+  repeated SubscribedTopicProto subscribedTopics = 2;
 }
 
 message SubscribedTagProto{
   int32 id = 1;
   string title = 2;
+}
+
+message SubscribedTopicProto{
+  int32 id = 1;
 }

@@ -24,7 +24,7 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
     private val preferencesLocalDataSource: PreferencesLocalDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : UserPreferencesRepository {
-    override fun getHasSkippedSignIn(): Flow<Boolean> {
+    override fun hasSkippedSignIn(): Flow<Boolean> {
         return preferencesLocalDataSource.getHasSkippedSignIn()
     }
 
@@ -33,19 +33,19 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
             preferencesLocalDataSource.setHasSkippedSignIn(hasSkippedSignIn)
         }
 
-    override fun getUserTheme(): Flow<UserTheme> {
+    override fun getTheme(): Flow<UserTheme> {
         return preferencesLocalDataSource.getUserTheme().map { it.toUserTheme() }
     }
 
-    override suspend fun setUserTheme(theme: UserTheme) = withContext(ioDispatcher) {
+    override suspend fun setTheme(theme: UserTheme) = withContext(ioDispatcher) {
         preferencesLocalDataSource.setUserTheme(theme.toTheme())
     }
 
-    override fun getDynamicColor(): Flow<Boolean> {
+    override fun isDynamicColorEnabled(): Flow<Boolean> {
         return preferencesLocalDataSource.getDynamicColor()
     }
 
-    override suspend fun setDynamicColor(enabled: Boolean) = withContext(ioDispatcher) {
+    override suspend fun setDynamicColorEnabled(enabled: Boolean) = withContext(ioDispatcher) {
         preferencesLocalDataSource.setDynamicColor(enabled)
     }
 
@@ -65,19 +65,19 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
         preferencesLocalDataSource.setSearchScope(searchScope.toQueryScope())
     }
 
-    override fun getEnableForYou(): Flow<Boolean> =
+    override fun isForYouEnabled(): Flow<Boolean> =
         preferencesLocalDataSource.getEnableForYou()
 
-    override suspend fun setEnableForYou(value: Boolean) = withContext(ioDispatcher) {
+    override suspend fun setForYouEnabled(value: Boolean) = withContext(ioDispatcher) {
         preferencesLocalDataSource.setEnableForYou(value)
     }
 
     override fun getNotifiedAnnouncementIds(): Flow<List<Int>> =
         preferencesLocalDataSource.getNotifiedAnnouncementIds()
 
-    override suspend fun setNotifiedAnnouncementId(notificationIds: Int) {
+    override suspend fun setNotifiedAnnouncementId(notificationId: Int) {
         withContext(ioDispatcher) {
-            preferencesLocalDataSource.setNotifiedAnnouncementId(notificationIds)
+            preferencesLocalDataSource.setNotifiedAnnouncementId(notificationId)
         }
     }
 
@@ -90,6 +90,13 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
         withContext(ioDispatcher) {
             preferencesLocalDataSource.clearNotifiedAnnouncementIds()
         }
+    }
+
+    override fun areFabFiltersEnabled(): Flow<Boolean> =
+        preferencesLocalDataSource.areFabFiltersEnabled()
+
+    override suspend fun setFabFiltersEnabled(value: Boolean) = withContext(ioDispatcher) {
+        preferencesLocalDataSource.setAreFabFiltersEnabled(value)
     }
 
 }

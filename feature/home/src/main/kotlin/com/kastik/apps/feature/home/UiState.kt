@@ -8,5 +8,6 @@ data class UiState(
     val showSignInNotice: Boolean = false,
     val availableFilters: FilterOptions = FilterOptions(),
     val quickResults: QuickResults = QuickResults(),
-    val enableForYou: Boolean = false
+    val enableForYou: Boolean = false,
+    val enableFabFilters: Boolean = false
 )

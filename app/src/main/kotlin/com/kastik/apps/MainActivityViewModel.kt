@@ -3,7 +3,7 @@ package com.kastik.apps
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kastik.apps.core.domain.usecases.GetDynamicColorUseCase
-import com.kastik.apps.core.domain.usecases.GetUserThemeUseCase
+import com.kastik.apps.core.domain.usecases.GetThemeUseCase
 import com.kastik.apps.core.model.user.UserTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,11 +14,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    getUserThemeUseCase: GetUserThemeUseCase, getDynamicColorUseCase: GetDynamicColorUseCase
+    getThemeUseCase: GetThemeUseCase, getDynamicColorUseCase: GetDynamicColorUseCase
 ) : ViewModel() {
 
     val appState: StateFlow<IEEAppState> = combine(
-        getUserThemeUseCase(), getDynamicColorUseCase()
+        getThemeUseCase(), getDynamicColorUseCase()
     ) { theme, dynamicColor ->
         IEEAppState(theme, dynamicColor)
     }.stateIn(

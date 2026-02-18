@@ -2,8 +2,8 @@ package com.kastik.apps.core.network.datasource
 
 
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.testing.api.FakeAboardApiClient
-import com.kastik.apps.core.testing.testdata.announcementPageResponseTestData
+import com.kastik.apps.core.network.api.FakeAboardApiClient
+import com.kastik.apps.core.network.testdata.announcementPageResponseTestData
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test

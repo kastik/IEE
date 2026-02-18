@@ -10,6 +10,7 @@ message UserPreferences{
   QueryScope query_scope = 5;
   bool enable_for_you = 6;
   repeated int32 notified_announcement_ids = 7;
+  bool enable_fab_filters = 8;
 }
 
 enum Theme {

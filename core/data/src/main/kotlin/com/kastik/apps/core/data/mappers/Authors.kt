@@ -13,5 +13,5 @@ fun AuthorResponseDto.toAuthorEntity() = AuthorEntity(
 fun AuthorEntity.toAuthor() = Author(
     id = id,
     name = name,
-    announcementCount = announcementCount ?: 0,
+    announcementCount = announcementCount,
 )

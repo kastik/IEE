@@ -68,10 +68,10 @@ fun AnnouncementFeed(
     val analytics = LocalAnalytics.current
 
 
-    val currentFeedState = when {
-        refreshState is LoadState.Loading && announcements.itemCount == 0 -> FeedState.Loading
-        refreshState is LoadState.Error && announcements.itemCount == 0 -> FeedState.Error
-        refreshState is LoadState.NotLoading && announcements.itemCount == 0 -> FeedState.Empty
+    val currentFeedState = when (refreshState) {
+        is LoadState.Loading if announcements.itemCount == 0 -> FeedState.Loading
+        is LoadState.Error if announcements.itemCount == 0 -> FeedState.Error
+        is LoadState.NotLoading if announcements.itemCount == 0 -> FeedState.Empty
         else -> FeedState.Content
     }
 
@@ -108,7 +108,7 @@ fun AnnouncementFeed(
 
             FeedState.Content -> {
                 LazyColumn(
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxSize()
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
                         .semantics { contentDescription = "announcement_feed" },

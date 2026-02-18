@@ -32,7 +32,7 @@ fun IEETag(
             Text(
                 text = text,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = MaterialTheme.typography.labelLarge, maxLines = 1
+                style = MaterialTheme.typography.labelSmall, maxLines = 1
             )
         }
     }

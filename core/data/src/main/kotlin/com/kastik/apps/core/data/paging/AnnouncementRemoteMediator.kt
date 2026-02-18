@@ -20,6 +20,7 @@ import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
 import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import kotlinx.coroutines.CancellationException
 
 @OptIn(ExperimentalPagingApi::class)
 class AnnouncementRemoteMediator(
@@ -108,6 +109,8 @@ class AnnouncementRemoteMediator(
         }
         return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
 
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         crashlytics.recordException(e)
         return MediatorResult.Error(e)
@@ -116,7 +119,7 @@ class AnnouncementRemoteMediator(
     private suspend fun insertAnnouncement(dto: PagedAnnouncementsResponseDto) {
 
         val mappedAuthors = dto.data.map { it.author.toAuthorEntity() }
-        authorLocalDataSource.upsertAuthors(mappedAuthors)
+        authorLocalDataSource.insertOrIgnoreAuthors(mappedAuthors)
 
         val mappedAnnouncements = dto.data.map { it.toAnnouncementEntity() }
         announcementLocalDataSource.upsertAnnouncements(mappedAnnouncements)

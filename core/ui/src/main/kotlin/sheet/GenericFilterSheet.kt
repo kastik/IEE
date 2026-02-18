@@ -82,7 +82,8 @@ fun <T> GenericFilterSheet(
     ModalBottomSheet(
         modifier = modifier,
         onDismissRequest = onDismiss,
-        sheetState = sheetState
+        sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
     ) {
         Row(
             modifier = Modifier
@@ -187,12 +188,15 @@ private fun <T> FilterRow(
 @Composable
 private fun AlphabetHeader(char: Char) {
     Surface(
-        tonalElevation = 2.dp, modifier = Modifier.fillMaxWidth()
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = 4.dp,
+        modifier = Modifier.fillMaxWidth()
     ) {
         Text(
             text = char.toString(),
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.padding(8.dp)
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(16.dp)
         )
     }
 }

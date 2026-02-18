@@ -3,10 +3,8 @@ package com.kastik.benchmark.apps.baselineprofile
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import com.kastik.benchmark.apps.launchAppAndDismissSigningDialog
 import com.kastik.benchmark.apps.settings.navigateToSettings
-import com.kastik.benchmark.apps.settings.toggleAboutApp
 import com.kastik.benchmark.apps.settings.toggleDynamicTheme
-import com.kastik.benchmark.apps.settings.toggleForYou
-import com.kastik.benchmark.apps.settings.toggleNotifications
+import com.kastik.benchmark.apps.settings.toggleFabFilters
 import com.kastik.benchmark.apps.settings.toggleSearchFieldOptions
 import com.kastik.benchmark.apps.settings.toggleSortingOptions
 import com.kastik.benchmark.apps.settings.toggleThemeOptions
@@ -25,11 +23,9 @@ class SettingsBaselineProfile {
         launchAppAndDismissSigningDialog()
         navigateToSettings()
         toggleSortingOptions()
-        toggleForYou()
+        toggleFabFilters()
         toggleSearchFieldOptions()
         toggleThemeOptions()
         toggleDynamicTheme()
-        toggleNotifications()
-        toggleAboutApp()
     }
 }

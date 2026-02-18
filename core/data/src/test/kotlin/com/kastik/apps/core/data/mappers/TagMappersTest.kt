@@ -1,12 +1,12 @@
 package com.kastik.apps.core.data.mappers
 
 import com.google.common.truth.Truth.assertThat
-import com.kastik.apps.core.testing.testdata.announcementTagDtoTestData
+import com.kastik.apps.core.datastore.testdata.subscribableTagProtoTestData
+import com.kastik.apps.core.datastore.testdata.subscribedTagProtoTestData
+import com.kastik.apps.core.network.testdata.announcementTagDtoTestData
+import com.kastik.apps.core.network.testdata.subscribableTagsDtoTestData
+import com.kastik.apps.core.network.testdata.subscribedTagDtoTestData
 import com.kastik.apps.core.testing.testdata.announcementTagEntityTestData
-import com.kastik.apps.core.testing.testdata.subscribableTagProtoTestData
-import com.kastik.apps.core.testing.testdata.subscribableTagsDtoTestData
-import com.kastik.apps.core.testing.testdata.subscribedTagDtoTestData
-import com.kastik.apps.core.testing.testdata.subscribedTagProtoTestData
 import org.junit.Test
 
 class TagMappersTest {
@@ -93,13 +93,6 @@ class TagMappersTest {
 
         assertThat(domain).isNotEmpty()
         assertThat(domain.size).isEqualTo(proto.size)
-
-
-        proto.zip(domain).forEach { (proto, domain) ->
-            assertThat(domain.id).isEqualTo(proto.id)
-            assertThat(domain.parentId ?: 0).isEqualTo(proto.parentId)
-            assertThat(domain.title).isEqualTo(proto.title)
-            assertThat(domain.deletedAt).isEqualTo(proto.deletedAt)
-        }
+        assertThat(domain).containsExactlyElementsIn(proto.map { it.toSubscribableTag() })
     }
 }

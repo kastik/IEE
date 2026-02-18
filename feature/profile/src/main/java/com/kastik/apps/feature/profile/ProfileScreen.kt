@@ -9,12 +9,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +32,7 @@ import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -35,7 +41,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -109,12 +114,8 @@ private fun SuccessState(
     )
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Your Profile") },
-                navigationIcon = {},
-            )
-        }) { innerPadding ->
+        contentWindowInsets = WindowInsets()
+    ) { innerPadding ->
 
         if (uiState.showTagSheet) {
             GenericRecursiveSheet(
@@ -133,9 +134,12 @@ private fun SuccessState(
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(28.dp)
         ) {
+            Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
+
             ProfilePicture(
                 name = uiState.profile.name
             )
@@ -175,6 +179,7 @@ private fun SuccessState(
                     text = "Log Out", style = MaterialTheme.typography.titleMedium
                 )
             }
+            Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
         }
     }
 }
@@ -189,7 +194,9 @@ private fun ProfileMeta(
     createdAt: String,
 ) {
     ElevatedCard(
-        shape = RoundedCornerShape(22.dp), modifier = modifier.fillMaxWidth()
+        shape = RoundedCornerShape(22.dp), modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
     ) {
         Column(
             Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -201,7 +208,7 @@ private fun ProfileMeta(
             }
             Column {
                 Text(
-                    "Role",
+                    text = "Role",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -210,27 +217,32 @@ private fun ProfileMeta(
                         isAdmin -> "Administrator"
                         isAuthor -> "Author"
                         else -> "Student"
-                    }, style = MaterialTheme.typography.bodyLarge
+                    }, style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
             Column {
                 Text(
-                    "Last Login",
+                    text = "Last Login",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    lastLogin, style = MaterialTheme.typography.bodyLarge
+                    text = lastLogin,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
             Column {
                 Text(
-                    "Joined",
+                    text = "Joined",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    createdAt, style = MaterialTheme.typography.bodyLarge
+                    createdAt,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -245,12 +257,14 @@ private fun ProfileName(
 ) {
     ElevatedCard(
         shape = MaterialTheme.shapes.extraLarge,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
     ) {
         Column(
             Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text(name, style = MaterialTheme.typography.headlineSmall)
+            Text(name, style = MaterialTheme.typography.titleLarge)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Outlined.Email, null, Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
@@ -289,7 +303,9 @@ private fun ProfileSubscribedTags(
 ) {
     ElevatedCard(
         shape = MaterialTheme.shapes.extraLarge,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
     ) {
         Column(
             Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)

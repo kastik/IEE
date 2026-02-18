@@ -13,4 +13,6 @@ dependencies {
     api(project(":core:datastore-proto"))
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preferences)
+
+    testFixturesImplementation(libs.androidx.test.core.ktx)
 }
