@@ -11,16 +11,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -33,7 +39,6 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -144,15 +149,9 @@ private fun SettingsScreenContent(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Settings", style = MaterialTheme.typography.titleLarge
-                    )
-                })
+        contentWindowInsets = WindowInsets()
+    ) { paddingValues ->
 
-        }) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -163,9 +162,16 @@ private fun SettingsScreenContent(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.Start
         ) {
-            Text("Feed Options", style = MaterialTheme.typography.titleMedium)
+            Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
+            Text(
+                text = "Feed Options",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp)
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(size = 20.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
             ) {
                 Column {
                     Column(
@@ -173,7 +179,11 @@ private fun SettingsScreenContent(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
-                        Text("Sort by", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = "Sort by",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                         Spacer(Modifier.height(8.dp))
                         SettingsegmentedButton(
                             selected = sortType,
@@ -230,9 +240,15 @@ private fun SettingsScreenContent(
                 }
             }
 
-            Text("Search Options", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "Search Options",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp)
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
             ) {
                 Column {
                     Column(
@@ -240,7 +256,11 @@ private fun SettingsScreenContent(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
-                        Text("Search in", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = "Search in",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                         Spacer(Modifier.height(8.dp))
                         SettingsegmentedButton(
                             selected = searchScope,
@@ -265,9 +285,15 @@ private fun SettingsScreenContent(
 
 
 
-            Text("Appearance", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp)
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
             ) {
                 Column {
                     Column(
@@ -275,7 +301,11 @@ private fun SettingsScreenContent(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
-                        Text("Theme", style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = "Theme",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                         Spacer(Modifier.height(8.dp))
                         SettingsegmentedButton(
                             selected = theme,
@@ -317,9 +347,15 @@ private fun SettingsScreenContent(
                 }
             }
 
-            Text("Notifications", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "Notifications",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp)
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
             ) {
                 Column {
                     SettingSwitchRow(
@@ -345,9 +381,15 @@ private fun SettingsScreenContent(
                 }
             }
 
-            Text("About", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "About",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp)
+                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
             ) {
                 Column {
                     SettingNavigationRow(
@@ -362,6 +404,7 @@ private fun SettingsScreenContent(
                         })
                 }
             }
+            Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
         }
     }
 }
@@ -382,9 +425,13 @@ fun <T> SettingsegmentedButton(
             SegmentedButton(
                 selected = selected == option,
                 onClick = { onSelected(option) },
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
             ) {
-                Text(text = label(option))
+                Text(
+                    text = label(option),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = if (selected == option) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
@@ -408,11 +455,15 @@ private fun SettingSwitchRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             if (subtitle != null) {
                 Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -436,11 +487,15 @@ private fun SettingNavigationRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             if (subtitle != null) {
                 Text(
-                    subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

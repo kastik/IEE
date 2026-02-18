@@ -30,7 +30,8 @@ fun IEEFilterChip(
         label = {
             Text(
                 text = displayLabel,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         },
         trailingIcon = { Icon(Icons.Default.ArrowDropDown, null) }

@@ -327,7 +327,6 @@ private fun HomeScreenContent(
         ) {
             HorizontalPager(
                 state = pagerState,
-                key = { pagerState.currentPage },
             ) { page ->
                 when (page) {
                     0 -> {

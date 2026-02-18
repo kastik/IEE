@@ -56,7 +56,8 @@ fun <T> SearchBarQuickResults(
                     Icon(icon, contentDescription = null)
                     Text(
                         text = labelProvider(item),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
