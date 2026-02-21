@@ -1,5 +1,6 @@
 ### Get Auth code used in Aboard authentication
 POST https://{{aboard_server}}/token
+Accept: application/json
 Content-Type: application/x-www-form-urlencoded
 
 client_id = {{client_id}}
@@ -12,38 +13,54 @@ scope = id,cn
 
 ### Authenticate with login.iee.ihu.gr token
 GET https://{{aboard_server}}/api/v2/authenticate?code=YOUR_CODE
+Accept: application/json
+
 
 ### Authenticate with static code ( Warning this needs a local setup to work! )
 GET https://{{aboard_server}}/api/v2/authenticate?code=DEBUG_CODE
+Accept: application/json
+
 
 ### Authenticate with static code ( Warning this needs a local setup to work! )
 GET https://{{aboard_server}}/api/v2/authenticate?code=AUTHOR_CODE
+Accept: application/json
+
 
 
 ###Refresh an active token
-POST {{aboard_server}}/api/v2/auth/token
+POST https://{{aboard_server}}/api/v2/auth/token
+Accept: application/json
 Content-Type: application/json
 
 {
   "token": "{{bearer}}"
 }
 
+### Refresh an expired token
+POST https://{{aboard_server}}/api/v2/auth/refresh
+Accept: application/json
+Authorization: Bearer {{bearer}}
+
 ### Who am i (Fetch signed-in user profile)
 GET https://{{aboard_server}}/api/v2/auth/whoami
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 
 ### Fetch User's subrcribed tags
 GET https://{{aboard_server}}/api/v2/auth/subscriptions
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Fetch Tags users can subrcribe
 GET https://{{aboard_server}}/api/v2/subscribetags/
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Subrcrible to tags with id = 93, 11, 15, 34, 67
 POST https://{{aboard_server}}/api/v2/auth/subscribe
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 Content-Type: application/json
 
 {
@@ -59,99 +76,117 @@ Content-Type: application/json
 
 ### Request Announcements Without Auth
 GET https://{{aboard_server}}/api/v2/announcements?perPage=10
+Accept: application/json
 
 ### Request Announcements With Auth
 GET https://{{aboard_server}}/api/v2/announcements?perPage=10
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 
 
 ### Request 10 Announcements
 GET https://{{aboard_server}}/api/v2/announcements?perPage=10
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Request Announcements, page 2
 GET https://{{aboard_server}}/api/v2/announcements?perPage=10&page=2
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 
 
 ### Request Announcements by Importance
 GET https://{{aboard_server}}/api/v2/announcements?sortId=0
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Request Announcements by Date decending
 GET https://{{aboard_server}}/api/v2/announcements?sortId=1
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Request Announcements by Date ascending
 GET https://{{aboard_server}}/api/v2/announcements?sortId=2
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Request 10 Announcements by importance, page 6
 GET https://{{aboard_server}}/api/v2/announcements?sortId=1&perPage=5
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Fetch Announcements With Body and Title text of "IEEE"
 GET https://{{aboard_server}}/api/v2/announcements?
     title=IEEE&
     body=IEEE
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Fetch Announcements With Body of "base"
 GET https://{{aboard_server}}/api/v2/announcements?
     body=base
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 
 ### Fetch Announcements with tagId=93
 GET https://{{aboard_server}}/api/v2/announcements?
     tags[]=19
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 
 ### Fetch Announcements with tagId=93, tagId=26
 GET https://{{aboard_server}}/api/v2/announcements?
     tags[]=93&
     tags[]=26
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 
 
 ### Request Announcement with id=64826
 GET https://{{aboard_server}}/api/v2/announcements/64826
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 
 
 ### Fetch All Tags
 GET https://{{aboard_server}}/api/v2/tags
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Fetch Filters (Tag structure and details)
 GET https://{{aboard_server}}/api/v2/filtertags
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ### Fetch All Authors
 GET https://{{aboard_server}}/api/v2/authors
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 
 ### Fetch from Attachment with id=17409, from announcement with id=64826
 GET https://{{aboard_server}}/api/v2/announcements/64826/attachments/17409
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 
 ### Fetch calendar? tf?
-https://{{aboard_server}}/api/v2/announcements?sortId=1&perPage=20&title=test&page=1&body=test&
+GET https://{{aboard_server}}/api/v2/announcements?sortId=1&perPage=20&title=test&page=1&body=test&
     tags[]=160&tags[]=18752&tags[]=19&users[]=1904&users[]=103&
     updatedAfter=2023-06-05T00%3A00%3A00.000Z&updatedBefore=2023-06-30T00%3A00%3A00.000Z
-authorization: Bearer {{bearer}}
+Accept: application/json
+Authorization: Bearer {{bearer}}
 
 ###POST ANNOUNCEMENT
 POST https://{{aboard_server}}/api/v2/announcements/
-Authorization: Bearer {{bearer}}
 Accept: application/json
+Authorization: Bearer {{bearer}}
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
