@@ -152,8 +152,8 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
             .map { it?.toAnnouncement() }
     }
 
-    override suspend fun getAttachmentUrl(attachmentId: Int): String {
-        return announcementLocalDataSource.getAttachmentWithId(attachmentId)
+    override suspend fun getAttachmentUrl(attachmentId: Int): String = withContext(ioDispatcher) {
+        announcementLocalDataSource.getAttachmentWithId(attachmentId)
     }
 
     override suspend fun clearAnnouncementCache() = withContext(ioDispatcher) {
