@@ -81,6 +81,10 @@ interface AboardApiClient {
         @Body aboardTokenRefreshRequestDto: AboardTokenRefreshRequestDto
     ): AboardTokenResponseDto
 
+    @POST("auth/refresh")
+    suspend fun refreshExpiredToken(
+    ): AboardTokenResponseDto
+
     @GET("auth/whoami")
     suspend fun getUserInfo(): ProfileResponseDto
 

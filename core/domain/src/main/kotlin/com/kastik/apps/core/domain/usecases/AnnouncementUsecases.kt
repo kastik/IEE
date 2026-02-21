@@ -71,7 +71,7 @@ class GetFilteredAnnouncementsUseCase @Inject constructor(
         }
 }
 
-@ViewModelScoped
+@Singleton
 class GetForYouAnnouncementsUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val announcementRepository: AnnouncementRepository,
