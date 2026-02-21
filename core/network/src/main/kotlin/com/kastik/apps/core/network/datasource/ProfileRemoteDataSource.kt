@@ -1,6 +1,7 @@
 package com.kastik.apps.core.network.datasource
 
 
+import com.kastik.apps.core.di.AuthenticatorAboardClient
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
 import com.kastik.apps.core.network.model.aboard.tags.SubscribeToTagsRequestDto
@@ -14,7 +15,7 @@ interface ProfileRemoteDataSource {
 }
 
 internal class ProfileRemoteDataSourceImpl @Inject constructor(
-    private val aboardApiClient: AboardApiClient,
+    @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient,
 ) : ProfileRemoteDataSource {
 
     override suspend fun getProfile(): ProfileResponseDto {

@@ -1,5 +1,6 @@
 package com.kastik.apps.core.network.datasource
 
+import com.kastik.apps.core.di.AuthenticatorAboardClient
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenRefreshRequestDto
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
@@ -16,7 +17,7 @@ interface AuthenticationRemoteDataSource {
 
 
 internal class AuthenticationRemoteDataSourceImpl @Inject constructor(
-    private val aboardApiClient: AboardApiClient,
+    @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient,
 ) : AuthenticationRemoteDataSource {
 
     override suspend fun exchangeCodeForAboardToken(code: String): AboardTokenResponseDto =

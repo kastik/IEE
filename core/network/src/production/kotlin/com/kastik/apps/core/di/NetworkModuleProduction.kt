@@ -1,5 +1,6 @@
 package com.kastik.apps.core.di
 
+import com.kastik.apps.core.network.interceptor.AboardAuthenticator
 import com.kastik.apps.core.network.interceptor.TokenInterceptor
 import com.kastik.apps.core.network.serializers.SortTypeQueryConverterFactory
 import dagger.Module
@@ -21,9 +22,9 @@ class NetworkModuleProduction {
 
     @Provides
     @Singleton
-    @AboardRetrofit
-    fun provideAnnRetrofit(
-        @AboardOkHttp client: OkHttpClient,
+    @AuthenticatorAboardRetrofit
+    fun provideAuthenticatorAboardRetrofit(
+        @AuthenticatorAboardOkHttp client: OkHttpClient,
         json: Json
     ): Retrofit {
         val contentType = "application/json".toMediaType()
@@ -38,9 +39,41 @@ class NetworkModuleProduction {
 
     @Provides
     @Singleton
-    @AboardOkHttp
-    fun provideAnnOkHttp(
-        tokenInterceptor: TokenInterceptor
+    @BaseAboardRetrofit
+    fun provideBaseAboardRetrofit(
+        @BaseAboardOkHttp client: OkHttpClient,
+        json: Json
+    ): Retrofit {
+        val contentType = "application/json".toMediaType()
+        return Retrofit.Builder()
+            .baseUrl("https://aboard.iee.ihu.gr/api/v2/")
+            .addConverterFactory(SortTypeQueryConverterFactory())
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .client(client)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @AuthenticatorAboardOkHttp
+    fun provideAuthenticatorAboardOkHttp(
+        tokenInterceptor: TokenInterceptor,
+        aboardAuthenticator: AboardAuthenticator,
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(tokenInterceptor)
+            .authenticator(aboardAuthenticator)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @BaseAboardOkHttp
+    fun provideBaseAboardOkHttp(
+        tokenInterceptor: TokenInterceptor,
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)

@@ -1,5 +1,6 @@
 package com.kastik.apps.core.network.datasource
 
+import com.kastik.apps.core.di.AuthenticatorAboardClient
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
@@ -21,7 +22,7 @@ interface AnnouncementRemoteDataSource {
 }
 
 internal class AnnouncementRemoteDataSourceImpl @Inject constructor(
-    private val aboardApiClient: AboardApiClient
+    @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient
 ) : AnnouncementRemoteDataSource {
     override suspend fun fetchPagedAnnouncements(
         page: Int,
