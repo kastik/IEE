@@ -10,7 +10,6 @@ interface AuthenticationRepository {
     fun getIsSignedIn(): Flow<Boolean>
     suspend fun refreshIsSignedIn(): Result<Unit, AuthenticatedRefreshError>
     suspend fun refreshAboardToken(): Result<Unit, AuthenticatedRefreshError>
-    suspend fun refreshExpiredAboardToken(): Result<Unit, AuthenticatedRefreshError>
     suspend fun exchangeCodeForAbroadToken(code: String): Result<Unit, AuthenticatedRefreshError>
     suspend fun clearAuthenticationData(): Result<Unit, StorageError>
 

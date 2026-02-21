@@ -75,15 +75,10 @@ class SignOutUserUseCase @Inject constructor(
 class RefreshTokenUseCase @Inject constructor(
     private val repository: AuthenticationRepository,
     private val signOutUserUseCase: SignOutUserUseCase,
-    private val remoteConfigRepository: RemoteConfigRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     suspend operator fun invoke(): Result<Unit, AuthenticatedRefreshError> {
-        val result = if (remoteConfigRepository.isAuthenticatorEnabled()) {
-            repository.refreshExpiredAboardToken()
-        } else {
-            repository.refreshAboardToken()
-        }
+        val result = repository.refreshAboardToken()
         if (result is Result.Error && result.error is AuthenticationError) {
             signOutUserUseCase()
             return result

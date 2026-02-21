@@ -83,21 +83,6 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshExpiredAboardToken() = withContext(NonCancellable + ioDispatcher) {
-        try {
-            val response = authenticationRemoteDataSource.refreshExpiredAboardToken()
-            authenticationLocalDataSource.setAboardAccessToken(response.accessToken)
-            authenticationLocalDataSource.setAboardTokenExpiration(response.expiresIn)
-            authenticationLocalDataSource.setAboardTokenLastRefreshTime(System.currentTimeMillis())
-            Result.Success(Unit)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            crashlytics.recordException(e)
-            Result.Error(e.toPrivateRefreshError())
-        }
-    }
-
 
     override suspend fun clearAuthenticationData() = withContext(NonCancellable + ioDispatcher) {
         try {

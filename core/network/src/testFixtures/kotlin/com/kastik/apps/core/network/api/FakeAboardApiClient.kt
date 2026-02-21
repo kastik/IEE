@@ -65,6 +65,10 @@ class FakeAboardApiClient : AboardApiClient {
         return aboardTokenResponseDtoTestData
     }
 
+    override suspend fun refreshExpiredToken(): AboardTokenResponseDto {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getUserInfo(): ProfileResponseDto {
         throwOnApiCall?.let {
             throw it

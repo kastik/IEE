@@ -11,7 +11,6 @@ import javax.inject.Inject
 interface AuthenticationRemoteDataSource {
     suspend fun exchangeCodeForAboardToken(code: String): AboardTokenResponseDto
     suspend fun refreshAboardToken(token: String): AboardTokenResponseDto
-    suspend fun refreshExpiredAboardToken(): AboardTokenResponseDto
     suspend fun checkIfTokenIsValid(): Boolean
 }
 
@@ -25,10 +24,6 @@ internal class AuthenticationRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun refreshAboardToken(token: String): AboardTokenResponseDto {
         return aboardApiClient.refreshToken(AboardTokenRefreshRequestDto(token))
-    }
-
-    override suspend fun refreshExpiredAboardToken(): AboardTokenResponseDto {
-        return aboardApiClient.refreshExpiredToken()
     }
 
     override suspend fun checkIfTokenIsValid(): Boolean {
