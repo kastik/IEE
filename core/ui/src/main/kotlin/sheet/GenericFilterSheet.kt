@@ -176,7 +176,7 @@ private fun <T> FilterRow(
     val id = idProvider(item)
     val isSelected = id in selection
 
-    SelectableTagItem(
+    SelectableItem(
         title = labelProvider(item),
         isSelected = isSelected,
         onToggle = {
