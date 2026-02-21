@@ -5,22 +5,26 @@ import android.content.Context
 import android.os.Environment
 import androidx.core.net.toUri
 import com.kastik.apps.core.domain.service.FileDownloader
-import com.kastik.apps.core.network.interceptor.TokenProvider
+import com.kastik.apps.core.network.interceptor.TokenManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
+
+//TODO DownloadManager doesn't support authenticators and can result in race conditions,
+// convert this to a Retrofit api call at some point
+
 internal class FileDownloaderImpl @Inject constructor(
     @ApplicationContext context: Context,
-    val tokenProvider: TokenProvider,
+    val tokenManager: TokenManager,
 ) : FileDownloader {
     private val downloadManger = context.getSystemService(DownloadManager::class.java)
 
-    override fun downloadAttachment(
+    override suspend fun downloadAttachment(
         url: String,
         fileName: String,
         mimeType: String,
     ) {
-        val token = tokenProvider.token.value
+        val token = tokenManager.getToken()
 
         val request = DownloadManager.Request(url.toUri()).apply {
             setTitle(fileName)

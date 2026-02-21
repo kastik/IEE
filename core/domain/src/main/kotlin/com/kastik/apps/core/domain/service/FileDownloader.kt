@@ -1,7 +1,7 @@
 package com.kastik.apps.core.domain.service
 
 interface FileDownloader {
-    fun downloadAttachment(
+    suspend fun downloadAttachment(
         url: String,
         fileName: String,
         mimeType: String,
