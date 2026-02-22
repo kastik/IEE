@@ -5,6 +5,8 @@ import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -268,7 +270,11 @@ private fun HomeScreenContent(
                     openAuthorSheet = { showAuthorSheet.value = true })
             },
             collapsedSecondaryActions = {
-                if (uiState.enableForYou) {
+                AnimatedVisibility(
+                    visible = uiState.enableForYou,
+                    enter = slideInVertically(),
+                    exit = slideOutVertically()
+                ) {
                     SecondaryTabRow(
                         selectedTabIndex = pagerState.currentPage,
                     ) {
