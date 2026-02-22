@@ -27,4 +27,5 @@ dependencies {
     testFixturesImplementation(project(":core:model"))
     testFixturesImplementation(libs.androidx.test.core.ktx)
     testFixturesImplementation(libs.okhttp.logging.interceptor)
+    testFixturesImplementation(libs.kotlinx.datetime)
 }

@@ -2,7 +2,6 @@ package com.kastik.apps.core.network.api
 
 
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementDto
 import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
 import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenRefreshRequestDto
@@ -20,6 +19,7 @@ import com.kastik.apps.core.network.testdata.subscribableTagsDtoTestData
 import com.kastik.apps.core.network.testdata.subscribedTagDtoTestData
 import com.kastik.apps.core.network.testdata.tagsResponseDtoTestData
 import com.kastik.apps.core.network.testdata.userProfileDtoTestData
+import kotlinx.datetime.LocalDateTime
 import okhttp3.ResponseBody
 
 
@@ -40,7 +40,8 @@ class FakeAboardApiClient : AboardApiClient {
         authorId: List<Int>?,
         tagsIds: List<Int>?,
         title: String?,
-        body: String?
+        body: String?,
+        updatedAfter: LocalDateTime?
     ): PagedAnnouncementsResponseDto {
         return announcementPageResponseTestData[page - 1]
     }
@@ -90,18 +91,6 @@ class FakeAboardApiClient : AboardApiClient {
     }
 
     override suspend fun searchAnnouncements(id: Int, attachmentId: Int): ResponseBody {
-        throw Exception("Not implemented")
-    }
-
-    override suspend fun uploadAnnouncement(announcement: AnnouncementDto) {
-        throw Exception("Not implemented")
-    }
-
-    override suspend fun deleteAnnouncement(id: Int) {
-        throw Exception("Not implemented")
-    }
-
-    override suspend fun updateAnnouncement(id: Int) {
         throw Exception("Not implemented")
     }
 
