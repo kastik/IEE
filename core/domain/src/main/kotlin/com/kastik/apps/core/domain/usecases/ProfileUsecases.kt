@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.time.Clock
 
 class GetUserProfileUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
@@ -53,7 +54,7 @@ class SubscribeToEmailTagsUseCase @Inject constructor(
     suspend operator fun invoke(newTagIds: List<Int>) = coroutineScope {
         val result = profileRepository.subscribeToEmailTags(newTagIds)
         if (result is Result.Success) {
-            userPreferencesRepository.setNotifiedAnnouncementId(emptyList())
+            userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
         }
         result
     }

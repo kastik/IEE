@@ -62,7 +62,6 @@ class SignOutUserUseCase @Inject constructor(
         profileRepository.clearLocalData()
         authenticationRepository.clearAuthenticationData()
         announcementRepository.clearAnnouncementCache()
-        userPreferencesRepository.clearNotifiedAnnouncementId()
         userPreferencesRepository.setHasSkippedSignIn(false)
         workScheduler.cancelTokenRefresh()
         workScheduler.cancelAnnouncementAlerts()

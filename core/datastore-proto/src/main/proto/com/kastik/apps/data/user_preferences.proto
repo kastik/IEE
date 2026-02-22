@@ -10,7 +10,8 @@ message UserPreferences{
   Sort sort_type = 4;
   QueryScope query_scope = 5;
   bool enable_for_you = 6;
-  repeated int32 notified_announcement_ids = 7;
+  reserved 7;
+  reserved "notified_announcement_ids";
   bool enable_fab_filters = 8;
   google.protobuf.Timestamp updated_after = 9;
 }

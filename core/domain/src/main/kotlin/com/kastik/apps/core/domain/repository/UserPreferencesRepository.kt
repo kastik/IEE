@@ -19,10 +19,6 @@ interface UserPreferencesRepository {
     suspend fun setSearchScope(searchScope: SearchScope)
     fun isForYouEnabled(): Flow<Boolean>
     suspend fun setForYouEnabled(value: Boolean)
-    fun getNotifiedAnnouncementIds(): Flow<List<Int>>
-    suspend fun setNotifiedAnnouncementId(notificationId: Int)
-    suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>)
-    suspend fun clearNotifiedAnnouncementId()
     fun areFabFiltersEnabled(): Flow<Boolean>
     suspend fun setFabFiltersEnabled(value: Boolean)
     fun getLastNotificationCheckTime(): Flow<Instant?>
