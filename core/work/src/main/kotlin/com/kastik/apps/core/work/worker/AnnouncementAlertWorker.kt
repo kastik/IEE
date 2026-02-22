@@ -10,7 +10,7 @@ import androidx.work.WorkerParameters
 import com.kastik.apps.core.domain.repository.RemoteConfigRepository
 import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.CheckNewAnnouncementsUseCase
-import com.kastik.apps.core.domain.usecases.StoreNotifiedAnnouncementIdsUseCase
+import com.kastik.apps.core.model.error.AuthenticationError
 import com.kastik.apps.core.model.result.Result.Error
 import com.kastik.apps.core.model.result.Result.Success
 import com.kastik.apps.core.work.scheduler.WorkSchedulerImpl.Companion.ANNOUNCEMENT_REFRESH_WORK_NAME
@@ -24,11 +24,9 @@ class AnnouncementAlertWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val notifier: Notifier,
     private val checkNewAnnouncementsUseCase: CheckNewAnnouncementsUseCase,
-    private val storeNotifiedAnnouncementIdsUseCase: StoreNotifiedAnnouncementIdsUseCase,
     private val remoteConfigRepository: RemoteConfigRepository
 ) : CoroutineWorker(context, workerParams) {
 
-    //TODO Store and check last sync time
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result {
 
@@ -46,13 +44,16 @@ class AnnouncementAlertWorker @AssistedInject constructor(
                         title = announcement.title,
                         body = announcement.preview
                     )
-                    storeNotifiedAnnouncementIdsUseCase(announcement.id)
                 }
                 return Result.success()
             }
 
             is Error -> {
-                if (runAttemptCount > 10) {
+                if (newAnnouncements.error is AuthenticationError) {
+                    notifier.sendPushNotification(
+                        title = "You have been logged out.",
+                        body = "Please sign in again to continue receiving notifications."
+                    )
                     return Result.failure()
                 }
                 return Result.retry()

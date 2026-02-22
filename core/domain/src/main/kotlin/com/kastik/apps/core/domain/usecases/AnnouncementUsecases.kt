@@ -7,7 +7,8 @@ import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.model.error.GeneralRefreshError
+import com.kastik.apps.core.model.error.AuthenticatedRefreshError
+import com.kastik.apps.core.model.error.AuthenticationError
 import com.kastik.apps.core.model.result.Result
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.collections.immutable.persistentListOf
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Clock
 
 @Singleton
 class GetHomeAnnouncementsUseCase @Inject constructor(
@@ -123,73 +125,47 @@ class RefreshAnnouncementWithIdUseCase @Inject constructor(
 }
 
 
-//TODO When changing the subscribed tags the storedIds will not match anything,
-// leading to missed announcements for the first launch of this UseCase
 class CheckNewAnnouncementsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
     private val profileRepository: ProfileRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
+    suspend operator fun invoke(): Result<List<Announcement>, AuthenticatedRefreshError> {
 
-    private companion object {
-        const val PAGE_SIZE = 20
-        const val MAX_PAGES_SAFETY_LIMIT = 2
-        const val MAX_HISTORY_SIZE = 50
-    }
+        val subscriptionResult = profileRepository.refreshEmailSubscriptions()
 
-    suspend operator fun invoke(): Result<List<Announcement>, GeneralRefreshError> {
+        if (subscriptionResult is Result.Error && subscriptionResult.error is AuthenticationError) {
+            return subscriptionResult
+        }
 
         val subscribedTagIds =
             profileRepository.getEmailSubscriptions().first().map { it.id }
 
-        if (subscribedTagIds.isEmpty()) return Result.Success(emptyList<Announcement>())
+        val lastNotifiedTime =
+            userPreferencesRepository.getLastNotificationCheckTime().first()
 
-        val notifiedAnnouncementIds =
-            userPreferencesRepository.getNotifiedAnnouncementIds().first().toMutableSet()
-
-        val announcementsToNotify = mutableListOf<Announcement>()
-
-        val coldStart = notifiedAnnouncementIds.isEmpty()
-
-        var page = 1
-
-        while (page <= MAX_PAGES_SAFETY_LIMIT) {
-
-            val announcementResult = announcementRepository.fetchAnnouncements(
-                page = page,
-                perPage = PAGE_SIZE,
-                sortType = SortType.DESC,
-                tagIds = subscribedTagIds
-            )
-
-            when (announcementResult) {
-                is Result.Success -> {
-                    val firstKnownIndex =
-                        announcementResult.data.indexOfFirst { notifiedAnnouncementIds.contains(it.id) }
-
-                    if (firstKnownIndex == -1) {
-                        announcementsToNotify.addAll(announcementResult.data)
-                        page++
-                    } else {
-                        val trulyNewItems = announcementResult.data.subList(0, firstKnownIndex)
-                        announcementsToNotify.addAll(trulyNewItems)
-                        break
-                    }
-                }
-
-                is Result.Error -> {
-                    return announcementResult
-                }
-
-            }
+        if (subscribedTagIds.isEmpty() || lastNotifiedTime == null) {
+            userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
+            return Result.Success(emptyList())
         }
 
-        if (coldStart) {
-            val updatedHistory = announcementsToNotify.toList().takeLast(MAX_HISTORY_SIZE)
-            userPreferencesRepository.setNotifiedAnnouncementId(updatedHistory.map { it.id })
-            return Result.Success(emptyList())
-        } else {
-            return Result.Success(announcementsToNotify)
+        val announcementResult = announcementRepository.fetchAnnouncements(
+            page = 1,
+            perPage = 20,
+            sortType = SortType.DESC,
+            tagIds = subscribedTagIds,
+            updatedAfter = lastNotifiedTime
+        )
+
+        when (announcementResult) {
+            is Result.Success -> {
+                userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
+                return Result.Success(announcementResult.data)
+            }
+
+            is Result.Error -> {
+                return announcementResult
+            }
         }
     }
 }

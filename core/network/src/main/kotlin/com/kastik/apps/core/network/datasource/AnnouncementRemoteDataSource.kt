@@ -5,6 +5,7 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
 import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import kotlinx.datetime.LocalDateTime
 import javax.inject.Inject
 
 interface AnnouncementRemoteDataSource {
@@ -15,7 +16,8 @@ interface AnnouncementRemoteDataSource {
         title: String? = null,
         body: String? = null,
         authorId: List<Int>? = null,
-        tagId: List<Int>? = null
+        tagId: List<Int>? = null,
+        updatedAfter: LocalDateTime? = null,
     ): PagedAnnouncementsResponseDto
 
     suspend fun fetchAnnouncementWithId(id: Int): AnnouncementResponseDto
@@ -31,7 +33,8 @@ internal class AnnouncementRemoteDataSourceImpl @Inject constructor(
         title: String?,
         body: String?,
         authorId: List<Int>?,
-        tagId: List<Int>?
+        tagId: List<Int>?,
+        updatedAfter: LocalDateTime?
     ): PagedAnnouncementsResponseDto = aboardApiClient.getAnnouncements(
         page = page,
         perPage = perPage,
@@ -39,7 +42,8 @@ internal class AnnouncementRemoteDataSourceImpl @Inject constructor(
         title = title?.ifEmpty { null },
         body = body?.ifEmpty { null },
         authorId = authorId,
-        tagsIds = tagId
+        tagsIds = tagId,
+        updatedAfter = updatedAfter
     )
 
     override suspend fun fetchAnnouncementWithId(id: Int): AnnouncementResponseDto =

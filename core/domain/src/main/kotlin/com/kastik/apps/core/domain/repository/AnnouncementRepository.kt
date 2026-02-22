@@ -8,6 +8,7 @@ import com.kastik.apps.core.model.error.GeneralRefreshError
 import com.kastik.apps.core.model.error.StorageError
 import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
+import kotlin.time.Instant
 
 interface AnnouncementRepository {
     fun getPagedAnnouncements(
@@ -26,6 +27,7 @@ interface AnnouncementRepository {
         bodyQuery: String = "",
         authorIds: List<Int> = emptyList(),
         tagIds: List<Int> = emptyList(),
+        updatedAfter: Instant? = null
     ): Result<List<Announcement>, GeneralRefreshError>
 
     fun getAnnouncementsQuickResults(

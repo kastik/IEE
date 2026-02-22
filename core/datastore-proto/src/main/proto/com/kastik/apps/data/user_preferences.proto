@@ -1,6 +1,7 @@
 syntax = "proto3";
 option java_package = "com.kastik.apps.core.datastore.proto";
 option java_multiple_files = true;
+import "google/protobuf/timestamp.proto";
 
 message UserPreferences{
   Theme theme = 1;
@@ -11,6 +12,7 @@ message UserPreferences{
   bool enable_for_you = 6;
   repeated int32 notified_announcement_ids = 7;
   bool enable_fab_filters = 8;
+  google.protobuf.Timestamp updated_after = 9;
 }
 
 enum Theme {

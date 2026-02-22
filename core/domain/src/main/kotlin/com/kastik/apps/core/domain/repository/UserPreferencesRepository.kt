@@ -4,6 +4,7 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
+import kotlin.time.Instant
 
 interface UserPreferencesRepository {
     fun hasSkippedSignIn(): Flow<Boolean>
@@ -24,4 +25,6 @@ interface UserPreferencesRepository {
     suspend fun clearNotifiedAnnouncementId()
     fun areFabFiltersEnabled(): Flow<Boolean>
     suspend fun setFabFiltersEnabled(value: Boolean)
+    fun getLastNotificationCheckTime(): Flow<Instant?>
+    suspend fun setLastNotificationCheckTime(time: Instant?)
 }

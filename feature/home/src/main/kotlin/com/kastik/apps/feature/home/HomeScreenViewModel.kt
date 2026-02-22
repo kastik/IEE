@@ -63,9 +63,13 @@ class HomeScreenViewModel @Inject constructor(
             enableFabFilters = enableFabFilters
         )
     }.onStart {
-        refreshIsSignedInUseCase()
+        viewModelScope.launch {
+            refreshIsSignedInUseCase()
+        }
     }.stateIn(
-        scope = viewModelScope, started = SharingStarted.Lazily, initialValue = UiState()
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = UiState()
     )
 
     val homeFeedAnnouncements = getHomeAnnouncementsUseCase().cachedIn(viewModelScope)

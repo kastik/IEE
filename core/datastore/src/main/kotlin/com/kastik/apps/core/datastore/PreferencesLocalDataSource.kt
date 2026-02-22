@@ -1,6 +1,7 @@
 package com.kastik.apps.core.datastore
 
 import androidx.datastore.core.DataStore
+import com.google.protobuf.Timestamp
 import com.kastik.apps.core.datastore.proto.QueryScope
 import com.kastik.apps.core.datastore.proto.Sort
 import com.kastik.apps.core.datastore.proto.Theme
@@ -29,6 +30,8 @@ interface PreferencesLocalDataSource {
     suspend fun clearNotifiedAnnouncementIds()
     fun areFabFiltersEnabled(): Flow<Boolean>
     suspend fun setAreFabFiltersEnabled(value: Boolean)
+    fun getLastNotificationCheckTime(): Flow<Timestamp?>
+    suspend fun setLastNotificationCheckTime(time: Timestamp?)
 }
 
 internal class PreferencesLocalDataSourceImpl @Inject constructor(
@@ -139,6 +142,17 @@ internal class PreferencesLocalDataSourceImpl @Inject constructor(
         dataStore.updateData { prefs ->
             prefs.toBuilder()
                 .setEnableFabFilters(value)
+                .build()
+        }
+    }
+
+    override fun getLastNotificationCheckTime(): Flow<Timestamp?> =
+        dataStore.data.map { it.updatedAfter }
+
+    override suspend fun setLastNotificationCheckTime(time: Timestamp?) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setUpdatedAfter(time)
                 .build()
         }
     }

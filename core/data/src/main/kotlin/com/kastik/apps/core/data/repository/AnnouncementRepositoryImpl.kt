@@ -31,9 +31,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Instant
 
 @Singleton
 internal class AnnouncementRepositoryImpl @Inject constructor(
@@ -89,9 +93,14 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         titleQuery: String,
         bodyQuery: String,
         authorIds: List<Int>,
-        tagIds: List<Int>
+        tagIds: List<Int>,
+        updatedAfter: Instant?
     ): Result<List<Announcement>, GeneralRefreshError> =
         try {
+
+            val greekLocalTime: LocalDateTime? =
+                updatedAfter?.toLocalDateTime(TimeZone.of("Europe/Athens"))
+
             Result.Success(
                 announcementRemoteDataSource.fetchPagedAnnouncements(
                     page = page,
@@ -101,6 +110,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
                     body = bodyQuery,
                     tagId = tagIds,
                     authorId = authorIds,
+                    updatedAfter = greekLocalTime
                 ).data.map { it.toAnnouncement() }
             )
         } catch (e: CancellationException) {

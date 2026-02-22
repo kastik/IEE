@@ -12,6 +12,7 @@ import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDt
 import com.kastik.apps.core.network.model.aboard.tags.SubscribeToTagsRequestDto
 import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
 import com.kastik.apps.core.network.model.aboard.tags.TagsResponseDto
+import kotlinx.datetime.LocalDateTime
 import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -32,6 +33,7 @@ interface AboardApiClient {
         @Query("tags[]") tagsIds: List<Int>? = null,
         @Query("title") title: String? = null,
         @Query("body") body: String? = null,
+        @Query("updatedAfter") updatedAfter: LocalDateTime? = null,
     ): PagedAnnouncementsResponseDto
 
     @GET("announcements/{id}")
