@@ -1,5 +1,6 @@
 package com.kastik.apps.core.datastore.datasource
 
+import com.google.protobuf.Timestamp
 import com.kastik.apps.core.datastore.PreferencesLocalDataSource
 import com.kastik.apps.core.datastore.proto.QueryScope
 import com.kastik.apps.core.datastore.proto.Sort
@@ -19,7 +20,7 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
     var enableForYou = false
     var queryScope: QueryScope = QueryScope.Title
 
-    var notifiedAnnouncementIds: List<Int> = emptyList()
+    var lastNotifiedTime: Timestamp? = null
 
 
     override fun getHasSkippedSignIn(): Flow<Boolean> = flowOf(skipped)
@@ -68,20 +69,6 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
         this.enableForYou = value
     }
 
-    override fun getNotifiedAnnouncementIds(): Flow<List<Int>> =
-        flowOf(notifiedAnnouncementIds)
-
-    override suspend fun setNotifiedAnnouncementId(notificationId: Int) {
-        notifiedAnnouncementIds = notifiedAnnouncementIds + notificationId
-    }
-
-    override suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>) {
-        notifiedAnnouncementIds = notificationIds
-    }
-
-    override suspend fun clearNotifiedAnnouncementIds() {
-        notifiedAnnouncementIds = emptyList()
-    }
 
     override fun areFabFiltersEnabled(): Flow<Boolean> =
         flowOf(fabFiltersEnabled)
@@ -89,6 +76,14 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
 
     override suspend fun setAreFabFiltersEnabled(value: Boolean) {
         fabFiltersEnabled = value
+    }
+
+    override fun getLastNotificationCheckTime(): Flow<Timestamp?> =
+        flowOf(lastNotifiedTime)
+
+
+    override suspend fun setLastNotificationCheckTime(time: Timestamp?) {
+        lastNotifiedTime = time
     }
 
 }
