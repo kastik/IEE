@@ -10,6 +10,7 @@ import com.kastik.apps.core.model.error.AuthenticatedRefreshError
 import com.kastik.apps.core.model.error.AuthenticationError
 import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class GetIsSignedInUseCase @Inject constructor(
@@ -24,6 +25,9 @@ class RefreshIsSignedInUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke(): Result<Unit, AuthenticatedRefreshError> {
+        if (!authenticationRepository.getIsSignedIn().first()) {
+            return Result.Error(AuthenticationError)
+        }
         val result = authenticationRepository.refreshIsSignedIn()
         if (result is Result.Error && result.error is AuthenticationError) {
             signOutUserUseCase()
@@ -80,7 +84,6 @@ class RefreshTokenUseCase @Inject constructor(
             signOutUserUseCase()
             return result
         }
-        userPreferencesRepository.setHasSkippedSignIn(false)
         return result
     }
 }
