@@ -4,7 +4,6 @@ import com.kastik.apps.core.di.AuthenticatorAboardClient
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenRefreshRequestDto
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
-import retrofit2.HttpException
 import javax.inject.Inject
 
 //TODO Once aboard gets the new refresh endpoint, remove the old endpoint all together
@@ -28,12 +27,8 @@ internal class AuthenticationRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun checkIfTokenIsValid(): Boolean {
-        return try {
             aboardApiClient.getUserInfo()
-            true
-        } catch (e: HttpException) {
-            e.code() != 401
-        }
+        return true
     }
 
 }
