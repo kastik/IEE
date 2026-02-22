@@ -1,6 +1,7 @@
 package com.kastik.apps.core.datastore
 
 import androidx.datastore.core.DataStore
+import com.google.protobuf.Timestamp
 import com.kastik.apps.core.datastore.proto.QueryScope
 import com.kastik.apps.core.datastore.proto.Sort
 import com.kastik.apps.core.datastore.proto.Theme
@@ -23,12 +24,10 @@ interface PreferencesLocalDataSource {
     suspend fun setSearchScope(queryScope: QueryScope)
     fun getEnableForYou(): Flow<Boolean>
     suspend fun setEnableForYou(value: Boolean)
-    fun getNotifiedAnnouncementIds(): Flow<List<Int>>
-    suspend fun setNotifiedAnnouncementId(notificationId: Int)
-    suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>)
-    suspend fun clearNotifiedAnnouncementIds()
     fun areFabFiltersEnabled(): Flow<Boolean>
     suspend fun setAreFabFiltersEnabled(value: Boolean)
+    fun getLastNotificationCheckTime(): Flow<Timestamp?>
+    suspend fun setLastNotificationCheckTime(time: Timestamp?)
 }
 
 internal class PreferencesLocalDataSourceImpl @Inject constructor(
@@ -104,34 +103,6 @@ internal class PreferencesLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override fun getNotifiedAnnouncementIds(): Flow<List<Int>> =
-        dataStore.data.map { it.notifiedAnnouncementIdsList }
-
-    override suspend fun setNotifiedAnnouncementId(notificationId: Int) {
-        dataStore.updateData { prefs ->
-            prefs.toBuilder()
-                .addNotifiedAnnouncementIds(notificationId)
-                .build()
-        }
-    }
-
-    override suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>) {
-        dataStore.updateData { prefs ->
-            prefs.toBuilder()
-                .clearNotifiedAnnouncementIds()
-                .addAllNotifiedAnnouncementIds(notificationIds)
-                .build()
-        }
-    }
-
-    override suspend fun clearNotifiedAnnouncementIds() {
-        dataStore.updateData { prefs ->
-            prefs.toBuilder()
-                .clearNotifiedAnnouncementIds()
-                .build()
-        }
-    }
-
     override fun areFabFiltersEnabled(): Flow<Boolean> =
         dataStore.data.map { it.enableFabFilters }
 
@@ -139,6 +110,17 @@ internal class PreferencesLocalDataSourceImpl @Inject constructor(
         dataStore.updateData { prefs ->
             prefs.toBuilder()
                 .setEnableFabFilters(value)
+                .build()
+        }
+    }
+
+    override fun getLastNotificationCheckTime(): Flow<Timestamp?> =
+        dataStore.data.map { it.updatedAfter }
+
+    override suspend fun setLastNotificationCheckTime(time: Timestamp?) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setUpdatedAfter(time)
                 .build()
         }
     }

@@ -22,8 +22,10 @@ dependencies {
     implementation(libs.retrofit.kotlinx.serialization)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
 
     testFixturesImplementation(project(":core:model"))
     testFixturesImplementation(libs.androidx.test.core.ktx)
     testFixturesImplementation(libs.okhttp.logging.interceptor)
+    testFixturesImplementation(libs.kotlinx.datetime)
 }

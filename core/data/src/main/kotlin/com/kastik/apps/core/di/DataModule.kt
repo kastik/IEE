@@ -1,6 +1,6 @@
 package com.kastik.apps.core.di
 
-import com.kastik.apps.core.data.provider.TokenProviderImpl
+import com.kastik.apps.core.data.provider.AboardTokenManagerImpl
 import com.kastik.apps.core.data.repository.AnnouncementRepositoryImpl
 import com.kastik.apps.core.data.repository.AuthenticationRepositoryImpl
 import com.kastik.apps.core.data.repository.AuthorRepositoryImpl
@@ -15,7 +15,7 @@ import com.kastik.apps.core.domain.repository.AuthorRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
-import com.kastik.apps.core.network.interceptor.TokenProvider
+import com.kastik.apps.core.network.interceptor.TokenManager
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -58,8 +58,8 @@ abstract class DataModule {
 
     @Binds
     internal abstract fun bindTokenProvider(
-        tokenProvider: TokenProviderImpl
-    ): TokenProvider
+        tokenProvider: AboardTokenManagerImpl
+    ): TokenManager
 
     @Binds
     internal abstract fun bindBase64ImageExtractor(

@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
 
 @Composable
-internal fun SelectableTagItem(
+internal fun SelectableItem(
     modifier: Modifier = Modifier,
     title: String,
     isSelected: Boolean,
@@ -84,9 +84,9 @@ internal fun SelectableTagItem(
 
 @Preview(name = "Selected Tag Item")
 @Composable
-private fun SelectableTagItemSelectedPreview() {
+private fun SelectableItemSelectedPreview() {
     AppsAboardTheme {
-        SelectableTagItem(
+        SelectableItem(
             title = "Selected tag",
             isSelected = true,
             onToggle = {}
@@ -96,9 +96,9 @@ private fun SelectableTagItemSelectedPreview() {
 
 @Preview(name = "Unselected Tag Item")
 @Composable
-private fun SelectableTagItemUnselectedPreview() {
+private fun SelectableItemUnselectedPreview() {
     AppsAboardTheme {
-        SelectableTagItem(
+        SelectableItem(
             title = "Not selected tag",
             isSelected = false,
             onToggle = {}

@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -136,7 +137,7 @@ private fun SuccessState(
                 text = AnnotatedString.fromHtml(title),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleLarge.copy(
+                style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.SemiBold,
                 ), color = MaterialTheme.colorScheme.onSurface
             )
@@ -164,7 +165,7 @@ private fun SuccessState(
             )
             Text(
                 text = author,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
@@ -172,7 +173,7 @@ private fun SuccessState(
 
             Text(
                 text = date,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -207,24 +208,36 @@ private fun SuccessState(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 attachments.forEach { attachment ->
-                    AssistChip(onClick = {
-                        analytics.logEvent(
-                            "attachment_clicked",
-                            mapOf("attachment_id" to attachment.id)
-                        )
-                        onAttachmentClick(
-                            announcementId,
-                            attachment.id,
-                            attachment.filename,
-                            attachment.mimeType,
-                        )
-                    }, label = { Text(attachment.filename) }, leadingIcon = {
-                        Icon(
-                            Icons.Outlined.AttachFile,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    })
+                    AssistChip(
+                        contentPadding = PaddingValues(
+                            horizontal = 16.dp,
+                            vertical = 8.dp
+                        ),
+                        onClick = {
+                            analytics.logEvent(
+                                "attachment_clicked",
+                                mapOf("attachment_id" to attachment.id)
+                            )
+                            onAttachmentClick(
+                                announcementId,
+                                attachment.id,
+                                attachment.filename,
+                                attachment.mimeType,
+                            )
+                        }, label = {
+                            Text(
+                                text = attachment.filename,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Outlined.AttachFile,
+                                contentDescription = attachment.filename,
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -258,7 +271,7 @@ private fun HtmlText(text: ProcessedBody.Text) {
     SelectionContainer {
         Text(
             text = text.text,
-            style = MaterialTheme.typography.bodyLarge.copy(lineHeight = 24.sp),
+            style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 24.sp),
             color = MaterialTheme.colorScheme.onSurface
         )
     }
