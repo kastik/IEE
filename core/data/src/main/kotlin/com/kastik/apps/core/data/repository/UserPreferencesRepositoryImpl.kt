@@ -1,11 +1,13 @@
 package com.kastik.apps.core.data.repository
 
 import com.kastik.apps.core.common.di.IoDispatcher
+import com.kastik.apps.core.data.mappers.toInstant
 import com.kastik.apps.core.data.mappers.toQueryScope
 import com.kastik.apps.core.data.mappers.toSearchScope
 import com.kastik.apps.core.data.mappers.toSort
 import com.kastik.apps.core.data.mappers.toSortType
 import com.kastik.apps.core.data.mappers.toTheme
+import com.kastik.apps.core.data.mappers.toTimestamp
 import com.kastik.apps.core.data.mappers.toUserTheme
 import com.kastik.apps.core.datastore.PreferencesLocalDataSource
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Instant
 
 @Singleton
 internal class UserPreferencesRepositoryImpl @Inject constructor(
@@ -72,31 +75,18 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
         preferencesLocalDataSource.setEnableForYou(value)
     }
 
-    override fun getNotifiedAnnouncementIds(): Flow<List<Int>> =
-        preferencesLocalDataSource.getNotifiedAnnouncementIds()
-
-    override suspend fun setNotifiedAnnouncementId(notificationId: Int) {
-        withContext(ioDispatcher) {
-            preferencesLocalDataSource.setNotifiedAnnouncementId(notificationId)
-        }
-    }
-
-    override suspend fun setNotifiedAnnouncementId(notificationIds: List<Int>) =
-        withContext(ioDispatcher) {
-            preferencesLocalDataSource.setNotifiedAnnouncementId(notificationIds)
-        }
-
-    override suspend fun clearNotifiedAnnouncementId() {
-        withContext(ioDispatcher) {
-            preferencesLocalDataSource.clearNotifiedAnnouncementIds()
-        }
-    }
-
     override fun areFabFiltersEnabled(): Flow<Boolean> =
         preferencesLocalDataSource.areFabFiltersEnabled()
 
     override suspend fun setFabFiltersEnabled(value: Boolean) = withContext(ioDispatcher) {
         preferencesLocalDataSource.setAreFabFiltersEnabled(value)
+    }
+
+    override fun getLastNotificationCheckTime(): Flow<Instant?> =
+        preferencesLocalDataSource.getLastNotificationCheckTime().map { it?.toInstant() }
+
+    override suspend fun setLastNotificationCheckTime(time: Instant?) {
+        preferencesLocalDataSource.setLastNotificationCheckTime(time?.toTimestamp())
     }
 
 }

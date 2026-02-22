@@ -2,20 +2,21 @@ package com.kastik.apps.core.network.interceptor
 
 
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.test.runTest
 import okhttp3.Request
 import org.junit.Before
 import org.junit.Test
 
 
 class TokenInterceptorTest {
-    lateinit var tokenProvider: FakeTokenProvider
+    lateinit var tokenProvider: FakeTokenManager
     lateinit var interceptor: TokenInterceptor
     val request = Request.Builder().url("http://site.com").build()
     val chain = FakeInterceptorChain(request)
 
     @Before
     fun setUp() {
-        tokenProvider = FakeTokenProvider()
+        tokenProvider = FakeTokenManager()
         interceptor = TokenInterceptor(tokenProvider)
         interceptor.intercept(chain)
 
@@ -30,8 +31,8 @@ class TokenInterceptorTest {
 
 
     @Test
-    fun addHeaderWhenTokenIsAvailableTest() {
-        tokenProvider.token.value = "token"
+    fun addHeaderWhenTokenIsAvailableTest() = runTest {
+        tokenProvider.updateToken("token")
         interceptor.intercept(chain)
         assertThat(chain.proceededRequest).isNotNull()
         assertThat(chain.proceededRequest!!.header("Authorization")).isNotNull()
@@ -40,12 +41,12 @@ class TokenInterceptorTest {
 
 
     @Test
-    fun reactsToTokenUpdatesTest() {
+    fun reactsToTokenUpdatesTest() = runTest {
         interceptor.intercept(chain)
         assertThat(chain.proceededRequest).isNotNull()
         assertThat(chain.proceededRequest!!.header("Authorization")).isNull()
 
-        tokenProvider.token.value = "token"
+        tokenProvider.updateToken("token")
 
         interceptor.intercept(chain)
 

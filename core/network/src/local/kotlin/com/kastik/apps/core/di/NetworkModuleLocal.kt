@@ -1,5 +1,6 @@
 package com.kastik.apps.core.di
 
+import com.kastik.apps.core.network.interceptor.AboardAuthenticator
 import com.kastik.apps.core.network.interceptor.TokenInterceptor
 import com.kastik.apps.core.network.serializers.SortTypeQueryConverterFactory
 import dagger.Module
@@ -23,12 +24,11 @@ import javax.net.ssl.X509TrustManager
 @Module
 @InstallIn(SingletonComponent::class)
 class NetworkModuleLocal {
-
     @Provides
     @Singleton
-    @AboardRetrofit
-    fun provideAnnRetrofit(
-        @AboardOkHttp client: OkHttpClient,
+    @AuthenticatorAboardRetrofit
+    fun provideAuthenticatorAboardRetrofit(
+        @AuthenticatorAboardOkHttp client: OkHttpClient,
         json: Json
     ): Retrofit {
         val contentType = "application/json".toMediaType()
@@ -43,9 +43,27 @@ class NetworkModuleLocal {
 
     @Provides
     @Singleton
-    @AboardOkHttp
-    fun provideAnnOkHttp(
-        tokenInterceptor: TokenInterceptor
+    @BaseAboardRetrofit
+    fun provideBaseAboardRetrofit(
+        @BaseAboardOkHttp client: OkHttpClient,
+        json: Json
+    ): Retrofit {
+        val contentType = "application/json".toMediaType()
+        return Retrofit.Builder()
+            .baseUrl("https://kastik-pc.local/api/v2/")
+            .addConverterFactory(SortTypeQueryConverterFactory())
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .client(client)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @AuthenticatorAboardOkHttp
+    fun provideAuthenticatorAboardOkHttp(
+        tokenInterceptor: TokenInterceptor,
+        aboardAuthenticator: AboardAuthenticator,
     ): OkHttpClient {
         val logger = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -66,8 +84,39 @@ class NetworkModuleLocal {
             .hostnameVerifier { _, _ -> true }
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
-            .addInterceptor(logger)
             .addInterceptor(tokenInterceptor)
+            .authenticator(aboardAuthenticator)
+            .addNetworkInterceptor(logger)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    @BaseAboardOkHttp
+    fun provideBaseAboardOkHttp(
+        tokenInterceptor: TokenInterceptor,
+    ): OkHttpClient {
+        val logger = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
+        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+        })
+
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+
+
+        return OkHttpClient.Builder()
+            .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
+            .hostnameVerifier { _, _ -> true }
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(tokenInterceptor)
+            .addNetworkInterceptor(logger)
             .build()
     }
 

@@ -5,6 +5,7 @@ import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementRespon
 import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
 import com.kastik.apps.core.network.model.aboard.announcement.PagedMetaResponseDto
 import com.kastik.apps.core.network.testdata.announcementPageResponseTestData
+import kotlinx.datetime.LocalDateTime
 
 class FakeAnnouncementRemoteDataSource(
     val fakeAnnouncementResponses: List<PagedAnnouncementsResponseDto> = announcementPageResponseTestData
@@ -21,7 +22,8 @@ class FakeAnnouncementRemoteDataSource(
         title: String?,
         body: String?,
         authorId: List<Int>?,
-        tagId: List<Int>?
+        tagId: List<Int>?,
+        updatedAfter: LocalDateTime?
     ): PagedAnnouncementsResponseDto {
         throwOnApiRequest?.let { throw it }
         pagedAnnouncementResponseOverride?.let { return it }

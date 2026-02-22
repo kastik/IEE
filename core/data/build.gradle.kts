@@ -32,6 +32,7 @@ dependencies {
     implementation(libs.paging.common)
     implementation(libs.retrofit)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.kotlinx.datetime)
 
     testImplementation(testFixtures(project(":core:crashlytics")))
     testImplementation(testFixtures(project(":core:datastore")))

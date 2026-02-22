@@ -31,15 +31,7 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
 
     override suspend fun refreshIsSignedIn(): Result<Unit, AuthenticatedRefreshError> =
         try {
-            val hasToken = authenticationLocalDataSource.getAboardAccessToken().first() != null
-            if (!hasToken) {
-                authenticationLocalDataSource.setIsSignedIn(false)
-                return Result.Success(Unit)
-            }
-
-            val isAuthenticated = authenticationRemoteDataSource.checkIfTokenIsValid()
-            authenticationLocalDataSource.setIsSignedIn(isAuthenticated)
-
+            authenticationRemoteDataSource.checkIfTokenIsValid()
             Result.Success(Unit)
         } catch (e: CancellationException) {
             throw e
