@@ -80,7 +80,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="v$(date +'%Y.%m.%d-%H%M')"
-          gh release create "$VERSION" \
+          APP_VERSION=$(jq -r '.elements[0].versionName' app/build/outputs/apk/production/release/output-metadata.json)
+          
+          gh release create "v$APP_VERSION" \
             app/build/outputs/apk/production/release/*.apk \
             --generate-notes
