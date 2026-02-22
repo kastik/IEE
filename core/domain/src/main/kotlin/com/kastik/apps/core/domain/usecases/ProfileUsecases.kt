@@ -3,6 +3,7 @@ package com.kastik.apps.core.domain.usecases
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.service.WorkScheduler
+import com.kastik.apps.core.model.error.AuthenticatedRefreshError
 import com.kastik.apps.core.model.result.Result
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.coroutineScope
@@ -23,8 +24,12 @@ class GetSubscribedTagsUseCase @Inject constructor(
 
 class RefreshUserProfileUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
+    private val refreshIsSignedInUseCase: RefreshIsSignedInUseCase,
 ) {
-    suspend operator fun invoke() = profileRepository.refreshProfile()
+    suspend operator fun invoke(): Result<Unit, AuthenticatedRefreshError> {
+        refreshIsSignedInUseCase()
+        return profileRepository.refreshProfile()
+    }
 }
 
 class RefreshEmailSubscriptionsUseCase @Inject constructor(

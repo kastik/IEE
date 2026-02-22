@@ -10,7 +10,6 @@ import com.kastik.apps.core.model.error.AuthenticatedRefreshError
 import com.kastik.apps.core.model.error.AuthenticationError
 import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class GetIsSignedInUseCase @Inject constructor(
@@ -21,15 +20,13 @@ class GetIsSignedInUseCase @Inject constructor(
 }
 
 class RefreshIsSignedInUseCase @Inject constructor(
+    private val signOutUserUseCase: SignOutUserUseCase,
     private val authenticationRepository: AuthenticationRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(): Result<Unit, AuthenticatedRefreshError> {
-        val wasSignedIn = authenticationRepository.getIsSignedIn().first()
         val result = authenticationRepository.refreshIsSignedIn()
-        val isNowSignedIn = authenticationRepository.getIsSignedIn().first()
-        if (wasSignedIn && !isNowSignedIn) {
-            userPreferencesRepository.setHasSkippedSignIn(false)
+        if (result is Result.Error && result.error is AuthenticationError) {
+            signOutUserUseCase()
         }
         return result
     }
@@ -66,6 +63,7 @@ class SignOutUserUseCase @Inject constructor(
         authenticationRepository.clearAuthenticationData()
         announcementRepository.clearAnnouncementCache()
         userPreferencesRepository.clearNotifiedAnnouncementId()
+        userPreferencesRepository.setHasSkippedSignIn(true)
         workScheduler.cancelTokenRefresh()
         workScheduler.cancelAnnouncementAlerts()
         profileRepository.unsubscribeFromAllTopics()
