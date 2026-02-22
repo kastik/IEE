@@ -131,6 +131,12 @@ Accept: application/json
 Authorization: Bearer {{bearer}}
 
 
+### Fetch announcements updated after February 18, 2026, at 7:55
+GET https://{{aboard_server}}/api/v2/announcements?updatedAfter=2026-02-18T07:55:00Z
+Accept: application/json
+Authorization: Bearer {{bearer}}
+
+
 ### Fetch Announcements with tagId=93
 GET https://{{aboard_server}}/api/v2/announcements?
     tags[]=19
