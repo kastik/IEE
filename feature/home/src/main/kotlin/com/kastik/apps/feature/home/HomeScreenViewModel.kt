@@ -13,12 +13,14 @@ import com.kastik.apps.core.domain.usecases.GetHomeAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
 import com.kastik.apps.core.domain.usecases.IsForYouEnabledUseCase
+import com.kastik.apps.core.domain.usecases.RefreshIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.SetHasSkippedSignInUseCase
 import com.kastik.apps.core.domain.usecases.ShowSignInNoticeRationalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     isSignedInUseCase: GetIsSignedInUseCase,
+    refreshIsSignedInUseCase: RefreshIsSignedInUseCase,
     showSignInNoticeRationalUseCase: ShowSignInNoticeRationalUseCase,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
     isForYouEnabledUseCase: IsForYouEnabledUseCase,
@@ -59,8 +62,14 @@ class HomeScreenViewModel @Inject constructor(
             enableForYou = enableForYou,
             enableFabFilters = enableFabFilters
         )
+    }.onStart {
+        viewModelScope.launch {
+            refreshIsSignedInUseCase()
+        }
     }.stateIn(
-        scope = viewModelScope, started = SharingStarted.Lazily, initialValue = UiState()
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = UiState()
     )
 
     val homeFeedAnnouncements = getHomeAnnouncementsUseCase().cachedIn(viewModelScope)

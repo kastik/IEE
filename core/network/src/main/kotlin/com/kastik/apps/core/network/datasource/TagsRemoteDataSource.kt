@@ -1,5 +1,6 @@
 package com.kastik.apps.core.network.datasource
 
+import com.kastik.apps.core.di.AuthenticatorAboardClient
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDto
 import com.kastik.apps.core.network.model.aboard.tags.TagsResponseDto
@@ -11,7 +12,7 @@ interface TagsRemoteDataSource {
 }
 
 internal class TagsRemoteDataSourceImpl @Inject constructor(
-    private val aboardApiClient: AboardApiClient
+    @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient
 ) : TagsRemoteDataSource {
     override suspend fun fetchAnnouncementTags(): TagsResponseDto =
         aboardApiClient.getTags()

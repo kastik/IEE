@@ -37,7 +37,14 @@ abstract class NetworkModule {
 
         @Provides
         @Singleton
-        fun provideAboardApi(@AboardRetrofit retrofit: Retrofit): AboardApiClient =
+        @AuthenticatorAboardClient
+        fun provideMainAboardApi(@AuthenticatorAboardRetrofit retrofit: Retrofit): AboardApiClient =
+            retrofit.create(AboardApiClient::class.java)
+
+        @Provides
+        @Singleton
+        @BaseAboardClient
+        fun provideRefreshAboardApi(@BaseAboardRetrofit retrofit: Retrofit): AboardApiClient =
             retrofit.create(AboardApiClient::class.java)
     }
 

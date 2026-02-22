@@ -1,9 +1,12 @@
 package com.kastik.apps.core.network.datasource
 
+import com.kastik.apps.core.di.AuthenticatorAboardClient
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenRefreshRequestDto
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
 import javax.inject.Inject
+
+//TODO Once aboard gets the new refresh endpoint, remove the old endpoint all together
 
 interface AuthenticationRemoteDataSource {
     suspend fun exchangeCodeForAboardToken(code: String): AboardTokenResponseDto
@@ -13,7 +16,7 @@ interface AuthenticationRemoteDataSource {
 
 
 internal class AuthenticationRemoteDataSourceImpl @Inject constructor(
-    private val aboardApiClient: AboardApiClient,
+    @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient,
 ) : AuthenticationRemoteDataSource {
 
     override suspend fun exchangeCodeForAboardToken(code: String): AboardTokenResponseDto =
@@ -24,7 +27,7 @@ internal class AuthenticationRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun checkIfTokenIsValid(): Boolean {
-        aboardApiClient.getUserInfo()
+            aboardApiClient.getUserInfo()
         return true
     }
 

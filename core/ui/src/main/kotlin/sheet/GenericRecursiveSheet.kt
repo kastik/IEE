@@ -41,6 +41,8 @@ import com.kastik.apps.core.common.extensions.removeAccents
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
+//TODO We're leaking domain logic here, the ui should only apply what is selected
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> GenericRecursiveSheet(
@@ -54,7 +56,38 @@ fun <T> GenericRecursiveSheet(
     childrenProvider: (T) -> List<T>
 ) {
     var query by remember { mutableStateOf("") }
-    val selectedIds = remember { mutableStateListOf<Int>().apply { addAll(subscribedTags) } }
+
+    val parentMap = remember(items) {
+        val map = mutableMapOf<Int, T>()
+        fun buildParentMap(nodes: List<T>, parent: T?) {
+            for (node in nodes) {
+                if (parent != null) map[idProvider(node)] = parent
+                buildParentMap(childrenProvider(node), node)
+            }
+        }
+        buildParentMap(items, null)
+        map
+    }
+
+    val selectedIds = remember(items, subscribedTags) {
+        val initialSelection = mutableSetOf<Int>()
+
+        fun initializeSelection(nodes: List<T>, isParentSelected: Boolean) {
+            for (node in nodes) {
+                val id = idProvider(node)
+                val isSelected = isParentSelected || subscribedTags.contains(id)
+
+                if (isSelected) {
+                    initialSelection.add(id)
+                }
+
+                initializeSelection(childrenProvider(node), isSelected)
+            }
+        }
+
+        initializeSelection(items, false)
+        mutableStateListOf<Int>().apply { addAll(initialSelection) }
+    }
 
     val flatList = remember(query, items) {
         val result = mutableListOf<FlatNode<T>>()
@@ -66,7 +99,6 @@ fun <T> GenericRecursiveSheet(
                     .contains(query.removeAccents(), ignoreCase = true)
 
                 val startIndex = result.size
-
                 val childrenMatch = traverse(childrenProvider(item), depth + 1)
 
                 if (selfMatch || childrenMatch) {
@@ -100,10 +132,7 @@ fun <T> GenericRecursiveSheet(
                         enter = scaleIn(),
                         exit = scaleOut()
                     ) {
-                        IconButton(
-                            onClick = { query = "" },
-
-                            ) {
+                        IconButton(onClick = { query = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
                                 contentDescription = "Clear text"
@@ -136,23 +165,50 @@ fun <T> GenericRecursiveSheet(
         ) {
             items(
                 items = flatList,
-                key = { idProvider(it.item) }) { node ->
+                key = { idProvider(it.item) }
+            ) { node ->
                 val currentId = idProvider(node.item)
                 val isSelected = currentId in selectedIds
 
-                SelectableTagItem(
+                SelectableItem(
                     modifier = Modifier.padding(start = (node.depth * 16).dp),
-                    title = labelProvider(node.item), isSelected = isSelected, onToggle = {
+                    title = labelProvider(node.item),
+                    isSelected = isSelected,
+                    onToggle = {
                         val descendants = collectAllIds(node.item, childrenProvider, idProvider)
 
                         if (isSelected) {
+                            // 2a. Remove item and all children
                             selectedIds.remove(currentId)
                             selectedIds.removeAll(descendants)
+
+                            // 2b. Traverse up and remove all ancestors
+                            var p = parentMap[currentId]
+                            while (p != null) {
+                                selectedIds.remove(idProvider(p))
+                                p = parentMap[idProvider(p)]
+                            }
                         } else {
+                            // 3a. Add item and all children
                             selectedIds.add(currentId)
                             selectedIds.addAll(descendants)
+
+                            // 3b. Traverse up and check if ancestors should be added
+                            var p = parentMap[currentId]
+                            while (p != null) {
+                                val allChildrenSelected = childrenProvider(p).all {
+                                    idProvider(it) in selectedIds
+                                }
+                                if (allChildrenSelected) {
+                                    selectedIds.add(idProvider(p))
+                                    p = parentMap[idProvider(p)]
+                                } else {
+                                    break // Stop checking higher if this parent doesn't qualify
+                                }
+                            }
                         }
-                    })
+                    }
+                )
             }
         }
 
@@ -160,7 +216,14 @@ fun <T> GenericRecursiveSheet(
 
         Button(
             onClick = {
-                applySelectedTags(selectedIds.toImmutableList())
+                val appliedIds = getOnlyTopLevelSelected(
+                    roots = items,
+                    selectedIds = selectedIds.toSet(),
+                    idProvider = idProvider,
+                    childrenProvider = childrenProvider
+                )
+
+                applySelectedTags(appliedIds.toImmutableList())
                 onDismiss()
             }, modifier = Modifier
                 .fillMaxWidth()
@@ -184,5 +247,30 @@ private fun <T> collectAllIds(
         }
     }
     traverse(root)
+    return result
+}
+
+private fun <T> getOnlyTopLevelSelected(
+    roots: List<T>,
+    selectedIds: Set<Int>,
+    idProvider: (T) -> Int,
+    childrenProvider: (T) -> List<T>
+): List<Int> {
+    val result = mutableListOf<Int>()
+
+    fun traverse(nodes: List<T>, isAncestorSelected: Boolean) {
+        for (node in nodes) {
+            val id = idProvider(node)
+            val isSelected = id in selectedIds
+
+            if (isSelected && !isAncestorSelected) {
+                result.add(id)
+            }
+
+            traverse(childrenProvider(node), isAncestorSelected || isSelected)
+        }
+    }
+
+    traverse(roots, false)
     return result
 }
