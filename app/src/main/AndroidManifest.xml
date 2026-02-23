@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/iee_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.IEE">
+        android:theme="@style/Theme.IEE.Splash.Theme">
 
         <provider
             android:name="androidx.startup.InitializationProvider"
@@ -33,7 +33,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.IEE"
+            android:theme="@style/Theme.IEE.Splash.Theme"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

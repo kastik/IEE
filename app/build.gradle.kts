@@ -86,6 +86,7 @@ dependencies {
     implementation(project(":feature:licenses"))
     implementation(project(":feature:search"))
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.splashscreen)
 
     baselineProfile(project(":benchmark"))
     implementation(libs.androidx.profileinstaller)
