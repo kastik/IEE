@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="launcher_background">#284168</color>
+    <color name="iee_color">#284168</color>
+    <color name="launcher_background">@color/iee_color</color>
+    <color name="splash_color">@color/iee_color</color>
 </resources>

@@ -27,6 +27,7 @@ activityCompose = "1.12.4"
 navigationCompose = "2.9.7"
 hiltNavigationCompose = "1.3.0"
 accompanistPermissions = "0.37.3"
+splashScreen = "1.2.0"
 
 
 
@@ -73,7 +74,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-activity = { group = "androidx.activity", name = "activity-ktx", version.ref = "activity"}
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workRuntimeKtx" }
-
+androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
 
 #Kotlin
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
