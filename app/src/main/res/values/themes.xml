@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.IEE.Base.Theme" parent="android:Theme.Material.NoActionBar"></style>
+    <style name="Theme.IEE.Base.Theme" parent="android:Theme.Material.NoActionBar" />
 
     <style name="Theme.IEE.Splash.Theme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/iee_splash_screen</item>
