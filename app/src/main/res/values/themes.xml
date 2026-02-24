@@ -5,7 +5,7 @@
 
     <style name="Theme.IEE.Splash.Theme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/iee_splash_screen</item>
-        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="windowSplashScreenAnimationDuration">@integer/splash_screen_duration</item>
         <item name="postSplashScreenTheme">@style/Theme.IEE.Base.Theme</item>
     </style>
 
