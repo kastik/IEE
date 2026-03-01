@@ -15,6 +15,7 @@ configure<LibraryExtension> {
 }
 
 dependencies {
+    implementation(project(":core:crashlytics"))
     implementation(project(":core:model"))
     implementation(project(":core:domain"))
     implementation(libs.retrofit)
