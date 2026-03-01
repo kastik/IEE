@@ -10,7 +10,6 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.error.AuthenticatedRefreshError
 import com.kastik.apps.core.model.error.AuthenticationError
 import com.kastik.apps.core.model.result.Result
-import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
@@ -20,10 +19,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.time.Clock
 
-@Singleton
 class GetHomeAnnouncementsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
     private val authenticationRepository: AuthenticationRepository,
@@ -47,7 +44,25 @@ class GetHomeAnnouncementsUseCase @Inject constructor(
     }
 }
 
-@ViewModelScoped
+class GetForYouAnnouncementsUseCase @Inject constructor(
+    private val profileRepository: ProfileRepository,
+    private val announcementRepository: AnnouncementRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<PagingData<Announcement>> =
+        combine(
+            userPreferencesRepository.getSortType(),
+            profileRepository.getEmailSubscriptions(),
+        ) { sortType, subscribedTags ->
+            sortType to subscribedTags
+        }.flatMapLatest { (sortType, subscribedTags) ->
+            announcementRepository.getPagedAnnouncements(
+                sortType = sortType,
+                tagIds = subscribedTags.map { it.id },
+            )
+        }
+}
+
 class GetFilteredAnnouncementsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
     private val userPreferencesRepository: UserPreferencesRepository
@@ -69,25 +84,6 @@ class GetFilteredAnnouncementsUseCase @Inject constructor(
                 bodyQuery = query.takeIf { searchScope.includesBody } ?: "",
                 authorIds = authorIds,
                 tagIds = tagIds
-            )
-        }
-}
-
-@Singleton
-class GetForYouAnnouncementsUseCase @Inject constructor(
-    private val profileRepository: ProfileRepository,
-    private val announcementRepository: AnnouncementRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
-    operator fun invoke(): Flow<PagingData<Announcement>> =
-        combine(
-            userPreferencesRepository.getSortType(),
-            profileRepository.getEmailSubscriptions(),
-            ::Pair
-        ).flatMapLatest { (sortType, subscribedTags) ->
-            announcementRepository.getPagedAnnouncements(
-                sortType = sortType,
-                tagIds = subscribedTags.map { it.id },
             )
         }
 }

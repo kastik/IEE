@@ -53,6 +53,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kastik.apps.core.designsystem.component.IEETag
 import com.kastik.apps.core.model.aboard.Profile
+import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
@@ -72,11 +73,9 @@ internal fun ProfileRoute(
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     AnimatedContent(
-        targetState = uiState.value,
-        contentKey = { state ->
+        targetState = uiState.value, contentKey = { state ->
             state::class
-        }
-    ) { state ->
+        }) { state ->
         when (state) {
             is UiState.Loading -> LoadingContent(
                 modifier = Modifier.fillMaxSize(),
@@ -85,8 +84,7 @@ internal fun ProfileRoute(
 
             is UiState.Error -> StatusContent(message = state.message)
             is UiState.SignedOut -> StatusContent(
-                message = state.message,
-                automaticAction = navigateBack
+                message = state.message, automaticAction = navigateBack
             )
 
             is UiState.Success -> SuccessState(
@@ -109,6 +107,8 @@ private fun SuccessState(
     showTagSheet: (Boolean) -> Unit,
     onSignOutClick: () -> Unit
 ) {
+    val analytics = LocalAnalytics.current
+
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
@@ -121,13 +121,19 @@ private fun SuccessState(
             GenericRecursiveSheet(
                 items = uiState.subscribableTags,
                 subscribedTags = uiState.subscribedTags.map { it.id }.toImmutableList(),
-                applySelectedTags = applySelectedTags,
+                applySelectedTags = { newTagIds ->
+                    analytics.logEvent(
+                        "subscribed_to_tags", mapOf(
+                            "source" to "profile_screen", "item_id" to newTagIds
+                        )
+                    )
+                    applySelectedTags(newTagIds)
+                },
                 sheetState = sheetState,
                 onDismiss = { showTagSheet(false) },
                 idProvider = { tag -> tag.id },
                 labelProvider = { it.title },
-                childrenProvider = { it.subTags }
-            )
+                childrenProvider = { it.subTags })
         }
 
         Column(
@@ -135,8 +141,7 @@ private fun SuccessState(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(28.dp)
+                .padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(28.dp)
         ) {
             Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
@@ -157,7 +162,10 @@ private fun SuccessState(
                 createdAt = uiState.profile.createdAt
             )
             Button(
-                onClick = onSignOutClick,
+                onClick = {
+                    analytics.logEvent("sign_out_clicked", mapOf("source" to "profile_screen"))
+                    onSignOutClick()
+                },
                 modifier = Modifier
                     .padding(12.dp)
                     .fillMaxWidth()
@@ -194,7 +202,8 @@ private fun ProfileMeta(
     createdAt: String,
 ) {
     ElevatedCard(
-        shape = RoundedCornerShape(22.dp), modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(22.dp),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
 
     ) {
@@ -217,7 +226,8 @@ private fun ProfileMeta(
                         isAdmin -> "Administrator"
                         isAuthor -> "Author"
                         else -> "Student"
-                    }, style = MaterialTheme.typography.bodyMedium,
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -322,8 +332,7 @@ private fun ProfileSubscribedTags(
                     Text("Subscribed Tags", style = MaterialTheme.typography.titleMedium)
                 }
                 IconButton(
-                    onClick = { showTagSheet(true) }
-                ) {
+                    onClick = { showTagSheet(true) }) {
                     Icon(Icons.Outlined.Settings, null)
                 }
             }

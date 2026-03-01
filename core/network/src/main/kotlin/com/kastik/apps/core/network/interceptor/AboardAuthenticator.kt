@@ -1,5 +1,6 @@
 package com.kastik.apps.core.network.interceptor
 
+import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.di.BaseAboardClient
 import com.kastik.apps.core.network.api.AboardApiClient
 import kotlinx.coroutines.runBlocking
@@ -11,6 +12,7 @@ import javax.inject.Inject
 
 class AboardAuthenticator @Inject constructor(
     private val tokenManager: TokenManager,
+    private val crashlytics: Crashlytics,
     @BaseAboardClient private val aboardRefreshApiClient: AboardApiClient,
 ) : Authenticator {
 
@@ -34,6 +36,7 @@ class AboardAuthenticator @Inject constructor(
                     tokenManager.updateToken(newToken)
                     return@runBlocking buildRequest(response.request, newToken)
                 } catch (e: Exception) {
+                    crashlytics.recordException(e)
                     return@runBlocking null
                 }
             }

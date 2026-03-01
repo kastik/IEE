@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.domain.usecases.SyncTopicSubscriptionsUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -16,6 +17,7 @@ import com.kastik.apps.core.model.result.Result as ResultDomain
 class SubscribeToTopicsWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
+    private val crashlytics: Crashlytics,
     private val syncTopicSubscriptionsUseCase: SyncTopicSubscriptionsUseCase,
 ) : CoroutineWorker(context, workerParams) {
 
@@ -29,6 +31,7 @@ class SubscribeToTopicsWorker @AssistedInject constructor(
             }
         }
     } catch (e: Exception) {
+        crashlytics.recordException(e)
         Result.retry()
     }
 

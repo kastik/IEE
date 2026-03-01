@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.domain.usecases.RefreshEmailSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.SubscribeToEmailTagsUseCase
 import dagger.assisted.Assisted
@@ -17,6 +18,7 @@ import com.kastik.apps.core.model.result.Result as ResultDomain
 class SubscribeToTagsWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
+    private val crashlytics: Crashlytics,
     private val subscribeToEmailTagsUseCase: SubscribeToEmailTagsUseCase,
     private val refreshEmailSubscriptionsUseCase: RefreshEmailSubscriptionsUseCase
 ) : CoroutineWorker(context, workerParams) {
@@ -38,6 +40,7 @@ class SubscribeToTagsWorker @AssistedInject constructor(
             }
 
         } catch (e: Exception) {
+            crashlytics.recordException(e)
             Result.retry()
         }
     }

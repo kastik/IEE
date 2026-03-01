@@ -55,7 +55,6 @@ import com.kastik.apps.core.designsystem.component.IEETag
 import com.kastik.apps.core.model.aboard.Attachment
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
-import com.kastik.apps.core.ui.extensions.TrackAnnouncementOpened
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
@@ -70,8 +69,11 @@ internal fun AnnouncementRoute(
     navigateBack: () -> Unit,
     viewModel: AnnouncementScreenViewModel = hiltViewModel(),
 ) {
-    TrackScreenViewEvent("announcement_screen")
-    TrackAnnouncementOpened(announcementId)
+    TrackScreenViewEvent(
+        "announcement_screen",
+        mapOf("announcement_id" to announcementId)
+    )
+
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -216,7 +218,10 @@ private fun SuccessState(
                         onClick = {
                             analytics.logEvent(
                                 "attachment_clicked",
-                                mapOf("attachment_id" to attachment.id)
+                                mapOf(
+                                    "item_id" to attachment.id,
+                                    "source" to "announcement_screen"
+                                )
                             )
                             onAttachmentClick(
                                 announcementId,

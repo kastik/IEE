@@ -165,10 +165,21 @@ private fun HomeScreenContent(
             title = "Sign in",
             text = "Sign in to unlock all announcements. You are currently browsing with limited access.",
             confirmText = "Sign-in",
-            onConfirm = { context.launchSignIn() },
+            onConfirm = {
+                analytics.logEvent(
+                    "sign_in_clicked", mapOf("source" to "home_screen")
+                )
+                context.launchSignIn()
+            },
             dismissText = "Dismiss",
-            onDismiss = onSignInNoticeDismissed
-        )
+            onDismiss = {
+                analytics.logEvent(
+                    "sign_in_dismissed", mapOf(
+                        "source" to "home_screen"
+                    )
+                )
+                onSignInNoticeDismissed()
+            })
     }
 
     if (uiState.isSignedIn) {
@@ -196,6 +207,14 @@ private fun HomeScreenContent(
         }
     }
 
+    LaunchedEffect(pagerState.currentPage) {
+        val currentTitle = titles.getOrNull(pagerState.currentPage) ?: return@LaunchedEffect
+        analytics.logEvent(
+            "tab_switched",
+            mapOf("tab" to currentTitle.lowercase().replace(" ", "_"), "source" to "home_screen")
+        )
+    }
+
     Scaffold(contentWindowInsets = WindowInsets.safeDrawing, floatingActionButton = {
         AnimatedVisibility(
             visible = pagerState.currentPage == 0, enter = scaleIn(), exit = scaleOut()
@@ -203,14 +222,18 @@ private fun HomeScreenContent(
             IEEFloatingToolBar(
                 expanded = (homeFeedLazyListState.isScrollingUp()),
                 expandedAction = {
-                    analytics.logEvent("scroll_up_clicked")
+                    analytics.logEvent(
+                        "scroll_up_clicked", mapOf("source" to "home_screen")
+                    )
                     scope.launch {
                         searchScroll.scrollOffset = 0f
                         homeFeedLazyListState.animateScrollToItem(0)
                     }
                 },
                 collapsedAction = {
-                    analytics.logEvent("search_clicked")
+                    analytics.logEvent(
+                        "search_clicked", mapOf("source" to "home_screen")
+                    )
                     scope.launch {
                         searchBarState.animateToExpanded()
                     }
@@ -249,16 +272,40 @@ private fun HomeScreenContent(
             quickResults = uiState.quickResults,
             searchBarState = searchBarState,
             textFieldState = searchBarTextFieldState,
-            onAnnouncementQuickResultClick = navigateToAnnouncement,
             onSearch = { query ->
+                analytics.logEvent(
+                    "search", mapOf(
+                        "search_term" to query, "source" to "home_screen"
+                    )
+                )
                 searchBarTextFieldState.clearText()
                 navigateToSearch(query, persistentListOf(), persistentListOf())
             },
+            onAnnouncementQuickResultClick = { announcementId ->
+                analytics.logEvent(
+                    "quick_result_click", mapOf(
+                        "result_type" to "announcement",
+                        "item_id" to announcementId,
+                        "source" to "home_screen"
+                    )
+                )
+                navigateToAnnouncement(announcementId)
+            },
             onTagQuickResultClick = { tag ->
+                analytics.logEvent(
+                    "quick_result_click", mapOf(
+                        "result_type" to "tag", "item_id" to tag, "source" to "home_screen"
+                    )
+                )
                 searchBarTextFieldState.clearText()
                 navigateToSearch("", persistentListOf(tag), persistentListOf())
             },
             onAuthorQuickResultClick = { author ->
+                analytics.logEvent(
+                    "quick_result_click", mapOf(
+                        "result_type" to "author", "item_id" to author, "source" to "home_screen"
+                    )
+                )
                 searchBarTextFieldState.clearText()
                 navigateToSearch("", persistentListOf(), persistentListOf(author))
             },
@@ -286,8 +333,7 @@ private fun HomeScreenContent(
                                 onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
                                 text = {
                                     Text(
-                                        text = title,
-                                        style = MaterialTheme.typography.titleSmall
+                                        text = title, style = MaterialTheme.typography.titleSmall
                                     )
                                 })
                         }
@@ -298,10 +344,14 @@ private fun HomeScreenContent(
                 IconButton(
                     onClick = {
                         if (uiState.isSignedIn) {
-                            analytics.logEvent("profile_clicked")
+                            analytics.logEvent(
+                                "profile_clicked", mapOf("source" to "home_screen")
+                            )
                             navigateToProfile()
                         } else {
-                            analytics.logEvent("sign_in_clicked")
+                            analytics.logEvent(
+                                "sign_in_clicked", mapOf("source" to "home_screen")
+                            )
                             context.launchSignIn()
                         }
                     }) {
@@ -314,7 +364,9 @@ private fun HomeScreenContent(
             },
             actions = {
                 IconButton(onClick = {
-                    analytics.logEvent("settings_clicked")
+                    analytics.logEvent(
+                        "settings_clicked", mapOf("source" to "home_screen")
+                    )
                     navigateToSettings()
                 }) {
                     Icon(
@@ -355,15 +407,17 @@ private fun HomeScreenContent(
                                 scrollBehavior = searchScroll,
                                 onAnnouncementClick = { announcementId ->
                                     analytics.logEvent(
-                                        "announcement_clicked",
-                                        mapOf("announcement_id" to announcementId)
+                                        "announcement_clicked", mapOf(
+                                            "item_id" to announcementId, "source" to "home_screen"
+                                        )
                                     )
                                     navigateToAnnouncement(announcementId)
                                 },
                                 onAnnouncementLongClick = { announcementId ->
                                     analytics.logEvent(
-                                        "announcement_shared",
-                                        mapOf("announcement_id" to announcementId)
+                                        "announcement_shared", mapOf(
+                                            "item_id" to announcementId, "source" to "home_screen"
+                                        )
                                     )
                                     context.shareAnnouncement(announcementId)
                                 },
@@ -393,9 +447,21 @@ private fun HomeScreenContent(
                                     lazyListState = forYouLazyListState,
                                     scrollBehavior = searchScroll,
                                     onAnnouncementClick = { announcementId ->
+                                        analytics.logEvent(
+                                            "announcement_clicked", mapOf(
+                                                "item_id" to announcementId,
+                                                "source" to "for_you_screen"
+                                            )
+                                        )
                                         navigateToAnnouncement(announcementId)
                                     },
                                     onAnnouncementLongClick = { announcementId ->
+                                        analytics.logEvent(
+                                            "announcement_shared", mapOf(
+                                                "item_id" to announcementId,
+                                                "source" to "for_you_screen"
+                                            )
+                                        )
                                         context.shareAnnouncement(announcementId)
                                     },
                                     contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
@@ -418,7 +484,11 @@ private fun HomeScreenContent(
             applyText = "Apply Tags",
             onApply = { newTagIds ->
                 scope.launch {
-                    analytics.logEvent("search_tags_updated", mapOf("tags" to newTagIds.toList()))
+                    analytics.logEvent(
+                        "tags_applied", mapOf(
+                            "item_id" to newTagIds, "source" to "home_screen"
+                        )
+                    )
                     showTagSheet.value = false
                     searchBarState.animateToCollapsed()
                     navigateToSearch("", newTagIds, persistentListOf())
@@ -447,8 +517,9 @@ private fun HomeScreenContent(
             onApply = { newAuthorIds ->
                 scope.launch {
                     analytics.logEvent(
-                        "search_authors_updated",
-                        mapOf("authors" to newAuthorIds.toList())
+                        "authors_applied", mapOf(
+                            "item_id" to newAuthorIds, "source" to "home_screen"
+                        )
                     )
                     showAuthorSheet.value = false
                     searchBarState.animateToCollapsed()

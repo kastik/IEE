@@ -65,7 +65,7 @@ fun AnnouncementFeed(
     val refreshState = announcements.loadState.refresh
     val appendState = announcements.loadState.append
     val vibrator = LocalHapticFeedback.current
-    val analytics = LocalAnalytics.current
+    val _ = LocalAnalytics.current
 
 
     val currentFeedState = when (refreshState) {
@@ -123,18 +123,10 @@ fun AnnouncementFeed(
                         item?.let {
                             AnnouncementCard(
                                 onClick = {
-                                    analytics.logEvent(
-                                        "announcement_click",
-                                        mapOf("announcement_id" to item.id)
-                                    )
                                     vibrator.performHapticFeedback(HapticFeedbackType.Confirm)
                                     onAnnouncementClick(item.id)
                                 },
                                 onLonClick = {
-                                    analytics.logEvent(
-                                        "announcement_long_click",
-                                        mapOf("announcement_id" to item.id)
-                                    )
                                     vibrator.performHapticFeedback(HapticFeedbackType.LongPress)
                                     onAnnouncementLongClick(item.id)
                                 },

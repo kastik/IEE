@@ -12,6 +12,7 @@ sealed class UiState {
         val searchScope: SearchScope,
         val isDynamicColorEnabled: Boolean,
         val isForYouEnabled: Boolean,
+        val isForYouAvailable: Boolean,
         val areFabFiltersEnabled: Boolean
     ) : UiState()
 }

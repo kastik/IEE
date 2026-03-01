@@ -118,15 +118,37 @@ private fun SearchScreenContent(
                 textFieldState = searchBarTextFieldState,
                 expandedSecondaryActions = secondaryActions,
                 collapsedSecondaryActions = secondaryActions,
-                onAnnouncementQuickResultClick = navigateToAnnouncement,
                 onSearch = { query ->
+                    analytics.logEvent(
+                        "search", mapOf(
+                            "search_term" to query,
+                            "source" to "search_screen"
+                        )
+                    )
                     onSearch(
                         query,
                         uiState.activeFilters.selectedTagIds,
                         uiState.activeFilters.selectedAuthorIds,
                     )
                 },
+                onAnnouncementQuickResultClick = { announcementId ->
+                    analytics.logEvent(
+                        "quick_result_click", mapOf(
+                            "result_type" to "announcement",
+                            "item_id" to announcementId,
+                            "source" to "search_screen"
+                        )
+                    )
+                    navigateToAnnouncement(announcementId)
+                },
                 onTagQuickResultClick = { tag ->
+                    analytics.logEvent(
+                        "quick_result_click", mapOf(
+                            "result_type" to "tag",
+                            "item_id" to tag,
+                            "source" to "search_screen"
+                        )
+                    )
                     onSearch(
                         uiState.activeFilters.committedQuery,
                         (uiState.activeFilters.selectedTagIds + tag).toImmutableList(),
@@ -134,6 +156,13 @@ private fun SearchScreenContent(
                     )
                 },
                 onAuthorQuickResultClick = { author ->
+                    analytics.logEvent(
+                        "quick_result_click", mapOf(
+                            "result_type" to "author",
+                            "item_id" to author,
+                            "source" to "search_screen"
+                        )
+                    )
                     onSearch(
                         uiState.activeFilters.committedQuery,
                         uiState.activeFilters.selectedTagIds,
@@ -176,14 +205,20 @@ private fun SearchScreenContent(
                     onAnnouncementClick = { announcementId ->
                         analytics.logEvent(
                             "announcement_clicked",
-                            mapOf("announcement_id" to announcementId)
+                            mapOf(
+                                "item_id" to announcementId,
+                                "source" to "search_screen"
+                            )
                         )
                         navigateToAnnouncement(announcementId)
                     },
                     onAnnouncementLongClick = { announcementId ->
                         analytics.logEvent(
                             "announcement_shared",
-                            mapOf("announcement_id" to announcementId)
+                            mapOf(
+                                "item_id" to announcementId,
+                                "source" to "search_screen"
+                            )
                         )
                         context.shareAnnouncement(announcementId)
                     },
@@ -205,8 +240,11 @@ private fun SearchScreenContent(
                 onApply = { newTagIds ->
                     scope.launch {
                         analytics.logEvent(
-                            "search_tags_updated",
-                            mapOf("tags" to newTagIds.toList())
+                            "tags_applied",
+                            mapOf(
+                                "item_id" to newTagIds,
+                                "source" to "search_screen"
+                            )
                         )
                         onSearch(
                             uiState.activeFilters.committedQuery,
@@ -239,7 +277,11 @@ private fun SearchScreenContent(
                 onApply = { newAuthorIds ->
                     scope.launch {
                         analytics.logEvent(
-                            "search_authors_updated", mapOf("authors" to newAuthorIds.toList())
+                            "authors_applied",
+                            mapOf(
+                                "item_id" to newAuthorIds,
+                                "source" to "search_screen"
+                            )
                         )
                         onSearch(
                             uiState.activeFilters.committedQuery,
