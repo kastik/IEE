@@ -2,8 +2,8 @@
     android:drawable="@drawable/iee_splash_vector">
     <target
         android:name="ac"
-        android:animation="@animator/draw_and_fill" />
+        android:animation="@animator/splash_draw_and_fill" />
     <target
         android:name="dc"
-        android:animation="@animator/draw_and_fill" />
+        android:animation="@animator/splash_draw_and_fill" />
 </animated-vector>
