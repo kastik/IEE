@@ -98,6 +98,12 @@ class SetSearchScopeUseCase @Inject constructor(
         userPreferencesRepository.setSearchScope(searchScope)
 }
 
+class IsForYouAvailableUseCase @Inject constructor(
+    private val authenticationRepository: AuthenticationRepository,
+) {
+    operator fun invoke(): Flow<Boolean> =
+        authenticationRepository.getIsSignedIn()
+}
 
 class IsForYouEnabledUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,

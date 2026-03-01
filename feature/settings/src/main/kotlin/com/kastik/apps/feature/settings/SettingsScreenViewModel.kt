@@ -3,6 +3,7 @@ package com.kastik.apps.feature.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kastik.apps.core.domain.usecases.GetUserPreferencesUseCase
+import com.kastik.apps.core.domain.usecases.IsForYouAvailableUseCase
 import com.kastik.apps.core.domain.usecases.SetDynamicColorUseCase
 import com.kastik.apps.core.domain.usecases.SetFabFiltersEnabledUseCase
 import com.kastik.apps.core.domain.usecases.SetForYouEnabledUseCase
@@ -13,7 +14,6 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -23,6 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
+    isForYouAvailableUseCase: IsForYouAvailableUseCase,
     getUserPreferencesUseCase: GetUserPreferencesUseCase,
     private val setSearchScopeUseCase: SetSearchScopeUseCase,
     private val setDynamicColorUseCase: SetDynamicColorUseCase,
@@ -32,18 +33,17 @@ class SettingsScreenViewModel @Inject constructor(
     private val setFabFiltersEnabledUseCase: SetFabFiltersEnabledUseCase,
 ) : ViewModel() {
 
-    private val errorState = MutableStateFlow<String?>(null)
-
     val uiState: StateFlow<UiState> = combine(
-        errorState,
         getUserPreferencesUseCase(),
-    ) { error, preferences ->
+        isForYouAvailableUseCase()
+    ) { preferences, isForYouAvailable ->
         UiState.Success(
             theme = preferences.theme,
             sortType = preferences.sortType,
             isDynamicColorEnabled = preferences.dynamicColor,
             searchScope = preferences.searchScope,
             isForYouEnabled = preferences.enableForYou,
+            isForYouAvailable = isForYouAvailable,
             areFabFiltersEnabled = preferences.disableFabFilters
         )
     }.stateIn(

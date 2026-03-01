@@ -95,6 +95,7 @@ internal fun SettingsRoute(
                     dynamicColor = state.isDynamicColorEnabled,
                     onDynamicColorChange = viewModel::setDynamicColor,
                     forYouEnabled = state.isForYouEnabled,
+                    isForYouAvailable = state.isForYouAvailable,
                     onForYouChange = viewModel::setEnableForYou,
                     fabFiltersDisabled = state.areFabFiltersEnabled,
                     onFabFiltersChange = viewModel::setFabFilters,
@@ -120,6 +121,7 @@ private fun SettingsScreenContent(
     dynamicColor: Boolean,
     onDynamicColorChange: (Boolean) -> Unit = {},
     forYouEnabled: Boolean,
+    isForYouAvailable: Boolean,
     onForYouChange: (Boolean) -> Unit = {},
     fabFiltersDisabled: Boolean,
     onFabFiltersChange: (Boolean) -> Unit = {},
@@ -206,7 +208,8 @@ private fun SettingsScreenContent(
                     HorizontalDivider()
                     SettingSwitchRow(
                         title = "For You",
-                        subtitle = "Show announcements from subscribed tags",
+                        subtitle = if (isForYouAvailable) "Show announcements from subscribed tags" else "You must be signed in to use this feature",
+                        enabled = isForYouAvailable,
                         checked = forYouEnabled,
                         onCheckedChange = { enabled ->
                             if (enabled) {
@@ -402,6 +405,12 @@ private fun SettingsScreenContent(
                             analytics.logEvent("open_source_licenses_clicked")
                             navigateToLicenses()
                         })
+                    HorizontalDivider()
+                    SettingNavigationRow(
+                        title = "Discord channel", onClick = {
+                            analytics.logEvent("open_source_licenses_clicked")
+                            context.launchUrl("https://discord.com/channels/693584494862794822/1473065482058993765")
+                        })
                 }
             }
             Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
@@ -441,14 +450,16 @@ fun <T> SettingsegmentedButton(
 private fun SettingSwitchRow(
     title: String,
     subtitle: String? = null,
+    enabled: Boolean = true,
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 14.dp)
             .toggleable(
+                enabled = enabled,
                 value = checked,
                 onValueChange = onCheckedChange
             ),
@@ -469,6 +480,7 @@ private fun SettingSwitchRow(
             }
         }
         Switch(
+            enabled = enabled,
             checked = checked,
             onCheckedChange = null
         )
@@ -517,6 +529,7 @@ fun SettingsScreenPreview() {
         searchScope = SearchScope.Title,
         onSearchScopeChange = {},
         forYouEnabled = false,
+        isForYouAvailable = true,
         onForYouChange = {},
         fabFiltersDisabled = false,
         onFabFiltersChange = {},
