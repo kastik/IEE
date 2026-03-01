@@ -1,5 +1,6 @@
 package com.kastik.apps.core.domain.usecases
 
+import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.common.extensions.combine
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
@@ -10,6 +11,7 @@ import com.kastik.apps.core.model.user.UserPreferences
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class HasSkippedSignInUseCase @Inject constructor(
@@ -165,4 +167,21 @@ class GetUserPreferencesUseCase @Inject constructor(
                 disableFabFilters
             )
         }
+}
+
+
+class UpdateUserPropertiesUseCase @Inject constructor(
+    private val analytics: Analytics,
+    private val getUserPreferencesUseCase: GetUserPreferencesUseCase,
+) {
+    suspend operator fun invoke() {
+        val prefs = getUserPreferencesUseCase().first()
+
+        analytics.setUserProperty("theme", prefs.theme.name)
+        analytics.setUserProperty("dynamic_color", prefs.dynamicColor.toString())
+        analytics.setUserProperty("sort_type", prefs.sortType.name)
+        analytics.setUserProperty("search_scope", prefs.searchScope.name)
+        analytics.setUserProperty("for_you", prefs.enableForYou.toString())
+        analytics.setUserProperty("fab_filters", prefs.disableFabFilters.toString())
+    }
 }

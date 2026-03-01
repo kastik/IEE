@@ -19,6 +19,26 @@ internal class AnalyticsReleaseImpl @Inject constructor(
                     is Float -> param(key, value.toDouble())
                     is Double -> param(key, value)
                     is Boolean -> param(key, if (value) 1L else 0L)
+                    is Iterable<*> -> param(key, value.joinToString(","))
+                    else -> param(key, value.toString())
+                }
+            }
+        }
+    }
+
+    override fun logScreenView(screenName: String, params: Map<String, Any?>) {
+        analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+            param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
+            param(FirebaseAnalytics.Param.SCREEN_CLASS, "MainActivity")
+            params.forEach { (key, value) ->
+                when (value) {
+                    null -> Unit
+                    is String -> param(key, value)
+                    is Long -> param(key, value)
+                    is Int -> param(key, value.toLong())
+                    is Float -> param(key, value.toDouble())
+                    is Double -> param(key, value)
+                    is Boolean -> param(key, if (value) 1L else 0L)
                 }
             }
         }
@@ -27,10 +47,4 @@ internal class AnalyticsReleaseImpl @Inject constructor(
     override fun setUserProperty(name: String, value: String?) =
         analytics.setUserProperty(name, value)
 
-    override fun logScreenView(screenName: String) {
-        analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-            param(FirebaseAnalytics.Param.SCREEN_CLASS, "MainActivity")
-        }
-    }
 }

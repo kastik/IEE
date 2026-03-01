@@ -39,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.common.extensions.removeAccents
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -58,7 +57,7 @@ fun <T> GenericFilterSheet(
     titlePlaceholder: String = "Search...",
     applyText: String = "Apply"
 ) {
-    val analytics = LocalAnalytics.current
+
     var query by remember { mutableStateOf("") }
     val currentSelection =
         remember(selectedIds) { mutableStateListOf<Int>().apply { addAll(selectedIds) } }
@@ -95,7 +94,6 @@ fun <T> GenericFilterSheet(
             OutlinedTextField(
                 value = query,
                 onValueChange = {
-                    analytics.logEvent("sheet_search", mapOf("query" to query))
                     query = it
                 },
                 modifier = Modifier.weight(1f),

@@ -200,8 +200,13 @@ private fun SettingsScreenContent(
                             onSelected = { sortType ->
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
                                 onSortTypeChange(sortType)
+                                analytics.setUserProperty("sort_type", sortType.name)
                                 analytics.logEvent(
-                                    "sort_type_changed", mapOf("sort_type" to sortType.name)
+                                    "sort_type_changed",
+                                    mapOf(
+                                        "sort_type" to sortType.name,
+                                        "source" to "settings_screen"
+                                    )
                                 )
                             })
                     }
@@ -218,9 +223,12 @@ private fun SettingsScreenContent(
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
                             }
                             onForYouChange(enabled)
+                            analytics.setUserProperty("for_you", enabled.toString())
                             analytics.logEvent(
-                                "for_you_changed",
-                                mapOf("for_you_enabled" to enabled.toString())
+                                "for_you_changed", mapOf(
+                                    "for_you" to enabled.toString(),
+                                    "source" to "settings_screen"
+                                )
                             )
                         })
                     HorizontalDivider()
@@ -235,9 +243,12 @@ private fun SettingsScreenContent(
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
                             }
                             onFabFiltersChange(enabled)
+                            analytics.setUserProperty("fab_filters", enabled.toString())
                             analytics.logEvent(
-                                "fab_filters_changed",
-                                mapOf("fab_filters_enabled" to enabled.toString())
+                                "fab_filters_changed", mapOf(
+                                    "fab_filters" to enabled.toString(),
+                                    "source" to "settings_screen"
+                                )
                             )
                         })
                 }
@@ -278,8 +289,12 @@ private fun SettingsScreenContent(
                             onSelected = { searchScope ->
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
                                 onSearchScopeChange(searchScope)
+                                analytics.setUserProperty("search_scope", searchScope.name)
                                 analytics.logEvent(
-                                    "search_scope_changed", mapOf("search_type" to searchScope.name)
+                                    "search_scope_changed", mapOf(
+                                        "search_scope" to searchScope.name,
+                                        "source" to "settings_screen"
+                                    )
                                 )
                             })
                     }
@@ -323,8 +338,12 @@ private fun SettingsScreenContent(
                             onSelected = { theme ->
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
                                 onThemeChange(theme)
+                                analytics.setUserProperty("theme", theme.name)
                                 analytics.logEvent(
-                                    "theme_changed", mapOf("theme" to theme.name)
+                                    "theme_changed", mapOf(
+                                        "theme" to theme.name,
+                                        "source" to "settings_screen"
+                                    )
                                 )
                             })
                     }
@@ -341,9 +360,12 @@ private fun SettingsScreenContent(
                                     hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
                                 }
                                 onDynamicColorChange(enabled)
+                                analytics.setUserProperty("dynamic_color", enabled.toString())
                                 analytics.logEvent(
-                                    "dynamic_color_changed",
-                                    mapOf("dynamic_color_enabled" to enabled.toString())
+                                    "dynamic_color_changed", mapOf(
+                                        "dynamic_color" to enabled.toString(),
+                                        "source" to "settings_screen"
+                                    )
                                 )
                             })
                     }
@@ -366,9 +388,12 @@ private fun SettingsScreenContent(
                         subtitle = "Receive updates and announcements",
                         checked = areNotificationGranted,
                         onCheckedChange = {
+                            analytics.setUserProperty("push_notifications", it.toString())
                             analytics.logEvent(
-                                "push_notifications_changed",
-                                mapOf("push_notifications_enabled" to it.toString())
+                                "push_notifications_changed", mapOf(
+                                    "push_notifications" to it.toString(),
+                                    "source" to "settings_screen"
+                                )
                             )
                             val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
@@ -396,19 +421,30 @@ private fun SettingsScreenContent(
             ) {
                 Column {
                     SettingNavigationRow(
-                        title = "About app", subtitle = "Version $versionName", onClick = {
+                        title = "About app", subtitle = "Version $versionName",
+                        onClick = {
+                            analytics.logEvent(
+                                "about_app_clicked",
+                                mapOf("source" to "settings_screen")
+                            )
                             context.launchUrl("https://github.com/kastik/IEE")
                         })
                     HorizontalDivider()
                     SettingNavigationRow(
                         title = "Open source licenses", onClick = {
-                            analytics.logEvent("open_source_licenses_clicked")
+                            analytics.logEvent(
+                                "open_source_licenses_clicked",
+                                mapOf("source" to "settings_screen")
+                            )
                             navigateToLicenses()
                         })
                     HorizontalDivider()
                     SettingNavigationRow(
                         title = "Discord channel", onClick = {
-                            analytics.logEvent("open_source_licenses_clicked")
+                            analytics.logEvent(
+                                "discord_channel_clicked",
+                                mapOf("source" to "settings_screen")
+                            )
                             context.launchUrl("https://discord.com/channels/693584494862794822/1473065482058993765")
                         })
                 }

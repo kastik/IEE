@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:model"))
     implementation(project(":core:notifications"))
+    implementation(project(":core:crashlytics"))
 
     implementation(libs.retrofit)
     implementation(libs.androidx.work.runtime.ktx)

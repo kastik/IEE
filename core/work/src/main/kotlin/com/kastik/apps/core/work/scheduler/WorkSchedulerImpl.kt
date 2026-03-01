@@ -24,16 +24,19 @@ import javax.inject.Inject
 
 
 class WorkSchedulerImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext context: Context
 ) : WorkScheduler {
 
     companion object {
-        const val TOKEN_REFRESH_WORK_NAME = "TOKEN_REFRESH_WORK"
-        const val SYNC_TOPICS_WORK_NAME = "SYNC_TOPICS_WORK"
-        const val SUBSCRIBE_TO_TAGS_WORK_NAME = "SUBSCRIBE_TO_TAGS_WORK"
-        const val ANNOUNCEMENT_REFRESH_WORK_NAME = "ANNOUNCEMENT_REFRESH_WORK"
+        internal const val TOKEN_REFRESH_WORK_NAME = "TOKEN_REFRESH_WORK"
+        internal const val SYNC_TOPICS_WORK_NAME = "SYNC_TOPICS_WORK"
+        internal const val SUBSCRIBE_TO_TAGS_WORK_NAME = "SUBSCRIBE_TO_TAGS_WORK"
+        internal const val ANNOUNCEMENT_REFRESH_WORK_NAME = "ANNOUNCEMENT_REFRESH_WORK"
     }
 
+    private val workManager = WorkManager.getInstance(context)
+
+    //TODO When aboard refresh logic is merged this will be redundant
     override fun scheduleTokenRefresh() {
 
         val constraints =
@@ -44,7 +47,7 @@ class WorkSchedulerImpl @Inject constructor(
                 constraints
             ).setBackoffCriteria(BackoffPolicy.LINEAR, 15, TimeUnit.MINUTES).build()
 
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        workManager.enqueueUniquePeriodicWork(
             uniqueWorkName = TOKEN_REFRESH_WORK_NAME,
             existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.REPLACE,
             request = tokenRefreshWorkRequest
@@ -52,11 +55,11 @@ class WorkSchedulerImpl @Inject constructor(
     }
 
     override fun getTokenRefreshWorkInfo(): Flow<WorkInfo?> =
-        WorkManager.getInstance(context).getWorkInfosForUniqueWorkFlow(TOKEN_REFRESH_WORK_NAME)
-            .map { it.firstOrNull() }
+        workManager.getWorkInfosForUniqueWorkFlow(TOKEN_REFRESH_WORK_NAME).map { it.firstOrNull() }
 
     override fun cancelTokenRefresh() {
-        WorkManager.getInstance(context).cancelUniqueWork(TOKEN_REFRESH_WORK_NAME)
+        workManager.cancelUniqueWork(TOKEN_REFRESH_WORK_NAME)
+
     }
 
     override fun scheduleAnnouncementAlerts() {
@@ -64,23 +67,24 @@ class WorkSchedulerImpl @Inject constructor(
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
         val announcementRefreshWorkRequest = PeriodicWorkRequestBuilder<AnnouncementAlertWorker>(
-            30,
-            TimeUnit.MINUTES
+            30, TimeUnit.MINUTES
         ).setConstraints(constraints).setBackoffCriteria(BackoffPolicy.LINEAR, 15, TimeUnit.MINUTES)
             .build()
 
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        workManager.enqueueUniquePeriodicWork(
             uniqueWorkName = ANNOUNCEMENT_REFRESH_WORK_NAME,
             existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.REPLACE,
             request = announcementRefreshWorkRequest
         )
     }
 
-    override fun getAnnouncementAlertsWorkInfo(): Flow<WorkInfo?> = WorkManager.getInstance(context)
-        .getWorkInfosForUniqueWorkFlow(ANNOUNCEMENT_REFRESH_WORK_NAME).map { it.firstOrNull() }
+    override fun getAnnouncementAlertsWorkInfo(): Flow<WorkInfo?> =
+        workManager.getWorkInfosForUniqueWorkFlow(ANNOUNCEMENT_REFRESH_WORK_NAME)
+            .map { it.firstOrNull() }
 
     override fun cancelAnnouncementAlerts() {
-        WorkManager.getInstance(context).cancelUniqueWork(ANNOUNCEMENT_REFRESH_WORK_NAME)
+        workManager.cancelUniqueWork(ANNOUNCEMENT_REFRESH_WORK_NAME)
+
     }
 
     override fun scheduleSubscribeToTags(newTagIds: List<Int>) {
@@ -98,18 +102,19 @@ class WorkSchedulerImpl @Inject constructor(
             OneTimeWorkRequestBuilder<SubscribeToTopicsWorker>().setConstraints(constraints)
                 .setBackoffCriteria(BackoffPolicy.LINEAR, 15, TimeUnit.MINUTES).build()
 
-        WorkManager.getInstance(context).beginUniqueWork(
+        workManager.beginUniqueWork(
             SUBSCRIBE_TO_TAGS_WORK_NAME, ExistingWorkPolicy.REPLACE, subscribeToTagsWork
         ).then(subscribeToTopicWork).enqueue()
 
     }
 
     override fun getSubscribeToTagsWorkInfo(): Flow<WorkInfo?> =
-        WorkManager.getInstance(context).getWorkInfosForUniqueWorkFlow(SUBSCRIBE_TO_TAGS_WORK_NAME)
+        workManager.getWorkInfosForUniqueWorkFlow(SUBSCRIBE_TO_TAGS_WORK_NAME)
             .map { it.firstOrNull() }
 
     override fun cancelSubscribeToTags() {
-        WorkManager.getInstance(context).cancelUniqueWork(SUBSCRIBE_TO_TAGS_WORK_NAME)
+        workManager.cancelUniqueWork(SUBSCRIBE_TO_TAGS_WORK_NAME)
+
     }
 
     override fun scheduleTopicsSync() {
@@ -120,17 +125,17 @@ class WorkSchedulerImpl @Inject constructor(
             OneTimeWorkRequestBuilder<SubscribeToTopicsWorker>().setConstraints(constraints)
                 .setBackoffCriteria(BackoffPolicy.LINEAR, 15, TimeUnit.MINUTES).build()
 
-        WorkManager.getInstance(context).beginUniqueWork(
+        workManager.beginUniqueWork(
             SYNC_TOPICS_WORK_NAME, ExistingWorkPolicy.REPLACE, subscribeToTopicWork
         ).enqueue()
     }
 
     override fun getTopicsSyncWorkInfo(): Flow<WorkInfo?> =
-        WorkManager.getInstance(context).getWorkInfosForUniqueWorkFlow(SYNC_TOPICS_WORK_NAME)
+        workManager.getWorkInfosForUniqueWorkFlow(SYNC_TOPICS_WORK_NAME)
             .map { it.firstOrNull() }
 
     override fun cancelTopicsSync() {
-        WorkManager.getInstance(context).cancelUniqueWork(SYNC_TOPICS_WORK_NAME)
+        workManager.cancelUniqueWork(SYNC_TOPICS_WORK_NAME)
 
     }
 }

@@ -7,6 +7,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.domain.repository.RemoteConfigRepository
 import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.CheckNewAnnouncementsUseCase
@@ -23,13 +24,13 @@ class AnnouncementAlertWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val notifier: Notifier,
+    private val crashlytics: Crashlytics,
     private val checkNewAnnouncementsUseCase: CheckNewAnnouncementsUseCase,
     private val remoteConfigRepository: RemoteConfigRepository
 ) : CoroutineWorker(context, workerParams) {
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    override suspend fun doWork(): Result {
-
+    override suspend fun doWork(): Result = try {
         if (remoteConfigRepository.isFcmEnabled()) {
             WorkManager.getInstance(applicationContext)
                 .cancelUniqueWork(ANNOUNCEMENT_REFRESH_WORK_NAME)
@@ -59,5 +60,8 @@ class AnnouncementAlertWorker @AssistedInject constructor(
                 return Result.retry()
             }
         }
+    } catch (e: Exception) {
+        crashlytics.recordException(e)
+        return Result.retry()
     }
 }

@@ -13,7 +13,7 @@ internal class AnalyticsDebugImpl @Inject constructor() : Analytics {
         Log.d("Analytics", "setUserProperty($name, $value)")
     }
 
-    override fun logScreenView(screenName: String) {
-        Log.d("Analytics", "logScreenView($screenName)")
+    override fun logScreenView(screenName: String, params: Map<String, Any?>) {
+        Log.d("Analytics", "logScreenView($screenName, $params)")
     }
 }

@@ -2,6 +2,7 @@
 
 -keepclassmembers class com.google.firebase.perf.v1.* { *; }
 
+-keepclassmembers class com.google.protobuf.** { *; }
 -keepclassmembers class com.kastik.apps.core.datastore.proto.* { *; }
 -keep interface com.kastik.apps.core.network.api.** { *; }
 
