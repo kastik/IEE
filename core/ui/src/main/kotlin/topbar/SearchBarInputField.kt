@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SearchBarInputField(
+    placeholder: String,
     textFieldState: TextFieldState,
     searchBarState: SearchBarState,
     onSearch: (String) -> Unit,
@@ -31,7 +32,7 @@ internal fun SearchBarInputField(
         textFieldState = textFieldState,
         searchBarState = searchBarState,
         onSearch = onSearch,
-        placeholder = { Text("Search") },
+        placeholder = { Text(placeholder) },
         leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
         trailingIcon = {
             AnimatedVisibility(

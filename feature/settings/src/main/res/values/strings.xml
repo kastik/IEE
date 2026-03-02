@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_feed_options">Feed"</string>
+    <string name="title_search_options">Search</string>
+    <string name="title_appearance">Appearance</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_about">About</string>
+
+    <string name="sort_by_label">Sort by</string>
+    <string name="sort_by_priority_label">Priority</string>
+    <string name="sort_by_descending_label">Descending</string>
+    <string name="sort_by_ascending_label">Ascending</string>
+
+    <string name="for_you_label">For You</string>
+    <string name="for_you_available_description">Show announcements from subscribed tags</string>
+    <string name="for_unavailable_description">You must be signed in to use this feature</string>
+
+    <string name="fab_filters_label">FAB filters</string>
+    <string name="fab_filters_description">Show filters beside the FAB button</string>
+
+    <string name="search_in_label">Search in"</string>
+    <string name="search_in_title_label">Title</string>
+    <string name="search_in_body_label">Body</string>
+    <string name="search_in_both_label">Both</string>
+
+    <string name="theme_label">Theme</string>
+    <string name="theme_system_label">System</string>
+    <string name="theme_light_label">Light</string>
+    <string name="theme_dark_label">Dark</string>
+
+    <string name="dynamic_color_label">Dynamic color</string>
+    <string name="dynamic_color_description">Use colors from the wallpaper</string>
+
+    <string name="push_notifications_label">Push notifications</string>
+    <string name="push_notifications_description">Receive updates and announcements</string>
+
+    <string name="about_app_label">About app</string>
+    <string name="about_app_description">Version</string>
+    <string name="open_source_label">Open source licenses</string>
+    <string name="discord_label">Discord channel</string>
+</resources>

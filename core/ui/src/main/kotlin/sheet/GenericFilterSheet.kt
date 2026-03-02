@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.common.extensions.removeAccents
 import kotlinx.collections.immutable.ImmutableList
@@ -54,8 +55,9 @@ fun <T> GenericFilterSheet(
     idProvider: (T) -> Int,
     labelProvider: (T) -> String,
     groupProvider: ((T) -> Char)? = null,
-    titlePlaceholder: String = "Search...",
-    applyText: String = "Apply"
+    searchHint: String,
+    applyLabel: String,
+    clearLabel: String
 ) {
 
     var query by remember { mutableStateOf("") }
@@ -97,7 +99,11 @@ fun <T> GenericFilterSheet(
                     query = it
                 },
                 modifier = Modifier.weight(1f),
-                placeholder = { Text(titlePlaceholder) },
+                placeholder = {
+                    Text(
+                        searchHint, overflow = TextOverflow.Ellipsis, maxLines = 1
+                    )
+                },
                 singleLine = true,
                 trailingIcon = {
                     AnimatedVisibility(
@@ -124,7 +130,7 @@ fun <T> GenericFilterSheet(
                     modifier = Modifier.wrapContentWidth(),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text("Clear", maxLines = 1)
+                    Text(clearLabel, maxLines = 1)
                 }
             }
         }
@@ -159,7 +165,7 @@ fun <T> GenericFilterSheet(
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            Text(applyText)
+            Text(applyLabel)
         }
     }
 }

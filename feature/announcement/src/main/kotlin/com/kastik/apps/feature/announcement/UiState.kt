@@ -1,5 +1,6 @@
 package com.kastik.apps.feature.announcement
 
+import androidx.annotation.StringRes
 import androidx.compose.ui.text.AnnotatedString
 import com.kastik.apps.core.model.aboard.Announcement
 import kotlinx.collections.immutable.ImmutableList
@@ -11,7 +12,7 @@ sealed class UiState {
         val processedBody: ImmutableList<ProcessedBody>
     ) : UiState()
 
-    data class Error(val message: String) : UiState()
+    data class Error(@StringRes val resId: Int) : UiState()
 
 }
 

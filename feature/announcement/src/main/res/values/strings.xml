@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fetching_message">Fetching announcement…</string>
+
+    <string name="tags_label">Tags</string>
+    <string name="attachments_label">Attachments</string>
+
+    <string name="error_authentication">Sign in required</string>
+    <string name="error_connection">No internet connection</string>
+    <string name="error_server">Something went wrong on the server</string>
+    <string name="error_time_out">Timed out</string>
+    <string name="error_generic">Something went wrong</string>
+</resources>

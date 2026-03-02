@@ -26,12 +26,12 @@ class AuthenticationScreenViewModel @Inject constructor(
 
     val uiState: StateFlow<UiState> = flow {
         if (!args.error.isNullOrBlank()) {
-            emit(UiState.Error(args.error))
+            emit(UiState.ServerError(args.error))
             return@flow
         }
 
         if (args.code.isNullOrBlank()) {
-            emit(UiState.Error("Something went wrong"))
+            emit(UiState.LocalError(R.string.error_generic))
             return@flow
         }
 
@@ -41,7 +41,7 @@ class AuthenticationScreenViewModel @Inject constructor(
 
     }.catch {
         signOutUserUseCase()
-        emit(UiState.Error("Something went wrong"))
+        emit(UiState.LocalError(R.string.error_generic))
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),

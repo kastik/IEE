@@ -26,6 +26,7 @@ fun SearchBar(
     onAuthorQuickResultClick: (authorId: Int) -> Unit,
     onAnnouncementQuickResultClick: (announcementId: Int) -> Unit,
     onSearch: (query: String) -> Unit,
+    searchHint: String,
     textFieldState: TextFieldState,
     searchBarState: SearchBarState,
     scrollBehavior: SearchBarScrollBehavior,
@@ -48,6 +49,7 @@ fun SearchBar(
     val searchBarInputField = remember {
         movableContentOf {
             SearchBarInputField(
+                placeholder = searchHint,
                 searchBarState = searchBarState,
                 textFieldState = textFieldState,
                 modifier = Modifier.semantics { contentDescription = "search_bar:input_field" },
