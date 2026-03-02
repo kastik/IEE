@@ -20,6 +20,7 @@ import com.kastik.apps.core.work.scheduler.WorkSchedulerImpl.Companion.TOKEN_REF
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 
@@ -38,12 +39,18 @@ class AnnouncementAlertWorker @AssistedInject constructor(
 
         val workManager = WorkManager.getInstance(applicationContext)
 
-        val tokenWorkInfos = withContext(Dispatchers.IO) {
-            workManager.getWorkInfosForUniqueWork(TOKEN_REFRESH_WORK_NAME).get()
-        }
+        var isTokenRunning = true
 
-        if (tokenWorkInfos.any { it.state == WorkInfo.State.RUNNING }) {
-            return Result.retry()
+        while (isTokenRunning) {
+            val tokenWorkInfos = withContext(Dispatchers.IO) {
+                workManager.getWorkInfosForUniqueWork(TOKEN_REFRESH_WORK_NAME).get()
+            }
+
+            isTokenRunning = tokenWorkInfos.any { it.state == WorkInfo.State.RUNNING }
+
+            if (isTokenRunning) {
+                delay(2000L)
+            }
         }
 
         if (remoteConfigRepository.isFcmEnabled()) {
