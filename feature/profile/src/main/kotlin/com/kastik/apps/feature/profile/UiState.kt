@@ -1,5 +1,6 @@
 package com.kastik.apps.feature.profile
 
+import androidx.annotation.StringRes
 import com.kastik.apps.core.model.aboard.Profile
 import com.kastik.apps.core.model.aboard.SubscribableTag
 import com.kastik.apps.core.model.aboard.Tag
@@ -13,9 +14,7 @@ sealed class UiState {
         val subscribableTags: ImmutableList<SubscribableTag> = persistentListOf(),
         val showTagSheet: Boolean = false,
     ) : UiState()
-
-    data class SignedOut(val message: String) : UiState()
-
-    data class Loading(val message: String) : UiState()
-    data class Error(val message: String) : UiState()
+    data class SignedOut(@StringRes val resId: Int) : UiState()
+    data class Loading(@StringRes val resId: Int) : UiState()
+    data class Error(@StringRes val resId: Int) : UiState()
 }

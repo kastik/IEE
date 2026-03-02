@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fetching_message">Ανάκτηση ανακοίνωσης…</string>
+
+    <string name="tags_label">Ετικέτες</string>
+    <string name="attachments_label">Συνημμένα</string>
+
+    <string name="error_authentication">Απαιτείται σύνδεση"</string>
+    <string name="error_connection">Δεν υπάρχει σύνδεση στο διαδίκτυο"</string>
+    <string name="error_server">Κάτι πήγε στραβά στον διακομιστή"</string>
+    <string name="error_time_out">Λήξη χρονικού ορίου"</string>
+    <string name="error_generic">Κάτι πήγε στραβά</string>
+</resources>

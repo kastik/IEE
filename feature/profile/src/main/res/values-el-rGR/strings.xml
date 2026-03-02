@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logged_out_message">Έχετε αποσυνδεθεί</string>
+    <string name="fetching_profile_message">Ανάκτηση του προφίλ σας…</string>
+
+    <string name="action_clear">Καθαρισμός</string>
+    <string name="action_apply">Εφαρμογή</string>
+    <string name="action_sign_out">Αποσύνδεση</string>
+
+    <string name="subscribed_tags_label">Εγγεγραμμένες ετικέτες</string>
+    <string name="subscribe_tag_sheet_hint">Αναζήτηση…</string>
+
+    <string name="role_label">Ρόλος</string>
+    <string name="role_admin_label">Διαχειριστής</string>
+    <string name="role_author_label">Συγγραφέας</string>
+    <string name="role_student_label">Φοιτητής</string>
+
+    <string name="account_info_label">Πληροφορίες Λογαριασμού</string>
+    <string name="account_info_joined">Έγινες μέλος</string>
+    <string name="account_info_last_log_in">Τελευταία σύνδεση</string>
+
+    <string name="warning_empty_subscriptions">Δεν έχετε εγγραφεί ακόμη σε καμία ετικέτα</string>
+
+    <string name="error_authentication">Απαιτείται σύνδεση</string>
+    <string name="error_connection">Δεν υπάρχει σύνδεση στο διαδίκτυο</string>
+    <string name="error_server">Κάτι πήγε στραβά στον διακομιστή</string>
+    <string name="error_storage">Σφάλμα αποθήκευσης. Δεν είναι δυνατή η αποθήκευση δεδομένων εφαρμογής</string>
+    <string name="error_time_out">Λήξη χρονικού ορίου</string>
+    <string name="error_generic">Κάτι πήγε στραβά</string>
+
+    <string name="toast_subscription_update_failed_message">Πρόβλημα σύνδεσης. Θα προσπαθήσουμε ξανά αυτόματα</string>
+</resources>

@@ -58,6 +58,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -156,22 +157,25 @@ private fun HomeScreenContent(
     val pageCount = if (uiState.enableForYou) 2 else 1
     val pagerState = rememberPagerState(pageCount = { pageCount })
     val titles = remember(uiState.enableForYou) {
-        if (uiState.enableForYou) listOf("Home", "For You") else listOf("Home")
+        if (uiState.enableForYou) listOf(
+            R.string.home_feed_label,
+            R.string.for_you_feed_label
+        ) else listOf(R.string.home_feed_label)
     }
 
     AnimatedVisibility(uiState.showSignInNotice) {
         IEEDialog(
             icon = Icons.AutoMirrored.Default.Login,
-            title = "Sign in",
-            text = "Sign in to unlock all announcements. You are currently browsing with limited access.",
-            confirmText = "Sign-in",
+            title = stringResource(R.string.login_dialog_title),
+            text = stringResource(R.string.login_dialog_description),
+            confirmText = stringResource(R.string.action_sign_in),
             onConfirm = {
                 analytics.logEvent(
                     "sign_in_clicked", mapOf("source" to "home_screen")
                 )
                 context.launchSignIn()
             },
-            dismissText = "Dismiss",
+            dismissText = stringResource(R.string.action_dismiss),
             onDismiss = {
                 analytics.logEvent(
                     "sign_in_dismissed", mapOf(
@@ -208,11 +212,23 @@ private fun HomeScreenContent(
     }
 
     LaunchedEffect(pagerState.currentPage) {
-        val currentTitle = titles.getOrNull(pagerState.currentPage) ?: return@LaunchedEffect
-        analytics.logEvent(
-            "tab_switched",
-            mapOf("tab" to currentTitle.lowercase().replace(" ", "_"), "source" to "home_screen")
-        )
+        if (pagerState.currentPage == 0) {
+            analytics.logEvent(
+                "tab_switched",
+                mapOf(
+                    "tab" to "home",
+                    "source" to "home_screen"
+                )
+            )
+        } else {
+            analytics.logEvent(
+                "tab_switched",
+                mapOf(
+                    "tab" to "for_you",
+                    "source" to "home_screen"
+                )
+            )
+        }
     }
 
     Scaffold(contentWindowInsets = WindowInsets.safeDrawing, floatingActionButton = {
@@ -271,6 +287,7 @@ private fun HomeScreenContent(
             scrollBehavior = searchScroll,
             quickResults = uiState.quickResults,
             searchBarState = searchBarState,
+            searchHint = stringResource(R.string.search_bar_hint),
             textFieldState = searchBarTextFieldState,
             onSearch = { query ->
                 analytics.logEvent(
@@ -311,6 +328,8 @@ private fun HomeScreenContent(
             },
             expandedSecondaryActions = {
                 SearchBarFilters(
+                    tagLabel = stringResource(R.string.search_bar_tag_label),
+                    authorLabel = stringResource(R.string.search_bar_author_label),
                     selectedTagsCount = 0,
                     selectedAuthorsCount = 0,
                     openTagSheet = { showTagSheet.value = true },
@@ -333,7 +352,8 @@ private fun HomeScreenContent(
                                 onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
                                 text = {
                                     Text(
-                                        text = title, style = MaterialTheme.typography.titleSmall
+                                        text = stringResource(title),
+                                        style = MaterialTheme.typography.titleSmall
                                     )
                                 })
                         }
@@ -402,6 +422,12 @@ private fun HomeScreenContent(
                                 )
                             }) {
                             AnnouncementFeed(
+                                loadingPlaceHolderText = stringResource(R.string.feed_placeholder),
+                                nextPagePlaceHolderText = stringResource(R.string.feed_footer),
+                                emptyPlaceHolderText = stringResource(R.string.feed_empty),
+                                errorPlaceHolderText = stringResource(R.string.error_generic),
+                                errorPlaceHolderRetryText = stringResource(R.string.action_retry),
+                                errorNextPagePlaceHolderText = stringResource(R.string.feed_failed_footer),
                                 announcements = homeFeedAnnouncements,
                                 lazyListState = homeFeedLazyListState,
                                 scrollBehavior = searchScroll,
@@ -443,6 +469,12 @@ private fun HomeScreenContent(
                             },
                             content = {
                                 AnnouncementFeed(
+                                    loadingPlaceHolderText = stringResource(R.string.feed_placeholder),
+                                    nextPagePlaceHolderText = stringResource(R.string.feed_footer),
+                                    emptyPlaceHolderText = stringResource(R.string.feed_for_you_empty),
+                                    errorPlaceHolderText = stringResource(R.string.error_generic),
+                                    errorPlaceHolderRetryText = stringResource(R.string.action_retry),
+                                    errorNextPagePlaceHolderText = stringResource(R.string.feed_failed_footer),
                                     announcements = forYouAnnouncements,
                                     lazyListState = forYouLazyListState,
                                     scrollBehavior = searchScroll,
@@ -480,8 +512,9 @@ private fun HomeScreenContent(
             selectedIds = persistentListOf(),
             idProvider = { it.id },
             labelProvider = { it.title },
-            titlePlaceholder = "Search Tags...",
-            applyText = "Apply Tags",
+            searchHint = stringResource(R.string.tag_sheet_hint),
+            applyLabel = stringResource(R.string.action_apply_tags),
+            clearLabel = stringResource(R.string.action_clear),
             onApply = { newTagIds ->
                 scope.launch {
                     analytics.logEvent(
@@ -512,8 +545,9 @@ private fun HomeScreenContent(
                 } ?: author.name
             },
             groupProvider = { it.name.first().uppercaseChar() },
-            titlePlaceholder = "Search Authors...",
-            applyText = "Apply Authors",
+            searchHint = stringResource(R.string.author_sheet_hint),
+            applyLabel = stringResource(R.string.action_apply_authors),
+            clearLabel = stringResource(R.string.action_clear),
             onApply = { newAuthorIds ->
                 scope.launch {
                     analytics.logEvent(
@@ -549,11 +583,11 @@ private fun NotificationRationale() {
             if (notificationPermissionState.status.shouldShowRationale) {
                 IEEDialog(
                     icon = Icons.Default.NotificationsActive,
-                    title = "Stay updated",
-                    text = "Turn on notifications to never miss an important announcement.",
-                    confirmText = "Allow",
+                    title = stringResource(R.string.notification_dialog_title),
+                    text = stringResource(R.string.notification_dialog_description),
+                    confirmText = stringResource(R.string.action_allow),
                     onConfirm = { notificationPermissionState.launchPermissionRequest() },
-                    dismissText = "Dismiss",
+                    dismissText = stringResource(R.string.action_dismiss),
                     onDismiss = { showRationale = false })
             } else {
                 LaunchedEffect(Unit) {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_retry">Retry</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_apply_tags">Apply Tags</string>
+    <string name="action_apply_authors">Apply Authors</string>
+
+    <string name="search_bar_hint">Search</string>
+
+    <string name="feed_empty">Nothing matched your search.</string>
+    <string name="feed_placeholder">Fetching Announcements…</string>
+    <string name="feed_footer">Getting next page…</string>
+    <string name="feed_failed_footer">Failed to load more announcements</string>
+
+    <string name="tag_chip_label">Tags</string>
+    <string name="tag_sheet_hint">Search Tags</string>
+    <string name="author_chip_label">Authors</string>
+    <string name="author_sheet_hint">Search authors…</string>
+
+    <string name="error_generic">Something went wrong</string>
+</resources>

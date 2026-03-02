@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_feed_options">Ροή"</string>
+    <string name="title_search_options">Αναζήτηση</string>
+    <string name="title_appearance">Εμφάνιση</string>
+    <string name="title_notifications">Ειδοποιήσεις</string>
+    <string name="title_about">Σχετικά</string>
+
+    <string name="sort_by_label">Ταξινόμηση κατά</string>
+    <string name="sort_by_priority_label">Επείγοντα</string>
+    <string name="sort_by_descending_label">Φθίνουσα</string>
+    <string name="sort_by_ascending_label">Άυξουσα</string>
+
+    <string name="for_you_label">Ροή εγγεγραμμενων</string>
+    <string name="for_you_available_description">Εμφάνιση ανακοινώσεων από ετικέτες που έχουν εγγραφεί</string>
+    <string name="for_unavailable_description">Πρέπει να είστε συνδεδεμένοι για να χρησιμοποιήσετε αυτήν τη λειτουργία</string>
+
+    <string name="fab_filters_label">Φίλτρα FAB</string>
+    <string name="fab_filters_description">Εμφάνιση φίλτρων δίπλα στο κουμπί FAB</string>
+
+    <string name="search_in_label">Αναζήτηση σε"</string>
+    <string name="search_in_title_label">Τίτλος</string>
+    <string name="search_in_body_label">Σώμα</string>
+    <string name="search_in_both_label">Παντού</string>
+
+    <string name="theme_label">Θέμα</string>
+    <string name="theme_system_label">Σύστημα</string>
+    <string name="theme_light_label">Φωτεινό</string>
+    <string name="theme_dark_label">Σκούρο</string>
+
+    <string name="dynamic_color_label">Δυναμικό χρώμα</string>
+    <string name="dynamic_color_description">Χρησιμοποιήστε χρώματα από την ταπετσαρία</string>
+
+    <string name="push_notifications_label">Γνωστοποιήσεις</string>
+    <string name="push_notifications_description">Λάβετε ενημερώσεις και ανακοινώσεις</string>
+
+    <string name="about_app_label">Εφαρμογή</string>
+    <string name="about_app_description">Έκδοση</string>
+    <string name="open_source_label">Άδειες ανοιχτού κώδικα</string>
+    <string name="discord_label">Κανάλι Discord</string>
+</resources>

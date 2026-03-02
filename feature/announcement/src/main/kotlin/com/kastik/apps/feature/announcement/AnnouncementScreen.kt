@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
@@ -83,10 +84,10 @@ internal fun AnnouncementRoute(
         when (state) {
             is UiState.Loading -> LoadingContent(
                 modifier = Modifier.fillMaxSize(),
-                message = "Fetching announcement...",
+                message = stringResource(R.string.fetching_message),
             )
 
-            is UiState.Error -> StatusContent(message = state.message)
+            is UiState.Error -> StatusContent(message = stringResource(state.resId))
 
             is UiState.Success -> SuccessState(
                 announcementId = state.announcement.id,
@@ -200,7 +201,7 @@ private fun SuccessState(
 
         if (attachments.isNotEmpty()) {
             Text(
-                text = "Attachments",
+                text = stringResource(R.string.attachments_label),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -251,7 +252,7 @@ private fun SuccessState(
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 
             Text(
-                text = "Tags",
+                text = stringResource(R.string.tags_label),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )

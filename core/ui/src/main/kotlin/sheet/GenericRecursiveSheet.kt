@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.common.extensions.removeAccents
 import kotlinx.collections.immutable.ImmutableList
@@ -53,7 +54,10 @@ fun <T> GenericRecursiveSheet(
     onDismiss: () -> Unit,
     idProvider: (T) -> Int,
     labelProvider: (T) -> String,
-    childrenProvider: (T) -> List<T>
+    childrenProvider: (T) -> List<T>,
+    searchHint: String,
+    applyLabel: String,
+    clearLabel: String,
 ) {
     var query by remember { mutableStateOf("") }
 
@@ -124,7 +128,13 @@ fun <T> GenericRecursiveSheet(
                 value = query,
                 onValueChange = { query = it },
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Search...") },
+                placeholder = {
+                    Text(
+                        text = searchHint,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+                },
                 singleLine = true,
                 trailingIcon = {
                     AnimatedVisibility(
@@ -152,7 +162,7 @@ fun <T> GenericRecursiveSheet(
                     modifier = Modifier.wrapContentWidth(),
                     shape = MaterialTheme.shapes.medium
                 ) {
-                    Text("Clear", maxLines = 1)
+                    Text(clearLabel, overflow = TextOverflow.Ellipsis, maxLines = 1)
                 }
             }
         }
@@ -229,7 +239,7 @@ fun <T> GenericRecursiveSheet(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text("Apply")
+            Text(applyLabel)
         }
     }
 }

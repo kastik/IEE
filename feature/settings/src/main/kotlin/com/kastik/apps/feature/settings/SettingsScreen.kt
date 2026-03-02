@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -166,7 +167,7 @@ private fun SettingsScreenContent(
         ) {
             Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
             Text(
-                text = "Feed Options",
+                text = stringResource(R.string.title_feed_options),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -182,7 +183,7 @@ private fun SettingsScreenContent(
                             .padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
                         Text(
-                            text = "Sort by",
+                            text = stringResource(R.string.sort_by_label),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -192,9 +193,9 @@ private fun SettingsScreenContent(
                             options = SortType.entries.toImmutableList(),
                             label = {
                                 when (it) {
-                                    SortType.Priority -> "Priority"
-                                    SortType.DESC -> "Descending"
-                                    SortType.ASC -> "Ascending"
+                                    SortType.Priority -> stringResource(R.string.sort_by_priority_label)
+                                    SortType.DESC -> stringResource(R.string.sort_by_descending_label)
+                                    SortType.ASC -> stringResource(R.string.sort_by_ascending_label)
                                 }
                             },
                             onSelected = { sortType ->
@@ -212,8 +213,10 @@ private fun SettingsScreenContent(
                     }
                     HorizontalDivider()
                     SettingSwitchRow(
-                        title = "For You",
-                        subtitle = if (isForYouAvailable) "Show announcements from subscribed tags" else "You must be signed in to use this feature",
+                        title = stringResource(R.string.for_you_label),
+                        subtitle = if (isForYouAvailable) stringResource(R.string.for_you_available_description) else stringResource(
+                            R.string.for_unavailable_description
+                        ),
                         enabled = isForYouAvailable,
                         checked = forYouEnabled,
                         onCheckedChange = { enabled ->
@@ -233,8 +236,8 @@ private fun SettingsScreenContent(
                         })
                     HorizontalDivider()
                     SettingSwitchRow(
-                        title = "FAB filters",
-                        subtitle = "Show filters in the FAB button",
+                        title = stringResource(R.string.fab_filters_label),
+                        subtitle = stringResource(R.string.fab_filters_description),
                         checked = fabFiltersDisabled,
                         onCheckedChange = { enabled ->
                             if (enabled) {
@@ -255,7 +258,7 @@ private fun SettingsScreenContent(
             }
 
             Text(
-                text = "Search Options",
+                text = stringResource(R.string.title_search_options),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -271,7 +274,7 @@ private fun SettingsScreenContent(
                             .padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
                         Text(
-                            text = "Search in",
+                            text = stringResource(R.string.search_in_label),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -281,9 +284,9 @@ private fun SettingsScreenContent(
                             options = SearchScope.entries.toImmutableList(),
                             label = {
                                 when (it) {
-                                    SearchScope.Title -> "Title"
-                                    SearchScope.Body -> "Body"
-                                    SearchScope.TitleAndBody -> "Both"
+                                    SearchScope.Title -> stringResource(R.string.search_in_title_label)
+                                    SearchScope.Body -> stringResource(R.string.search_in_body_label)
+                                    SearchScope.TitleAndBody -> stringResource(R.string.search_in_both_label)
                                 }
                             },
                             onSelected = { searchScope ->
@@ -304,7 +307,7 @@ private fun SettingsScreenContent(
 
 
             Text(
-                text = "Appearance",
+                text = stringResource(R.string.title_appearance),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -320,7 +323,7 @@ private fun SettingsScreenContent(
                             .padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
                         Text(
-                            text = "Theme",
+                            text = stringResource(R.string.theme_label),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -330,9 +333,9 @@ private fun SettingsScreenContent(
                             options = UserTheme.entries.toImmutableList(),
                             label = {
                                 when (it) {
-                                    UserTheme.FOLLOW_SYSTEM -> "System"
-                                    UserTheme.LIGHT -> "Light"
-                                    UserTheme.DARK -> "Dark"
+                                    UserTheme.FOLLOW_SYSTEM -> stringResource(R.string.theme_system_label)
+                                    UserTheme.LIGHT -> stringResource(R.string.theme_light_label)
+                                    UserTheme.DARK -> stringResource(R.string.theme_dark_label)
                                 }
                             },
                             onSelected = { theme ->
@@ -350,8 +353,8 @@ private fun SettingsScreenContent(
                     HorizontalDivider()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         SettingSwitchRow(
-                            title = "Dynamic color",
-                            subtitle = "Use colors from the wallpaper",
+                            title = stringResource(R.string.dynamic_color_label),
+                            subtitle = stringResource(R.string.dynamic_color_description),
                             checked = dynamicColor,
                             onCheckedChange = { enabled ->
                                 if (enabled) {
@@ -373,7 +376,7 @@ private fun SettingsScreenContent(
             }
 
             Text(
-                text = "Notifications",
+                text = stringResource(R.string.title_notifications),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -384,8 +387,8 @@ private fun SettingsScreenContent(
             ) {
                 Column {
                     SettingSwitchRow(
-                        title = "Push notifications",
-                        subtitle = "Receive updates and announcements",
+                        title = stringResource(R.string.push_notifications_label),
+                        subtitle = stringResource(R.string.push_notifications_description),
                         checked = areNotificationGranted,
                         onCheckedChange = {
                             analytics.setUserProperty("push_notifications", it.toString())
@@ -410,7 +413,7 @@ private fun SettingsScreenContent(
             }
 
             Text(
-                text = "About",
+                text = stringResource(R.string.title_about),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary,
             )
@@ -421,7 +424,8 @@ private fun SettingsScreenContent(
             ) {
                 Column {
                     SettingNavigationRow(
-                        title = "About app", subtitle = "Version $versionName",
+                        title = stringResource(R.string.about_app_label),
+                        subtitle = "${stringResource(R.string.about_app_description)} $versionName",
                         onClick = {
                             analytics.logEvent(
                                 "about_app_clicked",
@@ -431,7 +435,7 @@ private fun SettingsScreenContent(
                         })
                     HorizontalDivider()
                     SettingNavigationRow(
-                        title = "Open source licenses", onClick = {
+                        title = stringResource(R.string.open_source_label), onClick = {
                             analytics.logEvent(
                                 "open_source_licenses_clicked",
                                 mapOf("source" to "settings_screen")
@@ -440,7 +444,7 @@ private fun SettingsScreenContent(
                         })
                     HorizontalDivider()
                     SettingNavigationRow(
-                        title = "Discord channel", onClick = {
+                        title = stringResource(R.string.discord_label), onClick = {
                             analytics.logEvent(
                                 "discord_channel_clicked",
                                 mapOf("source" to "settings_screen")
@@ -459,7 +463,7 @@ private fun SettingsScreenContent(
 fun <T> SettingsegmentedButton(
     selected: T,
     options: ImmutableList<T>,
-    label: (T) -> String,
+    label: @Composable (T) -> String,
     onSelected: (T) -> Unit,
     modifier: Modifier = Modifier
 ) {

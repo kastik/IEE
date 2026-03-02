@@ -31,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -102,6 +103,8 @@ private fun SearchScreenContent(
     val secondaryActions = remember(uiState.activeFilters) {
         movableContentOf {
             SearchBarFilters(
+                tagLabel = stringResource(R.string.tag_chip_label),
+                authorLabel = stringResource(R.string.author_chip_label),
                 selectedTagsCount = uiState.activeFilters.selectedTagIds.size,
                 selectedAuthorsCount = uiState.activeFilters.selectedAuthorIds.size,
                 openTagSheet = { showTagSheet.value = true },
@@ -114,6 +117,7 @@ private fun SearchScreenContent(
             SearchBar(
                 scrollBehavior = searchScroll,
                 quickResults = uiState.quickResults,
+                searchHint = stringResource(R.string.search_bar_hint),
                 searchBarState = searchBarState,
                 textFieldState = searchBarTextFieldState,
                 expandedSecondaryActions = secondaryActions,
@@ -199,6 +203,12 @@ private fun SearchScreenContent(
                     )
                 }
                 AnnouncementFeed(
+                    loadingPlaceHolderText = stringResource(R.string.feed_placeholder),
+                    nextPagePlaceHolderText = stringResource(R.string.feed_footer),
+                    emptyPlaceHolderText = stringResource(R.string.feed_empty),
+                    errorPlaceHolderText = stringResource(R.string.error_generic),
+                    errorPlaceHolderRetryText = stringResource(R.string.action_retry),
+                    errorNextPagePlaceHolderText = stringResource(R.string.feed_failed_footer),
                     announcements = searchFeedAnnouncements,
                     lazyListState = lazyListState,
                     scrollBehavior = searchScroll,
@@ -235,8 +245,9 @@ private fun SearchScreenContent(
                 selectedIds = uiState.activeFilters.selectedTagIds,
                 idProvider = { it.id },
                 labelProvider = { it.title },
-                titlePlaceholder = "Search Tags...",
-                applyText = "Apply Tags",
+                searchHint = stringResource(R.string.tag_sheet_hint),
+                applyLabel = stringResource(R.string.action_apply_tags),
+                clearLabel = stringResource(R.string.action_clear),
                 onApply = { newTagIds ->
                     scope.launch {
                         analytics.logEvent(
@@ -272,8 +283,9 @@ private fun SearchScreenContent(
                     } ?: author.name
                 },
                 groupProvider = { it.name.first().uppercaseChar() },
-                titlePlaceholder = "Search Authors...",
-                applyText = "Apply Authors",
+                searchHint = stringResource(R.string.author_sheet_hint),
+                applyLabel = stringResource(R.string.action_apply_authors),
+                clearLabel = stringResource(R.string.action_clear),
                 onApply = { newAuthorIds ->
                     scope.launch {
                         analytics.logEvent(
