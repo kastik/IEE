@@ -14,6 +14,8 @@ import com.kastik.apps.core.designsystem.component.IEEFilterChip
 
 @Composable
 fun SearchBarFilters(
+    tagLabel: String,
+    authorLabel: String,
     selectedTagsCount: Int,
     selectedAuthorsCount: Int,
     openTagSheet: () -> Unit,
@@ -29,13 +31,13 @@ fun SearchBarFilters(
             .horizontalScroll(rememberScrollState())
     ) {
         IEEFilterChip(
-            label = "Tags",
+            label = tagLabel,
             selectedCount = selectedTagsCount,
             onClick = openTagSheet
         )
 
         IEEFilterChip(
-            label = "Authors",
+            label = authorLabel,
             selectedCount = selectedAuthorsCount,
             onClick = openAuthorSheet
         )

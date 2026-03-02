@@ -46,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -79,12 +80,12 @@ internal fun ProfileRoute(
         when (state) {
             is UiState.Loading -> LoadingContent(
                 modifier = Modifier.fillMaxSize(),
-                message = state.message,
+                message = stringResource(state.resId),
             )
 
-            is UiState.Error -> StatusContent(message = state.message)
+            is UiState.Error -> StatusContent(stringResource(state.resId))
             is UiState.SignedOut -> StatusContent(
-                message = state.message, automaticAction = navigateBack
+                message = stringResource(state.resId), automaticAction = navigateBack
             )
 
             is UiState.Success -> SuccessState(
@@ -119,6 +120,9 @@ private fun SuccessState(
 
         if (uiState.showTagSheet) {
             GenericRecursiveSheet(
+                searchHint = stringResource(R.string.subscribe_tag_sheet_hint),
+                applyLabel = stringResource(R.string.action_apply),
+                clearLabel = stringResource(R.string.action_clear),
                 items = uiState.subscribableTags,
                 subscribedTags = uiState.subscribedTags.map { it.id }.toImmutableList(),
                 applySelectedTags = { newTagIds ->
@@ -133,7 +137,8 @@ private fun SuccessState(
                 onDismiss = { showTagSheet(false) },
                 idProvider = { tag -> tag.id },
                 labelProvider = { it.title },
-                childrenProvider = { it.subTags })
+                childrenProvider = { it.subTags },
+            )
         }
 
         Column(
@@ -184,7 +189,8 @@ private fun SuccessState(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Log Out", style = MaterialTheme.typography.titleMedium
+                    text = stringResource(R.string.action_sign_out),
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
             Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
@@ -213,19 +219,22 @@ private fun ProfileMeta(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Outlined.ManageAccounts, null)
                 Spacer(Modifier.width(8.dp))
-                Text("Account Info", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.account_info_label),
+                    style = MaterialTheme.typography.titleMedium
+                )
             }
             Column {
                 Text(
-                    text = "Role",
+                    text = stringResource(R.string.role_label),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     when {
-                        isAdmin -> "Administrator"
-                        isAuthor -> "Author"
-                        else -> "Student"
+                        isAdmin -> stringResource(R.string.role_admin_label)
+                        isAuthor -> stringResource(R.string.role_author_label)
+                        else -> stringResource(R.string.role_student_label)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
@@ -233,7 +242,7 @@ private fun ProfileMeta(
             }
             Column {
                 Text(
-                    text = "Last Login",
+                    text = stringResource(R.string.account_info_last_log_in),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -245,7 +254,7 @@ private fun ProfileMeta(
             }
             Column {
                 Text(
-                    text = "Joined",
+                    text = stringResource(R.string.account_info_joined),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -329,7 +338,10 @@ private fun ProfileSubscribedTags(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Outlined.NotificationsActive, null)
                     Spacer(Modifier.width(8.dp))
-                    Text("Subscribed Tags", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        stringResource(R.string.subscribed_tags_label),
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
                 IconButton(
                     onClick = { showTagSheet(true) }) {
@@ -342,7 +354,7 @@ private fun ProfileSubscribedTags(
             ) { tags ->
                 if (tags.isEmpty()) {
                     Text(
-                        "You haven’t subscribed to any tags yet.",
+                        text = stringResource(R.string.warning_empty_subscriptions),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

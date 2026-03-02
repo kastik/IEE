@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logged_out_message">You\'ve been logged out</string>
+    <string name="fetching_profile_message">Fetching your profile…</string>
+
+    <string name="action_clear">Clear</string>
+    <string name="action_apply">Apply</string>
+    <string name="action_sign_out">Sign out</string>
+
+    <string name="subscribed_tags_label">Subscribed Tags</string>
+    <string name="subscribe_tag_sheet_hint">Search…</string>
+
+    <string name="role_label">Role</string>
+    <string name="role_admin_label">Admin</string>
+    <string name="role_author_label">Author</string>
+    <string name="role_student_label">Student</string>
+
+    <string name="account_info_label">Account Info</string>
+    <string name="account_info_joined">Joined</string>
+    <string name="account_info_last_log_in">Last Login</string>
+
+    <string name="warning_empty_subscriptions">You haven’t subscribed to any tags yet</string>
+
+    <string name="error_authentication">Sign in required</string>
+    <string name="error_connection">No internet connection</string>
+    <string name="error_server">Something went wrong on the server</string>
+    <string name="error_storage">Storage error. Unable to save application data</string>
+    <string name="error_time_out">Timed out</string>
+    <string name="error_generic">Something went wrong</string>
+
+    <string name="toast_subscription_update_failed_message">Connection issue. We will try again automatically</string>
+</resources>

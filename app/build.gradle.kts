@@ -16,8 +16,8 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 31
-        versionName = "2.1.1"
+        versionCode = 33
+        versionName = "2.1.3"
     }
 
     val keystoreProperties = Properties().apply {

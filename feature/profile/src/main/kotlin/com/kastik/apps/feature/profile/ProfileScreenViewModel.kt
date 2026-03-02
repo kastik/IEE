@@ -70,14 +70,14 @@ class ProfileScreenViewModel @Inject constructor(
                 showTagSheet = showTagSheet,
             )
         } else {
-            UiState.SignedOut("You have beed logged out.")
+            UiState.SignedOut(R.string.logged_out_message)
         }
     }.onStart { refreshData() }.catch {
-        UiState.Error(it.message ?: "Something went wrong")
+        UiState.Error(R.string.error_generic)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
-        initialValue = UiState.Loading(message = "Fetching your profile...")
+        initialValue = UiState.Loading(R.string.fetching_profile_message)
     )
 
     fun toggleTagsSheet(enabled: Boolean) {
@@ -95,12 +95,8 @@ class ProfileScreenViewModel @Inject constructor(
                 val runCount = workInfo?.runAttemptCount ?: 0
 
                 when {
-                    state == WorkInfo.State.FAILED -> {
-                        notifier.sendToastNotification("Update failed. Please try again.")
-                    }
-
                     state == WorkInfo.State.ENQUEUED && runCount > 0 -> {
-                        notifier.sendToastNotification("Connection issue. We will try again automatically.")
+                        notifier.sendToastNotification(R.string.toast_subscription_update_failed_message)
                     }
 
                     state == WorkInfo.State.ENQUEUED && runCount == 0 -> Unit
@@ -141,20 +137,11 @@ class ProfileScreenViewModel @Inject constructor(
     }
 }
 
-private fun AuthenticatedRefreshError.toUserMessage(): String = when (this) {
-    ConnectionError -> "Network unavailable. Please check your connection."
-    ServerError -> "Server error. Unable to sync data."
-    StorageError -> "Storage error. Unable to save application data."
-    TimeoutError -> "Connection timed out."
-    UnknownError -> "An unexpected error occurred."
-    AuthenticationError -> "Sign in required"
-}
-
-private fun GeneralRefreshError.toUserMessage(): String = when (this) {
-    ConnectionError -> "Network unavailable. Please check your connection."
-    ServerError -> "Server error. Unable to sync data."
-    StorageError -> "Storage error. Unable to save application data."
-    TimeoutError -> "Connection timed out."
-    UnknownError -> "An unexpected error occurred."
-    AuthenticationError -> "Sign in required"
+private fun AuthenticatedRefreshError.toUserMessage(): Int = when (this) {
+    ConnectionError -> R.string.error_connection
+    ServerError -> R.string.error_server
+    StorageError -> R.string.error_storage
+    TimeoutError -> R.string.error_time_out
+    UnknownError -> R.string.error_generic
+    AuthenticationError -> R.string.error_authentication
 }

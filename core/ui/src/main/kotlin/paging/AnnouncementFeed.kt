@@ -54,6 +54,12 @@ private enum class FeedState {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnnouncementFeed(
+    loadingPlaceHolderText: String,
+    nextPagePlaceHolderText: String,
+    emptyPlaceHolderText: String,
+    errorPlaceHolderText: String,
+    errorPlaceHolderRetryText: String,
+    errorNextPagePlaceHolderText: String,
     announcements: LazyPagingItems<Announcement>,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
@@ -87,21 +93,21 @@ fun AnnouncementFeed(
         when (state) {
             FeedState.Loading -> {
                 LoadingContent(
-                    message = "Fetching Announcements...",
+                    message = loadingPlaceHolderText,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
 
             FeedState.Error -> {
                 StatusContent(
-                    message = "Something went wrong.",
+                    message = errorPlaceHolderText,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
 
             FeedState.Empty -> {
                 StatusContent(
-                    message = "Nothing matched your search.",
+                    message = emptyPlaceHolderText,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -147,7 +153,7 @@ fun AnnouncementFeed(
                     when (appendState) {
                         is LoadState.Loading -> item {
                             LoadingContent(
-                                message = "Getting next page...",
+                                message = nextPagePlaceHolderText,
                                 progressIndicatorSize = 32.dp,
                                 modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
                             )
@@ -155,9 +161,9 @@ fun AnnouncementFeed(
 
                         is LoadState.Error -> item {
                             StatusContent(
-                                message = "Failed to load more announcements.",
+                                message = errorNextPagePlaceHolderText,
                                 action = { announcements.retry() },
-                                actionText = "Retry"
+                                actionText = errorPlaceHolderRetryText
                             )
                         }
 
@@ -203,6 +209,12 @@ private fun AnnouncementFeedPreview() {
         AppsAboardTheme {
             AnnouncementFeed(
                 announcements = lazyPagingItems,
+                loadingPlaceHolderText = "",
+                nextPagePlaceHolderText = "",
+                emptyPlaceHolderText = "",
+                errorPlaceHolderText = "",
+                errorPlaceHolderRetryText = "",
+                errorNextPagePlaceHolderText = "",
             )
         }
     }

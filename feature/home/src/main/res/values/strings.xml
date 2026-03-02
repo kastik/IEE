@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_sign_in">Sign-in</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_allow">Allow</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_apply_tags">Apply Tags</string>
+    <string name="action_apply_authors">Apply Authors</string>
+
+    <string name="login_dialog_title">Please Sign In</string>
+    <string name="login_dialog_description">Sign in to unlock all announcements. You are currently browsing with limited access</string>
+
+    <string name="notification_dialog_title">Stay updated</string>
+    <string name="notification_dialog_description">Turn on notifications to never miss an important announcement.</string>
+
+    <string name="feed_empty">Nothing matched your search</string>
+    <string name="feed_placeholder">Fetching Announcements…</string>
+    <string name="feed_footer">Getting next page…</string>
+    <string name="feed_failed_footer">Failed to load more announcements</string>
+    <string name="feed_for_you_empty">Please subscribe to some tags</string>
+
+    <string name="search_bar_hint">Search</string>
+    <string name="search_bar_tag_label">Tags</string>
+    <string name="search_bar_author_label">Authors</string>
+
+    <string name="home_feed_label">Home</string>
+    <string name="for_you_feed_label">For You</string>
+
+    <string name="tag_chip_label">Tags</string>
+    <string name="tag_sheet_hint">Search Tags</string>
+    <string name="author_chip_label">Authors</string>
+    <string name="author_sheet_hint">Search authors…</string>
+
+    <string name="error_generic">Something went wrong</string>
+
+</resources>

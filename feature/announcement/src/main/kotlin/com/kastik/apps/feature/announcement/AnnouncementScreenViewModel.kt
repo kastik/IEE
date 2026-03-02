@@ -40,7 +40,7 @@ class AnnouncementScreenViewModel @Inject constructor(
     private val refreshAnnouncementWithIdUseCase: RefreshAnnouncementWithIdUseCase,
 ) : ViewModel() {
     val args = savedStateHandle.toRoute<AnnouncementRoute>()
-    private val errorMessage = MutableStateFlow<String?>(null)
+    private val errorMessage = MutableStateFlow<Int?>(null)
     val uiState: StateFlow<UiState> = combine(
         getAnnouncementWithIdUseCase(args.id), errorMessage
     ) { announcement, errorMsg ->
@@ -73,7 +73,7 @@ class AnnouncementScreenViewModel @Inject constructor(
 
             val error = (result as Result.Error).error
 
-            val message = error.toUserMessage()
+            val message = error.toUserMessageRes()
             if (uiState.value is UiState.Success) {
                 notifier.sendToastNotification(message)
             } else {
@@ -124,10 +124,10 @@ class AnnouncementScreenViewModel @Inject constructor(
         }
 }
 
-private fun AuthenticatedRefreshError.toUserMessage(): String = when (this) {
-    AuthenticationError -> "Sign in required"
-    ConnectionError -> "No internet connection"
-    ServerError -> "Couldn't refresh the announcement."
-    TimeoutError -> "Timed out while refreshing."
-    else -> "Something went wrong while refreshing."
+private fun AuthenticatedRefreshError.toUserMessageRes(): Int = when (this) {
+    AuthenticationError -> R.string.error_authentication
+    ConnectionError -> R.string.error_connection
+    ServerError -> R.string.error_server
+    TimeoutError -> R.string.error_time_out
+    else -> R.string.error_generic
 }
