@@ -15,3 +15,5 @@
 local.properties
 .idea/
 /app/src/release/generated/baselineProfiles/
+startup-prof.txt
+baseline-prof.txt
