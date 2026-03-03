@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_name_general">Γενικά</string>
+    <string name="channel_name_announcements">Νέες Ανακοινώσεις</string>
+    <string name="channel_name_fcm_campaigns">Καμπάνιες</string>
+
+    <string name="channel_desc_general">Ενημερώσεις σχετικά με την κατάσταση του λογαριασμού σας</string>
+    <string name="channel_desc_announcements">Οι πιο πρόσφατες ανακοινώσεις</string>
+    <string name="channel_desc_fcm_campaigns">Νέα εφαρμογής και αιτήματα σχολίων</string>
+
+    <string name="group_name_important">Σημαντικά</string>
+    <string name="group_name_campaigns">Καμπάνιες</string>
+</resources>

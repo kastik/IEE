@@ -4,6 +4,7 @@ interface Notifier {
     fun sendPushNotification(title: String)
     fun sendPushNotification(title: String, body: String?)
     fun sendPushNotification(announcementId: Int, title: String, body: String?)
+    fun sendPushNotification(uri: String, title: String, body: String?)
     suspend fun sendToastNotification(message: String)
     suspend fun sendToastNotification(resId: Int)
 }
