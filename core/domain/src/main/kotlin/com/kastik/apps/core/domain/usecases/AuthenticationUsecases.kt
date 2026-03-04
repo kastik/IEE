@@ -24,12 +24,15 @@ class SignInUserUseCase @Inject constructor(
     private val tagsRepository: TagsRepository,
     private val profileRepository: ProfileRepository,
     private val authenticationRepository: AuthenticationRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     suspend operator fun invoke(code: String) {
         authenticationRepository.exchangeCodeForAbroadToken(code)
         profileRepository.refreshProfile()
         tagsRepository.refreshSubscribedTags()
-        workScheduler.scheduleAnnouncementAlerts()
+        workScheduler.scheduleAnnouncementAlerts(
+            userPreferencesRepository.getAnnouncementCheckInterval().first()
+        )
     }
 }
 

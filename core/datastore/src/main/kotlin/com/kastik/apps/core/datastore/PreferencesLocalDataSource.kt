@@ -28,6 +28,10 @@ interface PreferencesLocalDataSource {
     suspend fun setAreFabFiltersEnabled(value: Boolean)
     fun getLastNotificationCheckTime(): Flow<Timestamp?>
     suspend fun setLastNotificationCheckTime(time: Timestamp?)
+    fun getAnnouncementCheckInterval(): Flow<Long>
+    suspend fun setAnnouncementCheckInterval(interval: Long)
+    fun areNotificationsEnabled(): Flow<Boolean>
+    suspend fun setNotificationsEnabled(value: Boolean)
 }
 
 internal class PreferencesLocalDataSourceImpl @Inject constructor(
@@ -124,4 +128,27 @@ internal class PreferencesLocalDataSourceImpl @Inject constructor(
                 .build()
         }
     }
+
+    override fun getAnnouncementCheckInterval() =
+        dataStore.data.map { it.announcementAlertInterval }
+
+    override suspend fun setAnnouncementCheckInterval(interval: Long) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setAnnouncementAlertInterval(interval)
+                .build()
+        }
+    }
+
+    override fun areNotificationsEnabled() =
+        dataStore.data.map { it.enableNotifications }
+
+    override suspend fun setNotificationsEnabled(value: Boolean) {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setEnableNotifications(value)
+                .build()
+        }
+    }
+
 }

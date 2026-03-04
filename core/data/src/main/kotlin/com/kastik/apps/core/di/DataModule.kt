@@ -4,6 +4,7 @@ import com.kastik.apps.core.data.provider.AboardTokenManagerImpl
 import com.kastik.apps.core.data.repository.AnnouncementRepositoryImpl
 import com.kastik.apps.core.data.repository.AuthenticationRepositoryImpl
 import com.kastik.apps.core.data.repository.AuthorRepositoryImpl
+import com.kastik.apps.core.data.repository.NotificationsRepositoryImpl
 import com.kastik.apps.core.data.repository.ProfileRepositoryImpl
 import com.kastik.apps.core.data.repository.TagsRepositoryImpl
 import com.kastik.apps.core.data.repository.UserPreferencesRepositoryImpl
@@ -12,6 +13,7 @@ import com.kastik.apps.core.data.utils.Base64ImageExtractorImpl
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.AuthorRepository
+import com.kastik.apps.core.domain.repository.NotificationRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
@@ -55,6 +57,11 @@ abstract class DataModule {
     internal abstract fun bindUserInfoRepository(
         profileRepositoryImpl: ProfileRepositoryImpl
     ): ProfileRepository
+
+    @Binds
+    internal abstract fun bindNotificationRepository(
+        notificationRepositoryImp: NotificationsRepositoryImpl
+    ): NotificationRepository
 
     @Binds
     internal abstract fun bindTokenProvider(

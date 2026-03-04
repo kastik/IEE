@@ -13,6 +13,9 @@ sealed class UiState {
         val isDynamicColorEnabled: Boolean,
         val isForYouEnabled: Boolean,
         val isForYouAvailable: Boolean,
-        val areFabFiltersEnabled: Boolean
+        val areFabFiltersEnabled: Boolean,
+        val announcementCheckInterval: Long,
+        val isAnnouncementCheckIntervalAvailable: Boolean,
+        val areNotificationsAllowed: Boolean,
     ) : UiState()
 }

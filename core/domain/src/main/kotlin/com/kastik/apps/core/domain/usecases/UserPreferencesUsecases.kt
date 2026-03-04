@@ -3,8 +3,10 @@ package com.kastik.apps.core.domain.usecases
 import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.common.extensions.combine
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
+import com.kastik.apps.core.domain.repository.NotificationRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
+import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserPreferences
@@ -141,6 +143,48 @@ class SetFabFiltersEnabledUseCase @Inject constructor(
         userPreferencesRepository.setFabFiltersEnabled(value)
 }
 
+
+class GetAnnouncementCheckIntervalUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<Long> =
+        userPreferencesRepository.getAnnouncementCheckInterval()
+}
+
+class SetAnnouncementCheckIntervalUseCase @Inject constructor(
+    private val workManager: WorkScheduler,
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke(value: Long) {
+        workManager.scheduleAnnouncementAlerts(value)
+        userPreferencesRepository.setAnnouncementCheckInterval(value)
+    }
+}
+
+class AreNotificationsAllowedUseCase @Inject constructor(
+    private val notificationRepository: NotificationRepository
+) {
+    operator fun invoke(): Flow<Boolean> =
+        notificationRepository.areNotificationsEnabled()
+}
+
+
+class IsAnnouncementCheckIntervalAvailableUseCase @Inject constructor(
+    private val tagsRepository: TagsRepository,
+    private val notificationRepository: NotificationRepository,
+    private val authenticationRepository: AuthenticationRepository,
+) {
+    operator fun invoke(): Flow<Boolean> {
+        return combine(
+            tagsRepository.getSubscribedTags(),
+            authenticationRepository.getIsSignedIn(),
+            notificationRepository.areNotificationsEnabled(),
+        ) { tags, isSignedIn, areNotificationEnabled ->
+            tags.isNotEmpty() && isSignedIn && areNotificationEnabled
+        }
+    }
+}
+
 class GetUserPreferencesUseCase @Inject constructor(
     private val getThemeUseCase: GetThemeUseCase,
     private val getDynamicColorUseCase: GetDynamicColorUseCase,
@@ -148,6 +192,7 @@ class GetUserPreferencesUseCase @Inject constructor(
     private val getSearchScopeUseCase: GetSearchScopeUseCase,
     private val isForYouEnabledUseCase: IsForYouEnabledUseCase,
     private val areFabFiltersEnabledUseCase: AreFabFiltersEnabledUseCase,
+    private val getAnnouncementCheckIntervalUseCase: GetAnnouncementCheckIntervalUseCase,
 ) {
     operator fun invoke() =
         combine(
@@ -157,14 +202,16 @@ class GetUserPreferencesUseCase @Inject constructor(
             getSearchScopeUseCase(),
             isForYouEnabledUseCase(),
             areFabFiltersEnabledUseCase(),
-        ) { theme, dynamicColor, sortType, searchScope, enableForYou, disableFabFilters ->
+            getAnnouncementCheckIntervalUseCase(),
+        ) { theme, dynamicColor, sortType, searchScope, enableForYou, disableFabFilters, announcementCheckInterval ->
             UserPreferences(
                 theme,
                 dynamicColor,
                 sortType,
                 searchScope,
                 enableForYou,
-                disableFabFilters
+                disableFabFilters,
+                announcementCheckInterval
             )
         }
 }

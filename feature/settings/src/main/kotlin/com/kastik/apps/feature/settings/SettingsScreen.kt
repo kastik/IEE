@@ -1,12 +1,12 @@
 package com.kastik.apps.feature.settings
 
-import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,16 +38,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -55,9 +60,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import com.kastik.apps.core.common.extensions.launchUrl
+import com.kastik.apps.core.designsystem.component.IEEIconToolTip
+import com.kastik.apps.core.designsystem.component.IEESliderThumbToolTip
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserTheme
@@ -66,6 +71,7 @@ import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlin.math.roundToLong
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -100,6 +106,10 @@ internal fun SettingsRoute(
                     onForYouChange = viewModel::setEnableForYou,
                     fabFiltersDisabled = state.areFabFiltersEnabled,
                     onFabFiltersChange = viewModel::setFabFilters,
+                    announcementCheckInterval = state.announcementCheckInterval,
+                    isAnnouncementCheckIntervalAvailable = state.isAnnouncementCheckIntervalAvailable,
+                    setAnnouncementCheckInterval = viewModel::setAnnouncementCheckInterval,
+                    areNotificationsAllowed = state.areNotificationsAllowed,
                     navigateToLicenses = navigateToLicenses
                 )
             }
@@ -126,20 +136,16 @@ private fun SettingsScreenContent(
     onForYouChange: (Boolean) -> Unit = {},
     fabFiltersDisabled: Boolean,
     onFabFiltersChange: (Boolean) -> Unit = {},
-    navigateToLicenses: () -> Unit = {}
+    announcementCheckInterval: Long,
+    isAnnouncementCheckIntervalAvailable: Boolean,
+    setAnnouncementCheckInterval: (Long) -> Unit = {},
+    areNotificationsAllowed: Boolean,
+    navigateToLicenses: () -> Unit = {},
 ) {
 
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
     val hapticFeedback = LocalHapticFeedback.current
-
-    val areNotificationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        rememberPermissionState(
-            Manifest.permission.POST_NOTIFICATIONS
-        ).status.isGranted
-    } else {
-        true
-    }
 
 
     val versionName = remember {
@@ -389,7 +395,7 @@ private fun SettingsScreenContent(
                     SettingSwitchRow(
                         title = stringResource(R.string.push_notifications_label),
                         subtitle = stringResource(R.string.push_notifications_description),
-                        checked = areNotificationGranted,
+                        checked = areNotificationsAllowed,
                         onCheckedChange = {
                             analytics.setUserProperty("push_notifications", it.toString())
                             analytics.logEvent(
@@ -409,6 +415,30 @@ private fun SettingsScreenContent(
                             }
                             context.startActivity(intent)
                         })
+                    HorizontalDivider()
+                    SettingsSliderRow(
+                        enabled = isAnnouncementCheckIntervalAvailable,
+                        title = stringResource(R.string.announcement_check_interval_label),
+                        richTooltipSubheadText = stringResource(R.string.announcement_check_interval_warning_title),
+                        richTooltipText = stringResource(R.string.announcement_check_interval_warning_body),
+                        startValue = announcementCheckInterval.toFloat(),
+                        valueRange = 60f..1440f,
+                        steps = 22,
+                        valueFormatter = { formatIntervalToHours(it.roundToLong()) },
+                        onValueChangeFinished = {
+                            setAnnouncementCheckInterval(it.roundToLong())
+                            analytics.setUserProperty(
+                                "announcement_interval",
+                                announcementCheckInterval.toString()
+                            )
+                            analytics.logEvent(
+                                "announcement_interval_changed", mapOf(
+                                    "announcement_interval" to announcementCheckInterval.toString(),
+                                    "source" to "settings_screen"
+                                )
+                            )
+                        }
+                    )
                 }
             }
 
@@ -460,7 +490,7 @@ private fun SettingsScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> SettingsegmentedButton(
+private fun <T> SettingsegmentedButton(
     selected: T,
     options: ImmutableList<T>,
     label: @Composable (T) -> String,
@@ -482,6 +512,99 @@ fun <T> SettingsegmentedButton(
                     color = if (selected == option) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun formatIntervalToHours(minutes: Long): String {
+    val hours = (minutes / 60).toInt()
+    val hourLabel = pluralStringResource(R.plurals.announcement_check_interval_hours, hours)
+
+    return "$hours $hourLabel"
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SettingsSliderRow(
+    enabled: Boolean,
+    title: String,
+    richTooltipSubheadText: String,
+    richTooltipText: String,
+    startValue: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    steps: Int,
+    valueFormatter: @Composable (Float) -> String,
+    onValueChangeFinished: (Float) -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    var sliderValue by remember { mutableFloatStateOf(startValue) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 16.dp),
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+            )
+            IEEIconToolTip(
+                tooltipTitle = {
+                    Text(
+                        text = richTooltipSubheadText,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                tooltipBody = {
+                    Text(
+                        text = richTooltipText,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null
+                    )
+                }
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Slider(
+                enabled = enabled,
+                value = sliderValue,
+                onValueChange = { sliderValue = it },
+                valueRange = valueRange,
+                steps = steps,
+                interactionSource = interactionSource,
+                onValueChangeFinished = {
+                    onValueChangeFinished(sliderValue)
+                },
+                thumb = {
+                    IEESliderThumbToolTip(
+                        enabled = enabled,
+                        interactionSource = interactionSource,
+                        tooltipText = valueFormatter(sliderValue)
+                    )
+                },
+            )
         }
     }
 }
@@ -573,6 +696,11 @@ fun SettingsScreenPreview() {
         onForYouChange = {},
         fabFiltersDisabled = false,
         onFabFiltersChange = {},
+        announcementCheckInterval = 0L,
+        isAnnouncementCheckIntervalAvailable = true,
+        setAnnouncementCheckInterval = {},
+        areNotificationsAllowed = true,
         navigateToLicenses = {},
     )
 }
+

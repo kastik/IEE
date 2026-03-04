@@ -33,6 +33,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.lifecycle.process)
 
     testImplementation(testFixtures(project(":core:crashlytics")))
     testImplementation(testFixtures(project(":core:datastore")))

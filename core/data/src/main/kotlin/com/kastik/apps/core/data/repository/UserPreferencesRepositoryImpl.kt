@@ -89,4 +89,20 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
         preferencesLocalDataSource.setLastNotificationCheckTime(time?.toTimestamp())
     }
 
+    override fun getAnnouncementCheckInterval() =
+        preferencesLocalDataSource.getAnnouncementCheckInterval()
+
+
+    override suspend fun setAnnouncementCheckInterval(interval: Long) {
+        preferencesLocalDataSource.setAnnouncementCheckInterval(interval)
+    }
+
+    override fun areNotificationsAllowed(): Flow<Boolean> =
+        preferencesLocalDataSource.areNotificationsEnabled()
+
+
+    override suspend fun setNotificationsAllowed(value: Boolean) {
+        preferencesLocalDataSource.setNotificationsEnabled(value)
+    }
+
 }

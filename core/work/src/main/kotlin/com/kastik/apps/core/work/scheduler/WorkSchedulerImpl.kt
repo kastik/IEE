@@ -28,18 +28,19 @@ class WorkSchedulerImpl @Inject constructor(
     private val workManager = WorkManager.getInstance(context)
 
 
-    override fun scheduleAnnouncementAlerts() {
+    override fun scheduleAnnouncementAlerts(intervalMinutes: Long) {
         val constraints =
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
         val announcementRefreshWorkRequest = PeriodicWorkRequestBuilder<AnnouncementAlertWorker>(
-            30, TimeUnit.MINUTES
+            intervalMinutes,
+            TimeUnit.MINUTES
         ).setConstraints(constraints).setBackoffCriteria(BackoffPolicy.LINEAR, 15, TimeUnit.MINUTES)
             .build()
 
         workManager.enqueueUniquePeriodicWork(
             uniqueWorkName = ANNOUNCEMENT_REFRESH_WORK_NAME,
-            existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.REPLACE,
+            existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.UPDATE,
             request = announcementRefreshWorkRequest
         )
     }
