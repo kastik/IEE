@@ -10,11 +10,7 @@ import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.DownloadAttachmentUseCase
 import com.kastik.apps.core.domain.usecases.GetAnnouncementWithIdUseCase
 import com.kastik.apps.core.domain.usecases.RefreshAnnouncementWithIdUseCase
-import com.kastik.apps.core.model.error.AuthenticatedRefreshError
-import com.kastik.apps.core.model.error.AuthenticationError
-import com.kastik.apps.core.model.error.ConnectionError
-import com.kastik.apps.core.model.error.ServerError
-import com.kastik.apps.core.model.error.TimeoutError
+import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.feature.announcement.navigation.AnnouncementRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -124,10 +120,10 @@ class AnnouncementScreenViewModel @Inject constructor(
         }
 }
 
-private fun AuthenticatedRefreshError.toUserMessageRes(): Int = when (this) {
-    AuthenticationError -> R.string.error_authentication
-    ConnectionError -> R.string.error_connection
-    ServerError -> R.string.error_server
-    TimeoutError -> R.string.error_time_out
-    else -> R.string.error_generic
+private fun NetworkError.toUserMessageRes(): Int = when (this) {
+    NetworkError.Authentication -> R.string.error_authentication
+    NetworkError.Connection -> R.string.error_connection
+    NetworkError.ServerError -> R.string.error_server
+    NetworkError.Timeout -> R.string.error_time_out
+    NetworkError.Unknown -> R.string.error_generic
 }

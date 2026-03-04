@@ -2,7 +2,6 @@ package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.domain.repository.AuthorRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
-import com.kastik.apps.core.model.error.GeneralRefreshError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.model.search.FilterOptions
 import com.kastik.apps.core.model.search.QuickResults
@@ -61,7 +60,7 @@ class RefreshFilterOptionsUseCase @Inject constructor(
     private val authorRepository: AuthorRepository,
     private val tagsRepository: TagsRepository,
 ) {
-    suspend operator fun invoke(): Result<Unit, GeneralRefreshError> = coroutineScope {
+    suspend operator fun invoke() = coroutineScope {
         val authorsDeferred = async { authorRepository.refreshAuthors() }
         val tagsDeferred = async { tagsRepository.refreshAnnouncementTags() }
         val (authorsSuccess, tagsSuccess) = awaitAll(authorsDeferred, tagsDeferred)

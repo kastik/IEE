@@ -126,11 +126,11 @@ class CheckNewAnnouncementsUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
-    suspend operator fun invoke(): Result<List<Announcement>, AuthenticatedRefreshError> {
+    suspend operator fun invoke(): Result<List<Announcement>, NetworkError> {
 
         val subscriptionResult = profileRepository.refreshEmailSubscriptions()
 
-        if (subscriptionResult is Result.Error && subscriptionResult.error is AuthenticationError) {
+        if (subscriptionResult is Result.Error && subscriptionResult.error is NetworkError.Authentication) {
             return subscriptionResult
         }
 
