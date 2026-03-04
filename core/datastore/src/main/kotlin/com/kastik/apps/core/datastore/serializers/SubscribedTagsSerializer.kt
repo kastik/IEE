@@ -1,6 +1,8 @@
 package com.kastik.apps.core.datastore.serializers
 
+import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
+import com.google.protobuf.InvalidProtocolBufferException
 import com.kastik.apps.core.datastore.proto.SubscriptionsProto
 import java.io.InputStream
 import java.io.OutputStream
@@ -10,7 +12,11 @@ object SubscribedTagsSerializer : Serializer<SubscriptionsProto> {
         .build()
 
     override suspend fun readFrom(input: InputStream): SubscriptionsProto {
-        return SubscriptionsProto.parseFrom(input)
+        try {
+            return SubscriptionsProto.parseFrom(input)
+        } catch (exception: InvalidProtocolBufferException) {
+            throw CorruptionException("Cannot read proto.", exception)
+        }
     }
 
     override suspend fun writeTo(t: SubscriptionsProto, output: OutputStream) =
