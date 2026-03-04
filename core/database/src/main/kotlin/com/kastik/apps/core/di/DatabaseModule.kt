@@ -2,6 +2,7 @@ package com.kastik.apps.core.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.kastik.apps.core.database.dao.AnnouncementDao
 import com.kastik.apps.core.database.dao.AuthorsDao
 import com.kastik.apps.core.database.dao.RemoteKeysDao
@@ -24,7 +25,8 @@ object DatabaseModule {
         @ApplicationContext context: Context
     ): AppDatabase = Room.databaseBuilder(
         context, AppDatabase::class.java, "announcement_cache.db"
-    ).fallbackToDestructiveMigration(true).build()
+    ).fallbackToDestructiveMigration(true)
+        .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING).build()
 
     @Provides
     @Singleton
