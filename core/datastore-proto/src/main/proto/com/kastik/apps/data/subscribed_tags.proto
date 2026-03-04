@@ -5,6 +5,8 @@ option java_multiple_files = true;
 
 message SubscriptionsProto{
   repeated SubscribedTagProto subscribedTags = 1;
+  reserved 2;
+  reserved "subscribedTopics";
 }
 
 message SubscribedTagProto{
