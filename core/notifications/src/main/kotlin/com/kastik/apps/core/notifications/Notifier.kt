@@ -31,11 +31,9 @@ class NotifierImpl @Inject constructor(
         manager
     }
 
-    override fun sendPushNotification(title: String) {
-        sendPushNotification("IEE", title)
-    }
-
-    override fun sendPushNotification(title: String, body: String?) {
+    override fun sendGeneralNotification(
+        title: String, body: String?, uri: String?
+    ) {
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
@@ -45,8 +43,7 @@ class NotifierImpl @Inject constructor(
         )
 
         val builder = NotificationCompat.Builder(
-            context,
-            context.getString(R.string.channel_id_fcm_campaigns)
+            context, context.getString(R.string.channel_id_general)
         ).apply {
             setSmallIcon(R.drawable.ic_notification_icon)
             setContentTitle(title)
@@ -58,7 +55,63 @@ class NotifierImpl @Inject constructor(
         notificationManager.notify(Random.nextInt(), builder.build())
     }
 
-    override fun sendPushNotification(announcementId: Int, title: String, body: String?) {
+    override fun sendGeneralNotification(
+        @StringRes titleResId: Int, @StringRes bodyResId: Int?, @StringRes uriResId: Int?
+    ) {
+        val intent = if (uriResId != null) {
+            Intent(Intent.ACTION_VIEW, context.getString(uriResId).toUri())
+        } else {
+            context.packageManager.getLaunchIntentForPackage(context.packageName)
+        }?.apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val builder = NotificationCompat.Builder(
+            context, context.getString(R.string.channel_id_general)
+        ).apply {
+            setSmallIcon(R.drawable.ic_notification_icon)
+            setContentTitle(context.getString(titleResId))
+            bodyResId.let { if (it != null) setContentText(context.getString(it)) }
+            setAutoCancel(true)
+            setContentIntent(pendingIntent)
+        }
+
+        notificationManager.notify(Random.nextInt(), builder.build())
+    }
+
+    override fun sendCampaignNotification(
+        title: String, body: String?, uri: String?
+    ) {
+
+        val deepLinkUri = uri?.toUri()
+
+        val intent = Intent(Intent.ACTION_VIEW, deepLinkUri).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+        )
+
+        val builder = NotificationCompat.Builder(
+            context, context.getString(R.string.channel_id_fcm_campaigns)
+        ).apply {
+            setSmallIcon(R.drawable.ic_notification_icon)
+            setContentTitle(title)
+            setContentText(body)
+            setAutoCancel(true)
+            setContentIntent(pendingIntent)
+        }
+
+        notificationManager.notify(Random.nextInt(), builder.build())
+    }
+
+    override fun sendAnnouncementNotification(
+        announcementId: Int, title: String, body: String
+    ) {
 
         val deepLinkUri = "com.kastik.apps://announcement?id=$announcementId".toUri()
 
@@ -70,51 +123,17 @@ class NotifierImpl @Inject constructor(
             context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
         )
 
-        val builder =
-            NotificationCompat.Builder(
-                context,
-                context.getString(R.string.channel_id_announcements)
-            )
-                .apply {
-                    setSmallIcon(R.drawable.ic_notification_icon)
-                    setContentTitle(title)
-                    setContentText(body)
-                    setAutoCancel(true)
-                    setContentIntent(pendingIntent)
-                }
+        val builder = NotificationCompat.Builder(
+            context, context.getString(R.string.channel_id_announcements)
+        ).apply {
+            setSmallIcon(R.drawable.ic_notification_icon)
+            setContentTitle(title)
+            setContentText(body)
+            setAutoCancel(true)
+            setContentIntent(pendingIntent)
+        }
 
         notificationManager.notify(announcementId, builder.build())
-    }
-
-    override fun sendPushNotification(
-        uri: String,
-        title: String,
-        body: String?
-    ) {
-
-        val deepLinkUri = uri.toUri()
-
-        val intent = Intent(Intent.ACTION_VIEW, deepLinkUri).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
-        val pendingIntent = PendingIntent.getActivity(
-            context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
-        )
-
-        val builder =
-            NotificationCompat.Builder(
-                context,
-                context.getString(R.string.channel_id_fcm_campaigns)
-            )
-                .apply {
-                    setSmallIcon(R.drawable.ic_notification_icon)
-                    setContentTitle(title)
-                    setContentText(body)
-                    setAutoCancel(true)
-                    setContentIntent(pendingIntent)
-                }
-
-        notificationManager.notify(Random.nextInt(), builder.build())
     }
 
     override suspend fun sendToastNotification(message: String) {

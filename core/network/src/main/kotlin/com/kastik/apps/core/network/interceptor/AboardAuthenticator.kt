@@ -8,6 +8,7 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class AboardAuthenticator @Inject constructor(
@@ -32,9 +33,13 @@ class AboardAuthenticator @Inject constructor(
 
 
                 try {
-                    val newToken = aboardRefreshApiClient.refreshExpiredToken().accessToken
-                    tokenManager.updateToken(newToken)
-                    return@runBlocking buildRequest(response.request, newToken)
+                    val newToken = aboardRefreshApiClient.refreshToken()
+                    tokenManager.updateToken(newToken.accessToken)
+                    return@runBlocking buildRequest(response.request, newToken.accessToken)
+                } catch (e: HttpException) {
+                    if (e.code() == 401) tokenManager.tokenExpired()
+                    crashlytics.recordException(e)
+                    return@runBlocking null
                 } catch (e: Exception) {
                     crashlytics.recordException(e)
                     return@runBlocking null

@@ -17,4 +17,8 @@ class AboardTokenManagerImpl @Inject constructor(
     override suspend fun updateToken(newToken: String) =
         authenticationLocalDataSource.setAboardAccessToken(newToken)
 
+    override suspend fun tokenExpired() {
+        authenticationLocalDataSource.clearAuthenticationData()
+    }
+
 }

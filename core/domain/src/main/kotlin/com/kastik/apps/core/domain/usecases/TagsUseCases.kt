@@ -3,13 +3,17 @@ package com.kastik.apps.core.domain.usecases
 import com.kastik.apps.core.common.extensions.removeAccents
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
+import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.aboard.SubscribableTag
+import com.kastik.apps.core.model.result.Result
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.time.Clock
 
 class GetAnnouncementTagsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository,
@@ -40,6 +44,32 @@ class RefreshSubscribableTagsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository
 ) {
     suspend operator fun invoke() = tagsRepository.refreshSubscribableTags()
+}
+
+class GetSubscriptionsUseCase @Inject constructor(
+    private val tagsRepository: TagsRepository,
+) {
+    operator fun invoke() = tagsRepository.getSubscribedTags().map { it.toImmutableList() }
+}
+
+class RefreshSubscriptionsUseCase @Inject constructor(
+    private val tagsRepository: TagsRepository,
+) {
+    suspend operator fun invoke() =
+        tagsRepository.refreshSubscribedTags()
+}
+
+class SubscribeToTagsUseCase @Inject constructor(
+    private val tagsRepository: TagsRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
+) {
+    suspend operator fun invoke(newTagIds: List<Int>) = coroutineScope {
+        val result = tagsRepository.subscribeToTags(newTagIds)
+        if (result is Result.Success) {
+            userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
+        }
+        result
+    }
 }
 
 

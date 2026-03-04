@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.kastik.apps.core.domain.usecases.LoginUserUseCase
+import com.kastik.apps.core.domain.usecases.SignInUserUseCase
 import com.kastik.apps.core.domain.usecases.SignOutUserUseCase
 import com.kastik.apps.feature.auth.navigation.AuthRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthenticationScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val loginUserUseCase: LoginUserUseCase,
+    private val signInUserUseCase: SignInUserUseCase,
     private val signOutUserUseCase: SignOutUserUseCase
 ) : ViewModel() {
 
@@ -35,7 +35,7 @@ class AuthenticationScreenViewModel @Inject constructor(
             return@flow
         }
 
-        loginUserUseCase(args.code)
+        signInUserUseCase(args.code)
 
         emit(UiState.Success)
 

@@ -3,7 +3,7 @@ package com.kastik.apps.core.domain.usecases
 import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.common.extensions.combine
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
-import com.kastik.apps.core.domain.repository.ProfileRepository
+import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
@@ -108,12 +108,12 @@ class IsForYouAvailableUseCase @Inject constructor(
 }
 
 class IsForYouEnabledUseCase @Inject constructor(
-    private val profileRepository: ProfileRepository,
+    private val tagsRepository: TagsRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<Boolean> =
         combine(
-            profileRepository.getEmailSubscriptions(),
+            tagsRepository.getSubscribedTags(),
             userPreferencesRepository.isForYouEnabled()
         ) { subscriptions, enableForYou ->
             subscriptions.isNotEmpty() && enableForYou
@@ -170,13 +170,14 @@ class GetUserPreferencesUseCase @Inject constructor(
 }
 
 
+//TODO This is a work around for not yet set user properties on older versions,
+//Remove this after enough users migrate to newer versions as analytics calls don't belong in domain layer
 class UpdateUserPropertiesUseCase @Inject constructor(
     private val analytics: Analytics,
     private val getUserPreferencesUseCase: GetUserPreferencesUseCase,
 ) {
     suspend operator fun invoke() {
         val prefs = getUserPreferencesUseCase().first()
-
         analytics.setUserProperty("theme", prefs.theme.name)
         analytics.setUserProperty("dynamic_color", prefs.dynamicColor.toString())
         analytics.setUserProperty("sort_type", prefs.sortType.name)
