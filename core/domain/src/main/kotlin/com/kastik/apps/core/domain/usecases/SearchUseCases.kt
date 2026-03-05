@@ -10,8 +10,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class GetQuickResultsUseCase @Inject constructor(
@@ -37,7 +35,6 @@ class GetQuickResultsUseCase @Inject constructor(
 class GetFilterOptionsUseCase @Inject constructor(
     private val getAuthorsUseCase: GetAuthorsUseCase,
     private val getAnnouncementTagsUseCase: GetAnnouncementTagsUseCase,
-    private val refreshFilterOptionsUseCase: RefreshFilterOptionsUseCase,
 ) {
     operator fun invoke(): Flow<FilterOptions> {
         return combine(
@@ -48,10 +45,6 @@ class GetFilterOptionsUseCase @Inject constructor(
                 tags = tags,
                 authors = authors,
             )
-        }.onStart {
-            coroutineScope {
-                launch { refreshFilterOptionsUseCase() }
-            }
         }
     }
 }
