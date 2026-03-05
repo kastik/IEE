@@ -63,12 +63,12 @@ class RefreshFilterOptionsUseCase @Inject constructor(
     suspend operator fun invoke() = coroutineScope {
         val authorsDeferred = async { authorRepository.refreshAuthors() }
         val tagsDeferred = async { tagsRepository.refreshAnnouncementTags() }
-        val (authorsSuccess, tagsSuccess) = awaitAll(authorsDeferred, tagsDeferred)
-        if (authorsSuccess !is Result.Success) {
-            return@coroutineScope authorsSuccess
+        val (authorsResult, tagsResult) = awaitAll(authorsDeferred, tagsDeferred)
+        if (authorsResult is Result.Error) {
+            return@coroutineScope authorsResult
         }
-        if (tagsSuccess !is Result.Success) {
-            return@coroutineScope tagsSuccess
+        if (tagsResult is Result.Error) {
+            return@coroutineScope tagsResult
         }
         return@coroutineScope Result.Success(Unit)
     }
