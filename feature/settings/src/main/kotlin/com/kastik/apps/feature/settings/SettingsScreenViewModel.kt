@@ -54,7 +54,7 @@ class SettingsScreenViewModel @Inject constructor(
             isForYouAvailable = isForYouAvailable,
             areFabFiltersEnabled = preferences.disableFabFilters,
             isAnnouncementCheckIntervalAvailable = isAnnouncementCheckIntervalAvailable,
-            announcementCheckInterval = preferences.announcementCheckInterval,
+            announcementCheckIntervalHours = preferences.announcementCheckIntervalHours,
             areNotificationsAllowed = areNotificationsAllowed,
         )
     }.stateIn(
@@ -99,9 +99,9 @@ class SettingsScreenViewModel @Inject constructor(
         }
     }
 
-    fun setAnnouncementCheckInterval(value: Long) {
+    fun setAnnouncementCheckIntervalHours(hours: Int) {
         viewModelScope.launch {
-            setAnnouncementCheckIntervalUseCase(value)
+            setAnnouncementCheckIntervalUseCase(hours)
         }
     }
 }

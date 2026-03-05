@@ -12,7 +12,7 @@ object UserPreferencesSerializer : Serializer<UserPreferences> {
         .setEnableDynamicColor(true)
         .setEnableForYou(true)
         .setEnableFabFilters(true)
-        .setAnnouncementAlertInterval(3600000L)
+        .setAnnouncementAlertIntervalMinutes(60)
         .build()
 
     override suspend fun readFrom(input: InputStream): UserPreferences {

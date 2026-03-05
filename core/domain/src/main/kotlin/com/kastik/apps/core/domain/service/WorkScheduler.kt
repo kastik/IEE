@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface WorkScheduler {
-    fun scheduleAnnouncementAlerts(intervalMinutes: Long)
+    fun scheduleAnnouncementAlerts(intervalMinutes: Int)
     fun getAnnouncementAlertsWorkInfo(): Flow<WorkInfo?>
     fun cancelAnnouncementAlerts()
 }

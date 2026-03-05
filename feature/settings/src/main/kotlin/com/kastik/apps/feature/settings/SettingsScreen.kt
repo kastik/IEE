@@ -71,7 +71,7 @@ import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlin.math.roundToLong
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -106,9 +106,9 @@ internal fun SettingsRoute(
                     onForYouChange = viewModel::setEnableForYou,
                     fabFiltersDisabled = state.areFabFiltersEnabled,
                     onFabFiltersChange = viewModel::setFabFilters,
-                    announcementCheckInterval = state.announcementCheckInterval,
+                    announcementCheckIntervalHours = state.announcementCheckIntervalHours,
                     isAnnouncementCheckIntervalAvailable = state.isAnnouncementCheckIntervalAvailable,
-                    setAnnouncementCheckInterval = viewModel::setAnnouncementCheckInterval,
+                    setAnnouncementCheckIntervalHours = viewModel::setAnnouncementCheckIntervalHours,
                     areNotificationsAllowed = state.areNotificationsAllowed,
                     navigateToLicenses = navigateToLicenses
                 )
@@ -136,9 +136,9 @@ private fun SettingsScreenContent(
     onForYouChange: (Boolean) -> Unit = {},
     fabFiltersDisabled: Boolean,
     onFabFiltersChange: (Boolean) -> Unit = {},
-    announcementCheckInterval: Long,
+    announcementCheckIntervalHours: Int,
     isAnnouncementCheckIntervalAvailable: Boolean,
-    setAnnouncementCheckInterval: (Long) -> Unit = {},
+    setAnnouncementCheckIntervalHours: (Int) -> Unit = {},
     areNotificationsAllowed: Boolean,
     navigateToLicenses: () -> Unit = {},
 ) {
@@ -417,23 +417,23 @@ private fun SettingsScreenContent(
                         })
                     HorizontalDivider()
                     SettingsSliderRow(
-                        enabled = isAnnouncementCheckIntervalAvailable,
                         title = stringResource(R.string.announcement_check_interval_label),
-                        richTooltipSubheadText = stringResource(R.string.announcement_check_interval_warning_title),
-                        richTooltipText = stringResource(R.string.announcement_check_interval_warning_body),
-                        startValue = announcementCheckInterval.toFloat(),
-                        valueRange = 60f..1440f,
                         steps = 22,
-                        valueFormatter = { formatIntervalToHours(it.roundToLong()) },
+                        initialValue = announcementCheckIntervalHours.toFloat(),
+                        valueRange = 1f..24f,
+                        enabled = isAnnouncementCheckIntervalAvailable,
+                        tooltipTitle = stringResource(R.string.announcement_check_interval_warning_title),
+                        tooltipBody = stringResource(R.string.announcement_check_interval_warning_body),
+                        valueFormatter = { formatIntervalToHours(it) },
                         onValueChangeFinished = {
-                            setAnnouncementCheckInterval(it.roundToLong())
+                            setAnnouncementCheckIntervalHours(it)
                             analytics.setUserProperty(
                                 "announcement_interval",
-                                announcementCheckInterval.toString()
+                                announcementCheckIntervalHours.toString()
                             )
                             analytics.logEvent(
                                 "announcement_interval_changed", mapOf(
-                                    "announcement_interval" to announcementCheckInterval.toString(),
+                                    "announcement_interval" to announcementCheckIntervalHours.toString(),
                                     "source" to "settings_screen"
                                 )
                             )
@@ -517,10 +517,8 @@ private fun <T> SettingsegmentedButton(
 }
 
 @Composable
-private fun formatIntervalToHours(minutes: Long): String {
-    val hours = (minutes / 60).toInt()
+private fun formatIntervalToHours(hours: Int): String {
     val hourLabel = pluralStringResource(R.plurals.announcement_check_interval_hours, hours)
-
     return "$hours $hourLabel"
 }
 
@@ -528,18 +526,18 @@ private fun formatIntervalToHours(minutes: Long): String {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsSliderRow(
-    enabled: Boolean,
     title: String,
-    richTooltipSubheadText: String,
-    richTooltipText: String,
-    startValue: Float,
-    valueRange: ClosedFloatingPointRange<Float>,
     steps: Int,
-    valueFormatter: @Composable (Float) -> String,
-    onValueChangeFinished: (Float) -> Unit,
+    initialValue: Float,
+    valueRange: ClosedFloatingPointRange<Float>,
+    enabled: Boolean,
+    tooltipTitle: String,
+    tooltipBody: String,
+    valueFormatter: @Composable (Int) -> String,
+    onValueChangeFinished: (Int) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    var sliderValue by remember { mutableFloatStateOf(startValue) }
+    var sliderValue by remember { mutableFloatStateOf(initialValue) }
 
     Column(
         modifier = Modifier
@@ -563,14 +561,14 @@ private fun SettingsSliderRow(
             IEEIconToolTip(
                 tooltipTitle = {
                     Text(
-                        text = richTooltipSubheadText,
+                        text = tooltipTitle,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 },
                 tooltipBody = {
                     Text(
-                        text = richTooltipText,
+                        text = tooltipBody,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -595,13 +593,13 @@ private fun SettingsSliderRow(
                 steps = steps,
                 interactionSource = interactionSource,
                 onValueChangeFinished = {
-                    onValueChangeFinished(sliderValue)
+                    onValueChangeFinished(sliderValue.roundToInt())
                 },
                 thumb = {
                     IEESliderThumbToolTip(
                         enabled = enabled,
                         interactionSource = interactionSource,
-                        tooltipText = valueFormatter(sliderValue)
+                        tooltipText = valueFormatter(sliderValue.roundToInt())
                     )
                 },
             )
@@ -696,9 +694,9 @@ fun SettingsScreenPreview() {
         onForYouChange = {},
         fabFiltersDisabled = false,
         onFabFiltersChange = {},
-        announcementCheckInterval = 0L,
+        announcementCheckIntervalHours = 1,
         isAnnouncementCheckIntervalAvailable = true,
-        setAnnouncementCheckInterval = {},
+        setAnnouncementCheckIntervalHours = {},
         areNotificationsAllowed = true,
         navigateToLicenses = {},
     )

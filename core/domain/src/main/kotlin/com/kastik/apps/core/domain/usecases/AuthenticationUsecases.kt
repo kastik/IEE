@@ -31,7 +31,7 @@ class SignInUserUseCase @Inject constructor(
         profileRepository.refreshProfile()
         tagsRepository.refreshSubscribedTags()
         workScheduler.scheduleAnnouncementAlerts(
-            userPreferencesRepository.getAnnouncementCheckInterval().first()
+            userPreferencesRepository.getAnnouncementCheckIntervalMinutes().first()
         )
     }
 }

@@ -9,5 +9,5 @@ data class UserPreferences(
     val searchScope: SearchScope,
     val enableForYou: Boolean,
     val disableFabFilters: Boolean,
-    val announcementCheckInterval: Long,
+    val announcementCheckIntervalHours: Int,
 )

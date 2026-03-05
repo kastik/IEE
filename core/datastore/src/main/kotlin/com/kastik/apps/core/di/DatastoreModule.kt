@@ -120,11 +120,11 @@ abstract class DataStoreModule {
             migrations = listOf(
                 object : DataMigration<UserPreferences> {
                     override suspend fun shouldMigrate(currentData: UserPreferences) =
-                        currentData.announcementAlertInterval == 0L
+                        currentData.announcementAlertIntervalMinutes == 0
 
                     override suspend fun migrate(currentData: UserPreferences) =
                         currentData.toBuilder()
-                            .setAnnouncementAlertInterval(3600000L)
+                            .setAnnouncementAlertIntervalMinutes(60)
                             .build()
 
                     override suspend fun cleanUp() {}

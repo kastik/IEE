@@ -28,12 +28,12 @@ class WorkSchedulerImpl @Inject constructor(
     private val workManager = WorkManager.getInstance(context)
 
 
-    override fun scheduleAnnouncementAlerts(intervalMinutes: Long) {
+    override fun scheduleAnnouncementAlerts(intervalMinutes: Int) {
         val constraints =
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
 
         val announcementRefreshWorkRequest = PeriodicWorkRequestBuilder<AnnouncementAlertWorker>(
-            intervalMinutes,
+            intervalMinutes.toLong(),
             TimeUnit.MINUTES
         ).setConstraints(constraints).setBackoffCriteria(BackoffPolicy.LINEAR, 15, TimeUnit.MINUTES)
             .build()
