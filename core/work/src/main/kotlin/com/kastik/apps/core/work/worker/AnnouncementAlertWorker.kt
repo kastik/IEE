@@ -31,6 +31,7 @@ class AnnouncementAlertWorker @AssistedInject constructor(
 
         when (val newAnnouncements = checkNewAnnouncementsUseCase()) {
             is Success -> {
+                notifier.sendGeneralNotification("Was success")
                 newAnnouncements.data.forEach { announcement ->
                     notifier.sendAnnouncementNotification(
                         announcementId = announcement.id,
@@ -45,7 +46,7 @@ class AnnouncementAlertWorker @AssistedInject constructor(
                 if (newAnnouncements.error is NetworkError.Authentication) {
                     notifier.sendGeneralNotification(
                         titleResId = R.string.title_logged_out,
-                        bodyResId = R.string.title_logged_out,
+                        bodyResId = R.string.body_logged_out,
                         uri = R.string.url_logged_out
                     )
                     return Result.failure()
