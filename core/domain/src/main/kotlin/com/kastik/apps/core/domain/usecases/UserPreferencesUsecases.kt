@@ -104,22 +104,28 @@ class SetSearchScopeUseCase @Inject constructor(
 }
 
 class IsForYouAvailableUseCase @Inject constructor(
-    private val authenticationRepository: AuthenticationRepository,
-) {
-    operator fun invoke(): Flow<Boolean> =
-        authenticationRepository.getIsSignedIn()
-}
-
-class IsForYouEnabledUseCase @Inject constructor(
     private val tagsRepository: TagsRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val authenticationRepository: AuthenticationRepository,
 ) {
     operator fun invoke(): Flow<Boolean> =
         combine(
             tagsRepository.getSubscribedTags(),
+            authenticationRepository.getIsSignedIn(),
+        ) { subscriptions, isSignedIn ->
+            isSignedIn && subscriptions.isNotEmpty()
+        }
+}
+
+class IsForYouEnabledUseCase @Inject constructor(
+    private val isForYouAvailableUseCase: IsForYouAvailableUseCase,
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<Boolean> =
+        combine(
+            isForYouAvailableUseCase(),
             userPreferencesRepository.isForYouEnabled()
-        ) { subscriptions, enableForYou ->
-            subscriptions.isNotEmpty() && enableForYou
+        ) { isForYouAvailable, isForYouEnabled ->
+            isForYouAvailable && isForYouEnabled
         }
 }
 

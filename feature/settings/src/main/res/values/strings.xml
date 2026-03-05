@@ -13,7 +13,7 @@
 
     <string name="for_you_label">For You</string>
     <string name="for_you_available_description">Show announcements from subscribed tags</string>
-    <string name="for_unavailable_description">You must be signed in to use this feature</string>
+    <string name="for_unavailable_description">Sign in and subscribe to tags to use this feature</string>
 
     <string name="fab_filters_label">FAB filters</string>
     <string name="fab_filters_description">Show filters beside the FAB button</string>

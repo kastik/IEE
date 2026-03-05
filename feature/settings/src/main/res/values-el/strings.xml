@@ -13,7 +13,7 @@
 
     <string name="for_you_label">Ροή εγγεγραμμενων</string>
     <string name="for_you_available_description">Εμφάνιση ανακοινώσεων από ετικέτες που έχουν εγγραφεί</string>
-    <string name="for_unavailable_description">Πρέπει να είστε συνδεδεμένοι για να χρησιμοποιήσετε αυτήν τη λειτουργία</string>
+    <string name="for_unavailable_description">Απαιτείται σύνδεση και εγγραφή σε ετικέτες</string>
 
     <string name="fab_filters_label">Φίλτρα FAB</string>
     <string name="fab_filters_description">Εμφάνιση φίλτρων δίπλα στο κουμπί FAB</string>
