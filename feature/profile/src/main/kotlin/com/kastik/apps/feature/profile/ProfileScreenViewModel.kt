@@ -7,7 +7,6 @@ import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetSubscribableTagsUseCase
 import com.kastik.apps.core.domain.usecases.GetSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserProfileUseCase
-import com.kastik.apps.core.domain.usecases.RefreshIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.RefreshSubscribableTagsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshUserProfileUseCase
@@ -40,7 +39,6 @@ class ProfileScreenViewModel @Inject constructor(
     private val refreshSubscribableTagsUseCase: RefreshSubscribableTagsUseCase,
     private val subscribeToTagsUseCase: SubscribeToTagsUseCase,
     private val signOutUserUseCase: SignOutUserUseCase,
-    private val refreshIsSignedInUseCase: RefreshIsSignedInUseCase,
 ) : ViewModel() {
 
     private val showTagSheet = MutableStateFlow(false)
@@ -94,13 +92,11 @@ class ProfileScreenViewModel @Inject constructor(
 
     private fun refreshData() {
         viewModelScope.launch {
-            val refreshSignedInDeferred = async { refreshIsSignedInUseCase() }
             val refreshProfileDeferred = async { refreshUserProfileUseCase() }
             val refreshSubscriptionsDeferred = async { refreshSubscriptionsUseCase() }
             val refreshSubscribableTagsDeferred = async { refreshSubscribableTagsUseCase() }
 
             listOf(
-                refreshSignedInDeferred.await(),
                 refreshProfileDeferred.await(),
                 refreshSubscriptionsDeferred.await()
             )

@@ -6,9 +6,8 @@ import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.service.WorkScheduler
-import com.kastik.apps.core.model.error.NetworkError
-import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -36,19 +35,20 @@ class SignInUserUseCase @Inject constructor(
     }
 }
 
-class RefreshIsSignedInUseCase @Inject constructor(
+class TriggerSignOutOnStatusChangeUseCase @Inject constructor(
     private val signOutUserUseCase: SignOutUserUseCase,
     private val authenticationRepository: AuthenticationRepository,
 ) {
-    suspend operator fun invoke(): Result<Unit, NetworkError> {
-        if (!authenticationRepository.getIsSignedIn().first()) {
-            return Result.Error(NetworkError.Authentication)
-        }
-        val result = authenticationRepository.refreshIsSignedIn()
-        if (result is Result.Error && result.error is NetworkError.Authentication) {
-            signOutUserUseCase()
-        }
-        return result
+    suspend operator fun invoke() {
+        var wasSignedIn = false
+        authenticationRepository.getIsSignedIn()
+            .distinctUntilChanged()
+            .collect { isSignedIn ->
+                if (wasSignedIn && !isSignedIn) {
+                    signOutUserUseCase()
+                }
+                wasSignedIn = isSignedIn
+            }
     }
 }
 
