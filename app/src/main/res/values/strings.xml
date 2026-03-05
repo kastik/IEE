@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name" translatable="false">IEE IHU</string>
+    <string name="app_shortcut_for_you">For You</string>
 </resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@mipmap/iee_shortcut_for_you"
+        android:shortcutId="for_you_shortcut"
+        android:shortcutShortLabel="@string/app_shortcut_for_you">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="com.kastik.apps://home?initialTab=FOR_YOU"
+            android:targetClass="com.kastik.apps.MainActivity"
+            android:targetPackage="com.kastik.apps" />
+    </shortcut>
+</shortcuts>

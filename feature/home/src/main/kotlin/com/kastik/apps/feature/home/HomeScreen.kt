@@ -85,6 +85,7 @@ import com.kastik.apps.core.ui.paging.AnnouncementFeed
 import com.kastik.apps.core.ui.sheet.GenericFilterSheet
 import com.kastik.apps.core.ui.topbar.SearchBar
 import com.kastik.apps.core.ui.topbar.SearchBarFilters
+import com.kastik.apps.feature.home.navigation.HomeTab
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
@@ -97,6 +98,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreenRoute(
+    initialTab: HomeTab,
     navigateToAnnouncement: (Int) -> Unit,
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
@@ -112,6 +114,7 @@ internal fun HomeScreenRoute(
 
     HomeScreenContent(
         uiState = uiState,
+        initialTab = initialTab,
         searchBarTextFieldState = textFieldState,
         homeFeedAnnouncements = homeFeedAnnouncements,
         forYouAnnouncements = forYouAnnouncements,
@@ -127,6 +130,7 @@ internal fun HomeScreenRoute(
 @Composable
 private fun HomeScreenContent(
     uiState: UiState,
+    initialTab: HomeTab,
     searchBarTextFieldState: TextFieldState,
     homeFeedAnnouncements: LazyPagingItems<Announcement>,
     forYouAnnouncements: LazyPagingItems<Announcement>,
@@ -162,6 +166,18 @@ private fun HomeScreenContent(
             R.string.for_you_feed_label
         ) else listOf(R.string.home_feed_label)
     }
+
+    LaunchedEffect(uiState.enableForYou) {
+        val targetPage = when (initialTab) {
+            HomeTab.HOME -> 0
+            HomeTab.FOR_YOU -> 1
+        }
+
+        if (targetPage < pagerState.pageCount) {
+            pagerState.scrollToPage(targetPage)
+        }
+    }
+
 
     AnimatedVisibility(uiState.showSignInNotice) {
         IEEDialog(
@@ -609,6 +625,7 @@ fun PreviewHomeScreenContent() {
         Surface {
             HomeScreenContent(
                 uiState = UiState(),
+                initialTab = HomeTab.HOME,
                 homeFeedAnnouncements = pagedAnnouncements,
                 forYouAnnouncements = pagedAnnouncements,
                 navigateToAnnouncement = {},
