@@ -119,6 +119,14 @@ class RefreshAnnouncementWithIdUseCase @Inject constructor(
         announcementRepository.refreshAnnouncementWithId(id)
 }
 
+class SetAnnouncementCheckTimeUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke() {
+        userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
+    }
+}
+
 
 class CheckNewAnnouncementsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
