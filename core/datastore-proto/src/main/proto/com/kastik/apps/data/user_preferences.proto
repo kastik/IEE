@@ -15,7 +15,6 @@ message UserPreferences{
   bool enable_fab_filters = 8;
   google.protobuf.Timestamp updated_after = 9;
   int32 announcement_alert_interval_minutes = 10;
-  optional bool enable_notifications = 11;
 }
 
 enum Theme {

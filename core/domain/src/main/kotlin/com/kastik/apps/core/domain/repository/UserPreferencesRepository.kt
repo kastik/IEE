@@ -25,6 +25,4 @@ interface UserPreferencesRepository {
     suspend fun setLastNotificationCheckTime(time: Instant?)
     fun getAnnouncementCheckIntervalMinutes(): Flow<Int>
     suspend fun setAnnouncementCheckIntervalMinutes(minutes: Int)
-    fun areNotificationsAllowed(): Flow<Boolean>
-    suspend fun setNotificationsAllowed(value: Boolean)
 }
