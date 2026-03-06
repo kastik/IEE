@@ -7,6 +7,16 @@ plugins {
 }
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.crashlytics"
+
+    buildTypes {
+        release {
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = "true"
+        }
+        debug {
+            manifestPlaceholders["crashlyticsCollectionEnabled"] = "false"
+        }
+    }
+
 }
 
 

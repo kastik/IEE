@@ -48,11 +48,9 @@ configure<ApplicationExtension> {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            manifestPlaceholders["crashlyticsCollectionEnabled"] = "true"
         }
         debug {
             applicationIdSuffix = ".debug"
-            manifestPlaceholders["crashlyticsCollectionEnabled"] = "false"
         }
     }
 
@@ -65,19 +63,22 @@ configure<ApplicationExtension> {
 }
 
 dependencies {
-    implementation(project(":core:common"))
     implementation(project(":core:config"))
-    implementation(project(":core:network"))
-    implementation(project(":core:data"))
-    implementation(project(":core:work"))
     implementation(project(":core:analytics"))
     implementation(project(":core:crashlytics"))
     implementation(project(":core:notifications"))
-    implementation(project(":core:downloader"))
-    implementation(project(":core:domain"))
-    implementation(project(":core:model"))
+
     implementation(project(":core:ui"))
     implementation(project(":core:designsystem"))
+
+    implementation(project(":core:model"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:common"))
+
+    implementation(project(":core:data"))
+    implementation(project(":core:work"))
+    implementation(project(":core:downloader"))
+
     implementation(project(":feature:home"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:announcement"))
@@ -85,8 +86,6 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:licenses"))
     implementation(project(":feature:search"))
-    implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.androidx.splashscreen)
 
     baselineProfile(project(":benchmark"))
     implementation(libs.androidx.profileinstaller)
