@@ -1,10 +1,10 @@
 package com.kastik.apps.core.network.datasource
 
+import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.network.api.FakeAboardApiClient
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class TagsRemoteDataSourceImplTest {
     lateinit var aboardClient: FakeAboardApiClient
@@ -19,14 +19,30 @@ class TagsRemoteDataSourceImplTest {
     @Test
     fun fetchTagsReturnsDataFromApi() = runTest {
         val remote = aboardClient.getTags()
-        val repository = tagsRemoteDataSource.fetchAnnouncementTags()
-        assertEquals(remote, repository)
+        val result = tagsRemoteDataSource.fetchAnnouncementTags()
+        assertThat(result).isEqualTo(remote)
     }
 
     @Test
     fun fetchSubscribableTagsReturnsDataFromApi() = runTest {
         val remote = aboardClient.getUserSubscribableTags()
-        val repository = tagsRemoteDataSource.fetchSubscribableTags()
-        assertEquals(remote, repository)
+        val result = tagsRemoteDataSource.fetchSubscribableTags()
+        assertThat(result).containsExactlyElementsIn(remote)
     }
+
+    @Test
+    fun getSubscribedTagsReturnsDataFromApi() = runTest {
+        val remote = aboardClient.getUserSubscriptions()
+        val result = tagsRemoteDataSource.fetchSubscriptions()
+        assertThat(result).containsExactlyElementsIn(remote)
+    }
+
+    @Test
+    fun subscribeToEmailTagsForwardsCorrectIdsToApi() = runTest {
+        val remote = listOf(1, 2, 3)
+        tagsRemoteDataSource.subscribeToTags(remote)
+        val result = aboardClient.getSubscribedIds()
+        assertThat(result).containsExactlyElementsIn(remote)
+    }
+
 }

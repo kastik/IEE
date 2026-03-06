@@ -1,6 +1,5 @@
 package com.kastik.apps.core.network.datasource
 
-import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.network.api.FakeAboardApiClient
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -24,18 +23,4 @@ class ProfileRemoteDataSourceImplTest {
         assertEquals(remote, repository)
     }
 
-    @Test
-    fun getSubscribedTagsReturnsDataFromApi() = runTest {
-        val remote = aboardClient.getUserSubscriptions()
-        val repository = profileRemoteDataSource.getEmailSubscriptions()
-        assertEquals(remote, repository)
-    }
-
-    @Test
-    fun subscribeToEmailTagsForwardsCorrectIdsToApi() = runTest {
-        val subscribeToIds = listOf(1, 2, 3)
-        profileRemoteDataSource.subscribeToEmailTags(subscribeToIds)
-        val result = aboardClient.getSubscribedIds()
-        assertThat(result).containsExactlyElementsIn(subscribeToIds)
-    }
 }

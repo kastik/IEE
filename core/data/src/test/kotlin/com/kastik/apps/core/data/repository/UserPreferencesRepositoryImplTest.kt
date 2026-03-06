@@ -45,9 +45,7 @@ class UserPreferencesRepositoryImplTest {
         preferencesRepositoryImpl.setTheme(UserTheme.LIGHT)
         assertThat(preferencesRepositoryImpl.getTheme().first()).isEqualTo(UserTheme.LIGHT)
         preferencesRepositoryImpl.setTheme(UserTheme.FOLLOW_SYSTEM)
-        assertThat(
-            preferencesRepositoryImpl.getTheme().first()
-        ).isEqualTo(UserTheme.FOLLOW_SYSTEM)
+        assertThat(preferencesRepositoryImpl.getTheme().first()).isEqualTo(UserTheme.FOLLOW_SYSTEM)
     }
 
     @Test

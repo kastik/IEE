@@ -4,7 +4,6 @@ package com.kastik.apps.core.network.api
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
 import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
-import com.kastik.apps.core.network.model.aboard.auth.AboardTokenRefreshRequestDto
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
 import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
 import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
@@ -59,15 +58,14 @@ class FakeAboardApiClient : AboardApiClient {
     }
 
     override suspend fun exchangeCodeForAboardToken(code: String): AboardTokenResponseDto {
+        throwOnApiCall?.let {
+            throw it
+        }
         return aboardTokenResponseDtoTestData
     }
 
-    override suspend fun refreshToken(aboardTokenRefreshRequestDto: AboardTokenRefreshRequestDto): AboardTokenResponseDto {
+    override suspend fun refreshToken(): AboardTokenResponseDto {
         return aboardTokenResponseDtoTestData
-    }
-
-    override suspend fun refreshExpiredToken(): AboardTokenResponseDto {
-        TODO("Not yet implemented")
     }
 
     override suspend fun getUserInfo(): ProfileResponseDto {

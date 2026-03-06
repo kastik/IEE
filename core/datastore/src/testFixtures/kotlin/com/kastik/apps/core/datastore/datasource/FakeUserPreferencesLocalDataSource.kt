@@ -6,84 +6,110 @@ import com.kastik.apps.core.datastore.proto.QueryScope
 import com.kastik.apps.core.datastore.proto.Sort
 import com.kastik.apps.core.datastore.proto.Theme
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
-    var skipped: Boolean = false
-    var theme: Theme = Theme.Light
-    var dynamicColor: Boolean = true
 
-    var sortType: Sort = Sort.Priority
+    private val _hasSkippedSignIn = MutableStateFlow(false)
+    val hasSkippedSignIn = _hasSkippedSignIn.asStateFlow()
+    private val _theme = MutableStateFlow(Theme.Light)
+    val theme = _theme.asStateFlow()
+    private val _dynamicColor = MutableStateFlow(true)
+    val dynamicColor = _dynamicColor.asStateFlow()
+    private val _sortType = MutableStateFlow(Sort.Priority)
+    val sortType = _sortType.asStateFlow()
+    private val _fabFiltersEnabled = MutableStateFlow(true)
+    val fabFiltersEnabled = _fabFiltersEnabled.asStateFlow()
+    private val _enableForYou = MutableStateFlow(false)
+    val enableForYou = _enableForYou.asStateFlow()
+    private val _queryScope = MutableStateFlow(QueryScope.Title)
+    val queryScope = _queryScope.asStateFlow()
+    private val _lastNotifiedTime = MutableStateFlow<Timestamp?>(null)
+    val lastNotifiedTime = _lastNotifiedTime.asStateFlow()
+    private val _announcementCheckIntervalMinutes = MutableStateFlow(15)
+    val announcementCheckIntervalMinutes = _announcementCheckIntervalMinutes.asStateFlow()
 
-    var fabFiltersEnabled: Boolean = false
 
-    var enableForYou = false
-    var queryScope: QueryScope = QueryScope.Title
-
-    var lastNotifiedTime: Timestamp? = null
-
-
-    override fun getHasSkippedSignIn(): Flow<Boolean> = flowOf(skipped)
+    override fun getHasSkippedSignIn(): Flow<Boolean> = hasSkippedSignIn
 
     override suspend fun setHasSkippedSignIn(hasSkippedSignIn: Boolean) {
-        skipped = hasSkippedSignIn
+        _hasSkippedSignIn.update {
+            hasSkippedSignIn
+        }
     }
 
-    override fun getUserTheme(): Flow<Theme> {
-        return flowOf(theme)
-    }
+    override fun getUserTheme(): Flow<Theme> = theme
+
 
     override suspend fun setUserTheme(theme: Theme) {
-        this.theme = theme
+        theme.let {
+            _theme.update { theme }
+        }
     }
 
-    override fun getDynamicColor(): Flow<Boolean> {
-        return flowOf(dynamicColor)
-    }
+    override fun getDynamicColor(): Flow<Boolean> = dynamicColor
+
 
     override suspend fun setDynamicColor(value: Boolean) {
-        dynamicColor = value
+        _dynamicColor.update {
+            value
+        }
     }
 
-    override fun getSortType(): Flow<Sort> {
-        return flowOf(sortType)
-    }
+    override fun getSortType(): Flow<Sort> = sortType
+
 
     override suspend fun setSortType(sortType: Sort) {
-        this.sortType = sortType
+        _sortType.update {
+            sortType
+        }
     }
 
-    override fun getSearchScope(): Flow<QueryScope> {
-        return flowOf(queryScope)
-    }
+    override fun getSearchScope(): Flow<QueryScope> = queryScope
+
 
     override suspend fun setSearchScope(queryScope: QueryScope) {
-        this.queryScope = queryScope
+        _queryScope.update {
+            queryScope
+        }
     }
 
-    override fun getEnableForYou(): Flow<Boolean> {
-        return flowOf(enableForYou)
-    }
+    override fun getEnableForYou(): Flow<Boolean> = enableForYou
+
 
     override suspend fun setEnableForYou(value: Boolean) {
-        this.enableForYou = value
+        _enableForYou.update {
+            value
+        }
     }
 
 
-    override fun areFabFiltersEnabled(): Flow<Boolean> =
-        flowOf(fabFiltersEnabled)
+    override fun areFabFiltersEnabled(): Flow<Boolean> = fabFiltersEnabled
 
 
     override suspend fun setAreFabFiltersEnabled(value: Boolean) {
-        fabFiltersEnabled = value
+        _fabFiltersEnabled.update {
+            value
+        }
     }
 
-    override fun getLastNotificationCheckTime(): Flow<Timestamp?> =
-        flowOf(lastNotifiedTime)
+    override fun getLastNotificationCheckTime(): Flow<Timestamp?> = lastNotifiedTime
 
 
     override suspend fun setLastNotificationCheckTime(time: Timestamp?) {
-        lastNotifiedTime = time
+        _lastNotifiedTime.update {
+            time
+        }
+    }
+
+    override fun getAnnouncementCheckIntervalMinutes(): Flow<Int> = announcementCheckIntervalMinutes
+
+    override suspend fun setAnnouncementCheckIntervalMinutes(minutes: Int) {
+        _announcementCheckIntervalMinutes.update {
+            minutes
+        }
     }
 
 }

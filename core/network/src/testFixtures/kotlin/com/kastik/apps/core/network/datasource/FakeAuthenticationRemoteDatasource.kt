@@ -16,14 +16,6 @@ class FakeAuthenticationRemoteDatasource : AuthenticationRemoteDataSource {
         throw IllegalStateException("Aboard Access Token Response is null")
     }
 
-    override suspend fun refreshAboardToken(token: String): AboardTokenResponseDto {
-        throwOnApiRequest?.let { throw it }
-        aboardAccessTokenResponse?.let {
-            return it
-        }
-        throw IllegalStateException("Aboard Access Token Response is null")
-    }
-
     override suspend fun checkIfTokenIsValid(): Boolean {
         throwOnApiRequest?.let { throw it }
         return isTokenValid

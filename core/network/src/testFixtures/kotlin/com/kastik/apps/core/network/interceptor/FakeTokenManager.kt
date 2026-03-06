@@ -10,4 +10,8 @@ class FakeTokenManager : TokenManager {
         token = newToken
     }
 
+    override suspend fun tokenExpired() {
+        token = null
+    }
+
 }
