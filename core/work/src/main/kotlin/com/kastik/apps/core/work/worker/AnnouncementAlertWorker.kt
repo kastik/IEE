@@ -31,7 +31,6 @@ class AnnouncementAlertWorker @AssistedInject constructor(
 
         when (val newAnnouncements = checkNewAnnouncementsUseCase()) {
             is Success -> {
-                notifier.sendGeneralNotification("Was success")
                 newAnnouncements.data.forEach { announcement ->
                     notifier.sendAnnouncementNotification(
                         announcementId = announcement.id,
