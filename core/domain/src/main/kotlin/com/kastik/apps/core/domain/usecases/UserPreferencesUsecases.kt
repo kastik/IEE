@@ -3,8 +3,10 @@ package com.kastik.apps.core.domain.usecases
 import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.common.extensions.combine
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
-import com.kastik.apps.core.domain.repository.ProfileRepository
+import com.kastik.apps.core.domain.repository.NotificationRepository
+import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
+import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.UserPreferences
@@ -12,6 +14,7 @@ import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class HasSkippedSignInUseCase @Inject constructor(
@@ -101,22 +104,28 @@ class SetSearchScopeUseCase @Inject constructor(
 }
 
 class IsForYouAvailableUseCase @Inject constructor(
+    private val tagsRepository: TagsRepository,
     private val authenticationRepository: AuthenticationRepository,
 ) {
     operator fun invoke(): Flow<Boolean> =
-        authenticationRepository.getIsSignedIn()
+        combine(
+            tagsRepository.getSubscribedTags(),
+            authenticationRepository.getIsSignedIn(),
+        ) { subscriptions, isSignedIn ->
+            isSignedIn && subscriptions.isNotEmpty()
+        }
 }
 
 class IsForYouEnabledUseCase @Inject constructor(
-    private val profileRepository: ProfileRepository,
+    private val isForYouAvailableUseCase: IsForYouAvailableUseCase,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<Boolean> =
         combine(
-            profileRepository.getEmailSubscriptions(),
+            isForYouAvailableUseCase(),
             userPreferencesRepository.isForYouEnabled()
-        ) { subscriptions, enableForYou ->
-            subscriptions.isNotEmpty() && enableForYou
+        ) { isForYouAvailable, isForYouEnabled ->
+            isForYouAvailable && isForYouEnabled
         }
 }
 
@@ -141,6 +150,50 @@ class SetFabFiltersEnabledUseCase @Inject constructor(
         userPreferencesRepository.setFabFiltersEnabled(value)
 }
 
+
+class GetAnnouncementCheckIntervalHoursUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<Int> =
+        userPreferencesRepository.getAnnouncementCheckIntervalMinutes().map {
+            it / 60
+        }
+}
+
+class SetAnnouncementCheckIntervalUseCase @Inject constructor(
+    private val workManager: WorkScheduler,
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke(hours: Int) {
+        workManager.scheduleAnnouncementAlerts(hours * 60)
+        userPreferencesRepository.setAnnouncementCheckIntervalMinutes(hours * 60)
+    }
+}
+
+class AreNotificationsAllowedUseCase @Inject constructor(
+    private val notificationRepository: NotificationRepository
+) {
+    operator fun invoke(): Flow<Boolean> =
+        notificationRepository.areNotificationsEnabled()
+}
+
+
+class IsAnnouncementCheckIntervalAvailableUseCase @Inject constructor(
+    private val tagsRepository: TagsRepository,
+    private val notificationRepository: NotificationRepository,
+    private val authenticationRepository: AuthenticationRepository,
+) {
+    operator fun invoke(): Flow<Boolean> {
+        return combine(
+            tagsRepository.getSubscribedTags(),
+            authenticationRepository.getIsSignedIn(),
+            notificationRepository.areNotificationsEnabled(),
+        ) { tags, isSignedIn, areNotificationEnabled ->
+            tags.isNotEmpty() && isSignedIn && areNotificationEnabled
+        }
+    }
+}
+
 class GetUserPreferencesUseCase @Inject constructor(
     private val getThemeUseCase: GetThemeUseCase,
     private val getDynamicColorUseCase: GetDynamicColorUseCase,
@@ -148,6 +201,7 @@ class GetUserPreferencesUseCase @Inject constructor(
     private val getSearchScopeUseCase: GetSearchScopeUseCase,
     private val isForYouEnabledUseCase: IsForYouEnabledUseCase,
     private val areFabFiltersEnabledUseCase: AreFabFiltersEnabledUseCase,
+    private val getAnnouncementCheckIntervalHoursUseCase: GetAnnouncementCheckIntervalHoursUseCase,
 ) {
     operator fun invoke() =
         combine(
@@ -157,26 +211,29 @@ class GetUserPreferencesUseCase @Inject constructor(
             getSearchScopeUseCase(),
             isForYouEnabledUseCase(),
             areFabFiltersEnabledUseCase(),
-        ) { theme, dynamicColor, sortType, searchScope, enableForYou, disableFabFilters ->
+            getAnnouncementCheckIntervalHoursUseCase(),
+        ) { theme, dynamicColor, sortType, searchScope, enableForYou, disableFabFilters, announcementCheckIntervalHours ->
             UserPreferences(
                 theme,
                 dynamicColor,
                 sortType,
                 searchScope,
                 enableForYou,
-                disableFabFilters
+                disableFabFilters,
+                announcementCheckIntervalHours
             )
         }
 }
 
 
+//TODO This is a work around for not yet set user properties on older versions,
+//Remove this after enough users migrate to newer versions as analytics calls don't belong in domain layer
 class UpdateUserPropertiesUseCase @Inject constructor(
     private val analytics: Analytics,
     private val getUserPreferencesUseCase: GetUserPreferencesUseCase,
 ) {
     suspend operator fun invoke() {
         val prefs = getUserPreferencesUseCase().first()
-
         analytics.setUserProperty("theme", prefs.theme.name)
         analytics.setUserProperty("dynamic_color", prefs.dynamicColor.toString())
         analytics.setUserProperty("sort_type", prefs.sortType.name)

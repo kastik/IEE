@@ -32,7 +32,6 @@ class AuthenticationRepositoryImplTest {
         fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
         authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
         assertThat(fakeAuthenticationLocalDataSource.aboardToken.value).isEqualTo(response.accessToken)
-        assertThat(fakeAuthenticationLocalDataSource.aboardTokenExpiration.value).isEqualTo(response.expiresIn)
     }
 
     @Test
@@ -51,8 +50,6 @@ class AuthenticationRepositoryImplTest {
         authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
         authenticationRepositoryImpl.clearAuthenticationData()
         assertThat(fakeAuthenticationLocalDataSource.aboardToken.value).isNull()
-        assertThat(fakeAuthenticationLocalDataSource.aboardTokenExpiration.value).isNull()
-        assertThat(fakeAuthenticationLocalDataSource.aboardTokenLastRefreshTime.value).isNull()
         assertThat(fakeAuthenticationLocalDataSource.isSignedIn.value).isFalse()
     }
 }

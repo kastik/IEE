@@ -4,7 +4,6 @@ package com.kastik.apps.core.network.api
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
 import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
-import com.kastik.apps.core.network.model.aboard.auth.AboardTokenRefreshRequestDto
 import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
 import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
 import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
@@ -67,15 +66,9 @@ interface AboardApiClient {
         @Query("code") code: String,
     ): AboardTokenResponseDto
 
-    @POST("auth/token")
-    @Headers("Accept: application/json")
-    suspend fun refreshToken(
-        @Body aboardTokenRefreshRequestDto: AboardTokenRefreshRequestDto
-    ): AboardTokenResponseDto
-
     @POST("auth/refresh")
     @Headers("Accept: application/json")
-    suspend fun refreshExpiredToken(
+    suspend fun refreshToken(
     ): AboardTokenResponseDto
 
     @GET("auth/whoami")

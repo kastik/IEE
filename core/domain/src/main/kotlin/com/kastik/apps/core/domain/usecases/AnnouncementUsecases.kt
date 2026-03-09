@@ -3,12 +3,11 @@ package com.kastik.apps.core.domain.usecases
 import androidx.paging.PagingData
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
-import com.kastik.apps.core.domain.repository.ProfileRepository
+import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.model.error.AuthenticatedRefreshError
-import com.kastik.apps.core.model.error.AuthenticationError
+import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -45,14 +44,14 @@ class GetHomeAnnouncementsUseCase @Inject constructor(
 }
 
 class GetForYouAnnouncementsUseCase @Inject constructor(
-    private val profileRepository: ProfileRepository,
+    private val tagsRepository: TagsRepository,
     private val announcementRepository: AnnouncementRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     operator fun invoke(): Flow<PagingData<Announcement>> =
         combine(
             userPreferencesRepository.getSortType(),
-            profileRepository.getEmailSubscriptions(),
+            tagsRepository.getSubscribedTags(),
         ) { sortType, subscribedTags ->
             sortType to subscribedTags
         }.flatMapLatest { (sortType, subscribedTags) ->
@@ -120,22 +119,30 @@ class RefreshAnnouncementWithIdUseCase @Inject constructor(
         announcementRepository.refreshAnnouncementWithId(id)
 }
 
+class SetAnnouncementCheckTimeUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke() {
+        userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
+    }
+}
+
 
 class CheckNewAnnouncementsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
-    private val profileRepository: ProfileRepository,
+    private val tagsRepository: TagsRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
-    suspend operator fun invoke(): Result<List<Announcement>, AuthenticatedRefreshError> {
+    suspend operator fun invoke(): Result<List<Announcement>, NetworkError> {
 
-        val subscriptionResult = profileRepository.refreshEmailSubscriptions()
+        val subscriptionResult = tagsRepository.refreshSubscribedTags()
 
-        if (subscriptionResult is Result.Error && subscriptionResult.error is AuthenticationError) {
+        if (subscriptionResult is Result.Error && subscriptionResult.error is NetworkError.Authentication) {
             return subscriptionResult
         }
 
         val subscribedTagIds =
-            profileRepository.getEmailSubscriptions().first().map { it.id }
+            tagsRepository.getSubscribedTags().first().map { it.id }
 
         val lastNotifiedTime =
             userPreferencesRepository.getLastNotificationCheckTime().first()

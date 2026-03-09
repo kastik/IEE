@@ -1,8 +1,8 @@
 package com.kastik.apps.core.network.serializers
 
+import com.google.common.truth.Truth.assertThat
 import kotlinx.serialization.json.Json
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class IntAsBooleanSerializerTest {
 
@@ -10,17 +10,19 @@ class IntAsBooleanSerializerTest {
 
     @Test
     fun oneDeserializesToTrueTest() {
-        assertEquals(true, json.decodeFromString(IntAsBooleanSerializer, "1"))
+        val result = json.decodeFromString(IntAsBooleanSerializer, "1")
+        assertThat(result).isTrue()
     }
 
     @Test
     fun zeroDeserializesToFalseTest() {
-        assertEquals(false, json.decodeFromString(IntAsBooleanSerializer, "0"))
+        val result = json.decodeFromString(IntAsBooleanSerializer, "0")
+        assertThat(result).isFalse()
     }
 
     @Test
-    fun nullDeserializesToTrueTest() {
-        assertEquals(false, json.decodeFromString(IntAsBooleanSerializer, "null"))
+    fun nullDeserializesToFalseTest() {
+        val result = json.decodeFromString(IntAsBooleanSerializer, "null")
+        assertThat(result).isFalse()
     }
-
 }

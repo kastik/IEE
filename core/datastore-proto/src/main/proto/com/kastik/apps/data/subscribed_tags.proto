@@ -5,14 +5,11 @@ option java_multiple_files = true;
 
 message SubscriptionsProto{
   repeated SubscribedTagProto subscribedTags = 1;
-  repeated SubscribedTopicProto subscribedTopics = 2;
+  reserved 2;
+  reserved "subscribedTopics";
 }
 
 message SubscribedTagProto{
   int32 id = 1;
   string title = 2;
-}
-
-message SubscribedTopicProto{
-  int32 id = 1;
 }

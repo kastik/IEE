@@ -6,41 +6,25 @@ import com.kastik.apps.core.data.mappers.toProfile
 import com.kastik.apps.core.data.mappers.toProfileProto
 import com.kastik.apps.core.datastore.datasource.FakeProfileLocalDataSource
 import com.kastik.apps.core.datastore.proto.ProfileProto
-import com.kastik.apps.core.datastore.testdata.subscribedTagProtoTestData
 import com.kastik.apps.core.datastore.testdata.userProfileProtoTestData
 import com.kastik.apps.core.network.datasource.FakeProfileRemoteDataSource
 import com.kastik.apps.core.network.testdata.userProfileDtoTestData
-import com.kastik.apps.core.notifications.PushNotificationsDatasource
-import io.mockk.Runs
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.just
-import io.mockk.mockkClass
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
 import org.junit.Test
 
 class ProfileRepositoryImplTest {
     private val testDispatcher = StandardTestDispatcher()
     private val profileLocalDataSource = FakeProfileLocalDataSource()
     private val profileRemoteDataSource = FakeProfileRemoteDataSource()
-    private val pushNotificationsDatasource = mockkClass(PushNotificationsDatasource::class)
 
     private val profileRepository = ProfileRepositoryImpl(
         crashlytics = FakeCrashlytics(),
         profileLocalDataSource = profileLocalDataSource,
         profileRemoteDataSource = profileRemoteDataSource,
-        pushNotificationsDatasource = pushNotificationsDatasource,
         ioDispatcher = testDispatcher,
     )
-
-    @Before
-    fun setup() {
-        coEvery { pushNotificationsDatasource.subscribeToTopics(any()) } just Runs
-        coEvery { pushNotificationsDatasource.unsubscribeFromTopics(any()) } just Runs
-    }
 
     //TODO Consider if we need to throw here instead
     @Test
@@ -81,73 +65,14 @@ class ProfileRepositoryImplTest {
     }
 
     @Test
-    fun getEmailSubscriptionsAreEmptyWhenNotSet() = runTest(testDispatcher) {
-        val result = profileRepository.getEmailSubscriptions().first()
-        assertThat(result).isEmpty()
-    }
-
-    @Test
-    fun getEmailSubscriptionsReturnsSubscribedTagsWhenSet() = runTest(testDispatcher) {
-        val tags = subscribedTagProtoTestData
-        profileLocalDataSource.setTagSubscriptions(tags)
-        val result = profileRepository.getEmailSubscriptions().first()
-        assertThat(result).isNotEmpty()
-        assertThat(result.size).isEqualTo(tags.size)
-
-        tags.zip(result).forEach { (tag, domain) ->
-            assertThat(domain.id).isEqualTo(tag.id)
-            assertThat(domain.title).isEqualTo(tag.title)
-        }
-    }
-
-    /**
-     * TODO Prompt Engineered
-     */
-
-    @Test
-    fun `refreshEmailSubscriptionsFetchesFromRemoteAnd savesToLocal`() = runTest(testDispatcher) {
-        profileRepository.refreshEmailSubscriptions()
-
-        val result = profileRepository.getEmailSubscriptions().first()
-        assertThat(result).isNotEmpty()
-    }
-
-    @Test
-    fun subscribeToTopicsCallsPushDatasource() = runTest(testDispatcher) {
-        //TODO This needs re-work
-        val _ = listOf(1, 2, 3)
-
-        profileRepository.syncTopicSubscriptions()
-
-        coVerify { pushNotificationsDatasource.subscribeToTopics(emptyList()) }
-    }
-
-    @Test
-    fun unsubscribeFromAllTopicsCallsPushDatasource() = runTest(testDispatcher) {
-        profileRepository.unsubscribeFromAllTopics()
-    }
-
-    @Test
     fun clearLocalDataClearsProfileAndSubscriptions() = runTest(testDispatcher) {
         profileLocalDataSource.setProfile(userProfileProtoTestData.first())
-        profileLocalDataSource.setTagSubscriptions(subscribedTagProtoTestData)
-
         profileRepository.clearLocalData()
-
         val profileResult = profileRepository.getProfile().first()
-        val subsResult = profileRepository.getEmailSubscriptions().first()
-
         assertThat(profileResult.id).isEqualTo(0)
-        assertThat(subsResult).isEmpty()
+
     }
 
-    @Test
-    fun subscribeToEmailTagsDelegatesToRemote() = runTest(testDispatcher) {
-        val tags = listOf(10, 20)
-
-        profileRepository.subscribeToEmailTags(tags)
-        //TODO
-    }
 
 }
 

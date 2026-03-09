@@ -13,8 +13,8 @@ import com.kastik.apps.core.data.mappers.toAnnouncementEntity
 import com.kastik.apps.core.data.mappers.toAttachmentEntity
 import com.kastik.apps.core.data.mappers.toAuthorEntity
 import com.kastik.apps.core.data.mappers.toBodyEntity
-import com.kastik.apps.core.data.mappers.toPrivateRefreshError
-import com.kastik.apps.core.data.mappers.toPublicRefreshError
+import com.kastik.apps.core.data.mappers.toLocalError
+import com.kastik.apps.core.data.mappers.toNetworkError
 import com.kastik.apps.core.data.mappers.toTagCrossRefs
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.data.paging.AnnouncementRemoteMediator
@@ -23,8 +23,6 @@ import com.kastik.apps.core.database.db.AppDatabase
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.model.error.GeneralRefreshError
-import com.kastik.apps.core.model.error.StorageError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -95,8 +93,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         authorIds: List<Int>,
         tagIds: List<Int>,
         updatedAfter: Instant?
-    ): Result<List<Announcement>, GeneralRefreshError> =
-        try {
+    ) = try {
 
             val greekLocalTime: LocalDateTime? =
                 updatedAfter?.toLocalDateTime(TimeZone.of("Europe/Athens"))
@@ -116,7 +113,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Result.Error(e.toPublicRefreshError())
+        Result.Error(e.toNetworkError())
         }
 
 
@@ -153,7 +150,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
             throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
-            Result.Error(e.toPrivateRefreshError())
+            Result.Error(e.toNetworkError())
         }
     }
 
@@ -177,7 +174,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
             throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
-            Result.Error(StorageError)
+            Result.Error(e.toLocalError())
         }
     }
 }

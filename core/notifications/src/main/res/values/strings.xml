@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="general_channel_id" translatable="false">general</string>
-    <string name="general_channel_name">General</string>
-    <string name="fcm_default_channel_id" translatable="false">general</string>
-    <string name="fcm_default_channel_name">General notifications</string>
-    <string name="fcm_announcement_channel_id" translatable="false">announcement</string>
-    <string name="fcm_announcement_channel_name">New announcements</string>
+    <string name="channel_id_general" translatable="false">general</string>
+    <string name="channel_id_fcm_campaigns" translatable="false">campaigns</string>
+    <string name="channel_id_announcements" translatable="false">announcement</string>
+
+    <string name="channel_name_general">General</string>
+    <string name="channel_name_announcements">New announcements</string>
+    <string name="channel_name_fcm_campaigns">Campaigns</string>
+
+    <string name="channel_desc_general">Updates about your account status</string>
+    <string name="channel_desc_announcements">Latest announcements</string>
+    <string name="channel_desc_fcm_campaigns">App news and feedback requests</string>
+
+    <string name="group_id_important" translatable="false">important_group</string>
+    <string name="group_id_campaigns" translatable="false">campaigns_group</string>
+
+    <string name="group_name_important">Important</string>
+    <string name="group_name_campaigns">Campaigns</string>
 </resources>

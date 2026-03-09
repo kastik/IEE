@@ -23,4 +23,6 @@ interface UserPreferencesRepository {
     suspend fun setFabFiltersEnabled(value: Boolean)
     fun getLastNotificationCheckTime(): Flow<Instant?>
     suspend fun setLastNotificationCheckTime(time: Instant?)
+    fun getAnnouncementCheckIntervalMinutes(): Flow<Int>
+    suspend fun setAnnouncementCheckIntervalMinutes(minutes: Int)
 }

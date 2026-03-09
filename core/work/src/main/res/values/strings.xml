@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_logged_out">You have been logged out</string>
+    <string name="body_logged_out">Please sign in again to continue receiving notifications</string>
+    <string name="url_logged_out" translatable="false">https://login.iee.ihu.gr/authorization?client_id=690a9861468c9b767cabdc40&amp;response_type=code&amp;scope=announcements,profile&amp;redirect_uri=com.kastik.apps://auth</string>
+</resources>

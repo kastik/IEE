@@ -2,8 +2,11 @@ package com.kastik.apps.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kastik.apps.core.domain.usecases.AreNotificationsAllowedUseCase
 import com.kastik.apps.core.domain.usecases.GetUserPreferencesUseCase
+import com.kastik.apps.core.domain.usecases.IsAnnouncementCheckIntervalAvailableUseCase
 import com.kastik.apps.core.domain.usecases.IsForYouAvailableUseCase
+import com.kastik.apps.core.domain.usecases.SetAnnouncementCheckIntervalUseCase
 import com.kastik.apps.core.domain.usecases.SetDynamicColorUseCase
 import com.kastik.apps.core.domain.usecases.SetFabFiltersEnabledUseCase
 import com.kastik.apps.core.domain.usecases.SetForYouEnabledUseCase
@@ -25,18 +28,23 @@ import javax.inject.Inject
 class SettingsScreenViewModel @Inject constructor(
     isForYouAvailableUseCase: IsForYouAvailableUseCase,
     getUserPreferencesUseCase: GetUserPreferencesUseCase,
+    areNotificationsAllowedUseCase: AreNotificationsAllowedUseCase,
+    isAnnouncementCheckIntervalAvailableUseCase: IsAnnouncementCheckIntervalAvailableUseCase,
     private val setSearchScopeUseCase: SetSearchScopeUseCase,
     private val setDynamicColorUseCase: SetDynamicColorUseCase,
     private val setThemeUseCase: SetThemeUseCase,
     private val setSortTypeUseCase: SetSortTypeUseCase,
     private val setForYouEnabledUseCase: SetForYouEnabledUseCase,
     private val setFabFiltersEnabledUseCase: SetFabFiltersEnabledUseCase,
+    private val setAnnouncementCheckIntervalUseCase: SetAnnouncementCheckIntervalUseCase,
 ) : ViewModel() {
 
     val uiState: StateFlow<UiState> = combine(
         getUserPreferencesUseCase(),
-        isForYouAvailableUseCase()
-    ) { preferences, isForYouAvailable ->
+        isForYouAvailableUseCase(),
+        areNotificationsAllowedUseCase(),
+        isAnnouncementCheckIntervalAvailableUseCase(),
+    ) { preferences, isForYouAvailable, areNotificationsAllowed, isAnnouncementCheckIntervalAvailable ->
         UiState.Success(
             theme = preferences.theme,
             sortType = preferences.sortType,
@@ -44,7 +52,10 @@ class SettingsScreenViewModel @Inject constructor(
             searchScope = preferences.searchScope,
             isForYouEnabled = preferences.enableForYou,
             isForYouAvailable = isForYouAvailable,
-            areFabFiltersEnabled = preferences.disableFabFilters
+            areFabFiltersEnabled = preferences.disableFabFilters,
+            isAnnouncementCheckIntervalAvailable = isAnnouncementCheckIntervalAvailable,
+            announcementCheckIntervalHours = preferences.announcementCheckIntervalHours,
+            areNotificationsAllowed = areNotificationsAllowed,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -85,6 +96,12 @@ class SettingsScreenViewModel @Inject constructor(
     fun setFabFilters(value: Boolean) {
         viewModelScope.launch {
             setFabFiltersEnabledUseCase(value)
+        }
+    }
+
+    fun setAnnouncementCheckIntervalHours(hours: Int) {
+        viewModelScope.launch {
+            setAnnouncementCheckIntervalUseCase(hours)
         }
     }
 }

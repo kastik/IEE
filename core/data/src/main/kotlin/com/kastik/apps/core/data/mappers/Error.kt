@@ -1,38 +1,48 @@
 package com.kastik.apps.core.data.mappers
 
-import android.database.sqlite.SQLiteException
-import com.kastik.apps.core.model.error.AuthenticatedRefreshError
-import com.kastik.apps.core.model.error.AuthenticationError
-import com.kastik.apps.core.model.error.ConnectionError
-import com.kastik.apps.core.model.error.GeneralRefreshError
-import com.kastik.apps.core.model.error.ServerError
-import com.kastik.apps.core.model.error.StorageError
-import com.kastik.apps.core.model.error.TimeoutError
-import com.kastik.apps.core.model.error.UnknownError
+import android.database.sqlite.SQLiteConstraintException
+import android.database.sqlite.SQLiteDatabaseCorruptException
+import android.database.sqlite.SQLiteDiskIOException
+import android.database.sqlite.SQLiteFullException
+import androidx.datastore.core.CorruptionException
+import com.kastik.apps.core.model.error.LocalError
+import com.kastik.apps.core.model.error.NetworkError
 import retrofit2.HttpException
 import java.io.IOException
+import java.net.ConnectException
 import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
-fun Throwable.toPublicRefreshError(): GeneralRefreshError {
+
+fun Throwable.toLocalError(): LocalError {
     return when (this) {
-        is SocketTimeoutException -> TimeoutError
-        is IOException -> ConnectionError
-        is HttpException -> ServerError
-        is SQLiteException -> StorageError
-        else -> UnknownError
+        is SQLiteFullException -> LocalError.DiskFull
+        is SQLiteDatabaseCorruptException -> LocalError.DatabaseCorrupt
+        is SQLiteConstraintException -> LocalError.ConstraintViolation
+
+        is CorruptionException -> LocalError.DataStoreCorrupt
+
+        is SQLiteDiskIOException, is IOException -> LocalError.IOError
+
+        else -> LocalError.Unknown
     }
 }
 
-fun Throwable.toPrivateRefreshError(): AuthenticatedRefreshError {
+
+fun Throwable.toNetworkError(): NetworkError {
     return when (this) {
-        is SocketTimeoutException -> TimeoutError
-        is IOException -> ConnectionError
+        is UnknownHostException, is ConnectException -> NetworkError.Connection
+        is SocketTimeoutException -> NetworkError.Timeout
+        is IOException -> NetworkError.Connection
+
         is HttpException -> {
-            if (this.code() == 401) AuthenticationError
-            else ServerError
+            when (this.code()) {
+                401 -> NetworkError.Authentication
+                in 500..599 -> NetworkError.ServerError
+                else -> NetworkError.Unknown
+            }
         }
 
-        is SQLiteException -> StorageError
-        else -> UnknownError
+        else -> NetworkError.Unknown
     }
 }

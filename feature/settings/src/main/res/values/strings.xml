@@ -13,7 +13,7 @@
 
     <string name="for_you_label">For You</string>
     <string name="for_you_available_description">Show announcements from subscribed tags</string>
-    <string name="for_unavailable_description">You must be signed in to use this feature</string>
+    <string name="for_unavailable_description">Sign in and subscribe to tags to use this feature</string>
 
     <string name="fab_filters_label">FAB filters</string>
     <string name="fab_filters_description">Show filters beside the FAB button</string>
@@ -33,6 +33,15 @@
 
     <string name="push_notifications_label">Push notifications</string>
     <string name="push_notifications_description">Receive updates and announcements</string>
+
+    <string name="announcement_check_interval_label">Announcement check interval</string>
+    <string name="announcement_check_interval_warning_title">Warning</string>
+    <string name="announcement_check_interval_warning_body">Background updates are not guaranteed at exact intervals. Device conditions may delay announcement checks</string>
+    <plurals name="announcement_check_interval_hours">
+        <item quantity="one">Hour</item>
+        <item quantity="other">Hours</item>
+    </plurals>
+
 
     <string name="about_app_label">About app</string>
     <string name="about_app_description">Version</string>

@@ -30,10 +30,10 @@ fun NavGraphBuilder.authenticationScreen(
 ) {
     composable<AuthRoute>(
         deepLinks = listOf(
-            navDeepLink {
-                uriPattern =
-                    "com.kastik.apps://auth?code={code}&state={state}&error={error}&error_description={error_description}"
-            }),
+            navDeepLink<AuthRoute>(
+                basePath = "com.kastik.apps://auth"
+            )
+        ),
         enterTransition = { scaleIn() },
         exitTransition = { fadeOut() },
         popEnterTransition = { fadeIn() }) { backStackEntry ->

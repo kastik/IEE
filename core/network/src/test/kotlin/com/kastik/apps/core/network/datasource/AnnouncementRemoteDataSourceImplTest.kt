@@ -1,29 +1,22 @@
 package com.kastik.apps.core.network.datasource
 
 
+import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.api.FakeAboardApiClient
 import com.kastik.apps.core.network.testdata.announcementPageResponseTestData
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class AnnouncementRemoteDataSourceImplTest {
 
-    lateinit var api: FakeAboardApiClient
-    private lateinit var dataSourceImpl: AnnouncementRemoteDataSourceImpl
-
-    @Before
-    fun setUp() {
-        api = FakeAboardApiClient()
-        dataSourceImpl = AnnouncementRemoteDataSourceImpl(api)
-    }
+    private val fakeAboardApiClient = FakeAboardApiClient()
+    private val dataSourceImpl = AnnouncementRemoteDataSourceImpl(fakeAboardApiClient)
 
 
     @Test
     fun fetchAnnouncementsForwardsCorrectPageTest() = runTest {
-        val responsePageOne = api.getAnnouncements(
+        val responsePageOne = fakeAboardApiClient.getAnnouncements(
             sortType = SortType.DESC,
             page = 1,
             perPage = 10
@@ -34,35 +27,34 @@ class AnnouncementRemoteDataSourceImplTest {
             perPage = 10,
             sortBy = SortType.Priority
         )
-        assertEquals(responsePageOne.meta.currentPage, resultPageOne.meta.currentPage)
+        assertThat(resultPageOne.meta.currentPage).isEqualTo(responsePageOne.meta.currentPage)
 
-        val responsePageTwo = api.getAnnouncements(
+        val responsePageTwo = fakeAboardApiClient.getAnnouncements(
             sortType = SortType.DESC,
             page = 2,
             perPage = 10
         )
         val resultPageTwo =
             dataSourceImpl.fetchPagedAnnouncements(page = 2, perPage = 10, SortType.Priority)
-        assertEquals(responsePageTwo.meta.currentPage, resultPageTwo.meta.currentPage)
+        assertThat(resultPageTwo.meta.currentPage).isEqualTo(responsePageTwo.meta.currentPage)
 
-        val responsePageThree = api.getAnnouncements(
+        val responsePageThree = fakeAboardApiClient.getAnnouncements(
             sortType = SortType.DESC,
             page = 3,
             perPage = 10
         )
         val resultPageThree =
             dataSourceImpl.fetchPagedAnnouncements(page = 3, perPage = 10, SortType.Priority)
-        assertEquals(responsePageThree.meta.currentPage, resultPageThree.meta.currentPage)
-
+        assertThat(resultPageThree.meta.currentPage).isEqualTo(responsePageThree.meta.currentPage)
     }
 
     @Test
-    fun fetchAnnouncementWithId_forwards_id_to_api() = runTest {
+    fun fetchAnnouncementWithIdForwardsCorrectIdToApi() = runTest {
         val ids = announcementPageResponseTestData.map { it.data.first().id }
         ids.forEach { id ->
-            val expected = api.getAnnouncement(id)
+            val remote = fakeAboardApiClient.getAnnouncement(id)
             val result = dataSourceImpl.fetchAnnouncementWithId(id)
-            assertEquals(expected, result)
+            assertThat(result).isEqualTo(remote)
         }
     }
 }

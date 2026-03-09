@@ -10,6 +10,7 @@ import com.kastik.apps.core.database.dao.TagsDao
 import com.kastik.apps.core.datastore.TagsLocalDataSource
 import com.kastik.apps.core.datastore.datasource.FakeTagsLocalDataSource
 import com.kastik.apps.core.datastore.testdata.subscribableTagsProtoTestData
+import com.kastik.apps.core.datastore.testdata.subscribedTagProtoTestData
 import com.kastik.apps.core.network.datasource.FakeTagsRemoteDataSource
 import com.kastik.apps.core.network.datasource.TagsRemoteDataSource
 import com.kastik.apps.core.network.testdata.announcementTagDtoTestData
@@ -91,5 +92,32 @@ class TagsRepositoryImplTest {
         assertThat(result).containsExactlyElementsIn(remote.map {
             it.toSubscribableTagProto().toSubscribableTag()
         })
+    }
+
+    @Test
+    fun getEmailSubscriptionsAreEmptyWhenNotSet() = runTest(testDispatcher) {
+        val result = repository.getSubscribedTags().first()
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun getEmailSubscriptionsReturnsSubscribedTagsWhenSet() = runTest(testDispatcher) {
+        val tags = subscribedTagProtoTestData
+        subscribableTagsLocalDataSource.setSubscriptions(tags)
+        val result = repository.getSubscribedTags().first()
+        assertThat(result).isNotEmpty()
+        assertThat(result.size).isEqualTo(tags.size)
+
+        tags.zip(result).forEach { (tag, domain) ->
+            assertThat(domain.id).isEqualTo(tag.id)
+            assertThat(domain.title).isEqualTo(tag.title)
+        }
+    }
+
+    @Test
+    fun `refreshEmailSubscriptionsFetchesFromRemoteAnd savesToLocal`() = runTest(testDispatcher) {
+        repository.refreshSubscribedTags()
+        val result = repository.getSubscribedTags().first()
+        assertThat(result).isNotEmpty()
     }
 }

@@ -2,9 +2,10 @@ package com.kastik.apps.core.data.repository
 
 import com.kastik.apps.core.common.di.IoDispatcher
 import com.kastik.apps.core.crashlytics.Crashlytics
-import com.kastik.apps.core.data.mappers.toPublicRefreshError
+import com.kastik.apps.core.data.mappers.toNetworkError
 import com.kastik.apps.core.data.mappers.toSubscribableTag
 import com.kastik.apps.core.data.mappers.toSubscribableTagProto
+import com.kastik.apps.core.data.mappers.toSubscribedTagProto
 import com.kastik.apps.core.data.mappers.toTag
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.database.dao.TagsDao
@@ -12,6 +13,7 @@ import com.kastik.apps.core.datastore.TagsLocalDataSource
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.model.aboard.SubscribableTag
 import com.kastik.apps.core.model.aboard.Tag
+import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.TagsRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -45,7 +47,7 @@ internal class TagsRepositoryImpl @Inject constructor(
             throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
-            Result.Error(e.toPublicRefreshError())
+            Result.Error(e.toNetworkError())
         }
     }
 
@@ -63,7 +65,38 @@ internal class TagsRepositoryImpl @Inject constructor(
             throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
-            Result.Error(e.toPublicRefreshError())
+            Result.Error(e.toNetworkError())
         }
     }
+
+    override fun getSubscribedTags(): Flow<List<Tag>> =
+        subscribableTagsLocalDataSource.getSubscriptions()
+            .map { it.subscribedTagsList.map { tag -> tag.toTag() } }
+
+
+    override suspend fun refreshSubscribedTags() = withContext(ioDispatcher) {
+        try {
+            val subscribedTags = tagsRemoteDataSource.fetchSubscriptions()
+            subscribableTagsLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
+            Result.Success(Unit)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            crashlytics.recordException(e)
+            Result.Error(e.toNetworkError())
+        }
+    }
+
+    override suspend fun subscribeToTags(tagIds: List<Int>): Result<Unit, NetworkError> =
+        withContext(ioDispatcher) {
+            try {
+                tagsRemoteDataSource.subscribeToTags(tagIds)
+                Result.Success(Unit)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                crashlytics.recordException(e)
+                Result.Error(e.toNetworkError())
+            }
+        }
 }

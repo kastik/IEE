@@ -14,5 +14,6 @@ message ProfileProto{
   string lastLoginAt = 8;
   string uid = 9;
   optional string deletedAt = 10;
-  SubscriptionsProto subscriptions = 11;
+  reserved "subscriptions";
+  reserved 11;
 }

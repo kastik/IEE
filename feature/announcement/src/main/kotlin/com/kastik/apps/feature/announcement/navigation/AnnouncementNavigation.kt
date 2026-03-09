@@ -30,12 +30,13 @@ fun NavGraphBuilder.announcementScreen(
 ) {
     composable<AnnouncementRoute>(
         deepLinks = listOf(
-            navDeepLink {
-                uriPattern = "com.kastik.apps://announcement?id={id}"
-            },
-            navDeepLink {
-                uriPattern = "https://aboard.iee.ihu.gr/announcements/{id}"
-            }),
+            navDeepLink<AnnouncementRoute>(
+                basePath = "com.kastik.apps://announcement"
+            ),
+            navDeepLink<AnnouncementRoute>(
+                basePath = "https://aboard.iee.ihu.gr/announcements"
+            )
+        ),
         enterTransition = { scaleIn() },
         exitTransition = { fadeOut() },
         popEnterTransition = { fadeIn() }) { backStackEntry ->

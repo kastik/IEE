@@ -23,7 +23,7 @@ fun IEENavHost() {
 
     NavHost(
         navController = navController,
-        startDestination = HomeRoute,
+        startDestination = HomeRoute(),
     ) {
         homeScreen(
             navigateToSearch = navController::navigateToSearch,

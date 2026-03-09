@@ -2,27 +2,17 @@ package com.kastik.apps.feature.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.WorkInfo
 import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetSubscribableTagsUseCase
-import com.kastik.apps.core.domain.usecases.GetSubscribeToTagsWorkInfoUseCase
-import com.kastik.apps.core.domain.usecases.GetSubscribedTagsUseCase
+import com.kastik.apps.core.domain.usecases.GetSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserProfileUseCase
-import com.kastik.apps.core.domain.usecases.RefreshEmailSubscriptionsUseCase
-import com.kastik.apps.core.domain.usecases.RefreshIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.RefreshSubscribableTagsUseCase
+import com.kastik.apps.core.domain.usecases.RefreshSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.RefreshUserProfileUseCase
-import com.kastik.apps.core.domain.usecases.ScheduleSubscribeToTagsUseCase
 import com.kastik.apps.core.domain.usecases.SignOutUserUseCase
-import com.kastik.apps.core.model.error.AuthenticatedRefreshError
-import com.kastik.apps.core.model.error.AuthenticationError
-import com.kastik.apps.core.model.error.ConnectionError
-import com.kastik.apps.core.model.error.GeneralRefreshError
-import com.kastik.apps.core.model.error.ServerError
-import com.kastik.apps.core.model.error.StorageError
-import com.kastik.apps.core.model.error.TimeoutError
-import com.kastik.apps.core.model.error.UnknownError
+import com.kastik.apps.core.domain.usecases.SubscribeToTagsUseCase
+import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -40,17 +30,15 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileScreenViewModel @Inject constructor(
     getUserProfileUseCase: GetUserProfileUseCase,
-    getSubscribedTagsUseCase: GetSubscribedTagsUseCase,
+    getSubscriptionsUseCase: GetSubscriptionsUseCase,
     getIsSignedInUseCase: GetIsSignedInUseCase,
     getSubscribableTagsUseCase: GetSubscribableTagsUseCase,
     private val notifier: Notifier,
     private val refreshUserProfileUseCase: RefreshUserProfileUseCase,
-    private val refreshEmailSubscriptionsUseCase: RefreshEmailSubscriptionsUseCase,
+    private val refreshSubscriptionsUseCase: RefreshSubscriptionsUseCase,
     private val refreshSubscribableTagsUseCase: RefreshSubscribableTagsUseCase,
-    private val scheduleSubscribeToTagsUseCase: ScheduleSubscribeToTagsUseCase,
-    private val getSubscribeToTagsWorkInfoUseCase: GetSubscribeToTagsWorkInfoUseCase,
+    private val subscribeToTagsUseCase: SubscribeToTagsUseCase,
     private val signOutUserUseCase: SignOutUserUseCase,
-    private val refreshIsSignedInUseCase: RefreshIsSignedInUseCase,
 ) : ViewModel() {
 
     private val showTagSheet = MutableStateFlow(false)
@@ -58,7 +46,7 @@ class ProfileScreenViewModel @Inject constructor(
     val uiState = combine(
         getIsSignedInUseCase(),
         getUserProfileUseCase(),
-        getSubscribedTagsUseCase(),
+        getSubscriptionsUseCase(),
         getSubscribableTagsUseCase(),
         showTagSheet,
     ) { isSignedIn, profile, subscribedTags, subscribableTags, showTagSheet ->
@@ -88,19 +76,10 @@ class ProfileScreenViewModel @Inject constructor(
 
     fun updateSelectedTagIds(newSubscribedTagsIds: ImmutableList<Int>) {
         viewModelScope.launch {
-            scheduleSubscribeToTagsUseCase(newSubscribedTagsIds)
-            //TODO This won't sendToast when no connection exists
-            getSubscribeToTagsWorkInfoUseCase().collect { workInfo ->
-                val state = workInfo?.state
-                val runCount = workInfo?.runAttemptCount ?: 0
-
-                when {
-                    state == WorkInfo.State.ENQUEUED && runCount > 0 -> {
-                        notifier.sendToastNotification(R.string.toast_subscription_update_failed_message)
-                    }
-
-                    state == WorkInfo.State.ENQUEUED && runCount == 0 -> Unit
-                }
+            val subscribeResult = subscribeToTagsUseCase(newSubscribedTagsIds)
+            val refreshResult = refreshSubscriptionsUseCase()
+            if (subscribeResult is Result.Error || refreshResult is Result.Error) {
+                notifier.sendToastNotification(R.string.error_generic)
             }
         }
     }
@@ -113,35 +92,32 @@ class ProfileScreenViewModel @Inject constructor(
 
     private fun refreshData() {
         viewModelScope.launch {
-            val refreshSignedInDeferred = async { refreshIsSignedInUseCase() }
             val refreshProfileDeferred = async { refreshUserProfileUseCase() }
-            val refreshSubscriptionsDeferred = async { refreshEmailSubscriptionsUseCase() }
+            val refreshSubscriptionsDeferred = async { refreshSubscriptionsUseCase() }
             val refreshSubscribableTagsDeferred = async { refreshSubscribableTagsUseCase() }
 
             listOf(
-                refreshSignedInDeferred.await(),
                 refreshProfileDeferred.await(),
                 refreshSubscriptionsDeferred.await()
             )
-                .filterIsInstance<Result.Error<AuthenticatedRefreshError>>()
+                .filterIsInstance<Result.Error<NetworkError>>()
                 .firstOrNull()
                 ?.let { refreshError ->
                     notifier.sendToastNotification(refreshError.error.toUserMessage())
                 }
 
             val refreshSubscribableTagsResult = refreshSubscribableTagsDeferred.await()
-            if (refreshSubscribableTagsResult is Result.Error<GeneralRefreshError>) {
+            if (refreshSubscribableTagsResult is Result.Error<NetworkError>) {
                 notifier.sendToastNotification(refreshSubscribableTagsResult.error.toUserMessage())
             }
         }
     }
 }
 
-private fun AuthenticatedRefreshError.toUserMessage(): Int = when (this) {
-    ConnectionError -> R.string.error_connection
-    ServerError -> R.string.error_server
-    StorageError -> R.string.error_storage
-    TimeoutError -> R.string.error_time_out
-    UnknownError -> R.string.error_generic
-    AuthenticationError -> R.string.error_authentication
+private fun NetworkError.toUserMessage(): Int = when (this) {
+    NetworkError.Authentication -> R.string.error_authentication
+    NetworkError.Connection -> R.string.error_connection
+    NetworkError.ServerError -> R.string.error_server
+    NetworkError.Timeout -> R.string.error_time_out
+    NetworkError.Unknown -> R.string.error_generic
 }

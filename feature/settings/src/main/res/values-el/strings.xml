@@ -13,7 +13,7 @@
 
     <string name="for_you_label">Ροή εγγεγραμμενων</string>
     <string name="for_you_available_description">Εμφάνιση ανακοινώσεων από ετικέτες που έχουν εγγραφεί</string>
-    <string name="for_unavailable_description">Πρέπει να είστε συνδεδεμένοι για να χρησιμοποιήσετε αυτήν τη λειτουργία</string>
+    <string name="for_unavailable_description">Απαιτείται σύνδεση και εγγραφή σε ετικέτες</string>
 
     <string name="fab_filters_label">Φίλτρα FAB</string>
     <string name="fab_filters_description">Εμφάνιση φίλτρων δίπλα στο κουμπί FAB</string>
@@ -33,6 +33,14 @@
 
     <string name="push_notifications_label">Γνωστοποιήσεις</string>
     <string name="push_notifications_description">Λάβετε ενημερώσεις και ανακοινώσεις</string>
+
+    <string name="announcement_check_interval_label">Διάστημα ελέγχου ανακοινώσεων</string>
+    <string name="announcement_check_interval_warning_title">Προειδοποίηση</string>
+    <string name="announcement_check_interval_warning_body">Δεν είναι εγγυημένο ότι οι ενημερώσεις στο παρασκήνιο θα γίνονται σε ακριβή χρονικά διαστήματα. Συνθήκες της συσκευής ενδέχεται να καθυστερήσουν τους ελέγχους ανακοινώσεων</string>
+    <plurals name="announcement_check_interval_hours">
+        <item quantity="one">Ωρα</item>
+        <item quantity="other">Ώρες</item>
+    </plurals>
 
     <string name="about_app_label">Εφαρμογή</string>
     <string name="about_app_description">Έκδοση</string>

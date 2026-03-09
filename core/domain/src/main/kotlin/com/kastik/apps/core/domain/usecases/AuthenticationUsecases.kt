@@ -3,13 +3,11 @@ package com.kastik.apps.core.domain.usecases
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
-import com.kastik.apps.core.domain.repository.RemoteConfigRepository
+import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.service.WorkScheduler
-import com.kastik.apps.core.model.error.AuthenticatedRefreshError
-import com.kastik.apps.core.model.error.AuthenticationError
-import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -20,37 +18,37 @@ class GetIsSignedInUseCase @Inject constructor(
         authenticationRepository.getIsSignedIn()
 }
 
-class RefreshIsSignedInUseCase @Inject constructor(
-    private val signOutUserUseCase: SignOutUserUseCase,
-    private val authenticationRepository: AuthenticationRepository,
-) {
-    suspend operator fun invoke(): Result<Unit, AuthenticatedRefreshError> {
-        if (!authenticationRepository.getIsSignedIn().first()) {
-            return Result.Error(AuthenticationError)
-        }
-        val result = authenticationRepository.refreshIsSignedIn()
-        if (result is Result.Error && result.error is AuthenticationError) {
-            signOutUserUseCase()
-        }
-        return result
-    }
-}
-
-class LoginUserUseCase @Inject constructor(
+class SignInUserUseCase @Inject constructor(
     private val workScheduler: WorkScheduler,
+    private val tagsRepository: TagsRepository,
     private val profileRepository: ProfileRepository,
-    private val remoteConfigRepository: RemoteConfigRepository,
     private val authenticationRepository: AuthenticationRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     suspend operator fun invoke(code: String) {
         authenticationRepository.exchangeCodeForAbroadToken(code)
         profileRepository.refreshProfile()
-        profileRepository.refreshEmailSubscriptions()
-        workScheduler.scheduleTokenRefresh()
-        workScheduler.scheduleTopicsSync()
-        if (!remoteConfigRepository.isFcmEnabled()) {
-            workScheduler.scheduleAnnouncementAlerts()
-        }
+        tagsRepository.refreshSubscribedTags()
+        workScheduler.scheduleAnnouncementAlerts(
+            userPreferencesRepository.getAnnouncementCheckIntervalMinutes().first()
+        )
+    }
+}
+
+class TriggerSignOutOnStatusChangeUseCase @Inject constructor(
+    private val signOutUserUseCase: SignOutUserUseCase,
+    private val authenticationRepository: AuthenticationRepository,
+) {
+    suspend operator fun invoke() {
+        var wasSignedIn = false
+        authenticationRepository.getIsSignedIn()
+            .distinctUntilChanged()
+            .collect { isSignedIn ->
+                if (wasSignedIn && !isSignedIn) {
+                    signOutUserUseCase()
+                }
+                wasSignedIn = isSignedIn
+            }
     }
 }
 
@@ -67,22 +65,6 @@ class SignOutUserUseCase @Inject constructor(
         authenticationRepository.clearAuthenticationData()
         announcementRepository.clearAnnouncementCache()
         userPreferencesRepository.setHasSkippedSignIn(false)
-        workScheduler.cancelTokenRefresh()
         workScheduler.cancelAnnouncementAlerts()
-        profileRepository.unsubscribeFromAllTopics()
-    }
-}
-
-class RefreshTokenUseCase @Inject constructor(
-    private val repository: AuthenticationRepository,
-    private val signOutUserUseCase: SignOutUserUseCase,
-) {
-    suspend operator fun invoke(): Result<Unit, AuthenticatedRefreshError> {
-        val result = repository.refreshAboardToken()
-        if (result is Result.Error && result.error is AuthenticationError) {
-            signOutUserUseCase()
-            return result
-        }
-        return result
     }
 }

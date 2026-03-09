@@ -3,36 +3,44 @@ package com.kastik.apps.core.network.datasource
 import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.network.api.FakeAboardApiClient
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertFailsWith
 
 class AuthenticationRemoteDataSourceImplTest {
 
-    lateinit var aboardClient: FakeAboardApiClient
-    private lateinit var authDatasource: AuthenticationRemoteDataSourceImpl
+    private val fakeAboardApiClient = FakeAboardApiClient()
+    private val authenticationRemoteDataSourceImpl =
+        AuthenticationRemoteDataSourceImpl(fakeAboardApiClient)
 
-    @Before
-    fun setUp() {
-        aboardClient = FakeAboardApiClient()
-        authDatasource = AuthenticationRemoteDataSourceImpl(
-            aboardApiClient = aboardClient,
-        )
+    @Test
+    fun exchangeCodeForAboardTokenReturnDataFromApi() = runTest {
+        val remote = fakeAboardApiClient.exchangeCodeForAboardToken("1234")
+        val result = authenticationRemoteDataSourceImpl.exchangeCodeForAboardToken("1234")
+        assertThat(result).isEqualTo(remote)
     }
 
     @Test
+    fun exchangeCodeForAboardTokenDoesNotSwallowErrors() = runTest {
+        fakeAboardApiClient.setThrowOnGetUserInfo(exception = IllegalStateException("Token expired"))
+        assertFailsWith<IllegalStateException> {
+            authenticationRemoteDataSourceImpl.exchangeCodeForAboardToken("12345")
+        }
+    }
+
+
+    @Test
     fun checkIfTokenIsValidReturnsTrueWhenGetUserDoesNotThrowTest() = runTest {
-        val result = authDatasource.checkIfTokenIsValid()
+        val result = authenticationRemoteDataSourceImpl.checkIfTokenIsValid()
         assertThat(result).isTrue()
     }
 
     @Test
     fun checkIfTokenIsValidReturnsFalseWhenGetUserThrowsTest() = runTest {
-        aboardClient.setThrowOnGetUserInfo(exception = IllegalStateException())
+        fakeAboardApiClient.setThrowOnGetUserInfo(exception = IllegalStateException())
 
         assertFailsWith<IllegalStateException> {
-            authDatasource.checkIfTokenIsValid()
+            authenticationRemoteDataSourceImpl.checkIfTokenIsValid()
         }
     }
-
 }
+

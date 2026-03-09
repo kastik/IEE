@@ -13,7 +13,8 @@ import com.kastik.apps.core.domain.usecases.GetHomeAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
 import com.kastik.apps.core.domain.usecases.IsForYouEnabledUseCase
-import com.kastik.apps.core.domain.usecases.RefreshIsSignedInUseCase
+import com.kastik.apps.core.domain.usecases.RefreshFilterOptionsUseCase
+import com.kastik.apps.core.domain.usecases.SetAnnouncementCheckTimeUseCase
 import com.kastik.apps.core.domain.usecases.SetHasSkippedSignInUseCase
 import com.kastik.apps.core.domain.usecases.ShowSignInNoticeRationalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,13 +29,14 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     isSignedInUseCase: GetIsSignedInUseCase,
-    refreshIsSignedInUseCase: RefreshIsSignedInUseCase,
     showSignInNoticeRationalUseCase: ShowSignInNoticeRationalUseCase,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
     isForYouEnabledUseCase: IsForYouEnabledUseCase,
     getForYouAnnouncementsUseCase: GetForYouAnnouncementsUseCase,
     getHomeAnnouncementsUseCase: GetHomeAnnouncementsUseCase,
     areFabFiltersEnabledUseCase: AreFabFiltersEnabledUseCase,
+    private val setAnnouncementCheckTimeUseCase: SetAnnouncementCheckTimeUseCase,
+    private val refreshFilterOptionsUseCase: RefreshFilterOptionsUseCase,
     private val setHasSkippedSignInUseCase: SetHasSkippedSignInUseCase,
     private val getQuickResultsUseCase: GetQuickResultsUseCase,
 ) : ViewModel() {
@@ -64,7 +66,10 @@ class HomeScreenViewModel @Inject constructor(
         )
     }.onStart {
         viewModelScope.launch {
-            refreshIsSignedInUseCase()
+            setAnnouncementCheckTimeUseCase()
+        }
+        viewModelScope.launch {
+            refreshFilterOptionsUseCase()
         }
     }.stateIn(
         scope = viewModelScope,

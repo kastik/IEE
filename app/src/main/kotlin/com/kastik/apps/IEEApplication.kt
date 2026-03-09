@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.kastik.apps.core.common.di.ApplicationScope
-import com.kastik.apps.core.domain.repository.RemoteConfigRepository
+import com.kastik.apps.core.domain.usecases.FetchRemoteOptionsUseCase
 import com.kastik.apps.core.domain.usecases.UpdateUserPropertiesUseCase
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -18,7 +18,7 @@ class IEEApplication : Application(), Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
 
     @Inject
-    lateinit var configRepo: RemoteConfigRepository
+    lateinit var fetchRemoteOptionsUseCase: FetchRemoteOptionsUseCase
 
     @Inject
     @ApplicationScope
@@ -35,7 +35,7 @@ class IEEApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         applicationScope.launch {
-            configRepo.fetchAndActivate()
+            fetchRemoteOptionsUseCase()
         }
         applicationScope.launch {
             updateUserPropertiesUseCase()

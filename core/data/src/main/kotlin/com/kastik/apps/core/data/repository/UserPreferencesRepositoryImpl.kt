@@ -89,4 +89,12 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
         preferencesLocalDataSource.setLastNotificationCheckTime(time?.toTimestamp())
     }
 
+    override fun getAnnouncementCheckIntervalMinutes() =
+        preferencesLocalDataSource.getAnnouncementCheckIntervalMinutes()
+
+
+    override suspend fun setAnnouncementCheckIntervalMinutes(minutes: Int) {
+        preferencesLocalDataSource.setAnnouncementCheckIntervalMinutes(minutes)
+    }
+
 }

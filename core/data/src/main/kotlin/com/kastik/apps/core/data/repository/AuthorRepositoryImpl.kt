@@ -4,7 +4,7 @@ import com.kastik.apps.core.common.di.IoDispatcher
 import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.toAuthor
 import com.kastik.apps.core.data.mappers.toAuthorEntity
-import com.kastik.apps.core.data.mappers.toPublicRefreshError
+import com.kastik.apps.core.data.mappers.toNetworkError
 import com.kastik.apps.core.database.dao.AuthorsDao
 import com.kastik.apps.core.domain.repository.AuthorRepository
 import com.kastik.apps.core.model.aboard.Author
@@ -39,7 +39,7 @@ internal class AuthorRepositoryImpl @Inject constructor(
             throw e
         } catch (e: Exception) {
             crashlytics.recordException(e)
-            Result.Error(e.toPublicRefreshError())
+            Result.Error(e.toNetworkError())
         }
     }
 }
