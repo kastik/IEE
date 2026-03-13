@@ -79,6 +79,8 @@ dependencies {
     implementation(project(":core:work"))
     implementation(project(":core:downloader"))
 
+    implementation(project(":dev-tools"))
+
     implementation(project(":feature:home"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:announcement"))

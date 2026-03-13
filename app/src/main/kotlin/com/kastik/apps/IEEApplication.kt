@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.kastik.apps.core.common.di.ApplicationScope
+import com.kastik.apps.core.dev.tools.DevTools
 import com.kastik.apps.core.domain.usecases.FetchRemoteOptionsUseCase
 import com.kastik.apps.core.domain.usecases.UpdateUserPropertiesUseCase
 import dagger.hilt.android.HiltAndroidApp
@@ -25,6 +26,9 @@ class IEEApplication : Application(), Configuration.Provider {
     lateinit var applicationScope: CoroutineScope
 
     @Inject
+    lateinit var devTools: DevTools
+
+    @Inject
     lateinit var updateUserPropertiesUseCase: UpdateUserPropertiesUseCase
 
     override val workManagerConfiguration: Configuration
@@ -34,12 +38,17 @@ class IEEApplication : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+
+        devTools.setupStrictMode()
+        devTools.setupLeakCanary()
+
         applicationScope.launch {
             fetchRemoteOptionsUseCase()
         }
         applicationScope.launch {
             updateUserPropertiesUseCase()
         }
+
     }
 
 }
