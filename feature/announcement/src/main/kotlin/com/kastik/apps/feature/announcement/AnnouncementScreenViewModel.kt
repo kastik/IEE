@@ -101,8 +101,9 @@ class AnnouncementScreenViewModel @Inject constructor(
                 val start = match.range.first
                 if (start > lastIndex) {
                     val textSegment = html.substring(lastIndex, start).trim()
-                    if (textSegment.isNotEmpty()) {
-                        parts.add(ProcessedBody.Text(AnnotatedString.fromHtml(textSegment)))
+                    val parsedText = AnnotatedString.fromHtml(textSegment)
+                    if (parsedText.text.isNotBlank()) {
+                        parts.add(ProcessedBody.Text(parsedText))
                     }
                 }
                 val src = match.groupValues[1]
@@ -112,8 +113,9 @@ class AnnouncementScreenViewModel @Inject constructor(
 
             if (lastIndex < html.length) {
                 val remainingText = html.substring(lastIndex).trim()
-                if (remainingText.isNotEmpty()) {
-                    parts.add(ProcessedBody.Text(AnnotatedString.fromHtml(remainingText)))
+                val parsedText = AnnotatedString.fromHtml(remainingText)
+                if (parsedText.text.isNotEmpty()) {
+                    parts.add(ProcessedBody.Text(parsedText))
                 }
             }
             parts
