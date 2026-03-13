@@ -15,6 +15,7 @@ import com.kastik.apps.core.model.result.Result.Success
 import com.kastik.apps.core.work.R
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 
 
 @HiltWorker
@@ -53,6 +54,8 @@ class AnnouncementAlertWorker @AssistedInject constructor(
                 return Result.retry()
             }
         }
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         crashlytics.recordException(e)
         return Result.retry()
