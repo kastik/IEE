@@ -14,7 +14,6 @@ import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class HasSkippedSignInUseCase @Inject constructor(
@@ -151,22 +150,20 @@ class SetFabFiltersEnabledUseCase @Inject constructor(
 }
 
 
-class GetAnnouncementCheckIntervalHoursUseCase @Inject constructor(
+class GetAnnouncementCheckIntervalMinutesUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<Int> =
-        userPreferencesRepository.getAnnouncementCheckIntervalMinutes().map {
-            it / 60
-        }
+        userPreferencesRepository.getAnnouncementCheckIntervalMinutes()
 }
 
 class SetAnnouncementCheckIntervalUseCase @Inject constructor(
     private val workManager: WorkScheduler,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
-    suspend operator fun invoke(hours: Int) {
-        workManager.scheduleAnnouncementAlerts(hours * 60)
-        userPreferencesRepository.setAnnouncementCheckIntervalMinutes(hours * 60)
+    suspend operator fun invoke(minutes: Int) {
+        workManager.scheduleAnnouncementAlerts(minutes)
+        userPreferencesRepository.setAnnouncementCheckIntervalMinutes(minutes)
     }
 }
 
@@ -201,7 +198,7 @@ class GetUserPreferencesUseCase @Inject constructor(
     private val getSearchScopeUseCase: GetSearchScopeUseCase,
     private val isForYouEnabledUseCase: IsForYouEnabledUseCase,
     private val areFabFiltersEnabledUseCase: AreFabFiltersEnabledUseCase,
-    private val getAnnouncementCheckIntervalHoursUseCase: GetAnnouncementCheckIntervalHoursUseCase,
+    private val getAnnouncementCheckIntervalMinutesUseCase: GetAnnouncementCheckIntervalMinutesUseCase,
 ) {
     operator fun invoke() =
         combine(
@@ -211,7 +208,7 @@ class GetUserPreferencesUseCase @Inject constructor(
             getSearchScopeUseCase(),
             isForYouEnabledUseCase(),
             areFabFiltersEnabledUseCase(),
-            getAnnouncementCheckIntervalHoursUseCase(),
+            getAnnouncementCheckIntervalMinutesUseCase(),
         ) { theme, dynamicColor, sortType, searchScope, enableForYou, disableFabFilters, announcementCheckIntervalHours ->
             UserPreferences(
                 theme,

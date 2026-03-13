@@ -1,5 +1,6 @@
 package com.kastik.apps.feature.settings
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kastik.apps.core.domain.usecases.AreNotificationsAllowedUseCase
@@ -54,7 +55,7 @@ class SettingsScreenViewModel @Inject constructor(
             isForYouAvailable = isForYouAvailable,
             areFabFiltersEnabled = preferences.disableFabFilters,
             isAnnouncementCheckIntervalAvailable = isAnnouncementCheckIntervalAvailable,
-            announcementCheckIntervalHours = preferences.announcementCheckIntervalHours,
+            announcementCheckIntervalMinutes = preferences.announcementCheckIntervalMinutes,
             areNotificationsAllowed = areNotificationsAllowed,
         )
     }.stateIn(
@@ -99,9 +100,10 @@ class SettingsScreenViewModel @Inject constructor(
         }
     }
 
-    fun setAnnouncementCheckIntervalHours(hours: Int) {
+    fun setAnnouncementCheckIntervalMinutes(minutes: Int) {
+        Log.d("SettingsScreenViewModel", "setAnnouncementCheckIntervalMinutes: $minutes")
         viewModelScope.launch {
-            setAnnouncementCheckIntervalUseCase(hours)
+            setAnnouncementCheckIntervalUseCase(minutes)
         }
     }
 }
