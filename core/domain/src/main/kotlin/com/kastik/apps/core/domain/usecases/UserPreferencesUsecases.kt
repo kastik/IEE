@@ -14,6 +14,7 @@ import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class HasSkippedSignInUseCase @Inject constructor(
@@ -165,6 +166,31 @@ class SetAnnouncementCheckIntervalUseCase @Inject constructor(
         workManager.scheduleAnnouncementAlerts(minutes)
         userPreferencesRepository.setAnnouncementCheckIntervalMinutes(minutes)
     }
+}
+
+class IncreaseImportantEventCountUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke() {
+        userPreferencesRepository.increaseImportantEventCount()
+    }
+}
+
+class ResetImportantEventCountUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke() {
+        userPreferencesRepository.resetImportantEventCount()
+    }
+}
+
+class ShouldShowReviewDialogUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<Boolean> =
+        userPreferencesRepository.getImportantEventCount().map {
+            it > 20
+        }
 }
 
 class AreNotificationsAllowedUseCase @Inject constructor(

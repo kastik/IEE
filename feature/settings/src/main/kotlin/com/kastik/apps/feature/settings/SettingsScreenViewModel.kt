@@ -1,10 +1,10 @@
 package com.kastik.apps.feature.settings
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kastik.apps.core.domain.usecases.AreNotificationsAllowedUseCase
 import com.kastik.apps.core.domain.usecases.GetUserPreferencesUseCase
+import com.kastik.apps.core.domain.usecases.IncreaseImportantEventCountUseCase
 import com.kastik.apps.core.domain.usecases.IsAnnouncementCheckIntervalAvailableUseCase
 import com.kastik.apps.core.domain.usecases.IsForYouAvailableUseCase
 import com.kastik.apps.core.domain.usecases.SetAnnouncementCheckIntervalUseCase
@@ -37,6 +37,7 @@ class SettingsScreenViewModel @Inject constructor(
     private val setSortTypeUseCase: SetSortTypeUseCase,
     private val setForYouEnabledUseCase: SetForYouEnabledUseCase,
     private val setFabFiltersEnabledUseCase: SetFabFiltersEnabledUseCase,
+    private val increaseImportantEventCountUseCase: IncreaseImportantEventCountUseCase,
     private val setAnnouncementCheckIntervalUseCase: SetAnnouncementCheckIntervalUseCase,
 ) : ViewModel() {
 
@@ -66,43 +67,49 @@ class SettingsScreenViewModel @Inject constructor(
 
     fun setDynamicColor(value: Boolean) {
         viewModelScope.launch {
+            increaseImportantEventCountUseCase()
             setDynamicColorUseCase(value)
         }
     }
 
     fun setTheme(theme: UserTheme) {
         viewModelScope.launch {
+            increaseImportantEventCountUseCase()
             setThemeUseCase(theme)
         }
     }
 
     fun setSortType(sortType: SortType) {
         viewModelScope.launch {
+            increaseImportantEventCountUseCase()
             setSortTypeUseCase(sortType)
         }
     }
 
     fun setSearchScope(searchScope: SearchScope) {
         viewModelScope.launch {
+            increaseImportantEventCountUseCase()
             setSearchScopeUseCase(searchScope)
         }
     }
 
     fun setEnableForYou(value: Boolean) {
         viewModelScope.launch {
+            increaseImportantEventCountUseCase()
             setForYouEnabledUseCase(value)
         }
     }
 
     fun setFabFilters(value: Boolean) {
         viewModelScope.launch {
+            increaseImportantEventCountUseCase()
             setFabFiltersEnabledUseCase(value)
         }
     }
 
     fun setAnnouncementCheckIntervalMinutes(minutes: Int) {
-        Log.d("SettingsScreenViewModel", "setAnnouncementCheckIntervalMinutes: $minutes")
         viewModelScope.launch {
+            increaseImportantEventCountUseCase()
             setAnnouncementCheckIntervalUseCase(minutes)
         }
     }

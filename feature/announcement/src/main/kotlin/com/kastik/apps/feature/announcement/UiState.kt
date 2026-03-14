@@ -9,6 +9,7 @@ sealed class UiState {
     data object Loading : UiState()
     data class Success(
         val announcement: Announcement,
+        val shouldShowReviewDialog: Boolean,
         val processedBody: ImmutableList<ProcessedBody>
     ) : UiState()
 

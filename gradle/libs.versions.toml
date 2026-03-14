@@ -61,6 +61,7 @@ firebase-bom = "34.10.0"
 crashlyticsGradle = "3.0.6"
 performanceGradle = "2.0.2"
 
+play-core = "2.0.2"
 
 appcompat = "1.7.1"
 material = "1.13.0"
@@ -125,6 +126,10 @@ firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-
 firebase-performance = { module = "com.google.firebase:firebase-perf" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
 firebase-config = { module = "com.google.firebase:firebase-config" }
+
+#Google Play
+play-review = { module = "com.google.android.play:review", version.ref = "play-core" }
+play-review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "play-core" }
 
 #OSS Licenses
 aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }

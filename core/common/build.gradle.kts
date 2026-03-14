@@ -7,3 +7,8 @@ plugins {
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.common"
 }
+
+dependencies {
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
+}
