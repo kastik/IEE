@@ -95,7 +95,11 @@ dependencies {
 
 baselineProfile {
     saveInSrc = true
-    mergeIntoMain = false
+    mergeIntoMain = true
     dexLayoutOptimization = true
     automaticGenerationDuringBuild = false
+
+    warnings {
+        disabledVariants = false
+    }
 }
