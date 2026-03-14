@@ -151,23 +151,46 @@ class SetFabFiltersEnabledUseCase @Inject constructor(
 }
 
 
-class GetAnnouncementCheckIntervalHoursUseCase @Inject constructor(
+class GetAnnouncementCheckIntervalMinutesUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<Int> =
-        userPreferencesRepository.getAnnouncementCheckIntervalMinutes().map {
-            it / 60
-        }
+        userPreferencesRepository.getAnnouncementCheckIntervalMinutes()
 }
 
 class SetAnnouncementCheckIntervalUseCase @Inject constructor(
     private val workManager: WorkScheduler,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
-    suspend operator fun invoke(hours: Int) {
-        workManager.scheduleAnnouncementAlerts(hours * 60)
-        userPreferencesRepository.setAnnouncementCheckIntervalMinutes(hours * 60)
+    suspend operator fun invoke(minutes: Int) {
+        workManager.scheduleAnnouncementAlerts(minutes)
+        userPreferencesRepository.setAnnouncementCheckIntervalMinutes(minutes)
     }
+}
+
+class IncreaseImportantEventCountUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke() {
+        userPreferencesRepository.increaseImportantEventCount()
+    }
+}
+
+class ResetImportantEventCountUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    suspend operator fun invoke() {
+        userPreferencesRepository.resetImportantEventCount()
+    }
+}
+
+class ShouldShowReviewDialogUseCase @Inject constructor(
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<Boolean> =
+        userPreferencesRepository.getImportantEventCount().map {
+            it > 20
+        }
 }
 
 class AreNotificationsAllowedUseCase @Inject constructor(
@@ -201,7 +224,7 @@ class GetUserPreferencesUseCase @Inject constructor(
     private val getSearchScopeUseCase: GetSearchScopeUseCase,
     private val isForYouEnabledUseCase: IsForYouEnabledUseCase,
     private val areFabFiltersEnabledUseCase: AreFabFiltersEnabledUseCase,
-    private val getAnnouncementCheckIntervalHoursUseCase: GetAnnouncementCheckIntervalHoursUseCase,
+    private val getAnnouncementCheckIntervalMinutesUseCase: GetAnnouncementCheckIntervalMinutesUseCase,
 ) {
     operator fun invoke() =
         combine(
@@ -211,7 +234,7 @@ class GetUserPreferencesUseCase @Inject constructor(
             getSearchScopeUseCase(),
             isForYouEnabledUseCase(),
             areFabFiltersEnabledUseCase(),
-            getAnnouncementCheckIntervalHoursUseCase(),
+            getAnnouncementCheckIntervalMinutesUseCase(),
         ) { theme, dynamicColor, sortType, searchScope, enableForYou, disableFabFilters, announcementCheckIntervalHours ->
             UserPreferences(
                 theme,

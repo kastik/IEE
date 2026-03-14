@@ -16,23 +16,9 @@ configure<TestExtension> {
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
 
-    testOptions {
-        managedDevices {
-            localDevices {
-                maybeCreate("pixel6Api34").apply {
-                    device = "Pixel 6"
-                    apiLevel = 34
-                    testedAbi = "x86_64"
-                    systemImageSource = "aosp-atd"
-                    require64Bit = true
-                }
-            }
-        }
-    }
 }
 
 baselineProfile {
-    managedDevices += "pixel6Api34"
     useConnectedDevices = true
     skipBenchmarksOnEmulator = true
 }

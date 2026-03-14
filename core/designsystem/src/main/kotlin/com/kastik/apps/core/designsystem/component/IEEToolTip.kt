@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -91,6 +92,9 @@ fun IEESliderThumbToolTip(
             RichTooltip {
                 Text(
                     text = tooltipText,
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontFeatureSettings = "tnum"
+                    ),
                 )
             }
         },

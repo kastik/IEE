@@ -43,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -105,9 +106,9 @@ internal fun SettingsRoute(
                     onForYouChange = viewModel::setEnableForYou,
                     fabFiltersDisabled = state.areFabFiltersEnabled,
                     onFabFiltersChange = viewModel::setFabFilters,
-                    announcementCheckIntervalHours = state.announcementCheckIntervalHours,
+                    announcementCheckIntervalMinutes = state.announcementCheckIntervalMinutes,
                     isAnnouncementCheckIntervalAvailable = state.isAnnouncementCheckIntervalAvailable,
-                    setAnnouncementCheckIntervalHours = viewModel::setAnnouncementCheckIntervalHours,
+                    setAnnouncementCheckIntervalMinutes = viewModel::setAnnouncementCheckIntervalMinutes,
                     areNotificationsAllowed = state.areNotificationsAllowed,
                     navigateToLicenses = navigateToLicenses
                 )
@@ -135,17 +136,15 @@ private fun SettingsScreenContent(
     onForYouChange: (Boolean) -> Unit = {},
     fabFiltersDisabled: Boolean,
     onFabFiltersChange: (Boolean) -> Unit = {},
-    announcementCheckIntervalHours: Int,
+    announcementCheckIntervalMinutes: Int,
     isAnnouncementCheckIntervalAvailable: Boolean,
-    setAnnouncementCheckIntervalHours: (Int) -> Unit = {},
+    setAnnouncementCheckIntervalMinutes: (Int) -> Unit = {},
     areNotificationsAllowed: Boolean,
     navigateToLicenses: () -> Unit = {},
 ) {
 
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
-    val hapticFeedback = LocalHapticFeedback.current
-
 
     val versionName = remember {
         try {
@@ -204,14 +203,11 @@ private fun SettingsScreenContent(
                                 }
                             },
                             onSelected = { sortType ->
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
                                 onSortTypeChange(sortType)
                                 analytics.setUserProperty("sort_type", sortType.name)
                                 analytics.logEvent(
-                                    "sort_type_changed",
-                                    mapOf(
-                                        "sort_type" to sortType.name,
-                                        "source" to "settings_screen"
+                                    "sort_type_changed", mapOf(
+                                        "sort_type" to sortType.name, "source" to "settings_screen"
                                     )
                                 )
                             })
@@ -220,22 +216,16 @@ private fun SettingsScreenContent(
                     SettingSwitchRow(
                         title = stringResource(R.string.for_you_label),
                         subtitle = if (isForYouAvailable) stringResource(R.string.for_you_available_description) else stringResource(
-                            R.string.for_unavailable_description
+                            R.string.for_you_unavailable_description
                         ),
                         enabled = isForYouAvailable,
                         checked = forYouEnabled,
                         onCheckedChange = { enabled ->
-                            if (enabled) {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            } else {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                            }
                             onForYouChange(enabled)
                             analytics.setUserProperty("for_you", enabled.toString())
                             analytics.logEvent(
                                 "for_you_changed", mapOf(
-                                    "for_you" to enabled.toString(),
-                                    "source" to "settings_screen"
+                                    "for_you" to enabled.toString(), "source" to "settings_screen"
                                 )
                             )
                         })
@@ -245,11 +235,6 @@ private fun SettingsScreenContent(
                         subtitle = stringResource(R.string.fab_filters_description),
                         checked = fabFiltersDisabled,
                         onCheckedChange = { enabled ->
-                            if (enabled) {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                            } else {
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                            }
                             onFabFiltersChange(enabled)
                             analytics.setUserProperty("fab_filters", enabled.toString())
                             analytics.logEvent(
@@ -268,7 +253,8 @@ private fun SettingsScreenContent(
                 color = MaterialTheme.colorScheme.primary,
             )
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(size = 20.dp),
                 colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
 
             ) {
@@ -295,7 +281,6 @@ private fun SettingsScreenContent(
                                 }
                             },
                             onSelected = { searchScope ->
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
                                 onSearchScopeChange(searchScope)
                                 analytics.setUserProperty("search_scope", searchScope.name)
                                 analytics.logEvent(
@@ -317,7 +302,8 @@ private fun SettingsScreenContent(
                 color = MaterialTheme.colorScheme.primary,
             )
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(size = 20.dp),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(size = 20.dp),
                 colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
 
             ) {
@@ -344,13 +330,11 @@ private fun SettingsScreenContent(
                                 }
                             },
                             onSelected = { theme ->
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
                                 onThemeChange(theme)
                                 analytics.setUserProperty("theme", theme.name)
                                 analytics.logEvent(
                                     "theme_changed", mapOf(
-                                        "theme" to theme.name,
-                                        "source" to "settings_screen"
+                                        "theme" to theme.name, "source" to "settings_screen"
                                     )
                                 )
                             })
@@ -362,11 +346,6 @@ private fun SettingsScreenContent(
                             subtitle = stringResource(R.string.dynamic_color_description),
                             checked = dynamicColor,
                             onCheckedChange = { enabled ->
-                                if (enabled) {
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                                } else {
-                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                                }
                                 onDynamicColorChange(enabled)
                                 analytics.setUserProperty("dynamic_color", enabled.toString())
                                 analytics.logEvent(
@@ -386,7 +365,8 @@ private fun SettingsScreenContent(
                 color = MaterialTheme.colorScheme.primary,
             )
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
 
             ) {
@@ -411,27 +391,27 @@ private fun SettingsScreenContent(
                     HorizontalDivider()
                     SettingsSliderRow(
                         title = stringResource(R.string.announcement_check_interval_label),
-                        steps = 22,
-                        initialValue = announcementCheckIntervalHours.toFloat(),
-                        valueRange = 1f..24f,
+                        steps = 46,
+                        initialValue = announcementCheckIntervalMinutes.toFloat(),
+                        valueRange = 15f..720f,
                         enabled = isAnnouncementCheckIntervalAvailable,
+                        description = if (!isAnnouncementCheckIntervalAvailable) stringResource(R.string.announcement_check_interval_unavailable_description) else null,
+                        tooltipEnabled = isAnnouncementCheckIntervalAvailable,
                         tooltipTitle = stringResource(R.string.announcement_check_interval_warning_title),
                         tooltipBody = stringResource(R.string.announcement_check_interval_warning_body),
-                        valueFormatter = { formatIntervalToHours(it) },
+                        valueFormatter = { formatInterval(it) },
                         onValueChangeFinished = {
-                            setAnnouncementCheckIntervalHours(it)
+                            setAnnouncementCheckIntervalMinutes(it)
                             analytics.setUserProperty(
-                                "announcement_interval",
-                                announcementCheckIntervalHours.toString()
+                                "announcement_interval", announcementCheckIntervalMinutes.toString()
                             )
                             analytics.logEvent(
                                 "announcement_interval_changed", mapOf(
-                                    "announcement_interval" to announcementCheckIntervalHours.toString(),
+                                    "announcement_interval" to announcementCheckIntervalMinutes.toString(),
                                     "source" to "settings_screen"
                                 )
                             )
-                        }
-                    )
+                        })
                 }
             }
 
@@ -441,7 +421,8 @@ private fun SettingsScreenContent(
                 color = MaterialTheme.colorScheme.primary,
             )
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
 
             ) {
@@ -451,8 +432,7 @@ private fun SettingsScreenContent(
                         subtitle = "${stringResource(R.string.about_app_description)} $versionName",
                         onClick = {
                             analytics.logEvent(
-                                "about_app_clicked",
-                                mapOf("source" to "settings_screen")
+                                "about_app_clicked", mapOf("source" to "settings_screen")
                             )
                             context.launchUrl("https://github.com/kastik/IEE")
                         })
@@ -460,8 +440,7 @@ private fun SettingsScreenContent(
                     SettingNavigationRow(
                         title = stringResource(R.string.open_source_label), onClick = {
                             analytics.logEvent(
-                                "open_source_licenses_clicked",
-                                mapOf("source" to "settings_screen")
+                                "open_source_licenses_clicked", mapOf("source" to "settings_screen")
                             )
                             navigateToLicenses()
                         })
@@ -469,8 +448,7 @@ private fun SettingsScreenContent(
                     SettingNavigationRow(
                         title = stringResource(R.string.discord_label), onClick = {
                             analytics.logEvent(
-                                "discord_channel_clicked",
-                                mapOf("source" to "settings_screen")
+                                "discord_channel_clicked", mapOf("source" to "settings_screen")
                             )
                             context.launchUrl("https://discord.com/channels/693584494862794822/1473065482058993765")
                         })
@@ -490,13 +468,18 @@ private fun <T> SettingsegmentedButton(
     onSelected: (T) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val vibrator = LocalHapticFeedback.current
+
     SingleChoiceSegmentedButtonRow(
         modifier = modifier.fillMaxWidth()
     ) {
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 selected = selected == option,
-                onClick = { onSelected(option) },
+                onClick = {
+                    vibrator.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    onSelected(option)
+                },
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
             ) {
                 Text(
@@ -510,9 +493,12 @@ private fun <T> SettingsegmentedButton(
 }
 
 @Composable
-private fun formatIntervalToHours(hours: Int): String {
-    val hourLabel = pluralStringResource(R.plurals.announcement_check_interval_hours, hours)
-    return "$hours $hourLabel"
+private fun formatInterval(minutes: Int): String {
+    val hours = minutes / 60
+    val minutes = minutes % 60
+    val hoursString = pluralStringResource(R.plurals.announcement_check_interval_hours, hours)
+    val minutesString = stringResource(R.string.announcement_check_interval_minutes)
+    return "$hours $hoursString, $minutes $minutesString"
 }
 
 
@@ -524,6 +510,8 @@ private fun SettingsSliderRow(
     initialValue: Float,
     valueRange: ClosedFloatingPointRange<Float>,
     enabled: Boolean,
+    description: String? = null,
+    tooltipEnabled: Boolean = true,
     tooltipTitle: String,
     tooltipBody: String,
     valueFormatter: @Composable (Int) -> String,
@@ -531,6 +519,8 @@ private fun SettingsSliderRow(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     var sliderValue by remember { mutableFloatStateOf(initialValue) }
+    var lastVibratedValue by remember { mutableIntStateOf(initialValue.roundToInt()) }
+    val vibrator = LocalHapticFeedback.current
 
     Column(
         modifier = Modifier
@@ -542,37 +532,45 @@ private fun SettingsSliderRow(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
+            Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 16.dp),
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
-            )
-            IEEIconToolTip(
-                tooltipTitle = {
+                    .padding(end = 16.dp)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 1,
+                )
+                description?.let {
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                    )
+                }
+            }
+            if (tooltipEnabled) {
+                IEEIconToolTip(tooltipTitle = {
                     Text(
                         text = tooltipTitle,
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                },
-                tooltipBody = {
+                }, tooltipBody = {
                     Text(
                         text = tooltipBody,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                },
-                icon = {
+                }, icon = {
                     Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = null
+                        imageVector = Icons.Default.Info, contentDescription = null
                     )
-                }
-            )
+                })
+            }
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -581,7 +579,14 @@ private fun SettingsSliderRow(
             Slider(
                 enabled = enabled,
                 value = sliderValue,
-                onValueChange = { sliderValue = it },
+                onValueChange = {
+                    val newVibrationValue = it.roundToInt()
+                    if (newVibrationValue != lastVibratedValue) {
+                        vibrator.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                        lastVibratedValue = newVibrationValue
+                    }
+                    sliderValue = it
+                },
                 valueRange = valueRange,
                 steps = steps,
                 interactionSource = interactionSource,
@@ -608,16 +613,20 @@ private fun SettingSwitchRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
+    val vibrator = LocalHapticFeedback.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 14.dp)
             .toggleable(
-                enabled = enabled,
-                value = checked,
-                onValueChange = onCheckedChange
-            ),
-        verticalAlignment = Alignment.CenterVertically
+                enabled = enabled, value = checked,
+                onValueChange = {
+                    vibrator.performHapticFeedback(if (it) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
+                    onCheckedChange(it)
+                },
+
+                ), verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
             Text(
@@ -634,9 +643,7 @@ private fun SettingSwitchRow(
             }
         }
         Switch(
-            enabled = enabled,
-            checked = checked,
-            onCheckedChange = null
+            enabled = enabled, checked = checked, onCheckedChange = null
         )
     }
 }
@@ -687,9 +694,9 @@ fun SettingsScreenPreview() {
         onForYouChange = {},
         fabFiltersDisabled = false,
         onFabFiltersChange = {},
-        announcementCheckIntervalHours = 1,
+        announcementCheckIntervalMinutes = 1,
         isAnnouncementCheckIntervalAvailable = true,
-        setAnnouncementCheckIntervalHours = {},
+        setAnnouncementCheckIntervalMinutes = {},
         areNotificationsAllowed = true,
         navigateToLicenses = {},
     )

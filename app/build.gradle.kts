@@ -16,8 +16,8 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 35
-        versionName = "2.2.1"
+        versionCode = 36
+        versionName = "2.2.2"
     }
 
     val keystoreProperties = Properties().apply {
@@ -79,6 +79,8 @@ dependencies {
     implementation(project(":core:work"))
     implementation(project(":core:downloader"))
 
+    implementation(project(":dev-tools"))
+
     implementation(project(":feature:home"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:announcement"))
@@ -93,7 +95,11 @@ dependencies {
 
 baselineProfile {
     saveInSrc = true
-    mergeIntoMain = false
+    mergeIntoMain = true
     dexLayoutOptimization = true
     automaticGenerationDuringBuild = false
+
+    warnings {
+        disabledVariants = false
+    }
 }

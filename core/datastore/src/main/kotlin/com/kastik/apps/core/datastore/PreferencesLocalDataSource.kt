@@ -30,6 +30,10 @@ interface PreferencesLocalDataSource {
     suspend fun setLastNotificationCheckTime(time: Timestamp?)
     fun getAnnouncementCheckIntervalMinutes(): Flow<Int>
     suspend fun setAnnouncementCheckIntervalMinutes(minutes: Int)
+    fun getImportantEventCount(): Flow<Int>
+    suspend fun increaseImportantEventCount()
+    suspend fun resetImportantEventCount()
+
 }
 
 internal class PreferencesLocalDataSourceImpl @Inject constructor(
@@ -134,6 +138,25 @@ internal class PreferencesLocalDataSourceImpl @Inject constructor(
         dataStore.updateData { prefs ->
             prefs.toBuilder()
                 .setAnnouncementAlertIntervalMinutes(minutes)
+                .build()
+        }
+    }
+
+    override fun getImportantEventCount(): Flow<Int> =
+        dataStore.data.map { it.importantEventCount }
+
+    override suspend fun increaseImportantEventCount() {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setImportantEventCount(prefs.importantEventCount + 1)
+                .build()
+        }
+    }
+
+    override suspend fun resetImportantEventCount() {
+        dataStore.updateData { prefs ->
+            prefs.toBuilder()
+                .setImportantEventCount(0)
                 .build()
         }
     }

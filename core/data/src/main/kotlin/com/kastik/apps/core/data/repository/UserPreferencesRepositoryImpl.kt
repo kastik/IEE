@@ -97,4 +97,15 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
         preferencesLocalDataSource.setAnnouncementCheckIntervalMinutes(minutes)
     }
 
+    override fun getImportantEventCount(): Flow<Int> =
+        preferencesLocalDataSource.getImportantEventCount()
+
+    override suspend fun increaseImportantEventCount() {
+        preferencesLocalDataSource.increaseImportantEventCount()
+    }
+
+    override suspend fun resetImportantEventCount() {
+        preferencesLocalDataSource.resetImportantEventCount()
+    }
+
 }

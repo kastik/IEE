@@ -9,7 +9,10 @@ import androidx.navigation.toRoute
 import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.DownloadAttachmentUseCase
 import com.kastik.apps.core.domain.usecases.GetAnnouncementWithIdUseCase
+import com.kastik.apps.core.domain.usecases.IncreaseImportantEventCountUseCase
 import com.kastik.apps.core.domain.usecases.RefreshAnnouncementWithIdUseCase
+import com.kastik.apps.core.domain.usecases.ResetImportantEventCountUseCase
+import com.kastik.apps.core.domain.usecases.ShouldShowReviewDialogUseCase
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.feature.announcement.navigation.AnnouncementRoute
@@ -31,19 +34,24 @@ import javax.inject.Inject
 class AnnouncementScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getAnnouncementWithIdUseCase: GetAnnouncementWithIdUseCase,
+    shouldShowReviewDialogUseCase: ShouldShowReviewDialogUseCase,
     private val notifier: Notifier,
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
     private val refreshAnnouncementWithIdUseCase: RefreshAnnouncementWithIdUseCase,
+    private val increaseImportantEventCountUseCase: IncreaseImportantEventCountUseCase,
+    private val resetImportantEventCountUseCase: ResetImportantEventCountUseCase,
 ) : ViewModel() {
     val args = savedStateHandle.toRoute<AnnouncementRoute>()
     private val errorMessage = MutableStateFlow<Int?>(null)
     val uiState: StateFlow<UiState> = combine(
-        getAnnouncementWithIdUseCase(args.id), errorMessage
-    ) { announcement, errorMsg ->
+        getAnnouncementWithIdUseCase(args.id),
+        shouldShowReviewDialogUseCase(),
+        errorMessage,
+    ) { announcement, shouldShowReviewDialog, errorMsg ->
         when {
             announcement != null -> {
                 val parts = parseHtmlWithImages(announcement.body).toImmutableList()
-                UiState.Success(announcement, parts)
+                UiState.Success(announcement, shouldShowReviewDialog, parts)
             }
 
             errorMsg != null -> UiState.Error(errorMsg)
@@ -60,6 +68,7 @@ class AnnouncementScreenViewModel @Inject constructor(
 
     fun refreshAnnouncement() {
         viewModelScope.launch {
+            increaseImportantEventCountUseCase()
             val result = refreshAnnouncementWithIdUseCase(args.id)
 
             if (result is Result.Success) {
@@ -82,6 +91,7 @@ class AnnouncementScreenViewModel @Inject constructor(
         announcementId: Int, attachmentId: Int, fileName: String, mimeType: String
     ) {
         viewModelScope.launch {
+            increaseImportantEventCountUseCase()
             downloadAttachmentUseCase(
                 attachmentId = attachmentId,
                 announcementId = announcementId,
@@ -101,8 +111,9 @@ class AnnouncementScreenViewModel @Inject constructor(
                 val start = match.range.first
                 if (start > lastIndex) {
                     val textSegment = html.substring(lastIndex, start).trim()
-                    if (textSegment.isNotEmpty()) {
-                        parts.add(ProcessedBody.Text(AnnotatedString.fromHtml(textSegment)))
+                    val parsedText = AnnotatedString.fromHtml(textSegment)
+                    if (parsedText.text.isNotBlank()) {
+                        parts.add(ProcessedBody.Text(parsedText))
                     }
                 }
                 val src = match.groupValues[1]
@@ -112,12 +123,19 @@ class AnnouncementScreenViewModel @Inject constructor(
 
             if (lastIndex < html.length) {
                 val remainingText = html.substring(lastIndex).trim()
-                if (remainingText.isNotEmpty()) {
-                    parts.add(ProcessedBody.Text(AnnotatedString.fromHtml(remainingText)))
+                val parsedText = AnnotatedString.fromHtml(remainingText)
+                if (parsedText.text.isNotEmpty()) {
+                    parts.add(ProcessedBody.Text(parsedText))
                 }
             }
             parts
         }
+
+    fun onSuccessfulReview() {
+        viewModelScope.launch {
+            resetImportantEventCountUseCase()
+        }
+    }
 }
 
 private fun NetworkError.toUserMessageRes(): Int = when (this) {

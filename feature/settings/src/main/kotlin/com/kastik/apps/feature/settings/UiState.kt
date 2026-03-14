@@ -14,7 +14,7 @@ sealed class UiState {
         val isForYouEnabled: Boolean,
         val isForYouAvailable: Boolean,
         val areFabFiltersEnabled: Boolean,
-        val announcementCheckIntervalHours: Int,
+        val announcementCheckIntervalMinutes: Int,
         val isAnnouncementCheckIntervalAvailable: Boolean,
         val areNotificationsAllowed: Boolean,
     ) : UiState()

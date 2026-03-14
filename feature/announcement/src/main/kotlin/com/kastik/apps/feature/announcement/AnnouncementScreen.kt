@@ -34,6 +34,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.kastik.apps.core.common.extensions.launchInAppReview
 import com.kastik.apps.core.common.extensions.shareAnnouncement
 import com.kastik.apps.core.designsystem.component.IEEDotDivider
 import com.kastik.apps.core.designsystem.component.IEETag
@@ -97,6 +99,8 @@ internal fun AnnouncementRoute(
                 prossedBodies = state.processedBody,
                 tags = state.announcement.tags.toImmutableList(),
                 attachments = state.announcement.attachments.toImmutableList(),
+                shouldShowReviewDialog = state.shouldShowReviewDialog,
+                onSuccessfulReview = viewModel::onSuccessfulReview,
                 navigateBack = navigateBack,
                 onAttachmentClick = viewModel::downloadAttachment
             )
@@ -115,11 +119,19 @@ private fun SuccessState(
     tags: ImmutableList<Tag>,
     attachments: ImmutableList<Attachment>,
     onAttachmentClick: (Int, Int, String, String) -> Unit,
+    shouldShowReviewDialog: Boolean,
+    onSuccessfulReview: () -> Unit,
     navigateBack: () -> Unit,
 ) {
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
     val scroll = rememberScrollState()
+
+    LaunchedEffect(shouldShowReviewDialog) {
+        if (shouldShowReviewDialog) {
+            context.launchInAppReview(onSuccessfulReview = onSuccessfulReview)
+        }
+    }
 
 
     Column(
@@ -321,6 +333,8 @@ fun SuccessStatePreview() {
             ),
         ),
         navigateBack = {},
-        onAttachmentClick = { _, _, _, _ ->
-        })
+        onAttachmentClick = { _, _, _, _ -> },
+        shouldShowReviewDialog = false,
+        onSuccessfulReview = {},
+    )
 }

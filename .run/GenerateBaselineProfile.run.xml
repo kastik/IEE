@@ -11,7 +11,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":app:generateProductionReleaseBaselineProfile" />
+          <option value=":app:generateBaselineProfile" />
         </list>
       </option>
       <option name="vmOptions" />

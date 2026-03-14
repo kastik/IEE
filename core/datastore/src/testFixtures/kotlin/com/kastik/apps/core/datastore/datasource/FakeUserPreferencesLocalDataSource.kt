@@ -30,6 +30,8 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
     val lastNotifiedTime = _lastNotifiedTime.asStateFlow()
     private val _announcementCheckIntervalMinutes = MutableStateFlow(15)
     val announcementCheckIntervalMinutes = _announcementCheckIntervalMinutes.asStateFlow()
+    private val _importantEventCount = MutableStateFlow(0)
+    val importantEventCount = _importantEventCount.asStateFlow()
 
 
     override fun getHasSkippedSignIn(): Flow<Boolean> = hasSkippedSignIn
@@ -109,6 +111,20 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
     override suspend fun setAnnouncementCheckIntervalMinutes(minutes: Int) {
         _announcementCheckIntervalMinutes.update {
             minutes
+        }
+    }
+
+    override fun getImportantEventCount(): Flow<Int> = importantEventCount
+
+    override suspend fun increaseImportantEventCount() {
+        _announcementCheckIntervalMinutes.update {
+            it + 1
+        }
+    }
+
+    override suspend fun resetImportantEventCount() {
+        _announcementCheckIntervalMinutes.update {
+            0
         }
     }
 
