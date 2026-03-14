@@ -1,8 +1,6 @@
 package com.kastik.apps.core.work.worker
 
-import android.Manifest
 import android.content.Context
-import androidx.annotation.RequiresPermission
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -27,7 +25,6 @@ class AnnouncementAlertWorker @AssistedInject constructor(
     private val checkNewAnnouncementsUseCase: CheckNewAnnouncementsUseCase,
 ) : CoroutineWorker(context, workerParams) {
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result = try {
 
         when (val newAnnouncements = checkNewAnnouncementsUseCase()) {
