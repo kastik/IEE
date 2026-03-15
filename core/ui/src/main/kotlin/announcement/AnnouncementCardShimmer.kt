@@ -39,7 +39,6 @@ fun AnnouncementCardShimmer(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
             .shimmer(shimmer),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -59,14 +58,12 @@ fun AnnouncementCardShimmer(
 
             Spacer(Modifier.height(12.dp))
 
-            // Title
             ShimmerBlock(width = 220.dp, height = 22.dp)
             Spacer(Modifier.height(6.dp))
             ShimmerBlock(width = 140.dp, height = 22.dp)
 
             Spacer(Modifier.height(12.dp))
 
-            // Categories chips
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 repeat(3) {
                     ShimmerBlock(
@@ -79,7 +76,6 @@ fun AnnouncementCardShimmer(
 
             Spacer(Modifier.height(16.dp))
 
-            // Preview text
             ShimmerBlock(width = Modifier.fillMaxWidth(), height = 14.dp)
             Spacer(Modifier.height(6.dp))
             ShimmerBlock(width = Modifier.fillMaxWidth(), height = 14.dp)

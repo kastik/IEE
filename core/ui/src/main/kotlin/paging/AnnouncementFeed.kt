@@ -33,6 +33,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
+import com.kastik.apps.core.designsystem.theme.ieeListSpring
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.announcement.AnnouncementCard
@@ -140,24 +141,31 @@ fun AnnouncementFeed(
                                     item.tags.map { it.title }.toImmutableList()
                                 },
                                 date = item.date,
-                                content = remember(item.preview) { item.preview.orEmpty() },
+                                content = remember(item.preview) { item.preview },
                                 isPinned = item.pinned,
-                                modifier = Modifier.animateItem()
+                                modifier = Modifier
+                                    .padding(6.dp)
+                                    .animateItem(
+                                        fadeInSpec = ieeListSpring(),
+                                        fadeOutSpec = ieeListSpring(),
+                                        placementSpec = ieeListSpring()
+                                    )
                             )
                         } ?: AnnouncementCardShimmer(
-                            modifier = Modifier.animateItem()
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .animateItem(
+                                    fadeInSpec = ieeListSpring(),
+                                    fadeOutSpec = ieeListSpring(),
+                                    placementSpec = ieeListSpring()
+                                )
                         )
                     }
                     when (appendState) {
-                        is LoadState.Loading -> item {
-                            LoadingContent(
-                                message = nextPagePlaceHolderText,
-                                progressIndicatorSize = 32.dp,
-                                modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
-                            )
-                        }
-
-                        is LoadState.Error -> item {
+                        is LoadState.Error -> item(
+                            key = "append_error",
+                            contentType = "error_indicator"
+                        ) {
                             StatusContent(
                                 message = errorNextPagePlaceHolderText,
                                 action = { announcements.retry() },
@@ -165,7 +173,16 @@ fun AnnouncementFeed(
                             )
                         }
 
-                        else -> Unit
+                        else -> item(
+                            key = "append_loading",
+                            contentType = "loading_indicator"
+                        ) {
+                            LoadingContent(
+                                message = nextPagePlaceHolderText,
+                                progressIndicatorSize = 32.dp,
+                                modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
+                            )
+                        }
                     }
                 }
             }

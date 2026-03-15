@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.theme.ieeListSpring
 import com.kastik.apps.core.designsystem.theme.roundBottomShape
+import com.kastik.apps.core.designsystem.theme.roundShape
 import com.kastik.apps.core.designsystem.theme.roundTopShape
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.ui.announcement.AnnouncementCard
@@ -58,7 +59,7 @@ fun <T> LazyListScope.searchBarQuickResults(
         items = items, key = { _, item -> keyProvider(item) }) { index, item ->
 
         val shape = when {
-            items.size <= 1 -> RectangleShape
+            items.size <= 1 -> roundShape
             index == 0 -> roundTopShape
             index == items.size - 1 -> roundBottomShape
             else -> RectangleShape
@@ -66,6 +67,7 @@ fun <T> LazyListScope.searchBarQuickResults(
 
         Surface(
             modifier = modifier
+                .padding(vertical = 2.dp)
                 .animateItem(
                     fadeInSpec = ieeListSpring(),
                     fadeOutSpec = ieeListSpring(),
@@ -123,6 +125,7 @@ fun LazyListScope.searchBarQuickResults(
         items = items, key = { keyProvider(it) }) { item ->
         AnnouncementCard(
             modifier = modifier
+                .padding(vertical = 2.dp)
                 .animateItem(
                     fadeInSpec = ieeListSpring(),
                     fadeOutSpec = ieeListSpring(),

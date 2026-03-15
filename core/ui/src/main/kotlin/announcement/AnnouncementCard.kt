@@ -66,7 +66,6 @@ fun AnnouncementCard(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
             .scale(scale)
             .combinedClickable(
                 interactionSource = interactionSource,
