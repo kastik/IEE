@@ -1,10 +1,11 @@
 package com.kastik.benchmark.apps.home
 
-import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.UiAutomatorTestScope
 
 
-fun MacrobenchmarkScope.refreshFeed() {
-    val announcementList = onElement(timeoutMs = 2000) { contentDescription == "announcement_feed" }
+fun UiAutomatorTestScope.refreshFeed() {
+    waitForStableInActiveWindow()
+    val announcementList = onElement { viewIdResourceName == "announcement_feed" }
     announcementList.scroll(Direction.UP, 1f)
 }

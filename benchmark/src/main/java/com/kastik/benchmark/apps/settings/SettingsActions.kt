@@ -1,38 +1,39 @@
 package com.kastik.benchmark.apps.settings
 
 import androidx.benchmark.macro.MacrobenchmarkScope
+import androidx.test.uiautomator.UiAutomatorTestScope
 import androidx.test.uiautomator.textAsString
 
 fun MacrobenchmarkScope.navigateToSettings() {
-    onElement(timeoutMs = 2000) { contentDescription == "Settings" }.click()
+    onElement { contentDescription == "Settings" }.click()
 }
 
 fun MacrobenchmarkScope.toggleSortingOptions() {
-    onElement(timeoutMs = 2000) { textAsString() == "Descending" }.click()
-    onElement(timeoutMs = 2000) { textAsString() == "Ascending" }.click()
-    onElement(timeoutMs = 2000) { textAsString() == "Priority" }.click()
+    onElement { textAsString() == "Descending" }.click()
+    onElement { textAsString() == "Ascending" }.click()
+    onElement { textAsString() == "Priority" }.click()
 }
 
-fun MacrobenchmarkScope.toggleFabFilters() {
-    onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
-    onElement(timeoutMs = 2000) { textAsString() == "For You" }.click()
+fun UiAutomatorTestScope.toggleFabFilters() {
+    onElement { textAsString() == "For You" }.click()
+    onElement { textAsString() == "For You" }.click()
 }
 
 
-fun MacrobenchmarkScope.toggleSearchFieldOptions() {
-    onElement(timeoutMs = 2000) { textAsString() == "Body" }.click()
-    onElement(timeoutMs = 2000) { textAsString() == "Both" }.click()
-    onElement(timeoutMs = 2000) { textAsString() == "Title" }.click()
+fun UiAutomatorTestScope.toggleSearchFieldOptions() {
+    onElement { textAsString() == "Body" }.click()
+    onElement { textAsString() == "Both" }.click()
+    onElement { textAsString() == "Title" }.click()
 }
 
-fun MacrobenchmarkScope.toggleThemeOptions() {
-    onElement(timeoutMs = 2000) { textAsString() == "Light" }.click()
-    onElement(timeoutMs = 2000) { textAsString() == "Dark" }.click()
-    onElement(timeoutMs = 2000) { textAsString() == "System" }.click()
+fun UiAutomatorTestScope.toggleThemeOptions() {
+    onElement { textAsString() == "Light" }.click()
+    onElement { textAsString() == "Dark" }.click()
+    onElement { textAsString() == "System" }.click()
 }
 
-fun MacrobenchmarkScope.toggleDynamicTheme() {
+fun UiAutomatorTestScope.toggleDynamicTheme() {
     repeat(2) {
-        onElement(timeoutMs = 2000) { textAsString() == "Dynamic color" }.click()
+        onElement { textAsString() == "Dynamic color" }.click()
     }
 }
