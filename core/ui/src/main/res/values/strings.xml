@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_result_title_tag">Tags</string>
+    <string name="quick_result_title_author">Authors</string>
+    <string name="quick_result_title_announcements">Announcements</string>
+</resources>

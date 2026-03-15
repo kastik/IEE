@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_result_title_tag">Ετικέτες</string>
+    <string name="quick_result_title_author">Συγγραφείς</string>
+    <string name="quick_result_title_announcements">Ανακοινώσεις</string>
+</resources>
