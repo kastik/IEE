@@ -37,7 +37,6 @@ import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.announcement.AnnouncementCard
 import com.kastik.apps.core.ui.announcement.AnnouncementCardShimmer
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import kotlinx.collections.immutable.persistentListOf
@@ -71,7 +70,6 @@ fun AnnouncementFeed(
     val refreshState = announcements.loadState.refresh
     val appendState = announcements.loadState.append
     val vibrator = LocalHapticFeedback.current
-    val _ = LocalAnalytics.current
 
 
     val currentFeedState = when (refreshState) {

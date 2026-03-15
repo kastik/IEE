@@ -3,12 +3,9 @@
     <string name="logged_out_message">Έχετε αποσυνδεθεί</string>
     <string name="fetching_profile_message">Ανάκτηση του προφίλ σας…</string>
 
-    <string name="action_clear">Καθαρισμός</string>
-    <string name="action_apply">Εφαρμογή</string>
     <string name="action_sign_out">Αποσύνδεση</string>
 
     <string name="subscribed_tags_label">Εγγεγραμμένες ετικέτες</string>
-    <string name="subscribe_tag_sheet_hint">Αναζήτηση…</string>
 
     <string name="role_label">Ρόλος</string>
     <string name="role_admin_label">Διαχειριστής</string>

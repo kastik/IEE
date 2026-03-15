@@ -42,7 +42,8 @@ import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.paging.AnnouncementFeed
-import com.kastik.apps.core.ui.sheet.GenericFilterSheet
+import com.kastik.apps.core.ui.sheet.AuthorSheet
+import com.kastik.apps.core.ui.sheet.TagSheet
 import com.kastik.apps.core.ui.topbar.SearchBar
 import com.kastik.apps.core.ui.topbar.SearchBarFilters
 import kotlinx.collections.immutable.ImmutableList
@@ -90,11 +91,11 @@ private fun SearchScreenContent(
     val scope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
-    val tagSheetState = rememberModalBottomSheetState(
+    val _ = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
     val showTagSheet = rememberSaveable { mutableStateOf(false) }
-    val authorSheetState = rememberModalBottomSheetState(
+    val _ = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
     )
     val showAuthorSheet = rememberSaveable { mutableStateOf(false) }
@@ -239,15 +240,8 @@ private fun SearchScreenContent(
 
 
         if (showTagSheet.value) {
-            GenericFilterSheet(
-                sheetState = tagSheetState,
-                items = uiState.availableFilters.tags,
-                selectedIds = uiState.activeFilters.selectedTagIds,
-                idProvider = { it.id },
-                labelProvider = { it.title },
-                searchHint = stringResource(R.string.tag_sheet_hint),
-                applyLabel = stringResource(R.string.action_apply_tags),
-                clearLabel = stringResource(R.string.action_clear),
+            TagSheet(
+                tags = uiState.availableFilters.tags,
                 onApply = { newTagIds ->
                     scope.launch {
                         analytics.logEvent(
@@ -272,20 +266,9 @@ private fun SearchScreenContent(
             )
         }
         if (showAuthorSheet.value) {
-            GenericFilterSheet(
-                sheetState = authorSheetState,
-                items = uiState.availableFilters.authors,
-                selectedIds = uiState.activeFilters.selectedAuthorIds,
-                idProvider = { it.id },
-                labelProvider = { author ->
-                    author.announcementCount?.let { announcementCount ->
-                        "${author.name} [${announcementCount}]"
-                    } ?: author.name
-                },
-                groupProvider = { it.name.first().uppercaseChar() },
-                searchHint = stringResource(R.string.author_sheet_hint),
-                applyLabel = stringResource(R.string.action_apply_authors),
-                clearLabel = stringResource(R.string.action_clear),
+            AuthorSheet(
+                authors = uiState.availableFilters.authors,
+                selectedAuthorIds = uiState.activeFilters.selectedAuthorIds,
                 onApply = { newAuthorIds ->
                     scope.launch {
                         analytics.logEvent(

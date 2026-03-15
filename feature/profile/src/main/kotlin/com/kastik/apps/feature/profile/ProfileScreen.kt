@@ -41,7 +41,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,7 +57,7 @@ import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
-import com.kastik.apps.core.ui.sheet.GenericRecursiveSheet
+import com.kastik.apps.core.ui.sheet.SubscribableTagSheet
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -110,22 +109,15 @@ private fun SuccessState(
 ) {
     val analytics = LocalAnalytics.current
 
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-    )
-
     Scaffold(
         contentWindowInsets = WindowInsets()
     ) { innerPadding ->
 
         if (uiState.showTagSheet) {
-            GenericRecursiveSheet(
-                searchHint = stringResource(R.string.subscribe_tag_sheet_hint),
-                applyLabel = stringResource(R.string.action_apply),
-                clearLabel = stringResource(R.string.action_clear),
-                items = uiState.subscribableTags,
+            SubscribableTagSheet(
+                subscribableTags = uiState.subscribableTags,
                 subscribedTags = uiState.subscribedTags.map { it.id }.toImmutableList(),
-                applySelectedTags = { newTagIds ->
+                onApply = { newTagIds ->
                     analytics.logEvent(
                         "subscribed_to_tags", mapOf(
                             "source" to "profile_screen", "item_id" to newTagIds
@@ -133,11 +125,7 @@ private fun SuccessState(
                     )
                     applySelectedTags(newTagIds)
                 },
-                sheetState = sheetState,
-                onDismiss = { showTagSheet(false) },
-                idProvider = { tag -> tag.id },
-                labelProvider = { it.title },
-                childrenProvider = { it.subTags },
+                onDismiss = { showTagSheet(false) }
             )
         }
 

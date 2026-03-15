@@ -42,7 +42,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.LoadingIndicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +51,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -82,15 +80,14 @@ import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.extensions.isScrollingUp
 import com.kastik.apps.core.ui.paging.AnnouncementFeed
-import com.kastik.apps.core.ui.sheet.GenericFilterSheet
+import com.kastik.apps.core.ui.sheet.AuthorSheet
+import com.kastik.apps.core.ui.sheet.TagSheet
 import com.kastik.apps.core.ui.topbar.SearchBar
 import com.kastik.apps.core.ui.topbar.SearchBarFilters
 import com.kastik.apps.feature.home.navigation.HomeTab
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
@@ -149,21 +146,14 @@ private fun HomeScreenContent(
     val homeFeedPullToRefreshState = rememberPullToRefreshState()
     val forYouFeedPullToRefreshState = rememberPullToRefreshState()
     val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
-    val tagSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-    )
     val showTagSheet = rememberSaveable { mutableStateOf(false) }
-    val authorSheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-    )
     val showAuthorSheet = rememberSaveable { mutableStateOf(false) }
     val searchBarState = rememberSearchBarState()
     val pageCount = if (uiState.enableForYou) 2 else 1
     val pagerState = rememberPagerState(pageCount = { pageCount })
     val titles = remember(uiState.enableForYou) {
         if (uiState.enableForYou) listOf(
-            R.string.home_feed_label,
-            R.string.for_you_feed_label
+            R.string.home_feed_label, R.string.for_you_feed_label
         ) else listOf(R.string.home_feed_label)
     }
 
@@ -180,45 +170,17 @@ private fun HomeScreenContent(
 
 
     AnimatedVisibility(uiState.showSignInNotice) {
-        IEEDialog(
-            icon = Icons.AutoMirrored.Default.Login,
-            title = stringResource(R.string.login_dialog_title),
-            text = stringResource(R.string.login_dialog_description),
-            confirmText = stringResource(R.string.action_sign_in),
-            onConfirm = {
-                analytics.logEvent(
-                    "sign_in_clicked", mapOf("source" to "home_screen")
-                )
-                context.launchSignIn()
-            },
-            dismissText = stringResource(R.string.action_dismiss),
-            onDismiss = {
-                analytics.logEvent(
-                    "sign_in_dismissed", mapOf(
-                        "source" to "home_screen"
-                    )
-                )
-                onSignInNoticeDismissed()
-            })
+        SignInDialog(onConfirm = {
+            analytics.logEvent("sign_in_clicked", mapOf("source" to "home_screen"))
+            context.launchSignIn()
+        }, onDismiss = {
+            analytics.logEvent("sign_in_dismissed", mapOf("source" to "home_screen"))
+            onSignInNoticeDismissed()
+        })
     }
 
-    if (uiState.isSignedIn) {
+    AnimatedVisibility(uiState.isSignedIn) {
         NotificationRationale()
-    }
-
-
-    LaunchedEffect(Unit) {
-        snapshotFlow { homeFeedPullToRefreshState.distanceFraction > 1f }.distinctUntilChanged()
-            .filter { it }.collect {
-                vibrator.performHapticFeedback(HapticFeedbackType.GestureEnd)
-            }
-    }
-
-    LaunchedEffect(Unit) {
-        snapshotFlow { forYouFeedPullToRefreshState.distanceFraction > 1f }.distinctUntilChanged()
-            .filter { it }.collect {
-                vibrator.performHapticFeedback(HapticFeedbackType.GestureEnd)
-            }
     }
 
     LaunchedEffect(searchBarState.isAnimating) {
@@ -230,18 +192,14 @@ private fun HomeScreenContent(
     LaunchedEffect(pagerState.currentPage) {
         if (pagerState.currentPage == 0) {
             analytics.logEvent(
-                "tab_switched",
-                mapOf(
-                    "tab" to "home",
-                    "source" to "home_screen"
+                "tab_switched", mapOf(
+                    "tab" to "home", "source" to "home_screen"
                 )
             )
         } else {
             analytics.logEvent(
-                "tab_switched",
-                mapOf(
-                    "tab" to "for_you",
-                    "source" to "home_screen"
+                "tab_switched", mapOf(
+                    "tab" to "for_you", "source" to "home_screen"
                 )
             )
         }
@@ -429,7 +387,10 @@ private fun HomeScreenContent(
                         PullToRefreshBox(
                             isRefreshing = refreshState is LoadState.Loading,
                             state = homeFeedPullToRefreshState,
-                            onRefresh = { homeFeedAnnouncements.refresh() },
+                            onRefresh = {
+                                vibrator.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                homeFeedAnnouncements.refresh()
+                            },
                             indicator = {
                                 LoadingIndicator(
                                     modifier = Modifier.align(Alignment.TopCenter),
@@ -475,7 +436,10 @@ private fun HomeScreenContent(
                         PullToRefreshBox(
                             isRefreshing = refreshState is LoadState.Loading,
                             state = forYouFeedPullToRefreshState,
-                            onRefresh = { forYouAnnouncements.refresh() },
+                            onRefresh = {
+                                vibrator.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                forYouAnnouncements.refresh()
+                            },
                             indicator = {
                                 LoadingIndicator(
                                     modifier = Modifier.align(Alignment.TopCenter),
@@ -522,15 +486,8 @@ private fun HomeScreenContent(
     }
 
     if (showTagSheet.value) {
-        GenericFilterSheet(
-            sheetState = tagSheetState,
-            items = uiState.availableFilters.tags,
-            selectedIds = persistentListOf(),
-            idProvider = { it.id },
-            labelProvider = { it.title },
-            searchHint = stringResource(R.string.tag_sheet_hint),
-            applyLabel = stringResource(R.string.action_apply_tags),
-            clearLabel = stringResource(R.string.action_clear),
+        TagSheet(
+            tags = uiState.availableFilters.tags,
             onApply = { newTagIds ->
                 scope.launch {
                     analytics.logEvent(
@@ -546,30 +503,16 @@ private fun HomeScreenContent(
             onDismiss = {
                 showTagSheet.value = false
             },
-
-            )
+        )
     }
     if (showAuthorSheet.value) {
-        GenericFilterSheet(
-            sheetState = authorSheetState,
-            items = uiState.availableFilters.authors,
-            selectedIds = persistentListOf(),
-            idProvider = { it.id },
-            labelProvider = { author ->
-                author.announcementCount?.let { announcementCount ->
-                    "${author.name} [${announcementCount}]"
-                } ?: author.name
-            },
-            groupProvider = { it.name.first().uppercaseChar() },
-            searchHint = stringResource(R.string.author_sheet_hint),
-            applyLabel = stringResource(R.string.action_apply_authors),
-            clearLabel = stringResource(R.string.action_clear),
+        AuthorSheet(
+            authors = uiState.availableFilters.authors,
             onApply = { newAuthorIds ->
                 scope.launch {
                     analytics.logEvent(
-                        "authors_applied", mapOf(
-                            "item_id" to newAuthorIds, "source" to "home_screen"
-                        )
+                        "authors_applied",
+                        mapOf("item_id" to newAuthorIds, "source" to "home_screen")
                     )
                     showAuthorSheet.value = false
                     searchBarState.animateToCollapsed()
@@ -581,7 +524,23 @@ private fun HomeScreenContent(
             },
         )
     }
+}
 
+
+@Composable
+fun SignInDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    IEEDialog(
+        icon = Icons.AutoMirrored.Default.Login,
+        title = stringResource(R.string.login_dialog_title),
+        text = stringResource(R.string.login_dialog_description),
+        confirmText = stringResource(R.string.action_sign_in),
+        onConfirm = onConfirm,
+        dismissText = stringResource(R.string.action_dismiss),
+        onDismiss = onDismiss
+    )
 }
 
 @OptIn(ExperimentalPermissionsApi::class)

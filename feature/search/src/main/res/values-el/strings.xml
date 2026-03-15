@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_retry">Δοκίμασε ξανά</string>
-    <string name="action_clear">Καθαρισμός</string>
-    <string name="action_apply_tags">Εφαρμογή ετικετών</string>
-    <string name="action_apply_authors">Εφαρμογή συγγραφέων</string>
 
     <string name="search_bar_hint">Αναζήτηση</string>
 
@@ -13,9 +10,7 @@
     <string name="feed_failed_footer">Αποτυχία φόρτωσης περισσότερων ανακοινώσεων</string>
 
     <string name="tag_chip_label">Ετικέτες</string>
-    <string name="tag_sheet_hint">Αναζήτηση ετικετών…</string>
     <string name="author_chip_label">Συγγραφείς</string>
-    <string name="author_sheet_hint">Αναζήτηση συγγραφέων…</string>
 
     <string name="error_generic">Κάτι πήγε στραβά</string>
 </resources>
