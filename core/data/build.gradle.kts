@@ -19,20 +19,11 @@ dependencies {
 
     implementation(project(":core:crashlytics"))
     implementation(project(":core:common"))
-    implementation(project(":core:work"))
     implementation(project(":core:domain"))
     implementation(project(":core:datastore"))
     implementation(project(":core:database"))
     implementation(project(":core:network"))
     implementation(project(":core:model"))
-    implementation(project(":core:notifications"))
-    implementation(libs.room.ktx)
-    implementation(libs.room.paging)
-    implementation(libs.room.runtime)
-    implementation(libs.paging.common)
-    implementation(libs.retrofit)
-    implementation(libs.androidx.work.runtime.ktx)
-    implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.lifecycle.process)
 
     testImplementation(testFixtures(project(":core:crashlytics")))
@@ -44,6 +35,4 @@ dependencies {
     testImplementation(libs.io.mockk)
     testImplementation(libs.robolectric)
 
-    testFixturesImplementation(project(":core:network"))
-    testFixturesImplementation(libs.androidx.test.core.ktx)
 }

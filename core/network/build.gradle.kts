@@ -18,12 +18,14 @@ dependencies {
     implementation(project(":core:crashlytics"))
     implementation(project(":core:model"))
     implementation(project(":core:domain"))
-    implementation(libs.retrofit)
+
+    api(libs.retrofit)
+    api(libs.kotlinx.datetime)
+
     implementation(libs.retrofit.converter.scalars)
     implementation(libs.retrofit.kotlinx.serialization)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.kotlinx.datetime)
 
     testFixturesImplementation(project(":core:model"))
     testFixturesImplementation(libs.androidx.test.core.ktx)

@@ -56,10 +56,10 @@ class NotifierImpl @Inject constructor(
     }
 
     override fun sendGeneralNotification(
-        @StringRes titleResId: Int, @StringRes bodyResId: Int?, @StringRes uriResId: Int?
+        @StringRes titleResId: Int, @StringRes bodyResId: Int?, @StringRes uri: Int?
     ) {
-        val intent = if (uriResId != null) {
-            Intent(Intent.ACTION_VIEW, context.getString(uriResId).toUri())
+        val intent = if (uri != null) {
+            Intent(Intent.ACTION_VIEW, context.getString(uri).toUri())
         } else {
             context.packageManager.getLaunchIntentForPackage(context.packageName)
         }?.apply {

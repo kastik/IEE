@@ -6,7 +6,6 @@ import androidx.work.Configuration
 import com.kastik.apps.core.common.di.ApplicationScope
 import com.kastik.apps.core.dev.tools.DevTools
 import com.kastik.apps.core.domain.usecases.FetchRemoteOptionsUseCase
-import com.kastik.apps.core.domain.usecases.UpdateUserPropertiesUseCase
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -28,9 +27,6 @@ class IEEApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var devTools: DevTools
 
-    @Inject
-    lateinit var updateUserPropertiesUseCase: UpdateUserPropertiesUseCase
-
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
@@ -44,9 +40,6 @@ class IEEApplication : Application(), Configuration.Provider {
 
         applicationScope.launch {
             fetchRemoteOptionsUseCase()
-        }
-        applicationScope.launch {
-            updateUserPropertiesUseCase()
         }
 
     }
