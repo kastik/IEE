@@ -1,22 +1,21 @@
 package com.kastik.benchmark.apps
 
-import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.UiAutomatorTestScope
 import androidx.test.uiautomator.textAsString
 
-fun MacrobenchmarkScope.launchAppAndDismissSigningDialog() {
+fun UiAutomatorTestScope.launchAppAndDismissSigningDialog() {
     pressHome()
-    startActivityAndWait()
+    startApp("com.kastik.apps")
     onElementOrNull(timeoutMs = 2000) { textAsString() == "Dismiss" }?.click()
 }
 
-fun MacrobenchmarkScope.scrollFeed() {
-    val announcementList = onElement(timeoutMs = 2000) { contentDescription == "announcement_feed" }
-    val timesToScrollDown = 3
-    repeat(timesToScrollDown) {
+//TODO This broke in HomeScreen after we added Horizontal Pager,
+fun UiAutomatorTestScope.scrollFeed() {
+    val announcementList = onElement { viewIdResourceName == "announcement_feed" }
+
+    val timesToScroll = 20
+    repeat(timesToScroll) {
         announcementList.scroll(Direction.DOWN, 1f)
-    }
-    repeat(timesToScrollDown) {
-        announcementList.scroll(Direction.UP, 1f)
     }
 }

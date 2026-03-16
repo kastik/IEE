@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_result_title_tag">Ετικέτες</string>
+    <string name="quick_result_title_author">Συγγραφείς</string>
+    <string name="quick_result_title_announcements">Ανακοινώσεις</string>
+
+    <string name="action_clear">Καθαρισμός</string>
+    <string name="action_subscribe">Εφαρμογή</string>
+    <string name="action_apply_tags">Εφαρμογή ετικετών</string>
+    <string name="action_apply_authors">Εφαρμογή συγγραφέων</string>
+
+    <string name="sheet_hint_tag">Αναζήτηση ετικετών</string>
+    <string name="sheet_hint_author">Αναζήτηση συγγραφέων</string>
+    <string name="sheet_hint_subscribe">Αναζήτηση…</string>
+</resources>

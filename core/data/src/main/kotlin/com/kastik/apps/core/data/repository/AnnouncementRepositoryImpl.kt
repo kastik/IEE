@@ -95,26 +95,26 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         updatedAfter: Instant?
     ) = try {
 
-            val greekLocalTime: LocalDateTime? =
-                updatedAfter?.toLocalDateTime(TimeZone.of("Europe/Athens"))
+        val greekLocalTime: LocalDateTime? =
+            updatedAfter?.toLocalDateTime(TimeZone.of("Europe/Athens"))
 
-            Result.Success(
-                announcementRemoteDataSource.fetchPagedAnnouncements(
-                    page = page,
-                    perPage = perPage,
-                    sortBy = sortType,
-                    title = titleQuery,
-                    body = bodyQuery,
-                    tagId = tagIds,
-                    authorId = authorIds,
-                    updatedAfter = greekLocalTime
-                ).data.map { it.toAnnouncement() }
-            )
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
+        Result.Success(
+            announcementRemoteDataSource.fetchPagedAnnouncements(
+                page = page,
+                perPage = perPage,
+                sortBy = sortType,
+                title = titleQuery,
+                body = bodyQuery,
+                tagId = tagIds,
+                authorId = authorIds,
+                updatedAfter = greekLocalTime
+            ).data.map { it.toAnnouncement() }
+        )
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
         Result.Error(e.toNetworkError())
-        }
+    }
 
 
     override fun getAnnouncementsQuickResults(

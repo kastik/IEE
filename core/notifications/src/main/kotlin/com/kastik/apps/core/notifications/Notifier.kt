@@ -56,10 +56,10 @@ class NotifierImpl @Inject constructor(
     }
 
     override fun sendGeneralNotification(
-        @StringRes titleResId: Int, @StringRes bodyResId: Int?, @StringRes uriResId: Int?
+        @StringRes titleResId: Int, @StringRes bodyResId: Int?, @StringRes uri: Int?
     ) {
-        val intent = if (uriResId != null) {
-            Intent(Intent.ACTION_VIEW, context.getString(uriResId).toUri())
+        val intent = if (uri != null) {
+            Intent(Intent.ACTION_VIEW, context.getString(uri).toUri())
         } else {
             context.packageManager.getLaunchIntentForPackage(context.packageName)
         }?.apply {
@@ -113,14 +113,17 @@ class NotifierImpl @Inject constructor(
         announcementId: Int, title: String, body: String
     ) {
 
-        val deepLinkUri = "com.kastik.apps://announcement?id=$announcementId".toUri()
+        val deepLinkUri = "com.kastik.apps://announcement/$announcementId".toUri()
 
 
         val intent = Intent(Intent.ACTION_VIEW, deepLinkUri).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         val pendingIntent = PendingIntent.getActivity(
-            context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_ONE_SHOT
+            context,
+            announcementId,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val builder = NotificationCompat.Builder(

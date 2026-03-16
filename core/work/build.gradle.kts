@@ -16,12 +16,8 @@ configure<LibraryExtension> {
 
 dependencies {
     implementation(project(":core:domain"))
-    implementation(project(":core:datastore"))
-    implementation(project(":core:network"))
     implementation(project(":core:model"))
-    implementation(project(":core:notifications"))
     implementation(project(":core:crashlytics"))
 
-    implementation(libs.retrofit)
     implementation(libs.androidx.work.runtime.ktx)
 }

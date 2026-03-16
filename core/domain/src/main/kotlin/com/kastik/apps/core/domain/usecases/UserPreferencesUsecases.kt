@@ -1,6 +1,5 @@
 package com.kastik.apps.core.domain.usecases
 
-import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.common.extensions.combine
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.NotificationRepository
@@ -13,7 +12,6 @@ import com.kastik.apps.core.model.user.UserPreferences
 import com.kastik.apps.core.model.user.UserTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -246,22 +244,4 @@ class GetUserPreferencesUseCase @Inject constructor(
                 announcementCheckIntervalHours
             )
         }
-}
-
-
-//TODO This is a work around for not yet set user properties on older versions,
-//Remove this after enough users migrate to newer versions as analytics calls don't belong in domain layer
-class UpdateUserPropertiesUseCase @Inject constructor(
-    private val analytics: Analytics,
-    private val getUserPreferencesUseCase: GetUserPreferencesUseCase,
-) {
-    suspend operator fun invoke() {
-        val prefs = getUserPreferencesUseCase().first()
-        analytics.setUserProperty("theme", prefs.theme.name)
-        analytics.setUserProperty("dynamic_color", prefs.dynamicColor.toString())
-        analytics.setUserProperty("sort_type", prefs.sortType.name)
-        analytics.setUserProperty("search_scope", prefs.searchScope.name)
-        analytics.setUserProperty("for_you", prefs.enableForYou.toString())
-        analytics.setUserProperty("fab_filters", prefs.disableFabFilters.toString())
-    }
 }

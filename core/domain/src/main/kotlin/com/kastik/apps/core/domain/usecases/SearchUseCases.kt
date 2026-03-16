@@ -15,7 +15,7 @@ import javax.inject.Inject
 class GetQuickResultsUseCase @Inject constructor(
     private val getTagsQuickResults: GetTagsQuickResults,
     private val getAuthorQuickResults: GetAuthorQuickResultsUseCase,
-    private val getAnnouncementsQuickResults: GetSearchQuickResultsAnnouncementsUseCase
+    private val getAnnouncementsQuickResults: GetAnnouncementQuickResultsUseCase
 ) {
     operator fun invoke(query: String): Flow<QuickResults> {
         return combine(

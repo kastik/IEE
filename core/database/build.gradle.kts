@@ -21,9 +21,10 @@ room {
 dependencies {
     ksp(libs.room.compiler)
 
+    api(libs.room.paging)
+
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    implementation(libs.room.paging)
     implementation(project(":core:model"))
 
     testFixturesImplementation(project(":core:model"))

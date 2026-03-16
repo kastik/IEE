@@ -4,9 +4,6 @@
     <string name="action_dismiss">Παράβλεψη</string>
     <string name="action_allow">Ενεργοποίηση</string>
     <string name="action_retry">Δοκίμασε ξανά</string>
-    <string name="action_clear">Καθαρισμός</string>
-    <string name="action_apply_tags">Εφαρμογή ετικετών</string>
-    <string name="action_apply_authors">Εφαρμογή συγγραφέων</string>
 
     <string name="login_dialog_title">Παρακαλώ συνδεθείτε</string>
     <string name="login_dialog_description">Συνδεθείτε για να ξεκλειδώσετε όλες τις ανακοινώσεις. Αυτήν τη στιγμή κάνετε περιήγηση με περιορισμένη πρόσβαση.</string>
@@ -16,8 +13,9 @@
 
     <string name="feed_empty">Κανένα αποτέλεσμα</string>
     <string name="feed_placeholder">Ανάκτηση ανακοινώσεων…</string>
-    <string name="feed_footer">Λήψη επόμενης σελίδας…</string>
-    <string name="feed_failed_footer">Αποτυχία φόρτωσης περισσότερων ανακοινώσεων</string>
+    <string name="feed_footer_loading">Λήψη επόμενης σελίδας…</string>
+    <string name="feed_footer_failed">Αποτυχία φόρτωσης περισσότερων ανακοινώσεων</string>
+    <string name="feed_footer_finished">Φτάσατε στο τέλος της λίστας!</string>
     <string name="feed_for_you_empty">Παρακαλώ εγγραφείτε σε ορισμένες ετικέτες</string>
 
     <string name="search_bar_hint">Αναζήτηση</string>
@@ -28,9 +26,7 @@
     <string name="for_you_feed_label">Εγγεγραμμένα</string>
 
     <string name="tag_chip_label">Ετικέτες</string>
-    <string name="tag_sheet_hint">Αναζήτηση ετικετών…</string>
     <string name="author_chip_label">Συγγραφείς</string>
-    <string name="author_sheet_hint">Αναζήτηση συγγραφέων…</string>
 
     <string name="error_generic">Κάτι πήγε στραβά</string>
 </resources>

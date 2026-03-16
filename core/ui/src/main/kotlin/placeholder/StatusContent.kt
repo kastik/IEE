@@ -27,7 +27,8 @@ fun StatusContent(
         ) {
             Text(
                 text = message,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -49,7 +50,11 @@ fun StatusContent(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            Text(message)
+            Text(
+                text = message,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }
@@ -63,21 +68,20 @@ fun StatusContent(
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .clickable { action() },
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = message,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier
-                .clickable { action() }
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
         )
         Text(
             text = actionText,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .clickable { action() }
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary,
         )
     }
 }

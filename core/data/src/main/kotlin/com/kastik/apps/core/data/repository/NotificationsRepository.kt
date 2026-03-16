@@ -7,11 +7,8 @@ import android.provider.Settings
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.kastik.apps.core.common.di.IoDispatcher
 import com.kastik.apps.core.domain.repository.NotificationRepository
-import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -22,8 +19,6 @@ import javax.inject.Singleton
 @Singleton
 internal class NotificationsRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val userPreferencesRepository: UserPreferencesRepository,
 ) : NotificationRepository {
     override fun areNotificationsEnabled(): Flow<Boolean> {
 

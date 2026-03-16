@@ -8,6 +8,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,7 +40,12 @@ class MainActivity : ComponentActivity() {
                 dynamicColor = appState.dynamicColor
             ) {
                 CompositionLocalProvider(LocalAnalytics provides analytics) {
-                    Surface(color = MaterialTheme.colorScheme.background) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.background,
+                        modifier = Modifier.semantics {
+                            testTagsAsResourceId = true
+                        }
+                    ) {
                         IEENavHost()
                     }
                 }

@@ -5,25 +5,35 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
@@ -33,11 +43,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
+import com.kastik.apps.core.designsystem.theme.ieeListSpring
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.announcement.AnnouncementCard
 import com.kastik.apps.core.ui.announcement.AnnouncementCardShimmer
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import kotlinx.collections.immutable.persistentListOf
@@ -60,6 +70,7 @@ fun AnnouncementFeed(
     errorPlaceHolderText: String,
     errorPlaceHolderRetryText: String,
     errorNextPagePlaceHolderText: String,
+    endOfPaginationText: String,
     announcements: LazyPagingItems<Announcement>,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
@@ -71,7 +82,6 @@ fun AnnouncementFeed(
     val refreshState = announcements.loadState.refresh
     val appendState = announcements.loadState.append
     val vibrator = LocalHapticFeedback.current
-    val _ = LocalAnalytics.current
 
 
     val currentFeedState = when (refreshState) {
@@ -117,7 +127,7 @@ fun AnnouncementFeed(
                     modifier = Modifier
                         .fillMaxSize()
                         .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .semantics { contentDescription = "announcement_feed" },
+                        .testTag("announcement_feed"),
                     state = lazyListState,
                     contentPadding = contentPadding
                 ) {
@@ -142,32 +152,68 @@ fun AnnouncementFeed(
                                     item.tags.map { it.title }.toImmutableList()
                                 },
                                 date = item.date,
-                                content = remember(item.preview) { item.preview.orEmpty() },
+                                content = remember(item.preview) { item.preview },
                                 isPinned = item.pinned,
-                                modifier = Modifier.animateItem()
+                                modifier = Modifier
+                                    .padding(6.dp)
+                                    .animateItem(
+                                        fadeInSpec = ieeListSpring(),
+                                        fadeOutSpec = ieeListSpring(),
+                                        placementSpec = ieeListSpring()
+                                    )
                             )
                         } ?: AnnouncementCardShimmer(
-                            modifier = Modifier.animateItem()
+                            modifier = Modifier
+                                .padding(6.dp)
+                                .animateItem(
+                                    fadeInSpec = ieeListSpring(),
+                                    fadeOutSpec = ieeListSpring(),
+                                    placementSpec = ieeListSpring()
+                                )
                         )
                     }
-                    when (appendState) {
-                        is LoadState.Loading -> item {
-                            LoadingContent(
+                    item(
+                        key = "append_state",
+                        contentType = "append_indicators"
+                    ) {
+                        when (appendState) {
+                            is LoadState.Loading -> LoadingContent(
                                 message = nextPagePlaceHolderText,
                                 progressIndicatorSize = 32.dp,
                                 modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
                             )
-                        }
 
-                        is LoadState.Error -> item {
-                            StatusContent(
+                            is LoadState.Error -> StatusContent(
                                 message = errorNextPagePlaceHolderText,
                                 action = { announcements.retry() },
                                 actionText = errorPlaceHolderRetryText
                             )
-                        }
 
-                        else -> Unit
+                            is LoadState.NotLoading -> {
+                                if (appendState.endOfPaginationReached) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 16.dp, bottom = 32.dp)
+                                    ) {
+                                        Text(
+                                            text = endOfPaginationText,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Icon(
+                                            Icons.Default.Celebration,
+                                            contentDescription = null,
+                                        )
+                                    }
+                                } else {
+                                    Spacer(modifier = Modifier.height(116.dp))
+                                }
+                            }
+
+                        }
                     }
                 }
             }
@@ -215,6 +261,7 @@ private fun AnnouncementFeedPreview() {
                 errorPlaceHolderText = "",
                 errorPlaceHolderRetryText = "",
                 errorNextPagePlaceHolderText = "",
+                endOfPaginationText = ""
             )
         }
     }

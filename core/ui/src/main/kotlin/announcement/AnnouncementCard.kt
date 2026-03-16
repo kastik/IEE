@@ -66,7 +66,6 @@ fun AnnouncementCard(
     ElevatedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
             .scale(scale)
             .combinedClickable(
                 interactionSource = interactionSource,
@@ -75,7 +74,7 @@ fun AnnouncementCard(
                 onLongClick = onLonClick
             ),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isPinned) MaterialTheme.colorScheme.surfaceContainerHighest else MaterialTheme.colorScheme.surfaceContainer,
         )
