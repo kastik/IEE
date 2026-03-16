@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.common.extensions.removeAccents
+import com.kastik.apps.core.designsystem.theme.ieeListSpring
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -105,9 +106,11 @@ fun <T> IEESheet(
                 .fillMaxWidth()
         ) {
             groupedItems.keys.sorted().forEach { header ->
-                stickyHeader { AlphabetHeader(header) }
+                stickyHeader { AlphabetHeader(header, Modifier.animateItem()) }
                 items(groupedItems[header] ?: emptyList()) { item ->
-                    FilterRow(item, currentSelection, idProvider, labelProvider)
+                    FilterRow(
+                        item, currentSelection, idProvider, labelProvider, Modifier.animateItem()
+                    )
                 }
             }
         }
@@ -161,7 +164,7 @@ fun <T> IEESheet(
                 .fillMaxWidth()
         ) {
             items(filteredItems) { item ->
-                FilterRow(item, currentSelection, idProvider, labelProvider)
+                FilterRow(item, currentSelection, idProvider, labelProvider, Modifier.animateItem())
             }
         }
     }
@@ -272,7 +275,13 @@ fun <T> IEESheet(
                 val isSelected = currentId in selectedIds
 
                 SelectableItem(
-                    modifier = Modifier.padding(start = (node.depth * 16).dp),
+                    modifier = Modifier
+                        .padding(start = (node.depth * 16).dp)
+                        .animateItem(
+                            fadeInSpec = ieeListSpring(),
+                            fadeOutSpec = ieeListSpring(),
+                            placementSpec = ieeListSpring()
+                        ),
                     title = labelProvider(node.item),
                     isSelected = isSelected,
                     onToggle = {
@@ -394,11 +403,14 @@ private fun IEEBaseSheet(
 }
 
 @Composable
-private fun AlphabetHeader(char: Char) {
+private fun AlphabetHeader(
+    char: Char,
+    modifier: Modifier = Modifier
+) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         Text(
             text = char.toString(),
@@ -411,15 +423,23 @@ private fun AlphabetHeader(char: Char) {
 
 @Composable
 private fun <T> FilterRow(
-    item: T, selection: MutableList<Int>, idProvider: (T) -> Int, labelProvider: (T) -> String
+    item: T,
+    selection: MutableList<Int>,
+    idProvider: (T) -> Int,
+    labelProvider: (T) -> String,
+    modifier: Modifier = Modifier
 ) {
     val id = idProvider(item)
     val isSelected = id in selection
 
     SelectableItem(
-        title = labelProvider(item), isSelected = isSelected, onToggle = {
+        title = labelProvider(item),
+        isSelected = isSelected,
+        onToggle = {
             if (isSelected) selection.remove(id) else selection.add(id)
-        })
+        },
+        modifier = modifier
+    )
 }
 
 @Composable
