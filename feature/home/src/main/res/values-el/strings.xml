@@ -13,8 +13,9 @@
 
     <string name="feed_empty">Κανένα αποτέλεσμα</string>
     <string name="feed_placeholder">Ανάκτηση ανακοινώσεων…</string>
-    <string name="feed_footer">Λήψη επόμενης σελίδας…</string>
-    <string name="feed_failed_footer">Αποτυχία φόρτωσης περισσότερων ανακοινώσεων</string>
+    <string name="feed_footer_loading">Λήψη επόμενης σελίδας…</string>
+    <string name="feed_footer_failed">Αποτυχία φόρτωσης περισσότερων ανακοινώσεων</string>
+    <string name="feed_footer_finished">Φτάσατε στο τέλος της λίστας!</string>
     <string name="feed_for_you_empty">Παρακαλώ εγγραφείτε σε ορισμένες ετικέτες</string>
 
     <string name="search_bar_hint">Αναζήτηση</string>

@@ -205,11 +205,12 @@ private fun SearchScreenContent(
                 }
                 AnnouncementFeed(
                     loadingPlaceHolderText = stringResource(R.string.feed_placeholder),
-                    nextPagePlaceHolderText = stringResource(R.string.feed_footer),
+                    nextPagePlaceHolderText = stringResource(R.string.feed_footer_loading),
                     emptyPlaceHolderText = stringResource(R.string.feed_empty),
                     errorPlaceHolderText = stringResource(R.string.error_generic),
                     errorPlaceHolderRetryText = stringResource(R.string.action_retry),
-                    errorNextPagePlaceHolderText = stringResource(R.string.feed_failed_footer),
+                    errorNextPagePlaceHolderText = stringResource(R.string.feed_footer_failed),
+                    endOfPaginationText = stringResource(R.string.feed_footer_finished),
                     announcements = searchFeedAnnouncements,
                     lazyListState = lazyListState,
                     scrollBehavior = searchScroll,

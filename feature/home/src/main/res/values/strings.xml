@@ -14,8 +14,9 @@
 
     <string name="feed_empty">Nothing matched your search</string>
     <string name="feed_placeholder">Fetching Announcements…</string>
-    <string name="feed_footer">Getting next page…</string>
-    <string name="feed_failed_footer">Failed to load more announcements</string>
+    <string name="feed_footer_loading">Getting next page…</string>
+    <string name="feed_footer_failed">Failed to load more announcements</string>
+    <string name="feed_footer_finished">You\'ve reached the end of the list!</string>
     <string name="feed_for_you_empty">Please subscribe to some tags</string>
 
     <string name="search_bar_hint">Search</string>
