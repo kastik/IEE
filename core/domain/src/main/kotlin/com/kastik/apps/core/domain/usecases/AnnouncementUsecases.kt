@@ -87,7 +87,7 @@ class GetFilteredAnnouncementsUseCase @Inject constructor(
         }
 }
 
-class GetSearchQuickResultsAnnouncementsUseCase @Inject constructor(
+class GetAnnouncementQuickResultsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
