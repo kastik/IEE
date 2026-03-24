@@ -13,6 +13,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -31,15 +32,16 @@ class GetHomeAnnouncementsUseCase @Inject constructor(
             userPreferencesRepository.getSortType()
         ) { _, sortType ->
             sortType
-        }.flatMapLatest { sortType ->
-            announcementRepository.getPagedAnnouncements(
-                sortType = sortType,
-                titleQuery = "",
-                bodyQuery = "",
-                authorIds = emptyList(),
-                tagIds = emptyList(),
-            )
-        }
+        }.distinctUntilChanged()
+            .flatMapLatest { sortType ->
+                announcementRepository.getPagedAnnouncements(
+                    sortType = sortType,
+                    titleQuery = "",
+                    bodyQuery = "",
+                    authorIds = emptyList(),
+                    tagIds = emptyList(),
+                )
+            }
     }
 }
 
@@ -54,12 +56,13 @@ class GetForYouAnnouncementsUseCase @Inject constructor(
             tagsRepository.getSubscribedTags(),
         ) { sortType, subscribedTags ->
             sortType to subscribedTags
-        }.flatMapLatest { (sortType, subscribedTags) ->
-            announcementRepository.getPagedAnnouncements(
-                sortType = sortType,
-                tagIds = subscribedTags.map { it.id },
-            )
-        }
+        }.distinctUntilChanged()
+            .flatMapLatest { (sortType, subscribedTags) ->
+                announcementRepository.getPagedAnnouncements(
+                    sortType = sortType,
+                    tagIds = subscribedTags.map { it.id },
+                )
+            }
 }
 
 class GetFilteredAnnouncementsUseCase @Inject constructor(
