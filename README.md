@@ -10,92 +10,112 @@ This application retrieves and displays announcements from the **Department of I
 Electronic Engineering (IEE)** at the **International Hellenic University (IHU)**. It is built using
 modern Android development practices, emphasizing modularization and clean architecture.
 
-### 📂 Module Structure
-
-The codebase is organized into the following logical groups:
-
-#### 🚀 Application & Build
-
-* **[:app](app)** - The application entry point and dependency graph root.
-* **[:build-logic](build-logic)** - Custom Gradle Convention Plugins for centralized build
-  configuration management.
-* **[:benchmark](benchmark)** - Macrobenchmark implementation for performance monitoring and
-  Baseline Profile generation.
-
-#### ✨ Features
-
-* **[:feature/announcement](feature/announcement)** - Announcement details and interaction.
-* **[:feature/auth](feature/auth)** - Authentication flows (Login).
-* **[:feature/home](feature/home)** - Primary dashboard and feed aggregation.
-* **[:feature/profile](feature/profile)** - User profile and subscription management.
-* **[:feature/search](feature/search)** - Querying and filtering functionality.
-* **[:feature/settings](feature/settings)** - Application configuration and preferences.
-* **[:feature/licenses](feature/licenses)** - Open Source license attribution.
-
-#### 🧩 Core
-
-* **[:core/model](core/model)** - Canonical domain entities.
-* **[:core/domain](core/domain)** - Shared business use cases.
-* **[:core/data](core/data)** - Repository implementations and data arbitration
-* **[:core/network](core/network)** - Retrofit clients and API definitions.
-* **[:core/database](core/database)** -Local persistence (Room).
-* **[:core/datastore](core/datastore)** - Proto DataStore implementation.
-* **[:core/designsystem](core/designsystem)** - Material 3 Theme, iconography, and atomic UI
-  components.
-* **[:core/ui](core/ui)** - Generic UI widgets and Compose extensions.
-* **[:core/common](core/common)** - Utility classes and extensions.
-* **[:core/analytics](core/analytics)** - Analytics reporting implementations.
-* **[:core/notifications](core/notifications)** - Push notification handling.
-* **[:core/downloader](core/downloader)** - Attachment download management.
-* **[:core/tesing](core/testing)** - Shared test rules, fixtures, and utilities.
-
 ## 🛠 Tech Stack
 
-**Architecture**
-
-* **Pattern:** MVVM / MVI (Clean Architecture)
-* **DI:** Hilt (Dagger)
-* **Concurrency:** Kotlin Coroutines & Flow
-
-**User Interface**
-
-* **Toolkit:** Jetpack Compose
-* **Design:** Material Design 3
-
-**Data & Networking**
-
-* **Network:** Retrofit / OkHttp
-* **Serialization:** Kotlinx Serialization
-* **Persistence:** Room (SQLite) & Proto DataStore
-
-**Build & Tooling**
-
-* **Build System:** Gradle Kotlin DSL
-* **Dependency Management:** Version Catalogs (`libs.versions.toml`)
-* **CI/CD:** GitHub Actions (Implied)
+| Category         | Technology                |
+|------------------|---------------------------|
+| **Language**     | Kotlin                    |
+| **UI Toolkit**   | Jetpack Compose           |
+| **DI**           | Hilt                      |
+| **Architecture** | MVVM (Clean Architecture) |
+| **Design**       | Material You              |
+| **Networking**   | Retrofit / OkHttp         |
+| **Persistence**  | Room & DataStore          |
+| **Build System** | Gradle                    |
+| **CI/CD**        | GitHub Actions            |
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-* **Android Studio:** Panda.
-* **JDK:** Java 21 or higher.
+* **Android Studio:** Meerkat or newer (AGP 9.1.0+).
+* **JDK:** 21 or higher.
+* **Android SDK:** API 36 or higher
+
+### Setup
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/kastik/IEE.git](https://github.com/kastik/IEE.git
+   git clone https://github.com/kastik/IEE.git
    ```
 
 2. **Open in Android Studio:**
    Allow Gradle to download dependencies and configure the included builds.
 
 3. **Run:**
-   Select the `app` configuration and run on an emulator or physical device.
+   Select the **app** configuration and run on an emulator or physical device.
 
-## Contributing
+## ⚙️ Environment Variables
+
+The release signing configuration can be provided via `local.properties` or environment variables:
+
+| Property (`local.properties`) | Environment Variable     | Description                       |
+|-------------------------------|--------------------------|-----------------------------------|
+| `store.file`                  | `RELEASE_STORE_FILE`     | Path to the release keystore file |
+| `store.password`              | `RELEASE_STORE_PASSWORD` | Keystore password                 |
+| `key.alias`                   | `RELEASE_KEY_ALIAS`      | Signing key alias                 |
+| `key.password`                | `RELEASE_KEY_PASSWORD`   | Signing key password              |
+
+> **Note:** `local.properties` values take precedence over environment variables.
+
+## 🧪 Tests
+
+The project uses the following testing libraries:
+
+* **Unit Tests:** JUnit 5 (Platform Suite Engine 6.0.3), MockK 1.14.9, Robolectric 4.16.1
+* **UI / Instrumented Tests:** Espresso 3.7.0, UI Automator 2.4.0
+* **Benchmarks:** AndroidX Macro Benchmark 1.5.0
+
+## 📂 Project Structure
+
+```
+IEE/
+├── app/                          # Application entry point and dependency graph root
+├── benchmark/                    # Macrobenchmark & Baseline Profile generation
+├── build-logic/                  # Gradle Convention Plugins for build configuration
+├── core/
+│   ├── analytics/                # Analytics reporting implementations
+│   ├── common/                   # Utility classes and extensions
+│   ├── config/                   # Remote/app configuration
+│   ├── crashlytics/              # Crashlytics integration
+│   ├── data/                     # Repository implementations and data arbitration
+│   ├── database/                 # Local persistence (Room)
+│   ├── datastore/                # Proto DataStore implementation
+│   ├── datastore-proto/          # Protobuf schema definitions for DataStore
+│   ├── designsystem/             # Material 3 theme, iconography, and atomic UI components
+│   ├── domain/                   # Shared business use cases
+│   ├── downloader/               # Attachment download management
+│   ├── model/                    # Canonical domain entities
+│   ├── network/                  # Retrofit clients and API definitions
+│   ├── notifications/            # Push notification handling
+│   ├── ui/                       # Generic UI widgets and Compose extensions
+│   └── work/                     # WorkManager background tasks
+├── dev-tools/                    # Debug-only developer tools and utilities
+├── feature/
+│   ├── announcement/             # Announcement details and interaction
+│   ├── auth/                     # Authentication flows (Login)
+│   ├── home/                     # Primary dashboard and feed aggregation
+│   ├── licenses/                 # Open Source license attribution
+│   ├── profile/                  # User profile and subscription management
+│   ├── search/                   # Querying and filtering functionality
+│   └── settings/                 # Application configuration and preferences
+├── gradle/
+│   └── libs.versions.toml        # Version catalog
+├── http/                         # HTTP request files for API testing
+├── build.gradle.kts              # Root build script
+├── settings.gradle.kts           # Module inclusion and repository config
+├── gradle.properties             # Gradle and Android build properties
+└── stability_config.conf         # Compose stability configuration
+```
+
+## 🤝 Contributing
 
 1. Fork the project.
 2. Create a feature branch (`git checkout -b feature/NewFeature`).
 3. Commit changes.
 4. Push to the branch.
 5. Open a Pull Request.
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
