@@ -82,6 +82,7 @@ internal fun AnnouncementRoute(
 
     AnimatedContent(
         targetState = uiState.value,
+        contentKey = { state -> state::class }
     ) { state ->
         when (state) {
             is UiState.Loading -> LoadingContent(
