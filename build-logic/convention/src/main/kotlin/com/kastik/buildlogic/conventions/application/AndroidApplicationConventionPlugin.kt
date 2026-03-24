@@ -8,9 +8,11 @@ import com.kastik.buildlogic.conventions.extensions.configureKotlinJvm
 import com.kastik.buildlogic.conventions.extensions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.getByType
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -38,6 +40,18 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 configureFlavors(this)
                 configureAndroidCompose(this)
 
+            }
+
+            afterEvaluate {
+                val androidExtension = extensions.getByType<ApplicationExtension>()
+                val projectName = target.rootProject.name.lowercase()
+                val moduleName = target.name.lowercase()
+                val appVersionName = androidExtension.defaultConfig.versionName ?: "unknown"
+                val appVersionCode = androidExtension.defaultConfig.versionCode ?: 0
+
+                extensions.configure<BasePluginExtension> {
+                    archivesName.set("$projectName-$moduleName-$appVersionName-($appVersionCode)")
+                }
             }
 
             extensions.configure<JavaPluginExtension> {

@@ -15,7 +15,6 @@ dependencies {
     implementation(project(":core:crashlytics"))
 
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
 
 }
