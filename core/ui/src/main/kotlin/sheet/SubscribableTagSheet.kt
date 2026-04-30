@@ -10,7 +10,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -18,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kastik.apps.core.common.extensions.removeAccents
 import com.kastik.apps.core.designsystem.component.IEESelectableItem
 import com.kastik.apps.core.designsystem.component.IEESheet
 import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
@@ -40,55 +38,14 @@ fun SubscribableTagSheet(
 ) {
     var query by remember { mutableStateOf("") }
 
-    val parentMap = remember(subscribableTags) {
-        val map = mutableMapOf<Int, SubscribableTag>()
-        fun buildParentMap(nodes: List<SubscribableTag>, parent: SubscribableTag?) {
-            for (node in nodes) {
-                if (parent != null) map[node.id] = parent
-                buildParentMap(node.subTags, node)
-            }
-        }
-        buildParentMap(subscribableTags, null)
-        map
-    }
-
-    val selectedIds = remember(subscribableTags, subscribedTags) {
-        val initialSelection = mutableSetOf<Int>()
-
-        fun initializeSelection(nodes: List<SubscribableTag>, isParentSelected: Boolean) {
-            for (node in nodes) {
-                val isSelected = isParentSelected || subscribedTags.contains(node.id)
-                if (isSelected) initialSelection.add(node.id)
-                initializeSelection(node.subTags, isSelected)
-            }
-        }
-
-        initializeSelection(subscribableTags, false)
-        mutableStateListOf<Int>().apply { addAll(initialSelection) }
-    }
-
-    val flatList = remember(query, subscribableTags) {
-        val result = mutableListOf<FlatNode<SubscribableTag>>()
-
-        fun traverse(nodes: List<SubscribableTag>, depth: Int): Boolean {
-            var anyMatch = false
-            for (item in nodes.sortedBy { it.title }) {
-                val selfMatch = query.isBlank() || item.title.removeAccents()
-                    .contains(query.removeAccents(), ignoreCase = true)
-
-                val startIndex = result.size
-                val childrenMatch = traverse(item.subTags, depth + 1)
-
-                if (selfMatch || childrenMatch) {
-                    result.add(startIndex, FlatNode(item, depth))
-                    anyMatch = true
-                }
-            }
-            return anyMatch
-        }
-        traverse(subscribableTags, 0)
-        result
-    }
+    val state = rememberHierarchicalSelection(
+        roots = subscribableTags,
+        initialSelectedIds = subscribedTags,
+        query = query,
+        idProvider = { it.id },
+        titleProvider = { it.title },
+        childrenProvider = { it.subTags },
+    )
 
     IEESheet(
         sheetState = subscribeTagSheetState,
@@ -96,14 +53,14 @@ fun SubscribableTagSheet(
         searchQuery = query,
         onSearchQueryChange = { query = it },
         searchHint = stringResource(R.string.sheet_hint_subscribe),
-        hasSelection = selectedIds.isNotEmpty(),
-        onClearSelection = { selectedIds.clear() },
+        hasSelection = state.selectedIds.isNotEmpty(),
+        onClearSelection = { state.selectedIds.clear() },
         clearLabel = stringResource(R.string.action_clear),
         applyLabel = stringResource(R.string.action_subscribe),
         onApply = {
             val appliedIds = getOnlyTopLevelSelected(
                 roots = subscribableTags,
-                selectedIds = selectedIds.toSet(),
+                selectedIds = state.selectedIds.toSet(),
                 idProvider = { it.id },
                 childrenProvider = { it.subTags },
             )
@@ -115,93 +72,21 @@ fun SubscribableTagSheet(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 16.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
-            items(items = flatList, key = { it.item.id }) { node ->
-                val isSelected = node.item.id in selectedIds
-
+            items(items = state.flatList, key = { it.item.id }) { flatNode ->
                 IEESelectableItem(
                     modifier = Modifier
-                        .padding(start = (node.depth * 16).dp)
-                        .animateItem(
-                            fadeInSpec = ieeListSpring(),
-                            fadeOutSpec = ieeListSpring(),
-                            placementSpec = ieeListSpring(),
-                        ),
-                    title = node.item.title,
-                    isSelected = isSelected,
-                    onClick = {
-                        val descendants = collectAllIds(node.item, { it.subTags }, { it.id })
-
-                        if (isSelected) {
-                            selectedIds.remove(node.item.id)
-                            selectedIds.removeAll(descendants)
-
-                            var p = parentMap[node.item.id]
-                            while (p != null) {
-                                selectedIds.remove(p.id)
-                                p = parentMap[p.id]
-                            }
-                        } else {
-                            selectedIds.add(node.item.id)
-                            selectedIds.addAll(descendants)
-
-                            var p = parentMap[node.item.id]
-                            while (p != null) {
-                                val allChildrenSelected = p.subTags.all { it.id in selectedIds }
-                                if (allChildrenSelected) {
-                                    selectedIds.add(p.id)
-                                    p = parentMap[p.id]
-                                } else {
-                                    break
-                                }
-                            }
-                        }
-                    },
+                        .padding(start = (flatNode.depth * 16).dp)
+                        .animateItem(ieeListSpring(), ieeListSpring(), ieeListSpring()),
+                    title = flatNode.item.title,
+                    isSelected = flatNode.item.id in state.selectedIds,
+                    onClick = { state.onToggle(flatNode.item) },
                 )
             }
         }
     }
 }
-
-private data class FlatNode<T>(val item: T, val depth: Int)
-
-private fun <T> collectAllIds(
-    root: T, childrenProvider: (T) -> List<T>, idProvider: (T) -> Int
-): List<Int> {
-    val result = mutableListOf<Int>()
-    fun traverse(node: T) {
-        for (child in childrenProvider(node)) {
-            result.add(idProvider(child))
-            traverse(child)
-        }
-    }
-    traverse(root)
-    return result
-}
-
-private fun <T> getOnlyTopLevelSelected(
-    roots: List<T>, selectedIds: Set<Int>, idProvider: (T) -> Int, childrenProvider: (T) -> List<T>
-): List<Int> {
-    val result = mutableListOf<Int>()
-
-    fun traverse(nodes: List<T>, isAncestorSelected: Boolean) {
-        for (node in nodes) {
-            val id = idProvider(node)
-            val isSelected = id in selectedIds
-
-            if (isSelected && !isAncestorSelected) {
-                result.add(id)
-            }
-
-            traverse(childrenProvider(node), isAncestorSelected || isSelected)
-        }
-    }
-
-    traverse(roots, false)
-    return result
-}
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
