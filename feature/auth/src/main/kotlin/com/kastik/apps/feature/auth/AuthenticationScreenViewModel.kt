@@ -44,7 +44,7 @@ class AuthenticationScreenViewModel @Inject constructor(
         emit(UiState.LocalError(R.string.error_generic))
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+        started = SharingStarted.Lazily,
         initialValue = UiState.Loading
     )
 }
