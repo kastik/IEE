@@ -1,0 +1,104 @@
+package com.kastik.apps.core.designsystem.component
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun IEESelectableItem(
+    modifier: Modifier = Modifier,
+    title: String,
+    isSelected: Boolean,
+    onClick: () -> Unit
+) {
+    val shape = RoundedCornerShape(20)
+    val containerColor by animateColorAsState(
+        if (isSelected) MaterialTheme.colorScheme.primaryContainer
+        else MaterialTheme.colorScheme.surfaceContainer
+    )
+    val contentColor by animateColorAsState(
+        if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+        else MaterialTheme.colorScheme.onSurface
+    )
+
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp, vertical = 6.dp)
+            .clip(shape)
+            .clickable(onClick = onClick),
+        color = containerColor,
+        tonalElevation = if (isSelected) 3.dp else 0.dp,
+        shadowElevation = 0.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelLarge,
+                color = contentColor,
+                modifier = Modifier.weight(1f)
+            )
+
+            AnimatedVisibility(
+                visible = isSelected, enter = scaleIn(), exit = scaleOut()
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Check,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun IEEUnSelectableItemSelectedPreview() {
+    MaterialTheme {
+        IEESelectableItem(
+            title = "Not Selected Item",
+            isSelected = false,
+            onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun IEESelectableItemSelectedPreview() {
+    MaterialTheme {
+        IEESelectableItem(
+            title = "Selected Item",
+            isSelected = true,
+            onClick = {}
+        )
+    }
+}

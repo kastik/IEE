@@ -117,13 +117,13 @@ class FakeUserPreferencesLocalDataSource : PreferencesLocalDataSource {
     override fun getImportantEventCount(): Flow<Int> = importantEventCount
 
     override suspend fun increaseImportantEventCount() {
-        _announcementCheckIntervalMinutes.update {
+        _importantEventCount.update {
             it + 1
         }
     }
 
     override suspend fun resetImportantEventCount() {
-        _announcementCheckIntervalMinutes.update {
+        _importantEventCount.update {
             0
         }
     }

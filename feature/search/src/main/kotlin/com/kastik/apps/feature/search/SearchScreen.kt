@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.movableContentOf
@@ -91,13 +90,7 @@ private fun SearchScreenContent(
     val scope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     val searchScroll = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
-    val _ = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-    )
     val showTagSheet = rememberSaveable { mutableStateOf(false) }
-    val _ = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-    )
     val showAuthorSheet = rememberSaveable { mutableStateOf(false) }
     val searchBarState = rememberSearchBarState()
 
@@ -243,6 +236,7 @@ private fun SearchScreenContent(
         if (showTagSheet.value) {
             TagSheet(
                 tags = uiState.availableFilters.tags,
+                selectedTagIds = uiState.activeFilters.selectedTagIds,
                 onApply = { newTagIds ->
                     scope.launch {
                         analytics.logEvent(
@@ -269,7 +263,7 @@ private fun SearchScreenContent(
         if (showAuthorSheet.value) {
             AuthorSheet(
                 authors = uiState.availableFilters.authors,
-                selectedAuthorIds = uiState.activeFilters.selectedAuthorIds,
+                preSelectedAuthorIds = uiState.activeFilters.selectedAuthorIds,
                 onApply = { newAuthorIds ->
                     scope.launch {
                         analytics.logEvent(

@@ -601,11 +601,8 @@ fun PreviewHomeScreenContent() {
 }
 
 val FakeTags = listOf(
-    Tag(
-        id = 1, title = "Tag1", false
-    ), Tag(
-        id = 2, title = "Tag2", false
-    )
+    Tag(id = 1, title = "Tag1"),
+    Tag(id = 2, title = "Tag2"),
 )
 
 val FakeAttachments = listOf(

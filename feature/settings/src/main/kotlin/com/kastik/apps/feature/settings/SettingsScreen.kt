@@ -191,7 +191,7 @@ private fun SettingsScreenContent(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(Modifier.height(8.dp))
-                        SettingsegmentedButton(
+                        SettingSegmentedButton(
                             selected = sortType,
                             options = SortType.entries.toImmutableList(),
                             label = {
@@ -257,40 +257,62 @@ private fun SettingsScreenContent(
                 colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
 
             ) {
-                Column {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 10.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
                             text = stringResource(R.string.search_in_label),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                        Spacer(Modifier.height(8.dp))
-                        SettingsegmentedButton(
-                            selected = searchScope,
-                            options = SearchScope.entries.toImmutableList(),
-                            label = {
-                                when (it) {
-                                    SearchScope.Title -> stringResource(R.string.search_in_title_label)
-                                    SearchScope.Body -> stringResource(R.string.search_in_body_label)
-                                    SearchScope.TitleAndBody -> stringResource(R.string.search_in_both_label)
-                                }
-                            },
-                            onSelected = { searchScope ->
-                                onSearchScopeChange(searchScope)
-                                analytics.setUserProperty("search_scope", searchScope.name)
-                                analytics.logEvent(
-                                    "search_scope_changed", mapOf(
-                                        "search_scope" to searchScope.name,
-                                        "source" to "settings_screen"
-                                    )
-                                )
-                            })
+                        IEEIconToolTip(tooltipTitle = {
+                            Text(
+                                text = stringResource(R.string.search_in_warning_title),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }, tooltipBody = {
+                            Text(
+                                text = stringResource(R.string.search_in_warning_body),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }, icon = {
+                            Icon(
+                                imageVector = Icons.Default.Info, contentDescription = null
+                            )
+                        })
                     }
+                    Spacer(Modifier.height(8.dp))
+                    SettingSegmentedButton(
+                        selected = searchScope,
+                        options = SearchScope.entries.toImmutableList(),
+                        label = {
+                            when (it) {
+                                SearchScope.Title -> stringResource(R.string.search_in_title_label)
+                                SearchScope.Body -> stringResource(R.string.search_in_body_label)
+                                SearchScope.TitleAndBody -> stringResource(R.string.search_in_both_label)
+                            }
+                        },
+                        onSelected = { searchScope ->
+                            onSearchScopeChange(searchScope)
+                            analytics.setUserProperty("search_scope", searchScope.name)
+                            analytics.logEvent(
+                                "search_scope_changed", mapOf(
+                                    "search_scope" to searchScope.name,
+                                    "source" to "settings_screen"
+                                )
+                            )
+                        })
                 }
+
             }
 
 
@@ -318,7 +340,7 @@ private fun SettingsScreenContent(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(Modifier.height(8.dp))
-                        SettingsegmentedButton(
+                        SettingSegmentedButton(
                             selected = theme,
                             options = UserTheme.entries.toImmutableList(),
                             label = {
@@ -460,7 +482,7 @@ private fun SettingsScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun <T> SettingsegmentedButton(
+private fun <T> SettingSegmentedButton(
     selected: T,
     options: ImmutableList<T>,
     label: @Composable (T) -> String,
