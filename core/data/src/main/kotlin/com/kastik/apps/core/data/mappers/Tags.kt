@@ -20,7 +20,8 @@ fun TagResponseDto.toTagEntity() = TagEntity(
 fun TagEntity.toTag() = Tag(
     id = id,
     title = title,
-    isPublic = isPublic
+    isPublic = isPublic,
+    parentId = parentId,
 )
 
 fun SubscribedTagResponseDto.toSubscribedTagProto(): SubscribedTagProto = let { dto ->
