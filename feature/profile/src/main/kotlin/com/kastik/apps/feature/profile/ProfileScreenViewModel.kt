@@ -61,7 +61,7 @@ class ProfileScreenViewModel @Inject constructor(
             UiState.SignedOut(R.string.logged_out_message)
         }
     }.onStart { refreshData() }.catch {
-        UiState.Error(R.string.error_generic)
+        emit(UiState.Error(R.string.error_generic))
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
