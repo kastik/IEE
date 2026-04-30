@@ -23,6 +23,9 @@
     <string name="search_in_body_label">Σώμα</string>
     <string name="search_in_both_label">Παντού</string>
 
+    <string name="search_in_warning_title">Προειδοποίηση</string>
+    <string name="search_in_warning_body">Το Παντού λειτουργεί με τελεστή AND, που σημαίνει ότι το κείμενο που αναζητείται πρέπει να υπάρχει στον τίτλο ΚΑΙ στο σώμα της ανακοίνωσης.</string>
+
     <string name="theme_label">Θέμα</string>
     <string name="theme_system_label">Σύστημα</string>
     <string name="theme_light_label">Φωτεινό</string>

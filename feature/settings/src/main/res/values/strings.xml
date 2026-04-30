@@ -23,6 +23,9 @@
     <string name="search_in_body_label">Body</string>
     <string name="search_in_both_label">Both</string>
 
+    <string name="search_in_warning_title">Warning</string>
+    <string name="search_in_warning_body">Both acts as an AND operator, meaning that the searched text needs to be present in both the title AND body of the announcement</string>
+
     <string name="theme_label">Theme</string>
     <string name="theme_system_label">System</string>
     <string name="theme_light_label">Light</string>
