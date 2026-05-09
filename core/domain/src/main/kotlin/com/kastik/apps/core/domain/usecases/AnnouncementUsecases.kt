@@ -32,8 +32,7 @@ class GetHomeAnnouncementsUseCase @Inject constructor(
             userPreferencesRepository.getSortType()
         ) { _, sortType ->
             sortType
-        }.distinctUntilChanged()
-            .flatMapLatest { sortType ->
+        }.flatMapLatest { sortType ->
                 announcementRepository.getPagedAnnouncements(
                     sortType = sortType,
                     titleQuery = "",
