@@ -7,9 +7,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -34,7 +35,7 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun AuthorSheet(
     modifier: Modifier = Modifier,
-    authorSheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    authorSheetState: SheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden),
     authors: ImmutableList<Author> = persistentListOf(),
     preSelectedAuthorIds: ImmutableList<Int> = persistentListOf(),
     onApply: (ImmutableList<Int>) -> Unit = {},

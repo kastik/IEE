@@ -7,7 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +31,7 @@ import kotlinx.collections.immutable.toImmutableList
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscribableTagSheet(
-    subscribeTagSheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+    subscribeTagSheetState: SheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden),
     subscribableTags: ImmutableList<SubscribableTag>,
     subscribedTags: ImmutableList<Int>,
     onApply: (ImmutableList<Int>) -> Unit,
