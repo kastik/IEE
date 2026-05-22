@@ -31,7 +31,10 @@ import kotlinx.collections.immutable.toImmutableList
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubscribableTagSheet(
-    subscribeTagSheetState: SheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden),
+    subscribeTagSheetState: SheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+    ),
     subscribableTags: ImmutableList<SubscribableTag>,
     subscribedTags: ImmutableList<Int>,
     onApply: (ImmutableList<Int>) -> Unit,
