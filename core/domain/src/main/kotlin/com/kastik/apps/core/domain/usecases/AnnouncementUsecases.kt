@@ -30,9 +30,10 @@ class GetHomeAnnouncementsUseCase @Inject constructor(
         return combine(
             authenticationRepository.getIsSignedIn(),
             userPreferencesRepository.getSortType()
-        ) { _, sortType ->
-            sortType
-        }.flatMapLatest { sortType ->
+        ) { isSignedIn, sortType ->
+            isSignedIn to sortType
+        }.distinctUntilChanged()
+            .flatMapLatest { (_, sortType) ->
                 announcementRepository.getPagedAnnouncements(
                     sortType = sortType,
                     titleQuery = "",
