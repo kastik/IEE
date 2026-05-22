@@ -1,14 +1,14 @@
 [versions]
 
-agp = "9.1.0"
+agp = "9.2.1"
 ksp = "2.3.4"
 
-kotlin = "2.3.10"
+kotlin = "2.3.21"
 coreKtx = "1.18.0"
-coroutines = "1.10.2"
-kotlinxSerialization = "1.10.0"
+coroutines = "1.11.0"
+kotlinxSerialization = "1.11.0"
 kotlinx-collections = "0.4.0"
-kotlinxDatetime = "0.7.1"
+kotlinxDatetime = "0.8.0"
 
 okhttp = "5.3.2"
 retrofit = "3.0.0"
@@ -19,20 +19,21 @@ hiltCompiler = "1.3.0"
 activity = "1.13.0"
 lifecycle = "2.10.0"
 
-workRuntimeKtx = "2.11.1"
+workRuntimeKtx = "2.11.2"
 
-material3 = "1.5.0-alpha18"
-composeBom = "2026.04.01"
+material3 = "1.5.0-alpha20"
+composeBom = "2026.05.01"
 activityCompose = "1.13.0"
 navigationCompose = "2.9.8"
 hiltNavigationCompose = "1.3.0"
 accompanistPermissions = "0.37.3"
 splashScreen = "1.2.0"
+composeStabilityAnalyzer = "0.7.5"
 
 
 
 room = "2.8.4"
-paging = "3.4.2"
+paging = "3.5.0"
 
 protobuf = "4.34.1"
 protobufPlugin = "0.10.0"
@@ -52,12 +53,12 @@ espressoCore = "3.7.0"
 
 uiautomator = "2.4.0-beta02"
 profileinstaller = "1.4.1"
-androidx-macro-benchmark = "1.5.0-alpha05"
+androidx-macro-benchmark = "1.5.0-alpha06"
 
 
 
 gms = "4.4.4"
-firebase-bom = "34.12.0"
+firebase-bom = "34.13.0"
 crashlyticsGradle = "3.0.7"
 performanceGradle = "2.0.2"
 
@@ -67,7 +68,7 @@ appcompat = "1.7.1"
 material = "1.13.0"
 
 coilCompose = "3.4.0"
-aboutLibraries = "14.0.1"
+aboutLibraries = "14.2.0"
 
 
 [libraries]
@@ -133,8 +134,8 @@ play-review-ktx = { module = "com.google.android.play:review-ktx", version.ref =
 
 #OSS Licenses
 aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
-aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose-core", version.ref = "aboutLibraries" } # Common compose core
-aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }      # Material 3 UI
+aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose-core", version.ref = "aboutLibraries" }
+aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 
 
 ####### Testing #######
@@ -208,7 +209,7 @@ performance-gradlePlugin = { id = "com.google.firebase.firebase-perf", version.r
 baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidx-macro-benchmark" }
 android-test = { id = "com.android.test", version.ref = "agp" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
-stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version = "0.6.6" }
+stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "composeStabilityAnalyzer" }
 
 
 ####### Convention plugins #######
