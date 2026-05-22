@@ -35,7 +35,10 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun AuthorSheet(
     modifier: Modifier = Modifier,
-    authorSheetState: SheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden),
+    authorSheetState: SheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+    ),
     authors: ImmutableList<Author> = persistentListOf(),
     preSelectedAuthorIds: ImmutableList<Int> = persistentListOf(),
     onApply: (ImmutableList<Int>) -> Unit = {},
