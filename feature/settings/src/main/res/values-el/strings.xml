@@ -12,14 +12,14 @@
     <string name="sort_by_ascending_label">Άυξουσα</string>
 
     <string name="for_you_label">Ροή εγγεγραμμενων</string>
-    <string name="for_you_available_description">Εμφάνιση ανακοινώσεων από ετικέτες που έχουν εγγραφεί</string>
+    <string name="for_you_available_description">Ανακοινώσεις από ετικέτες που ακολουθείτε</string>
     <string name="for_you_unavailable_description">Απαιτείται σύνδεση και εγγραφή σε ετικέτες</string>
 
     <string name="fab_filters_label">Φίλτρα FAB</string>
     <string name="fab_filters_description">Εμφάνιση φίλτρων δίπλα στο κουμπί FAB</string>
 
     <string name="search_in_label">Αναζήτηση σε"</string>
-    <string name="search_in_title_label">Τίτλος</string>
+    <string name="search_in_title_label">Τίτλο</string>
     <string name="search_in_body_label">Σώμα</string>
     <string name="search_in_both_label">Παντού</string>
 
