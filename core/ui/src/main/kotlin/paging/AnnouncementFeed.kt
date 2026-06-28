@@ -8,7 +8,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Celebration
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -27,7 +27,11 @@ import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -55,10 +59,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.flowOf
 
 private enum class FeedState {
-    Loading,
-    Error,
-    Empty,
-    Content
+    Loading, Error, Empty, Content
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -84,6 +85,16 @@ fun AnnouncementFeed(
     val vibrator = LocalHapticFeedback.current
 
 
+    var shouldShowErrorBanner by remember { mutableStateOf(false) }
+
+    LaunchedEffect(refreshState) {
+        when (refreshState) {
+            is LoadState.Error -> shouldShowErrorBanner = true
+            is LoadState.NotLoading -> shouldShowErrorBanner = false
+            is LoadState.Loading -> Unit
+        }
+    }
+
     val currentFeedState = when (refreshState) {
         is LoadState.Loading if announcements.itemCount == 0 -> FeedState.Loading
         is LoadState.Error if announcements.itemCount == 0 -> FeedState.Error
@@ -92,12 +103,9 @@ fun AnnouncementFeed(
     }
 
     AnimatedContent(
-        targetState = currentFeedState,
-        transitionSpec = {
+        targetState = currentFeedState, transitionSpec = {
             fadeIn(animationSpec = tween(400)) togetherWith fadeOut(animationSpec = tween(400))
-        },
-        label = "feed_state_transition",
-        modifier = modifier
+        }, label = "feed_state_transition", modifier = modifier
     ) { state ->
 
         when (state) {
@@ -123,6 +131,14 @@ fun AnnouncementFeed(
             }
 
             FeedState.Content -> {
+
+                val isError = refreshState is LoadState.Error
+                val firstItemKey = announcements.itemSnapshotList.firstOrNull()?.id
+
+                LaunchedEffect(firstItemKey, isError) {
+                    lazyListState.animateScrollToItem(0)
+                }
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -131,6 +147,43 @@ fun AnnouncementFeed(
                     state = lazyListState,
                     contentPadding = contentPadding
                 ) {
+
+                    if (shouldShowErrorBanner) {
+                        item(
+                            key = "refresh_error_warning", contentType = "warning_banner"
+                        ) {
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp, horizontal = 8.dp)
+                                    .animateItem(
+                                        fadeInSpec = ieeListSpring(),
+                                        fadeOutSpec = ieeListSpring(),
+                                        placementSpec = ieeListSpring()
+                                    ),
+                                shape = MaterialTheme.shapes.medium,
+                                color = MaterialTheme.colorScheme.errorContainer,
+                                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Warning,
+                                        contentDescription = "Warning"
+                                    )
+                                    Text(
+                                        text = errorPlaceHolderText,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
                     items(
                         count = announcements.itemCount,
                         key = announcements.itemKey { it.id },
@@ -139,9 +192,9 @@ fun AnnouncementFeed(
                         item?.let {
                             AnnouncementCard(
                                 onClick = {
-                                    vibrator.performHapticFeedback(HapticFeedbackType.Confirm)
-                                    onAnnouncementClick(item.id)
-                                },
+                                vibrator.performHapticFeedback(HapticFeedbackType.Confirm)
+                                onAnnouncementClick(item.id)
+                            },
                                 onLonClick = {
                                     vibrator.performHapticFeedback(HapticFeedbackType.LongPress)
                                     onAnnouncementLongClick(item.id)
@@ -172,6 +225,7 @@ fun AnnouncementFeed(
                                 )
                         )
                     }
+
                     item(
                         key = "append_state",
                         contentType = "append_indicators"
@@ -209,10 +263,25 @@ fun AnnouncementFeed(
                                         )
                                     }
                                 } else {
-                                    Spacer(modifier = Modifier.height(116.dp))
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(
+                                            12.dp, Alignment.CenterHorizontally
+                                        ),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(116.dp)
+                                    ) {
+                                        Text(
+                                            text = "Please wait for the refresh to finish",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        Icon(Icons.Default.Warning, null)
+                                    }
+
                                 }
                             }
-
                         }
                     }
                 }
@@ -236,8 +305,7 @@ private fun AnnouncementFeedPreview() {
             pinned = true,
             body = "",
             attachments = emptyList(),
-        ),
-        Announcement(
+        ), Announcement(
             id = 2,
             author = "Admin",
             title = "Second Announcement",
