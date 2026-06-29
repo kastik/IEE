@@ -1,6 +1,6 @@
 package com.kastik.apps.core.network.datasource
 
-import com.kastik.apps.core.di.AuthenticatorAboardClient
+import com.kastik.apps.core.network.di.AuthenticatorAboardClient
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
 import javax.inject.Inject

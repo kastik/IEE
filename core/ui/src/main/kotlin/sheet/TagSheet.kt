@@ -20,10 +20,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.component.IEESelectableItem
 import com.kastik.apps.core.designsystem.component.IEESheet
-import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
 import com.kastik.apps.core.designsystem.theme.ieeListSpring
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.R
+import com.kastik.apps.core.ui.preview.IeePreview
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -113,7 +113,7 @@ private fun TagSheetPreview() {
         Tag(id = 2, title = "Tag 2"),
         Tag(id = 3, title = "Tag 3"),
     )
-    AppsAboardTheme {
+    IeePreview {
         TagSheet(
             tags = sampleTags,
             selectedTagIds = persistentListOf(1)

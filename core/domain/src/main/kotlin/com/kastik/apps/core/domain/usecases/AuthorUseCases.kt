@@ -10,7 +10,7 @@ class GetAuthorsUseCase @Inject constructor(
     private val authorRepository: AuthorRepository
 ) {
     operator fun invoke() =
-        authorRepository.getAuthors().map { it.toImmutableList() }
+        authorRepository.authors.map { it.toImmutableList() }
 }
 
 class RefreshAuthorsUseCase @Inject constructor(
@@ -24,7 +24,7 @@ class GetAuthorQuickResultsUseCase @Inject constructor(
     private val authorRepository: AuthorRepository
 ) {
     operator fun invoke(query: String) =
-        authorRepository.getAuthors().map { authors ->
+        authorRepository.authors.map { authors ->
             authors.filter {
                 it.name.removeAccents().contains(query.removeAccents(), ignoreCase = true)
             }.take(5).toImmutableList()

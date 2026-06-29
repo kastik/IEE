@@ -6,7 +6,7 @@ import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
 
 interface AuthenticationRepository {
-    fun getIsSignedIn(): Flow<Boolean>
+    val isSignedIn: Flow<Boolean>
     suspend fun refreshIsSignedIn(): Result<Unit, NetworkError>
     suspend fun exchangeCodeForAbroadToken(code: String): Result<Unit, NetworkError>
     suspend fun clearAuthenticationData(): Result<Unit, LocalError>

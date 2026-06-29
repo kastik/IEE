@@ -4,7 +4,7 @@ import com.kastik.apps.core.common.di.IoDispatcher
 import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.toLocalError
 import com.kastik.apps.core.data.mappers.toNetworkError
-import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
+import com.kastik.apps.core.datastore.datasource.AuthenticationLocalDataSource
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
@@ -24,8 +24,8 @@ internal class AuthenticationRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : AuthenticationRepository {
 
-    override fun getIsSignedIn(): Flow<Boolean> =
-        authenticationLocalDataSource.getIsSignedIn()
+    override val isSignedIn: Flow<Boolean> =
+        authenticationLocalDataSource.isSignedIn
 
     override suspend fun refreshIsSignedIn() = withContext(ioDispatcher) {
         try {

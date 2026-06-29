@@ -16,7 +16,7 @@ import com.kastik.apps.core.domain.usecases.SetSortTypeUseCase
 import com.kastik.apps.core.domain.usecases.SetThemeUseCase
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
-import com.kastik.apps.core.model.user.UserTheme
+import com.kastik.apps.core.model.user.Theme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -50,13 +50,13 @@ class SettingsScreenViewModel @Inject constructor(
         UiState.Success(
             theme = preferences.theme,
             sortType = preferences.sortType,
-            isDynamicColorEnabled = preferences.dynamicColor,
+            isDynamicColorEnabled = preferences.isDynamicColorEnabled,
             searchScope = preferences.searchScope,
-            isForYouEnabled = preferences.enableForYou,
+            isForYouEnabled = preferences.isForYouEnabled,
             isForYouAvailable = isForYouAvailable,
-            areFabFiltersEnabled = preferences.disableFabFilters,
+            areFabFiltersEnabled = preferences.areFabFiltersEnabled,
             isAnnouncementCheckIntervalAvailable = isAnnouncementCheckIntervalAvailable,
-            announcementCheckIntervalMinutes = preferences.announcementCheckIntervalMinutes,
+            announcementCheckIntervalMinutes = preferences.checkIntervalMinutes,
             areNotificationsAllowed = areNotificationsAllowed,
         )
     }.stateIn(
@@ -72,7 +72,7 @@ class SettingsScreenViewModel @Inject constructor(
         }
     }
 
-    fun setTheme(theme: UserTheme) {
+    fun setTheme(theme: Theme) {
         viewModelScope.launch {
             increaseImportantEventCountUseCase()
             setThemeUseCase(theme)

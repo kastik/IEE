@@ -46,7 +46,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
-import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
+import com.kastik.apps.core.designsystem.theme.IeeTheme
 import com.kastik.apps.core.designsystem.theme.ieeListSpring
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.Tag
@@ -320,7 +320,7 @@ private fun AnnouncementFeedPreview() {
     val lazyPagingItems = flowOf(PagingData.from(sampleAnnouncements)).collectAsLazyPagingItems()
 
     Surface {
-        AppsAboardTheme {
+        IeeTheme {
             AnnouncementFeed(
                 announcements = lazyPagingItems,
                 loadingPlaceHolderText = "",

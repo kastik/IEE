@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.common.extensions.removeAccents
 import com.kastik.apps.core.designsystem.component.IEESelectableItem
 import com.kastik.apps.core.designsystem.component.IEESheet
-import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
+import com.kastik.apps.core.designsystem.theme.IeeTheme
 import com.kastik.apps.core.model.aboard.Author
 import com.kastik.apps.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
@@ -130,7 +130,7 @@ private fun AlphabetHeader(
 @Preview
 @Composable
 private fun AuthorSheetPreview() {
-    AppsAboardTheme {
+    IeeTheme {
         AuthorSheet(
             authors = persistentListOf(
                 Author(id = 1, name = "Alice", announcementCount = 3),

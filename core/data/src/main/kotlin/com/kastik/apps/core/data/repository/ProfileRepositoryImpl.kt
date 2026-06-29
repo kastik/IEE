@@ -6,7 +6,7 @@ import com.kastik.apps.core.data.mappers.toLocalError
 import com.kastik.apps.core.data.mappers.toNetworkError
 import com.kastik.apps.core.data.mappers.toProfile
 import com.kastik.apps.core.data.mappers.toProfileProto
-import com.kastik.apps.core.datastore.ProfileLocalDataSource
+import com.kastik.apps.core.datastore.datasource.ProfileLocalDataSource
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.model.aboard.Profile
 import com.kastik.apps.core.model.result.Result
@@ -27,9 +27,9 @@ internal class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ProfileRepository {
 
-    override fun getProfile(): Flow<Profile> {
-        return profileLocalDataSource.getProfile().map { profile -> profile.toProfile() }
-    }
+    override val profile: Flow<Profile> =
+        profileLocalDataSource.profile.map { profile -> profile.toProfile() }
+
 
     override suspend fun refreshProfile() = withContext(ioDispatcher) {
         try {

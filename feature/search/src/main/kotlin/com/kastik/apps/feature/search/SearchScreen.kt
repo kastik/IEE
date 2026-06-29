@@ -52,7 +52,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun SearchScreen(
+internal fun SearchRoute(
     navigateBack: () -> Unit,
     navigateToAnnouncement: (Int) -> Unit,
     viewModel: SearchScreenViewModel = hiltViewModel(),

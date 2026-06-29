@@ -15,7 +15,7 @@ class GetIsSignedInUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository
 ) {
     operator fun invoke(): Flow<Boolean> =
-        authenticationRepository.getIsSignedIn()
+        authenticationRepository.isSignedIn
 }
 
 class SignInUserUseCase @Inject constructor(
@@ -30,7 +30,7 @@ class SignInUserUseCase @Inject constructor(
         profileRepository.refreshProfile()
         tagsRepository.refreshSubscribedTags()
         workScheduler.scheduleAnnouncementAlerts(
-            userPreferencesRepository.getAnnouncementCheckIntervalMinutes().first()
+            userPreferencesRepository.userPreferences.first().checkIntervalMinutes
         )
     }
 }
@@ -41,7 +41,7 @@ class TriggerSignOutOnStatusChangeUseCase @Inject constructor(
 ) {
     suspend operator fun invoke() {
         var wasSignedIn = false
-        authenticationRepository.getIsSignedIn()
+        authenticationRepository.isSignedIn
             .distinctUntilChanged()
             .collect { isSignedIn ->
                 if (wasSignedIn && !isSignedIn) {
@@ -53,18 +53,18 @@ class TriggerSignOutOnStatusChangeUseCase @Inject constructor(
 }
 
 class SignOutUserUseCase @Inject constructor(
+    private val workScheduler: WorkScheduler,
     private val profileRepository: ProfileRepository,
     private val announcementRepository: AnnouncementRepository,
     private val authenticationRepository: AuthenticationRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val workScheduler: WorkScheduler
 ) {
     suspend operator fun invoke() {
         //TODO Make this also return Result
         profileRepository.clearLocalData()
         authenticationRepository.clearAuthenticationData()
         announcementRepository.clearAnnouncementCache()
-        userPreferencesRepository.setHasSkippedSignIn(false)
+        userPreferencesRepository.setSkippedSignIn(false)
         workScheduler.cancelAnnouncementAlerts()
     }
 }

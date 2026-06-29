@@ -6,6 +6,6 @@ import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
 
 interface AuthorRepository {
-    fun getAuthors(): Flow<List<Author>>
+    val authors: Flow<List<Author>>
     suspend fun refreshAuthors(): Result<Unit, NetworkError>
 }

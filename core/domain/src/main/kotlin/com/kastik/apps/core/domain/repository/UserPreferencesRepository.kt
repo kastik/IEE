@@ -2,31 +2,22 @@ package com.kastik.apps.core.domain.repository
 
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
-import com.kastik.apps.core.model.user.UserTheme
+import com.kastik.apps.core.model.user.UserPreferences
+import com.kastik.apps.core.model.user.Theme
 import kotlinx.coroutines.flow.Flow
 import kotlin.time.Instant
 
 interface UserPreferencesRepository {
-    fun hasSkippedSignIn(): Flow<Boolean>
-    suspend fun setHasSkippedSignIn(hasSkippedSignIn: Boolean)
-    fun getTheme(): Flow<UserTheme>
-    suspend fun setTheme(theme: UserTheme)
-    fun isDynamicColorEnabled(): Flow<Boolean>
-    suspend fun setDynamicColorEnabled(enabled: Boolean)
-    fun getSortType(): Flow<SortType>
+    val userPreferences: Flow<UserPreferences>
+    suspend fun setSkippedSignIn(isSkipped: Boolean)
+    suspend fun setTheme(theme: Theme)
+    suspend fun setDynamicColor(isEnabled: Boolean)
     suspend fun setSortType(sortType: SortType)
-    fun getSearchScope(): Flow<SearchScope>
     suspend fun setSearchScope(searchScope: SearchScope)
-    fun isForYouEnabled(): Flow<Boolean>
-    suspend fun setForYouEnabled(value: Boolean)
-    fun areFabFiltersEnabled(): Flow<Boolean>
-    suspend fun setFabFiltersEnabled(value: Boolean)
-    fun getLastNotificationCheckTime(): Flow<Instant?>
-    suspend fun setLastNotificationCheckTime(time: Instant?)
-    fun getAnnouncementCheckIntervalMinutes(): Flow<Int>
-    suspend fun setAnnouncementCheckIntervalMinutes(minutes: Int)
-    fun getImportantEventCount(): Flow<Int>
+    suspend fun setForYou(isEnabled: Boolean)
+    suspend fun setFabFilters(areEnabled: Boolean)
+    suspend fun setLastCheckTime(time: Instant?)
+    suspend fun setCheckIntervalMinutes(minutes: Int)
     suspend fun increaseImportantEventCount()
     suspend fun resetImportantEventCount()
-
 }

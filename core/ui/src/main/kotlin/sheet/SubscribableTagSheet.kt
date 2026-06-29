@@ -20,9 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.component.IEESelectableItem
 import com.kastik.apps.core.designsystem.component.IEESheet
-import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
+import com.kastik.apps.core.designsystem.theme.IeeTheme
 import com.kastik.apps.core.designsystem.theme.ieeListSpring
-import com.kastik.apps.core.model.aboard.SubscribableTag
+import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -35,7 +35,7 @@ fun SubscribableTagSheet(
         initialValue = SheetValue.Hidden,
         enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
     ),
-    subscribableTags: ImmutableList<SubscribableTag>,
+    tags: ImmutableList<Tag>,
     subscribedTags: ImmutableList<Int>,
     onApply: (ImmutableList<Int>) -> Unit,
     onDismiss: () -> Unit,
@@ -43,7 +43,7 @@ fun SubscribableTagSheet(
     var query by remember { mutableStateOf("") }
 
     val state = rememberHierarchicalSelection(
-        roots = subscribableTags,
+        roots = tags,
         initialSelectedIds = subscribedTags,
         query = query,
         idProvider = { it.id },
@@ -63,7 +63,7 @@ fun SubscribableTagSheet(
         applyLabel = stringResource(R.string.action_subscribe),
         onApply = {
             val appliedIds = getOnlyTopLevelSelected(
-                roots = subscribableTags,
+                roots = tags,
                 selectedIds = state.selectedIds.toSet(),
                 idProvider = { it.id },
                 childrenProvider = { it.subTags },
@@ -97,78 +97,39 @@ fun SubscribableTagSheet(
 @Composable
 private fun SubscribableTagSheetPreview() {
     val sampleSubTags = listOf(
-        SubscribableTag(
+        Tag(
             id = 2,
             title = "Sub Tag 1",
-            parentId = 1,
-            isPublic = true,
-            createdAt = "",
-            updatedAt = null,
-            deletedAt = null,
-            mailListName = "sub_tag_1",
-            subTags = emptyList()
         ),
-        SubscribableTag(
+        Tag(
             id = 3,
             title = "Sub Tag 2",
-            parentId = 1,
-            isPublic = true,
-            createdAt = "",
-            updatedAt = null,
-            deletedAt = null,
-            mailListName = "sub_tag_2",
             subTags = listOf(
-                SubscribableTag(
+                Tag(
                     id = 4,
                     title = "Sub Tag 3",
                     parentId = 3,
-                    isPublic = true,
-                    createdAt = "",
-                    updatedAt = null,
-                    deletedAt = null,
-                    mailListName = "sub_tag_3",
-                    subTags = emptyList()
-                ), SubscribableTag(
+                ), Tag(
                     id = 5,
                     title = "Sub Tag 4",
-                    parentId = 3,
-                    isPublic = true,
-                    createdAt = "",
-                    updatedAt = null,
-                    deletedAt = null,
-                    mailListName = "sub_tag_4",
-                    subTags = emptyList()
                 )
             )
         ),
-        SubscribableTag(
+        Tag(
             id = 6,
             title = "Sub Tag 5",
-            parentId = 1,
-            isPublic = true,
-            createdAt = "",
-            updatedAt = null,
-            deletedAt = null,
-            mailListName = "sub_tag_5",
-            subTags = emptyList()
         )
     )
     val sampleTags = persistentListOf(
-        SubscribableTag(
+        Tag(
             id = 1,
             title = "Root Tag",
-            parentId = null,
-            isPublic = true,
-            createdAt = "",
-            updatedAt = null,
-            deletedAt = null,
-            mailListName = "root_tag",
             subTags = sampleSubTags
         )
     )
-    AppsAboardTheme {
+    IeeTheme {
         SubscribableTagSheet(
-            subscribableTags = sampleTags,
+            tags = sampleTags,
             subscribedTags = persistentListOf(2, 4, 6),
             onApply = {},
             onDismiss = {}

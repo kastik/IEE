@@ -1,5 +1,9 @@
 package com.kastik.apps.core.di
 
+import com.kastik.apps.core.network.di.AuthenticatorAboardOkHttp
+import com.kastik.apps.core.network.di.AuthenticatorAboardRetrofit
+import com.kastik.apps.core.network.di.BaseAboardOkHttp
+import com.kastik.apps.core.network.di.BaseAboardRetrofit
 import com.kastik.apps.core.network.interceptor.AboardAuthenticator
 import com.kastik.apps.core.network.interceptor.TokenInterceptor
 import com.kastik.apps.core.network.serializers.SortTypeQueryConverterFactory

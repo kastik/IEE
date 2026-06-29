@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetUserProfileUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    operator fun invoke() = profileRepository.getProfile()
+    operator fun invoke() = profileRepository.profile
 }
 
 class RefreshUserProfileUseCase @Inject constructor(

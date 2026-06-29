@@ -9,14 +9,12 @@ import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import kotlin.time.Clock
@@ -26,22 +24,26 @@ class GetHomeAnnouncementsUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
+    private data class FilterParams(
+        val isSignedIn: Boolean,
+        val sortType: SortType,
+    )
+
     operator fun invoke(): Flow<PagingData<Announcement>> {
         return combine(
-            authenticationRepository.getIsSignedIn(),
-            userPreferencesRepository.getSortType()
-        ) { isSignedIn, sortType ->
-            isSignedIn to sortType
-        }.distinctUntilChanged()
-            .flatMapLatest { (_, sortType) ->
-                announcementRepository.getPagedAnnouncements(
-                    sortType = sortType,
-                    titleQuery = "",
-                    bodyQuery = "",
-                    authorIds = emptyList(),
-                    tagIds = emptyList(),
-                )
-            }
+            authenticationRepository.isSignedIn,
+            userPreferencesRepository.userPreferences
+        ) { isSignedIn, userPreferences ->
+            FilterParams(isSignedIn, userPreferences.sortType)
+        }.distinctUntilChanged().flatMapLatest { params ->
+            announcementRepository.getPagedAnnouncements(
+                sortType = params.sortType,
+                titleQuery = "",
+                bodyQuery = "",
+                authorIds = emptyList(),
+                tagIds = emptyList(),
+            )
+        }
     }
 }
 
@@ -50,42 +52,56 @@ class GetForYouAnnouncementsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
-    operator fun invoke(): Flow<PagingData<Announcement>> =
-        combine(
-            userPreferencesRepository.getSortType(),
-            tagsRepository.getSubscribedTags(),
-        ) { sortType, subscribedTags ->
-            sortType to subscribedTags
-        }.distinctUntilChanged()
-            .flatMapLatest { (sortType, subscribedTags) ->
-                announcementRepository.getPagedAnnouncements(
-                    sortType = sortType,
-                    tagIds = subscribedTags.map { it.id },
-                )
-            }
+    private data class FilterParams(
+        val sortType: SortType,
+        val subscribedTagIds: List<Int>
+    )
+
+    operator fun invoke(): Flow<PagingData<Announcement>> = combine(
+        tagsRepository.subscribedTags,
+        userPreferencesRepository.userPreferences,
+    ) { subscribedTags, userPreferences ->
+        FilterParams(
+            userPreferences.sortType, subscribedTags.map { it.id }
+        )
+    }.distinctUntilChanged().flatMapLatest { params ->
+        announcementRepository.getPagedAnnouncements(
+            sortType = params.sortType,
+            tagIds = params.subscribedTagIds,
+        )
+    }
 }
 
 class GetFilteredAnnouncementsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
+    private data class FilterParams(
+        val sortType: SortType,
+        val titleQuery: String,
+        val bodyQuery: String,
+        val authorIds: List<Int>,
+        val tagIds: List<Int>
+    )
+
     operator fun invoke(
-        query: String = "",
-        authorIds: List<Int> = emptyList(),
-        tagIds: List<Int> = emptyList()
+        query: String = "", authorIds: List<Int> = emptyList(), tagIds: List<Int> = emptyList()
     ): Flow<PagingData<Announcement>> =
-        combine(
-            userPreferencesRepository.getSortType(),
-            userPreferencesRepository.getSearchScope()
-        ) { sortType, searchScope ->
-            sortType to searchScope
-        }.flatMapLatest { (sortType, searchScope) ->
-            announcementRepository.getPagedAnnouncements(
-                sortType = sortType,
-                titleQuery = query.takeIf { searchScope.includesTitle } ?: "",
-                bodyQuery = query.takeIf { searchScope.includesBody } ?: "",
+        userPreferencesRepository.userPreferences.map { userPreferences ->
+            FilterParams(
+                sortType = userPreferences.sortType,
+                titleQuery = query.takeIf { userPreferences.searchScope.includesTitle } ?: "",
+                bodyQuery = query.takeIf { userPreferences.searchScope.includesBody } ?: "",
                 authorIds = authorIds,
                 tagIds = tagIds
+            )
+        }.distinctUntilChanged().flatMapLatest { params ->
+            announcementRepository.getPagedAnnouncements(
+                sortType = params.sortType,
+                titleQuery = params.titleQuery,
+                bodyQuery = params.bodyQuery,
+                authorIds = params.authorIds,
+                tagIds = params.tagIds
             )
         }
 }
@@ -94,17 +110,14 @@ class GetAnnouncementQuickResultsUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
-    operator fun invoke(query: String? = null) =
-        userPreferencesRepository.getSortType()
-            .flatMapLatest { sortType ->
-                if (query.isNullOrBlank()) {
-                    flowOf(persistentListOf())
-                } else {
-                    announcementRepository.getAnnouncementsQuickResults(sortType, query).map {
-                        it.toImmutableList()
-                    }
-                }
+    operator fun invoke(query: String) =
+        userPreferencesRepository.userPreferences.map { userPreferences ->
+            userPreferences.sortType
+        }.distinctUntilChanged().flatMapLatest { sortType ->
+            announcementRepository.getAnnouncementsQuickResults(sortType, query).map {
+                it.toImmutableList()
             }
+        }
 }
 
 class GetAnnouncementWithIdUseCase @Inject constructor(
@@ -118,15 +131,14 @@ class GetAnnouncementWithIdUseCase @Inject constructor(
 class RefreshAnnouncementWithIdUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository
 ) {
-    suspend operator fun invoke(id: Int) =
-        announcementRepository.refreshAnnouncementWithId(id)
+    suspend operator fun invoke(id: Int) = announcementRepository.refreshAnnouncementWithId(id)
 }
 
 class SetAnnouncementCheckTimeUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke() {
-        userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
+        userPreferencesRepository.setLastCheckTime(Clock.System.now())
     }
 }
 
@@ -144,14 +156,13 @@ class CheckNewAnnouncementsUseCase @Inject constructor(
             return subscriptionResult
         }
 
-        val subscribedTagIds =
-            tagsRepository.getSubscribedTags().first().map { it.id }
+        val subscribedTagIds = tagsRepository.subscribedTags.first().map { it.id }
 
         val lastNotifiedTime =
-            userPreferencesRepository.getLastNotificationCheckTime().first()
+            userPreferencesRepository.userPreferences.first().lastNotificationCheckTime
 
         if (subscribedTagIds.isEmpty() || lastNotifiedTime == null) {
-            userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
+            userPreferencesRepository.setLastCheckTime(Clock.System.now())
             return Result.Success(emptyList())
         }
 
@@ -165,7 +176,7 @@ class CheckNewAnnouncementsUseCase @Inject constructor(
 
         when (announcementResult) {
             is Result.Success -> {
-                userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
+                userPreferencesRepository.setLastCheckTime(Clock.System.now())
                 return Result.Success(announcementResult.data)
             }
 

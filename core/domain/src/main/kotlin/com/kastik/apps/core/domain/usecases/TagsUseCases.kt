@@ -4,7 +4,7 @@ import com.kastik.apps.core.common.extensions.removeAccents
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
-import com.kastik.apps.core.model.aboard.SubscribableTag
+import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.model.result.Result
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -20,8 +20,8 @@ class GetAnnouncementTagsUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
 ) {
     operator fun invoke() = combine(
-        tagsRepository.getAnnouncementTags(),
-        authenticationRepository.getIsSignedIn(),
+        tagsRepository.announcementTags,
+        authenticationRepository.isSignedIn,
     ) { tags, isSignedIn ->
         if (isSignedIn) tags else tags.filter { it.isPublic }
     }.map { it.toImmutableList() }
@@ -36,8 +36,8 @@ class RefreshAnnouncementTagsUseCase @Inject constructor(
 class GetSubscribableTagsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository
 ) {
-    operator fun invoke(): Flow<ImmutableList<SubscribableTag>> =
-        tagsRepository.getSubscribableTags().map { it.toImmutableList() }
+    operator fun invoke(): Flow<ImmutableList<Tag>> =
+        tagsRepository.tags.map { it.toImmutableList() }
 }
 
 class RefreshSubscribableTagsUseCase @Inject constructor(
@@ -49,7 +49,7 @@ class RefreshSubscribableTagsUseCase @Inject constructor(
 class GetSubscriptionsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository,
 ) {
-    operator fun invoke() = tagsRepository.getSubscribedTags().map { it.toImmutableList() }
+    operator fun invoke() = tagsRepository.subscribedTags.map { it.toImmutableList() }
 }
 
 class RefreshSubscriptionsUseCase @Inject constructor(
@@ -66,7 +66,7 @@ class SubscribeToTagsUseCase @Inject constructor(
     suspend operator fun invoke(newTagIds: List<Int>) = coroutineScope {
         val result = tagsRepository.subscribeToTags(newTagIds)
         if (result is Result.Success) {
-            userPreferencesRepository.setLastNotificationCheckTime(Clock.System.now())
+            userPreferencesRepository.setLastCheckTime(Clock.System.now())
         }
         result
     }
@@ -78,8 +78,8 @@ class GetTagsQuickResults @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
 ) {
     operator fun invoke(query: String) = combine(
-        tagsRepository.getAnnouncementTags(),
-        authenticationRepository.getIsSignedIn()
+        tagsRepository.announcementTags,
+        authenticationRepository.isSignedIn
     ) { tags, isSignedIn ->
         val normalizedQuery = query.removeAccents()
 

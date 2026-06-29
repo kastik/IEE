@@ -3,15 +3,12 @@ package com.kastik.apps.core.data.repository
 import com.kastik.apps.core.common.di.IoDispatcher
 import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.toNetworkError
-import com.kastik.apps.core.data.mappers.toSubscribableTag
-import com.kastik.apps.core.data.mappers.toSubscribableTagProto
-import com.kastik.apps.core.data.mappers.toSubscribedTagProto
 import com.kastik.apps.core.data.mappers.toTag
 import com.kastik.apps.core.data.mappers.toTagEntity
+import com.kastik.apps.core.data.mappers.toTagProto
 import com.kastik.apps.core.database.dao.TagsDao
-import com.kastik.apps.core.datastore.TagsLocalDataSource
+import com.kastik.apps.core.datastore.datasource.TagsLocalDataSource
 import com.kastik.apps.core.domain.repository.TagsRepository
-import com.kastik.apps.core.model.aboard.SubscribableTag
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
@@ -33,9 +30,17 @@ internal class TagsRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : TagsRepository {
 
-    override fun getAnnouncementTags(): Flow<List<Tag>> {
-        return announcementTagsLocalDataSource.getTags().map { it.map { tag -> tag.toTag() } }
-    }
+    override val announcementTags: Flow<List<Tag>> =
+        announcementTagsLocalDataSource.getTags().map { it.map { tag -> tag.toTag() } }
+
+    override val subscribedTags: Flow<List<Tag>> =
+        subscribableTagsLocalDataSource.subscriptions
+            .map { it.tagsList.map { tag -> tag.toTag() } }
+
+    override val tags: Flow<List<Tag>> =
+        subscribableTagsLocalDataSource.subscribableTags
+            .map { subscribableTags -> subscribableTags.tagsList.map { tag -> tag.toTag() } }
+
 
     override suspend fun refreshAnnouncementTags() = withContext(ioDispatcher) {
         try {
@@ -51,15 +56,10 @@ internal class TagsRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getSubscribableTags(): Flow<List<SubscribableTag>> {
-        return subscribableTagsLocalDataSource.getSubscribableTags()
-            .map { subscribableTags -> subscribableTags.tagsList.map { tag -> tag.toSubscribableTag() } }
-    }
-
     override suspend fun refreshSubscribableTags() = withContext(ioDispatcher) {
         try {
             val subscribableTags = tagsRemoteDataSource.fetchSubscribableTags()
-            subscribableTagsLocalDataSource.setSubscribableTags(subscribableTags.map { tag -> tag.toSubscribableTagProto() })
+            subscribableTagsLocalDataSource.setSubscribableTags(subscribableTags.map { tag -> tag.toTagProto() })
             Result.Success(Unit)
         } catch (e: CancellationException) {
             throw e
@@ -69,15 +69,11 @@ internal class TagsRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getSubscribedTags(): Flow<List<Tag>> =
-        subscribableTagsLocalDataSource.getSubscriptions()
-            .map { it.subscribedTagsList.map { tag -> tag.toTag() } }
-
 
     override suspend fun refreshSubscribedTags() = withContext(ioDispatcher) {
         try {
             val subscribedTags = tagsRemoteDataSource.fetchSubscriptions()
-            subscribableTagsLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
+            subscribableTagsLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toTagProto() })
             Result.Success(Unit)
         } catch (e: CancellationException) {
             throw e

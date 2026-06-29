@@ -7,7 +7,7 @@ import com.kastik.apps.core.model.result.Result
 import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
-    fun getProfile(): Flow<Profile>
+    val profile: Flow<Profile>
     suspend fun refreshProfile(): Result<Unit, NetworkError>
     suspend fun clearLocalData(): Result<Unit, LocalError>
 }

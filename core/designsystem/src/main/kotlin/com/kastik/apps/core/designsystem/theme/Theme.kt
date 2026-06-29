@@ -87,7 +87,7 @@ private val darkScheme = darkColorScheme(
 )
 
 @Composable
-fun AppsAboardTheme(
+fun IeeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit

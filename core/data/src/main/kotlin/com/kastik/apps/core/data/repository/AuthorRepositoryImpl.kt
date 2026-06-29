@@ -26,9 +26,9 @@ internal class AuthorRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : AuthorRepository {
 
-    override fun getAuthors(): Flow<List<Author>> {
-        return authorLocalDataSource.getAuthors().map { it.map { it.toAuthor() } }
-    }
+    override val authors: Flow<List<Author>> =
+        authorLocalDataSource.getAuthors().map { it.map { it.toAuthor() } }
+
 
     override suspend fun refreshAuthors() = withContext(ioDispatcher) {
         try {

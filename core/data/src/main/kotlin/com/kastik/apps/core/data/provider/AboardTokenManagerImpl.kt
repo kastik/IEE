@@ -1,6 +1,6 @@
 package com.kastik.apps.core.data.provider
 
-import com.kastik.apps.core.datastore.AuthenticationLocalDataSource
+import com.kastik.apps.core.datastore.datasource.AuthenticationLocalDataSource
 import com.kastik.apps.core.network.interceptor.TokenManager
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class AboardTokenManagerImpl @Inject constructor(
 ) : TokenManager {
 
     override suspend fun getToken(): String? =
-        authenticationLocalDataSource.getAboardAccessToken().first()
+        authenticationLocalDataSource.aboardAccessToken.first()
 
     override suspend fun updateToken(newToken: String) =
         authenticationLocalDataSource.setAboardAccessToken(newToken)
