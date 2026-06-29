@@ -3,6 +3,7 @@ package com.kastik.apps.core.database.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.kastik.apps.core.database.converters.InstantConverter
 import com.kastik.apps.core.database.converters.IntListConverter
 import com.kastik.apps.core.database.converters.SortTypeConverter
 import com.kastik.apps.core.database.dao.AnnouncementDao
@@ -13,13 +14,13 @@ import com.kastik.apps.core.database.entities.AnnouncementEntity
 import com.kastik.apps.core.database.entities.AttachmentEntity
 import com.kastik.apps.core.database.entities.AuthorEntity
 import com.kastik.apps.core.database.entities.BodyEntity
-import com.kastik.apps.core.database.entities.RemoteKeys
+import com.kastik.apps.core.database.entities.RemoteKeysEntity
 import com.kastik.apps.core.database.entities.TagEntity
 import com.kastik.apps.core.database.entities.TagsCrossRefEntity
 
 @Database(
     entities = [
-        RemoteKeys::class,
+        RemoteKeysEntity::class,
         TagEntity::class,
         BodyEntity::class,
         AuthorEntity::class,
@@ -27,10 +28,10 @@ import com.kastik.apps.core.database.entities.TagsCrossRefEntity
         AnnouncementEntity::class,
         TagsCrossRefEntity::class,
     ],
-    version = 8,
+    version = 10,
     exportSchema = true
 )
-@TypeConverters(IntListConverter::class, SortTypeConverter::class)
+@TypeConverters(IntListConverter::class, SortTypeConverter::class, InstantConverter::class)
 
 abstract class AppDatabase : RoomDatabase() {
     abstract fun announcementDao(): AnnouncementDao

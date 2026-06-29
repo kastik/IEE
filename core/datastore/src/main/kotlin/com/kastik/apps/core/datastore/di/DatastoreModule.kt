@@ -1,7 +1,6 @@
 package com.kastik.apps.core.datastore.di
 
 import android.content.Context
-import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
@@ -9,8 +8,6 @@ import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.datastore.datasource.AuthenticationLocalDataSource

@@ -40,8 +40,7 @@ interface AnnouncementDao {
     @Query(
         """
     SELECT announcemententity.* FROM announcemententity
-    WHERE title LIKE '%' || :query || '%' 
-    OR engTitle LIKE '%' || :query || '%'
+    WHERE title LIKE '%' || :query || '%'
     OR preview LIKE '%' || :query || '%'
     ORDER BY
     CASE WHEN :sortType = 'Priority' THEN 

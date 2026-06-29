@@ -16,7 +16,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -33,9 +32,8 @@ class NetworkModuleProduction {
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl("https://aboard.iee.ihu.gr/api/v2/")
+            .baseUrl("https://aboard.iee.ihu.gr/api/")
             .addConverterFactory(SortTypeQueryConverterFactory())
-            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(json.asConverterFactory(contentType))
             .client(client)
             .build()
@@ -50,9 +48,7 @@ class NetworkModuleProduction {
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl("https://aboard.iee.ihu.gr/api/v2/")
-            .addConverterFactory(SortTypeQueryConverterFactory())
-            .addConverterFactory(ScalarsConverterFactory.create())
+            .baseUrl("https://aboard.iee.ihu.gr/api/")
             .addConverterFactory(json.asConverterFactory(contentType))
             .client(client)
             .build()

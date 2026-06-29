@@ -15,11 +15,12 @@ import com.kastik.apps.core.data.mappers.toTagCrossRefs
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.data.utils.Base64ImageExtractor
 import com.kastik.apps.core.database.db.AppDatabase
-import com.kastik.apps.core.database.entities.RemoteKeys
+import com.kastik.apps.core.database.entities.RemoteKeysEntity
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSource
-import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import com.kastik.apps.core.network.model.common.PagedResponseDto
+import com.kastik.apps.core.network.model.response.AnnouncementDto
 import kotlinx.coroutines.CancellationException
 
 @OptIn(ExperimentalPagingApi::class)
@@ -69,8 +70,8 @@ class AnnouncementRemoteMediator(
             page = page,
             title = titleQuery,
             body = bodyQuery,
-            tagId = tagIds,
-            authorId = authorIds,
+            tagIds = tagIds,
+            authorIds = authorIds,
             perPage = state.config.pageSize,
             sortBy = sortType
         )
@@ -92,7 +93,7 @@ class AnnouncementRemoteMediator(
             val nextKey = if (endOfPaginationReached) null else page + 1
 
             val keys = response.data.map { dto ->
-                RemoteKeys(
+                RemoteKeysEntity(
                     announcementId = dto.id,
                     titleQuery = titleQuery,
                     bodyQuery = bodyQuery,
@@ -116,7 +117,7 @@ class AnnouncementRemoteMediator(
         return MediatorResult.Error(e)
     }
 
-    private suspend fun insertAnnouncement(dto: PagedAnnouncementsResponseDto) {
+    private suspend fun insertAnnouncement(dto: PagedResponseDto<AnnouncementDto>) {
 
         val mappedAuthors = dto.data.map { it.author.toAuthorEntity() }
         authorLocalDataSource.insertOrIgnoreAuthors(mappedAuthors)
@@ -138,7 +139,7 @@ class AnnouncementRemoteMediator(
 
     }
 
-    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, AnnouncementPreviewRelation>): RemoteKeys? {
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, AnnouncementPreviewRelation>): RemoteKeysEntity? {
         val lastItem = state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?: return null
 

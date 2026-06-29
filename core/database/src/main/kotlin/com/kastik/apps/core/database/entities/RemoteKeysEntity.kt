@@ -14,7 +14,7 @@ import com.kastik.apps.core.model.aboard.SortType
         "announcementId"
     ]
 )
-data class RemoteKeys(
+data class RemoteKeysEntity(
     val announcementId: Int,
     val titleQuery: String,
     val bodyQuery: String,

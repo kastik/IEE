@@ -1,15 +1,17 @@
-package com.kastik.apps.core.network.model.aboard.announcement
+package com.kastik.apps.core.network.model.common
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PagedMetaResponseDto(
+data class PagedMetaDto(
     @SerialName("current_page") val currentPage: Int,
-    val from: Int,
+
     @SerialName("last_page") val lastPage: Int,
-    val path: String,
+    @SerialName("path") val path: String,
     @SerialName("per_page") val perPage: Int,
-    val to: Int,
-    val total: Int
+
+    @SerialName("from") val from: Int,
+    @SerialName("to") val to: Int,
+    @SerialName("total") val total: Int
 )

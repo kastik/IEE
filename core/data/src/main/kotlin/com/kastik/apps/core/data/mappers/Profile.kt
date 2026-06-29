@@ -2,17 +2,16 @@ package com.kastik.apps.core.data.mappers
 
 import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.model.aboard.Profile
-import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
+import com.kastik.apps.core.network.model.response.ProfileDto
 
-fun ProfileResponseDto.toProfileProto(): ProfileProto = ProfileProto.newBuilder().apply {
+fun ProfileDto.toProfileProto(): ProfileProto = ProfileProto.newBuilder().apply {
     id = this@toProfileProto.id
     uid = this@toProfileProto.uid
-    name = this@toProfileProto.name.ifEmpty { nameEng }
+    name = this@toProfileProto.name
     email = this@toProfileProto.email
     isAdmin = this@toProfileProto.isAdmin
     isAuthor = this@toProfileProto.isAuthor
 
-    // Convert strings to Timestamps
     this@toProfileProto.createdAt?.toTimestamp()?.let { createdAt = it }
     this@toProfileProto.updatedAt?.toTimestamp()?.let { updatedAt = it }
     this@toProfileProto.deletedAt?.toTimestamp()?.let { deletedAt = it }

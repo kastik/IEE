@@ -2,90 +2,85 @@ package com.kastik.apps.core.network.api
 
 
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
-import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
-import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
-import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
-import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
-import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDto
-import com.kastik.apps.core.network.model.aboard.tags.SubscribeToTagsRequestDto
-import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
-import com.kastik.apps.core.network.model.aboard.tags.TagsResponseDto
+import com.kastik.apps.core.network.model.common.PagedResponseDto
+import com.kastik.apps.core.network.model.common.SingleResponseDto
+import com.kastik.apps.core.network.model.request.SubscribeDto
+import com.kastik.apps.core.network.model.response.AnnouncementDto
+import com.kastik.apps.core.network.model.response.AnnouncementTagsResponseDto
+import com.kastik.apps.core.network.model.response.AuthorDto
+import com.kastik.apps.core.network.model.response.ProfileDto
+import com.kastik.apps.core.network.model.response.TagResponseDto
+import com.kastik.apps.core.network.model.response.TokenDto
 import kotlinx.datetime.LocalDateTime
-import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
-import retrofit2.http.Streaming
 
 interface AboardApiClient {
-    @GET("announcements")
+    @GET("v2/announcements")
     @Headers("Accept: application/json")
     suspend fun getAnnouncements(
         @Query("sortId") sortType: SortType,
         @Query("page") page: Int,
         @Query("perPage") perPage: Int,
-        @Query("users[]") authorId: List<Int>? = null,
-        @Query("tags[]") tagsIds: List<Int>? = null,
+        @Query("users[]") authorIds: List<Int>? = null,
+        @Query("tags[]") tagIds: List<Int>? = null,
         @Query("title") title: String? = null,
         @Query("body") body: String? = null,
         @Query("updatedAfter") updatedAfter: LocalDateTime? = null,
-    ): PagedAnnouncementsResponseDto
+    ): PagedResponseDto<AnnouncementDto>
 
-    @GET("announcements/{id}")
+    @GET("v2/announcements/{id}")
     @Headers("Accept: application/json")
     suspend fun getAnnouncement(
         @Path("id") id: Int
-    ): AnnouncementResponseDto
-
-    @Streaming
-    @GET("announcements/{id}/attachments/{attachmentId}")
-    suspend fun searchAnnouncements(
-        @Path("id") id: Int,
-        @Path("attachmentId") attachmentId: Int
-    ): ResponseBody
+    ): SingleResponseDto<AnnouncementDto>
 
 
-    @GET("tags")
+    @GET("v2/tags")
     @Headers("Accept: application/json")
     suspend fun getTags(
-    ): TagsResponseDto
+    ): AnnouncementTagsResponseDto
 
-    @GET("authors")
+    @GET("v2/authors")
     @Headers("Accept: application/json")
     suspend fun getAuthors(
-    ): List<AuthorResponseDto>
+    ): List<AuthorDto>
 
 
-    @GET("authenticate")
+    @GET("v2/subscribetags")
     @Headers("Accept: application/json")
-    suspend fun exchangeCodeForAboardToken(
-        @Query("code") code: String,
-    ): AboardTokenResponseDto
+    suspend fun getAvailableTags(): List<TagResponseDto>
 
-    @POST("auth/refresh")
+
+
+
+    @GET("v2/authenticate")
+    @Headers("Accept: application/json")
+    suspend fun exchangeAuthCode(
+        @Query("code") code: String,
+    ): TokenDto
+
+    @GET("v2/auth/whoami")
+    @Headers("Accept: application/json")
+    suspend fun getCurrentUser(): ProfileDto
+
+    @POST("v2/auth/refresh")
     @Headers("Accept: application/json")
     suspend fun refreshToken(
-    ): AboardTokenResponseDto
+    ): TokenDto
 
-    @GET("auth/whoami")
+    @POST("v2/auth/subscribe")
     @Headers("Accept: application/json")
-    suspend fun getUserInfo(): ProfileResponseDto
-
-    @GET("auth/subscriptions")
-    @Headers("Accept: application/json")
-    suspend fun getUserSubscriptions(): List<SubscribedTagResponseDto>
-
-    @GET("subscribetags")
-    @Headers("Accept: application/json")
-    suspend fun getUserSubscribableTags(): List<SubscribableTagsResponseDto>
-
-    @POST("auth/subscribe")
     suspend fun subscribeToTags(
-        @Body updatedTags: SubscribeToTagsRequestDto
+        @Body tags: SubscribeDto
     )
+
+    @GET("v2/auth/subscriptions")
+    @Headers("Accept: application/json")
+    suspend fun getSubscribedTags(): List<TagResponseDto>
 
 }

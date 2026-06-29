@@ -105,8 +105,8 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
                 sortBy = sortType,
                 title = titleQuery,
                 body = bodyQuery,
-                tagId = tagIds,
-                authorId = authorIds,
+                tagIds = tagIds,
+                authorIds = authorIds,
                 updatedAfter = greekLocalTime
             ).data.map { it.toAnnouncement() }
         )

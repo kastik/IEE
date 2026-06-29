@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 8,
-    "identityHash": "a1e190342f3a7c552d2da32acc7ffcb5",
+    "identityHash": "6245387f77e58944ac22a7a8c9dcc94b",
     "entities": [
       {
         "tableName": "remote_keys",
@@ -109,7 +109,7 @@
       },
       {
         "tableName": "BodyEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`announcementId` INTEGER NOT NULL, `body` TEXT NOT NULL, `engBody` TEXT NOT NULL, PRIMARY KEY(`announcementId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`announcementId` INTEGER NOT NULL, `body` TEXT NOT NULL, PRIMARY KEY(`announcementId`))",
         "fields": [
           {
             "fieldPath": "announcementId",
@@ -120,12 +120,6 @@
           {
             "fieldPath": "body",
             "columnName": "body",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "engBody",
-            "columnName": "engBody",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -255,7 +249,7 @@
       },
       {
         "tableName": "AnnouncementEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `authorId` INTEGER NOT NULL, `title` TEXT NOT NULL, `engTitle` TEXT, `preview` TEXT NOT NULL, `engPreview` TEXT, `hasEng` INTEGER NOT NULL, `createdAt` TEXT NOT NULL, `updatedAt` TEXT NOT NULL, `isPinned` INTEGER NOT NULL, `pinnedUntil` TEXT, `isEvent` INTEGER, `eventStartTime` TEXT, `eventEndTime` TEXT, `eventLocation` TEXT, `gmaps` TEXT, `announcementUrl` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`authorId`) REFERENCES `AuthorEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `authorId` INTEGER NOT NULL, `title` TEXT NOT NULL, `preview` TEXT NOT NULL, `createdAt` TEXT NOT NULL, `updatedAt` TEXT NOT NULL, `isPinned` INTEGER NOT NULL, `pinnedUntil` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`authorId`) REFERENCES `AuthorEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -276,25 +270,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "engTitle",
-            "columnName": "engTitle",
-            "affinity": "TEXT"
-          },
-          {
             "fieldPath": "preview",
             "columnName": "preview",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "engPreview",
-            "columnName": "engPreview",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "hasEng",
-            "columnName": "hasEng",
-            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -319,37 +297,6 @@
             "fieldPath": "pinnedUntil",
             "columnName": "pinnedUntil",
             "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "isEvent",
-            "columnName": "isEvent",
-            "affinity": "INTEGER"
-          },
-          {
-            "fieldPath": "eventStartTime",
-            "columnName": "eventStartTime",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "eventEndTime",
-            "columnName": "eventEndTime",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "eventLocation",
-            "columnName": "eventLocation",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "gmaps",
-            "columnName": "gmaps",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "announcementUrl",
-            "columnName": "announcementUrl",
-            "affinity": "TEXT",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -464,7 +411,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a1e190342f3a7c552d2da32acc7ffcb5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6245387f77e58944ac22a7a8c9dcc94b')"
     ]
   }
 }

@@ -1,8 +1,8 @@
 package com.kastik.apps.core.network.interceptor
 
 import com.kastik.apps.core.crashlytics.Crashlytics
-import com.kastik.apps.core.network.di.BaseAboardClient
 import com.kastik.apps.core.network.api.AboardApiClient
+import com.kastik.apps.core.network.di.BaseAboardClient
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request

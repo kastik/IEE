@@ -13,7 +13,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -33,9 +32,8 @@ class NetworkModuleLocal {
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl("https://kastik-pc.local/api/v2/")
+            .baseUrl("https://kastik-pc.local/api/")
             .addConverterFactory(SortTypeQueryConverterFactory())
-            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(json.asConverterFactory(contentType))
             .client(client)
             .build()
@@ -50,9 +48,8 @@ class NetworkModuleLocal {
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
-            .baseUrl("https://kastik-pc.local/api/v2/")
+            .baseUrl("https://kastik-pc.local/api/")
             .addConverterFactory(SortTypeQueryConverterFactory())
-            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(json.asConverterFactory(contentType))
             .client(client)
             .build()

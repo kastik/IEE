@@ -2,14 +2,14 @@ package com.kastik.apps.core.data.mappers
 
 import com.kastik.apps.core.database.entities.AttachmentEntity
 import com.kastik.apps.core.model.aboard.Attachment
-import com.kastik.apps.core.network.model.aboard.attachment.AttachmentResponseDto
+import com.kastik.apps.core.network.model.response.AttachmentDto
 
 
-fun AttachmentResponseDto.toAttachmentEntity() = AttachmentEntity(
+fun AttachmentDto.toAttachmentEntity() = AttachmentEntity(
     id = id,
     announcementId = announcementId,
-    filename = filename,
-    fileSize = filesize,
+    filename = fileName,
+    fileSize = fileSize,
     mimeType = mimeType,
     attachmentUrl = attachmentUrl,
     attachmentUrlPreview = attachmentUrlView
@@ -17,7 +17,7 @@ fun AttachmentResponseDto.toAttachmentEntity() = AttachmentEntity(
 
 fun AttachmentEntity.toAttachment() = Attachment(
     id = id,
-    filename = filename,
+    fileName = filename,
     fileSize = fileSize,
     mimeType = mimeType,
 )
