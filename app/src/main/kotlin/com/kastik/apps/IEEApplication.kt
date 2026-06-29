@@ -18,9 +18,6 @@ class IEEApplication : Application(), Configuration.Provider {
     lateinit var workerFactory: HiltWorkerFactory
 
     @Inject
-    lateinit var fetchRemoteOptionsUseCase: FetchRemoteOptionsUseCase
-
-    @Inject
     @ApplicationScope
     lateinit var applicationScope: CoroutineScope
 
@@ -37,10 +34,6 @@ class IEEApplication : Application(), Configuration.Provider {
 
         devTools.setupStrictMode()
         devTools.setupLeakCanary()
-
-        applicationScope.launch {
-            fetchRemoteOptionsUseCase()
-        }
 
     }
 

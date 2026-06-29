@@ -7,5 +7,4 @@ import androidx.room.PrimaryKey
 data class BodyEntity(
     @PrimaryKey val announcementId: Int,
     val body: String,
-    val engBody: String,
 )

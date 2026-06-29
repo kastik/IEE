@@ -4,9 +4,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
-import com.kastik.apps.core.config.FirebaseConfigRepository
 import com.kastik.apps.core.config.R
-import com.kastik.apps.core.domain.repository.RemoteConfigRepository
+import com.kastik.apps.core.config.RemoteConfig
+import com.kastik.apps.core.config.impl.RemoteConfigReleaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RemoteConfigModule {
+abstract class RemoteConfigReleaseModule {
 
     companion object {
         @Provides
@@ -33,6 +33,7 @@ abstract class RemoteConfigModule {
     }
 
     @Binds
-    internal abstract fun bindRemoteConfig(impl: FirebaseConfigRepository): RemoteConfigRepository
+    @Singleton
+    internal abstract fun bindRemoteConfig(impl: RemoteConfigReleaseImpl): RemoteConfig
 
 }

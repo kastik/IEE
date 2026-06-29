@@ -1,0 +1,19 @@
+package com.kastik.apps.core.config.di
+
+import com.kastik.apps.core.config.RemoteConfig
+import com.kastik.apps.core.config.impl.RemoteConfigDebugImpl
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RemoteConfigDebugModule {
+
+    @Binds
+    @Singleton
+    internal abstract fun bindRemoteConfig(impl: RemoteConfigDebugImpl): RemoteConfig
+
+}
