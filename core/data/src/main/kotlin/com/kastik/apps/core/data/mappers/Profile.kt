@@ -13,8 +13,6 @@ fun ProfileDto.toProfileProto(): ProfileProto = ProfileProto.newBuilder().apply 
     isAuthor = this@toProfileProto.isAuthor
 
     this@toProfileProto.createdAt?.toTimestamp()?.let { createdAt = it }
-    this@toProfileProto.updatedAt?.toTimestamp()?.let { updatedAt = it }
-    this@toProfileProto.deletedAt?.toTimestamp()?.let { deletedAt = it }
     this@toProfileProto.lastLoginAt?.toTimestamp()?.let { lastLoginAt = it }
 }.build()
 
@@ -25,8 +23,6 @@ fun ProfileProto.toProfile(): Profile = Profile(
     email = email,
     isAdmin = isAdmin,
     isAuthor = isAuthor,
-    createdAt = if (hasCreatedAt()) createdAt.toInstant() else null,
-    updatedAt = if (hasUpdatedAt()) updatedAt.toInstant() else null,
-    deletedAt = if (hasDeletedAt()) deletedAt.toInstant() else null,
+    createdAt = createdAt.toInstant(),
     lastLoginAt = lastLoginAt.toInstant()
 )

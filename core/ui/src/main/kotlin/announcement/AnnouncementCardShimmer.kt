@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kastik.apps.core.designsystem.component.IeePreview
 
 @Composable
 fun AnnouncementCardShimmer(
@@ -139,5 +140,7 @@ private fun ShimmerBlock(
 @Preview
 @Composable
 fun PreviewAnnouncementCardShimmer() {
-    AnnouncementCardShimmer()
+    IeePreview {
+        AnnouncementCardShimmer()
+    }
 }

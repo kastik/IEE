@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.kastik.apps.core.designsystem.component.IEEFilterChip
+import com.kastik.apps.core.designsystem.component.IeeFilterChip
 
 @Composable
 fun SearchBarFilters(
@@ -30,13 +30,13 @@ fun SearchBarFilters(
             .padding(horizontal = 6.dp)
             .horizontalScroll(rememberScrollState())
     ) {
-        IEEFilterChip(
+        IeeFilterChip(
             label = tagLabel,
             selectedCount = selectedTagsCount,
             onClick = openTagSheet
         )
 
-        IEEFilterChip(
+        IeeFilterChip(
             label = authorLabel,
             selectedCount = selectedAuthorsCount,
             onClick = openAuthorSheet

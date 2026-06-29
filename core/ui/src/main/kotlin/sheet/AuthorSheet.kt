@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.common.extensions.removeAccents
-import com.kastik.apps.core.designsystem.component.IEESelectableItem
-import com.kastik.apps.core.designsystem.component.IEESheet
-import com.kastik.apps.core.designsystem.theme.IeeTheme
+import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeSelectableItem
+import com.kastik.apps.core.designsystem.component.IeeSheet
 import com.kastik.apps.core.model.aboard.Author
 import com.kastik.apps.core.ui.R
 import kotlinx.collections.immutable.ImmutableList
@@ -65,7 +65,7 @@ fun AuthorSheet(
             .groupBy { it.name.first().uppercaseChar() }
     }
 
-    IEESheet(
+    IeeSheet(
         modifier = modifier,
         sheetState = authorSheetState,
         searchQuery = query,
@@ -90,7 +90,7 @@ fun AuthorSheet(
                     val isSelected = id in currentSelection
                     val label = author.announcementCount?.let { count -> "${author.name} [$count]" }
                         ?: author.name
-                    IEESelectableItem(
+                    IeeSelectableItem(
                         title = label,
                         isSelected = isSelected,
                         onClick = {
@@ -130,7 +130,7 @@ private fun AlphabetHeader(
 @Preview
 @Composable
 private fun AuthorSheetPreview() {
-    IeeTheme {
+    IeePreview {
         AuthorSheet(
             authors = persistentListOf(
                 Author(id = 1, name = "Alice", announcementCount = 3),

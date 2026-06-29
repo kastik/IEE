@@ -8,7 +8,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:data="com.kastik.apps://home?initialTab=FOR_YOU"
-            android:targetClass="com.kastik.apps.MainActivity"
+            android:targetClass="com.kastik.apps.activity.IeeMainActivity"
             android:targetPackage="com.kastik.apps" />
     </shortcut>
 </shortcuts>

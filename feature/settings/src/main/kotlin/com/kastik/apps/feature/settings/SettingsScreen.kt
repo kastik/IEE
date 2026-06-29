@@ -700,26 +700,37 @@ private fun SettingNavigationRow(
 
 @Preview
 @Composable
-fun SettingsScreenPreview() {
-    SettingsScreenContent(
-        theme = UserTheme.FOLLOW_SYSTEM,
-        onThemeChange = {},
-        dynamicColor = true,
-        onDynamicColorChange = {},
-        sortType = SortType.Priority,
-        onSortTypeChange = {},
-        searchScope = SearchScope.Title,
-        onSearchScopeChange = {},
-        forYouEnabled = false,
-        isForYouAvailable = true,
-        onForYouChange = {},
-        fabFiltersDisabled = false,
-        onFabFiltersChange = {},
-        announcementCheckIntervalMinutes = 1,
-        isAnnouncementCheckIntervalAvailable = true,
-        setAnnouncementCheckIntervalMinutes = {},
-        areNotificationsAllowed = true,
-        navigateToLicenses = {},
-    )
+fun SettingsScreenSuccessPreview() {
+    IeePreview {
+        SettingsScreenSuccess(
+            theme = Theme.FOLLOW_SYSTEM,
+            onThemeChange = {},
+            dynamicColor = true,
+            onDynamicColorChange = {},
+            sortType = SortType.Priority,
+            onSortTypeChange = {},
+            searchScope = SearchScope.Title,
+            onSearchScopeChange = {},
+            forYouEnabled = false,
+            isForYouAvailable = true,
+            onForYouChange = {},
+            fabFiltersDisabled = false,
+            onFabFiltersChange = {},
+            announcementCheckIntervalMinutes = 1,
+            isAnnouncementCheckIntervalAvailable = true,
+            setAnnouncementCheckIntervalMinutes = {},
+            areNotificationsAllowed = true,
+            navigateToLicenses = {},
+        )
+    }
+
+}
+
+@Preview
+@Composable
+fun SettingsScreenLoadingPreview() {
+    IeePreview {
+        SettingsScreenLoading()
+    }
 }
 

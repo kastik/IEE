@@ -310,32 +310,27 @@ private fun HtmlImage(image: ProcessedBody.Image) {
 
 @Preview
 @Composable
-fun SuccessStatePreview() {
-    SuccessState(
-        announcementId = 1,
-        title = "Announcement Title",
-        author = "Kostas Papastathopoulos",
-        prossedBodies = persistentListOf(ProcessedBody.Text(AnnotatedString.fromHtml("Announcement Body"))),
-        date = "2/10/2025",
-        tags = persistentListOf(
-            Tag(id = 1, title = "Tag 1"),
-            Tag(id = 2, title = "Tag 3"),
-            Tag(id = 3, title = "Tag 2"),
-        ),
-        attachments = persistentListOf(
-            Attachment(
-                id = 1, filename = "Attachment 1", fileSize = 1000, mimeType = "TODO()"
-            ),
-            Attachment(
-                id = 2, filename = "Attachment 2", fileSize = 1000, mimeType = "TODO()"
-            ),
-            Attachment(
-                id = 3, filename = "Attachment 3", fileSize = 1000, mimeType = "TODO()"
-            ),
-        ),
-        navigateBack = {},
-        onAttachmentClick = { _, _, _, _ -> },
-        shouldShowReviewDialog = false,
-        onSuccessfulReview = {},
-    )
+fun AnnouncementScreenSuccessPreview() {
+    IeePreview {
+        AnnouncementScreenSuccess()
+    }
+}
+
+@Preview
+@Composable
+fun AnnouncementScreenLoadingPreview() {
+    IeePreview {
+        AnnouncementScreenLoading()
+    }
+}
+
+@Preview
+@Composable
+fun AnnouncementScreenErrorPreview() {
+    IeePreview {
+        AnnouncementScreenError(
+            resId = 0,
+            announcementId = 0
+        )
+    }
 }

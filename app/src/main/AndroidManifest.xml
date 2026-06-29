@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name=".IEEApplication"
+        android:name=".IeeApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -17,7 +17,7 @@
         android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/iee_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.IEE.Splash.Theme"
+        android:theme="@style/Theme.Iee.Splash.Theme"
         tools:targetApi="33">
 
         <provider
@@ -33,9 +33,9 @@
         </provider>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.IeeMainActivity"
             android:exported="true"
-            android:theme="@style/Theme.IEE.Splash.Theme"
+            android:theme="@style/Theme.Iee.Splash.Theme"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.theme.tearCornerShape
 
 @Composable
-fun IEETag(
+fun IeeTag(
     text: String,
     modifier: Modifier = Modifier,
 ) {
@@ -40,6 +40,8 @@ fun IEETag(
 
 @Preview
 @Composable
-fun IEETagPreview() {
-    IEETag(text = "1st semester")
+fun IeeTagPreview() {
+    IeePreview {
+        IeeTag(text = "1st semester")
+    }
 }

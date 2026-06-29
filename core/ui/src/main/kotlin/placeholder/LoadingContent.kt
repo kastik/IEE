@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.kastik.apps.core.designsystem.component.IeePreview
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -53,7 +53,7 @@ fun LoadingContent(
 @Preview
 @Composable
 fun LoadingContentPaggingPreview() {
-    Surface {
+    IeePreview {
         LoadingContent(
             message = "Getting next page...",
             progressIndicatorSize = 32.dp,
@@ -65,7 +65,7 @@ fun LoadingContentPaggingPreview() {
 @Preview
 @Composable
 fun LoadingContentFullScreenPreview() {
-    Surface {
+    IeePreview {
         LoadingContent(
             message = "Doing work...",
             modifier = Modifier.fillMaxSize()

@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun IEESelectableItem(
+fun IeeSelectableItem(
     modifier: Modifier = Modifier,
     title: String,
     isSelected: Boolean,
@@ -81,9 +81,9 @@ fun IEESelectableItem(
 
 @Preview
 @Composable
-fun IEEUnSelectableItemSelectedPreview() {
-    MaterialTheme {
-        IEESelectableItem(
+fun IeeUnSelectableItemSelectedPreview() {
+    IeePreview {
+        IeeSelectableItem(
             title = "Not Selected Item",
             isSelected = false,
             onClick = {}
@@ -93,9 +93,9 @@ fun IEEUnSelectableItemSelectedPreview() {
 
 @Preview
 @Composable
-fun IEESelectableItemSelectedPreview() {
-    MaterialTheme {
-        IEESelectableItem(
+fun IeeSelectableItemSelectedPreview() {
+    IeePreview {
+        IeeSelectableItem(
             title = "Selected Item",
             isSelected = true,
             onClick = {}

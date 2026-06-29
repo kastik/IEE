@@ -10,7 +10,6 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -20,7 +19,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun IEEFloatingToolBar(
+fun IeeFloatingToolBar(
     modifier: Modifier = Modifier,
     expanded: Boolean,
     expandedAction: () -> Unit,
@@ -60,9 +59,9 @@ fun IEEFloatingToolBar(
 
 @Preview
 @Composable
-fun IEEFloatingToolBarExpandedPreview() {
-    MaterialTheme {
-        IEEFloatingToolBar(
+fun IeeFloatingToolBarExpandedPreview() {
+    IeePreview {
+        IeeFloatingToolBar(
             expanded = false,
             expandedAction = {},
             collapsedAction = { },
@@ -74,9 +73,9 @@ fun IEEFloatingToolBarExpandedPreview() {
 
 @Preview
 @Composable
-fun IEEFloatingToolBarCollapsedPreview() {
-    MaterialTheme {
-        IEEFloatingToolBar(
+fun IeeFloatingToolBarCollapsedPreview() {
+    IeePreview {
+        IeeFloatingToolBar(
             expanded = true,
             expandedAction = {},
             collapsedAction = { },

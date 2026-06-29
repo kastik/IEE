@@ -577,53 +577,15 @@ private fun NotificationRationale() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showSystemUi = false, showBackground = true)
+@Preview
 @Composable
-fun PreviewHomeScreenContent() {
-    val pagedAnnouncements = flowOf(PagingData.from(FakeAnnouncements)).collectAsLazyPagingItems()
-    AppsAboardTheme {
-        Surface {
-            HomeScreenContent(
-                uiState = UiState(),
-                initialTab = HomeTab.HOME,
-                homeFeedAnnouncements = pagedAnnouncements,
-                forYouAnnouncements = pagedAnnouncements,
-                navigateToAnnouncement = {},
-                navigateToSettings = {},
-                navigateToProfile = {},
-                onSignInNoticeDismissed = {},
-                navigateToSearch = { _, _, _ -> },
-                searchBarTextFieldState = TextFieldState(),
-            )
-        }
+fun PreviewHomeScreen() {
+    val emptyFlow = flowOf(PagingData.empty<Announcement>())
+    val lazyItems = emptyFlow.collectAsLazyPagingItems()
+    IeePreview {
+        HomeScreen(
+            homeFeedAnnouncements = lazyItems,
+            forYouAnnouncements = lazyItems,
+        )
     }
 }
-
-val FakeTags = listOf(
-    Tag(id = 1, title = "Tag1"),
-    Tag(id = 2, title = "Tag2"),
-)
-
-val FakeAttachments = listOf(
-    Attachment(
-        id = 1,
-        filename = "image.jpg",
-        fileSize = 1000,
-        mimeType = "TODO()",
-    )
-)
-
-val FakeAnnouncements = listOf(
-    Announcement(
-        id = 1,
-        title = "Announcement Title",
-        preview = "The quick brow fox jumps over the lazy dog",
-        author = "Kostas",
-        tags = FakeTags,
-        attachments = FakeAttachments,
-        date = "10-12-2025 11:45",
-        pinned = false,
-        body = "",
-    )
-)

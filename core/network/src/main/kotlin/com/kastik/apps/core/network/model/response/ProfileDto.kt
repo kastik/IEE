@@ -24,12 +24,6 @@ data class ProfileDto(
     @SerialName("created_at") val createdAt: Instant?,
 
     @Serializable(with = InstantSerializer::class)
-    @SerialName("updated_at") val updatedAt: Instant?,
-
-    @Serializable(with = InstantSerializer::class)
-    @SerialName("deleted_at") val deletedAt: Instant?,
-
-    @Serializable(with = InstantSerializer::class)
     @SerialName("last_login_at") val lastLoginAt: Instant?,
 
 )

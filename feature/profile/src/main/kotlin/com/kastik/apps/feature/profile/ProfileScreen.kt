@@ -364,30 +364,49 @@ private fun ProfileSubscribedTags(
     }
 }
 
+@Preview
+@Composable
+fun ProfileErrorPreview() {
+    IeePreview {
+        ProfileError()
+    }
+}
 
 @Preview
 @Composable
-fun ProfileSuccessStatePreview() {
-    SuccessState(
-        uiState = UiState.Success(
-            profile = Profile(
-                id = 5,
-                uid = "134234",
-                name = "John Doe",
-                email = "john.quincy.adams@examplepetstore.com",
-                isAdmin = false,
-                isAuthor = true,
-                lastLoginAt = "2-2-2025",
-                createdAt = "2-2-2025",
-                updatedAt = "2-2-2025",
-                deletedAt = null,
-            ),
+fun ProfileLoadingPreview() {
+    IeePreview {
+        ProfileLoading()
+    }
+}
 
-            subscribedTags = persistentListOf(),
-            subscribableTags = persistentListOf(),
-        ),
-        applySelectedTags = {},
-        showTagSheet = {},
-        onSignOutClick = {},
-    )
+@Preview
+@Composable
+fun ProfileSignedOutPreview() {
+    IeePreview {
+        ProfileSignedOut()
+    }
+}
+
+
+@Preview
+@Composable
+fun ProfileProfileSuccesPreview() {
+    IeePreview {
+        ProfileSuccess(
+            uiState = UiState.Success(
+                profile = Profile(
+                    id = 5,
+                    uid = "134234",
+                    name = "John Doe",
+                    email = "john.quincy.adams@examplepetstore.com",
+                ),
+                subscribedTags = persistentListOf(),
+                tags = persistentListOf(),
+            ),
+            applySelectedTags = {},
+            showTagSheet = {},
+            onSignOutClick = {},
+        )
+    }
 }

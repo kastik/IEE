@@ -35,7 +35,8 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kastik.apps.core.designsystem.component.IEETag
+import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeTag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -125,7 +126,7 @@ fun AnnouncementCard(
                 contentPadding = PaddingValues(horizontal = 2.dp)
             ) {
                 items(categories) { category ->
-                    IEETag(
+                    IeeTag(
                         text = category,
                     )
                 }
@@ -141,29 +142,33 @@ private fun String.collapseWhitespace(): String =
 @Preview
 @Composable
 fun PreviewAnnouncementCard() {
-    AnnouncementCard(
-        onClick = {},
-        publisher = "Kostas Papastathopoulos",
-        title = "The quick brown fox",
-        categories = persistentListOf("The", "Quick", "Brown", "Fox"),
-        date = "25-1-2019 08:34",
-        content = "The quick brown fox jumps over the lazy dog",
-        isPinned = false
-    )
+    IeePreview {
+        AnnouncementCard(
+            onClick = {},
+            publisher = "Kostas Papastathopoulos",
+            title = "The quick brown fox",
+            categories = persistentListOf("The", "Quick", "Brown", "Fox"),
+            date = "25-1-2019 08:34",
+            content = "The quick brown fox jumps over the lazy dog",
+            isPinned = false
+        )
+    }
 }
 
 @Preview
 @Composable
 fun PreviewPinnedAnnouncementCard() {
-    AnnouncementCard(
-        onClick = {},
-        publisher = "Kostas Papastathopoulos",
-        title = "The quick brown fox",
-        categories = persistentListOf("The", "Quick", "Brown", "Fox"),
-        date = "25-1-2019 08:34",
-        content = "The quick brown fox jumps over the lazy dog",
-        isPinned = true
-    )
+    IeePreview {
+        AnnouncementCard(
+            onClick = {},
+            publisher = "Kostas Papastathopoulos",
+            title = "The quick brown fox",
+            categories = persistentListOf("The", "Quick", "Brown", "Fox"),
+            date = "25-1-2019 08:34",
+            content = "The quick brown fox jumps over the lazy dog",
+            isPinned = true
+        )
+    }
 }
 
 

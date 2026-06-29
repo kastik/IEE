@@ -60,3 +60,34 @@ private fun SuccessState(
     }
 }
 
+@Preview
+@Composable
+fun AuthenticationLoadingPreview() {
+    IeePreview {
+        AuthenticationLoading()
+    }
+}
+
+@Preview
+@Composable
+fun AuthenticationSuccessPreview() {
+    IeePreview {
+        AuthenticationSuccess()
+    }
+}
+
+@Preview
+@Composable
+fun AuthenticationLocalErrorPreview() {
+    IeePreview {
+        AuthenticationLocalError()
+    }
+}
+
+@Preview
+@Composable
+fun AuthenticationServerErrorPreview() {
+    IeePreview {
+        AuthenticationServerError()
+    }
+}

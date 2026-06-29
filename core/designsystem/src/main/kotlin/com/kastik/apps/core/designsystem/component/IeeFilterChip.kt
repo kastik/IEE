@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun IEEFilterChip(
+fun IeeFilterChip(
     label: String,
     selectedCount: Int,
     onClick: () -> Unit,
@@ -38,44 +38,52 @@ fun IEEFilterChip(
     )
 }
 
-@Preview(name = "IEEFilterChip")
+@Preview(name = "IeeFilterChip")
 @Composable
-fun PreviewIEEFilterChip() {
-    IEEFilterChip(
-        label = "Authors",
-        selectedCount = 0,
-        onClick = {}
-    )
+fun PreviewIeeFilterChip() {
+    IeePreview {
+        IeeFilterChip(
+            label = "Authors",
+            selectedCount = 0,
+            onClick = {}
+        )
+    }
 }
 
-@Preview(name = "IEEFilterChip with icon")
+@Preview(name = "IeeFilterChip with icon")
 @Composable
-fun PreviewIEEFilterChipWithIcon() {
-    IEEFilterChip(
-        icon = Icons.Default.Person,
-        label = "Authors",
-        selectedCount = 0,
-        onClick = {}
-    )
+fun PreviewIeeFilterChipWithIcon() {
+    IeePreview {
+        IeeFilterChip(
+            icon = Icons.Default.Person,
+            label = "Authors",
+            selectedCount = 0,
+            onClick = {}
+        )
+    }
 }
 
-@Preview(name = "IEEFilterChip with selection")
+@Preview(name = "IeeFilterChip with selection")
 @Composable
-fun PreviewIEEFilterChipWithSelection() {
-    IEEFilterChip(
-        label = "Authors",
-        selectedCount = 4,
-        onClick = {}
-    )
+fun PreviewIeeFilterChipWithSelection() {
+    IeePreview {
+        IeeFilterChip(
+            label = "Authors",
+            selectedCount = 4,
+            onClick = {}
+        )
+    }
 }
 
-@Preview(name = "IEEFilterChip with selection and icon")
+@Preview(name = "IeeFilterChip with selection and icon")
 @Composable
-fun PreviewIEEFilterChipWithSelectionAndIcon() {
-    IEEFilterChip(
-        icon = Icons.Default.Person,
-        label = "Authors",
-        selectedCount = 4,
-        onClick = {}
-    )
+fun PreviewIeeFilterChipWithSelectionAndIcon() {
+    IeePreview {
+        IeeFilterChip(
+            icon = Icons.Default.Person,
+            label = "Authors",
+            selectedCount = 4,
+            onClick = {}
+        )
+    }
 }

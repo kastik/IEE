@@ -1,4 +1,4 @@
-package com.kastik.apps
+package com.kastik.apps.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,27 +15,28 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kastik.apps.core.analytics.Analytics
-import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
-import com.kastik.apps.core.model.user.UserTheme
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
+import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
+import com.kastik.apps.core.designsystem.theme.IeeTheme
+import com.kastik.apps.core.model.user.Theme
 import com.kastik.apps.core.ui.extensions.shouldUseDarkTheme
-import com.kastik.apps.navigation.IEENavHost
+import com.kastik.apps.navigation.IeeNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class IeeMainActivity : ComponentActivity() {
     @Inject
     lateinit var analytics: Analytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+
         setContent {
-            val viewModel: MainActivityViewModel = hiltViewModel()
+            val viewModel: IeeMainActivityViewModel = hiltViewModel()
             val appState by viewModel.appState.collectAsStateWithLifecycle()
-            AppsAboardTheme(
+            IeeTheme(
                 darkTheme = appState.theme.shouldUseDarkTheme(),
                 dynamicColor = appState.dynamicColor
             ) {
@@ -46,7 +47,7 @@ class MainActivity : ComponentActivity() {
                             testTagsAsResourceId = true
                         }
                     ) {
-                        IEENavHost()
+                        IeeNavHost()
                     }
                 }
             }
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-data class IEEAppState(
-    val theme: UserTheme,
+data class IeeAppState(
+    val theme: Theme,
     val dynamicColor: Boolean
 )

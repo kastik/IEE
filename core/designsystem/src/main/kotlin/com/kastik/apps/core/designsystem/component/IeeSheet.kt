@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IEESheet(
+fun IeeSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState,
     searchQuery: String,
@@ -121,9 +121,9 @@ fun IEESheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun IEESheetPreview() {
-    MaterialTheme {
-        IEESheet(
+fun IeeSheetPreview() {
+    IeePreview {
+        IeeSheet(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             searchQuery = "Query",
             onSearchQueryChange = {},

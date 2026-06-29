@@ -13,6 +13,7 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 
 @Composable
 internal fun LicensesRoute(
+    viewModel: LicensesScreenViewModel = hiltViewModel()
 ) {
     hiltViewModel<LicensesScreenViewModel>()
     LicensesScreen()
@@ -20,8 +21,8 @@ internal fun LicensesRoute(
 
 @Composable
 internal fun LicensesScreen(
+    libraries: Libs?,
 ) {
-    val libraries by produceLibraries(R.raw.aboutlibraries)
     Scaffold { paddingValues ->
         LibrariesContainer(
             modifier = Modifier
@@ -30,5 +31,13 @@ internal fun LicensesScreen(
             libraries = libraries,
             contentPadding = paddingValues
         )
+    }
+}
+
+@Preview
+@Composable
+fun LicensesScreenPreview() {
+    IeePreview {
+        LicensesScreen(null)
     }
 }

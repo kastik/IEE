@@ -18,7 +18,7 @@ import com.kastik.apps.feature.settings.navigation.navigateToSettings
 import com.kastik.apps.feature.settings.navigation.settingsScreen
 
 @Composable
-fun IEENavHost() {
+fun IeeNavHost() {
     val navController = rememberNavController()
 
     NavHost(

@@ -5,14 +5,14 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.kastik.apps.core.common.di.ApplicationScope
 import com.kastik.apps.core.dev.tools.DevTools
-import com.kastik.apps.core.domain.usecases.FetchRemoteOptionsUseCase
+import com.kastik.apps.core.domain.usecases.TriggerSignOutOnStatusChangeUseCase
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
-class IEEApplication : Application(), Configuration.Provider {
+class IeeApplication : Application(), Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -24,6 +24,9 @@ class IEEApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var devTools: DevTools
 
+    @Inject
+    lateinit var triggerSignOutOnStatusChangeUseCase: TriggerSignOutOnStatusChangeUseCase
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
@@ -34,6 +37,10 @@ class IEEApplication : Application(), Configuration.Provider {
 
         devTools.setupStrictMode()
         devTools.setupLeakCanary()
+
+        applicationScope.launch {
+            triggerSignOutOnStatusChangeUseCase()
+        }
 
     }
 

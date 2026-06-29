@@ -46,17 +46,19 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
-import com.kastik.apps.core.designsystem.theme.IeeTheme
+import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.apps.core.designsystem.theme.ieeListSpring
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.announcement.AnnouncementCard
 import com.kastik.apps.core.ui.announcement.AnnouncementCardShimmer
+import com.kastik.apps.core.ui.extensions.toFormattedString
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.flowOf
+import kotlin.time.Clock
 
 private enum class FeedState {
     Loading, Error, Empty, Content
@@ -192,9 +194,9 @@ fun AnnouncementFeed(
                         item?.let {
                             AnnouncementCard(
                                 onClick = {
-                                vibrator.performHapticFeedback(HapticFeedbackType.Confirm)
-                                onAnnouncementClick(item.id)
-                            },
+                                    vibrator.performHapticFeedback(HapticFeedbackType.Confirm)
+                                    onAnnouncementClick(item.id)
+                                },
                                 onLonClick = {
                                     vibrator.performHapticFeedback(HapticFeedbackType.LongPress)
                                     onAnnouncementLongClick(item.id)
@@ -204,9 +206,9 @@ fun AnnouncementFeed(
                                 categories = remember(item.tags) {
                                     item.tags.map { it.title }.toImmutableList()
                                 },
-                                date = item.date,
+                                date = item.date.toFormattedString(),
                                 content = remember(item.preview) { item.preview },
-                                isPinned = item.pinned,
+                                isPinned = item.isPinned,
                                 modifier = Modifier
                                     .padding(6.dp)
                                     .animateItem(
@@ -299,39 +301,35 @@ private fun AnnouncementFeedPreview() {
             id = 1,
             author = "Admin",
             title = "Welcome to AppsAboard!",
-            date = "2024-01-01",
+            date = Clock.System.now(),
             tags = persistentListOf(Tag(1, "General"), Tag(2, "New")),
             preview = "This is the first announcement.",
-            pinned = true,
+            isPinned = true,
             body = "",
-            attachments = emptyList(),
         ), Announcement(
             id = 2,
             author = "Admin",
             title = "Second Announcement",
-            date = "2024-01-02",
+            date = Clock.System.now(),
             tags = persistentListOf(Tag(1, "General")),
             preview = "This is the second announcement with a bit longer preview text to see how it renders.",
-            pinned = false,
+            isPinned = false,
             body = "",
-            attachments = emptyList(),
         )
     )
     val lazyPagingItems = flowOf(PagingData.from(sampleAnnouncements)).collectAsLazyPagingItems()
 
-    Surface {
-        IeeTheme {
-            AnnouncementFeed(
-                announcements = lazyPagingItems,
-                loadingPlaceHolderText = "",
-                nextPagePlaceHolderText = "",
-                emptyPlaceHolderText = "",
-                errorPlaceHolderText = "",
-                errorPlaceHolderRetryText = "",
-                errorNextPagePlaceHolderText = "",
-                endOfPaginationText = ""
-            )
-        }
+    IeePreview {
+        AnnouncementFeed(
+            announcements = lazyPagingItems,
+            loadingPlaceHolderText = "",
+            nextPagePlaceHolderText = "",
+            emptyPlaceHolderText = "",
+            errorPlaceHolderText = "",
+            errorPlaceHolderRetryText = "",
+            errorNextPagePlaceHolderText = "",
+            endOfPaginationText = ""
+        )
     }
 }
 
