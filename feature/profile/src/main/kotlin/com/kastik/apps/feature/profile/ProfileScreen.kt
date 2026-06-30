@@ -1,5 +1,6 @@
 package com.kastik.apps.feature.profile
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -51,10 +52,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kastik.apps.core.designsystem.component.IEETag
+import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeTag
+import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
+import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.model.aboard.Profile
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
-import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
+import com.kastik.apps.core.ui.extensions.logButtonClick
+import com.kastik.apps.core.ui.extensions.logFiltersApplied
+import com.kastik.apps.core.ui.extensions.logSheetOpened
+import com.kastik.apps.core.ui.extensions.toFormattedString
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import com.kastik.apps.core.ui.sheet.SubscribableTagSheet
@@ -68,7 +74,10 @@ internal fun ProfileRoute(
     navigateBack: () -> Unit,
     viewModel: ProfileScreenViewModel = hiltViewModel(),
 ) {
-    TrackScreenViewEvent("profile_screen")
+    TrackScreenViewEvent(
+        screenClass = "profile_route",
+        screenName = "profile_screen",
+    )
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -77,31 +86,58 @@ internal fun ProfileRoute(
             state::class
         }) { state ->
         when (state) {
-            is UiState.Loading -> LoadingContent(
-                modifier = Modifier.fillMaxSize(),
-                message = stringResource(state.resId),
+            is UiState.Loading -> ProfileLoading(message = state.resId)
+            is UiState.Error -> ProfileError(state.resId)
+            is UiState.SignedOut -> ProfileSignedOut(
+                message = state.resId,
+                navigateBack = navigateBack
             )
 
-            is UiState.Error -> StatusContent(stringResource(state.resId))
-            is UiState.SignedOut -> StatusContent(
-                message = stringResource(state.resId), automaticAction = navigateBack
-            )
-
-            is UiState.Success -> SuccessState(
-                uiState = state,
-                applySelectedTags = viewModel::updateSelectedTagIds,
-                showTagSheet = viewModel::toggleTagsSheet,
-                onSignOutClick = viewModel::onSignOutClick
-            )
+            is UiState.Success -> {
+                ProfileSuccess(
+                    uiState = state,
+                    applySelectedTags = viewModel::updateSelectedTagIds,
+                    showTagSheet = viewModel::toggleTagsSheet,
+                    onSignOutClick = viewModel::onSignOutClick
+                )
+            }
         }
     }
-
-
 }
+
+
+@Composable
+fun ProfileSignedOut(
+    @StringRes message: Int = 0,
+    navigateBack: () -> Unit = {},
+) {
+    StatusContent(
+        message = stringResource(message),
+        automaticAction = navigateBack
+    )
+}
+
+@Composable
+fun ProfileLoading(
+    @StringRes message: Int = 0,
+) {
+    LoadingContent(
+        modifier = Modifier.fillMaxSize(),
+        message = stringResource(message),
+    )
+}
+
+@Composable
+fun ProfileError(
+    @StringRes message: Int = 0,
+) {
+    StatusContent(stringResource(message))
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun SuccessState(
+private fun ProfileSuccess(
     uiState: UiState.Success,
     applySelectedTags: (ImmutableList<Int>) -> Unit,
     showTagSheet: (Boolean) -> Unit,
@@ -115,14 +151,10 @@ private fun SuccessState(
 
         if (uiState.showTagSheet) {
             SubscribableTagSheet(
-                subscribableTags = uiState.subscribableTags,
+                tags = uiState.tags,
                 subscribedTags = uiState.subscribedTags.map { it.id }.toImmutableList(),
                 onApply = { newTagIds ->
-                    analytics.logEvent(
-                        "subscribed_to_tags", mapOf(
-                            "source" to "profile_screen", "item_id" to newTagIds
-                        )
-                    )
+                    analytics.logFiltersApplied("subscribed_tags", newTagIds)
                     applySelectedTags(newTagIds)
                 },
                 onDismiss = { showTagSheet(false) }
@@ -138,25 +170,27 @@ private fun SuccessState(
         ) {
             Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
-            ProfilePicture(
-                name = uiState.profile.name
-            )
-            ProfileName(
-                name = uiState.profile.name, email = uiState.profile.email
-            )
+            ProfilePicture(name = uiState.profile.name)
+            ProfileName(name = uiState.profile.name, email = uiState.profile.email)
+
             ProfileSubscribedTags(
                 subscribedTagTitles = uiState.subscribedTags.map { it.title }.toImmutableList(),
-                showTagSheet = showTagSheet
+                showTagSheet = { value ->
+                    if (value) analytics.logSheetOpened("subscribed_tags_sheet")
+                    showTagSheet(value)
+                }
             )
+
             ProfileMeta(
                 isAdmin = uiState.profile.isAdmin,
                 isAuthor = uiState.profile.isAuthor,
-                lastLogin = uiState.profile.lastLoginAt,
-                createdAt = uiState.profile.createdAt
+                lastLogin = uiState.profile.lastLoginAt.toFormattedString(),
+                createdAt = uiState.profile.createdAt.toFormattedString()
             )
+
             Button(
                 onClick = {
-                    analytics.logEvent("sign_out_clicked", mapOf("source" to "profile_screen"))
+                    analytics.logButtonClick("sign_out")
                     onSignOutClick()
                 },
                 modifier = Modifier
@@ -353,7 +387,7 @@ private fun ProfileSubscribedTags(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         tags.forEach { tag ->
-                            IEETag(
+                            IeeTag(
                                 text = tag
                             )
                         }

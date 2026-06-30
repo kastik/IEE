@@ -27,6 +27,6 @@ data class AnnouncementDto(
 
     @SerialName("author") val author: AuthorDto,
 
-    @SerialName("tags") val tags: List<TagResponseDto>,
+    @SerialName("tags") val tags: List<TagDto>,
     @SerialName("attachments") val attachments: List<AttachmentDto>,
 )

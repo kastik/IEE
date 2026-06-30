@@ -37,9 +37,14 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kastik.apps.core.common.extensions.shareAnnouncement
+import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
+import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.model.aboard.Announcement
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
-import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
+import com.kastik.apps.core.ui.extensions.logAnnouncementShared
+import com.kastik.apps.core.ui.extensions.logFiltersApplied
+import com.kastik.apps.core.ui.extensions.logItemSelection
+import com.kastik.apps.core.ui.extensions.logSearch
+import com.kastik.apps.core.ui.extensions.logSheetOpened
 import com.kastik.apps.core.ui.paging.AnnouncementFeed
 import com.kastik.apps.core.ui.sheet.AuthorSheet
 import com.kastik.apps.core.ui.sheet.TagSheet
@@ -48,7 +53,6 @@ import com.kastik.apps.core.ui.topbar.SearchBarFilters
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,9 +65,12 @@ internal fun SearchRoute(
     val searchFeedAnnouncements = viewModel.searchFeedAnnouncements.collectAsLazyPagingItems()
     val textFieldState = viewModel.searchBarTextFieldState
 
-    TrackScreenViewEvent("search_screen")
+    TrackScreenViewEvent(
+        screenClass = "search_route",
+        screenName = "search_screen",
+    )
 
-    SearchScreenContent(
+    SearchScreen(
         uiState = uiState.value,
         searchBarTextFieldState = textFieldState,
         searchFeedAnnouncements = searchFeedAnnouncements,
@@ -73,10 +80,9 @@ internal fun SearchRoute(
     )
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun SearchScreenContent(
+private fun SearchScreen(
     uiState: UiState,
     searchBarTextFieldState: TextFieldState,
     searchFeedAnnouncements: LazyPagingItems<Announcement>,
@@ -84,7 +90,6 @@ private fun SearchScreenContent(
     navigateToAnnouncement: (Int) -> Unit,
     onSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
 ) {
-
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
     val scope = rememberCoroutineScope()
@@ -101,8 +106,14 @@ private fun SearchScreenContent(
                 authorLabel = stringResource(R.string.author_chip_label),
                 selectedTagsCount = uiState.activeFilters.selectedTagIds.size,
                 selectedAuthorsCount = uiState.activeFilters.selectedAuthorIds.size,
-                openTagSheet = { showTagSheet.value = true },
-                openAuthorSheet = { showAuthorSheet.value = true })
+                openTagSheet = {
+                    analytics.logSheetOpened("search_tags_sheet")
+                    showTagSheet.value = true
+                },
+                openAuthorSheet = {
+                    analytics.logSheetOpened("search_authors_sheet")
+                    showAuthorSheet.value = true
+                })
         }
     }
 
@@ -117,11 +128,10 @@ private fun SearchScreenContent(
                 expandedSecondaryActions = secondaryActions,
                 collapsedSecondaryActions = secondaryActions,
                 onSearch = { query ->
-                    analytics.logEvent(
-                        "search", mapOf(
-                            "search_term" to query,
-                            "source" to "search_screen"
-                        )
+                    analytics.logSearch(
+                        query,
+                        uiState.activeFilters.selectedTagIds,
+                        uiState.activeFilters.selectedAuthorIds,
                     )
                     onSearch(
                         query,
@@ -130,41 +140,26 @@ private fun SearchScreenContent(
                     )
                 },
                 onAnnouncementQuickResultClick = { announcementId ->
-                    analytics.logEvent(
-                        "quick_result_click", mapOf(
-                            "result_type" to "announcement",
-                            "item_id" to announcementId,
-                            "source" to "search_screen"
-                        )
+                    analytics.logItemSelection(
+                        announcementId.toString(),
+                        "announcement_quick_result"
                     )
                     navigateToAnnouncement(announcementId)
                 },
-                onTagQuickResultClick = { tag ->
-                    analytics.logEvent(
-                        "quick_result_click", mapOf(
-                            "result_type" to "tag",
-                            "item_id" to tag,
-                            "source" to "search_screen"
-                        )
-                    )
+                onTagQuickResultClick = { tagId ->
+                    analytics.logItemSelection(tagId.toString(), "tag_quick_result")
                     onSearch(
                         uiState.activeFilters.committedQuery,
-                        (uiState.activeFilters.selectedTagIds + tag).toImmutableList(),
+                        (uiState.activeFilters.selectedTagIds + tagId).toImmutableList(),
                         uiState.activeFilters.selectedAuthorIds,
                     )
                 },
-                onAuthorQuickResultClick = { author ->
-                    analytics.logEvent(
-                        "quick_result_click", mapOf(
-                            "result_type" to "author",
-                            "item_id" to author,
-                            "source" to "search_screen"
-                        )
-                    )
+                onAuthorQuickResultClick = { authorId ->
+                    analytics.logItemSelection(authorId.toString(), "author_quick_result")
                     onSearch(
                         uiState.activeFilters.committedQuery,
                         uiState.activeFilters.selectedTagIds,
-                        (uiState.activeFilters.selectedAuthorIds + author).toImmutableList(),
+                        (uiState.activeFilters.selectedAuthorIds + authorId).toImmutableList(),
                     )
                 },
                 navigationIcon = {
@@ -185,12 +180,8 @@ private fun SearchScreenContent(
             val refreshState = searchFeedAnnouncements.loadState.refresh
             val isEmpty = searchFeedAnnouncements.itemCount == 0
 
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                AnimatedVisibility(
-                    refreshState is LoadState.Loading && !isEmpty
-                ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                AnimatedVisibility(refreshState is LoadState.Loading && !isEmpty) {
                     LinearWavyProgressIndicator(
                         modifier = Modifier.fillMaxWidth(),
                         trackColor = Color.Transparent,
@@ -208,23 +199,11 @@ private fun SearchScreenContent(
                     lazyListState = lazyListState,
                     scrollBehavior = searchScroll,
                     onAnnouncementClick = { announcementId ->
-                        analytics.logEvent(
-                            "announcement_clicked",
-                            mapOf(
-                                "item_id" to announcementId,
-                                "source" to "search_screen"
-                            )
-                        )
+                        analytics.logItemSelection(announcementId.toString(), "announcement")
                         navigateToAnnouncement(announcementId)
                     },
                     onAnnouncementLongClick = { announcementId ->
-                        analytics.logEvent(
-                            "announcement_shared",
-                            mapOf(
-                                "item_id" to announcementId,
-                                "source" to "search_screen"
-                            )
-                        )
+                        analytics.logAnnouncementShared(announcementId)
                         context.shareAnnouncement(announcementId)
                     },
                     contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
@@ -232,19 +211,17 @@ private fun SearchScreenContent(
             }
         }
 
-
         if (showTagSheet.value) {
             TagSheet(
                 tags = uiState.availableFilters.tags,
                 selectedTagIds = uiState.activeFilters.selectedTagIds,
                 onApply = { newTagIds ->
                     scope.launch {
-                        analytics.logEvent(
-                            "tags_applied",
-                            mapOf(
-                                "item_id" to newTagIds,
-                                "source" to "search_screen"
-                            )
+                        analytics.logFiltersApplied("tags", newTagIds)
+                        analytics.logSearch(
+                            uiState.activeFilters.committedQuery,
+                            newTagIds,
+                            uiState.activeFilters.selectedAuthorIds,
                         )
                         onSearch(
                             uiState.activeFilters.committedQuery,
@@ -255,9 +232,7 @@ private fun SearchScreenContent(
                         searchBarState.animateToCollapsed()
                     }
                 },
-                onDismiss = {
-                    showTagSheet.value = false
-                },
+                onDismiss = { showTagSheet.value = false },
             )
         }
         if (showAuthorSheet.value) {
@@ -266,12 +241,11 @@ private fun SearchScreenContent(
                 preSelectedAuthorIds = uiState.activeFilters.selectedAuthorIds,
                 onApply = { newAuthorIds ->
                     scope.launch {
-                        analytics.logEvent(
-                            "authors_applied",
-                            mapOf(
-                                "item_id" to newAuthorIds,
-                                "source" to "search_screen"
-                            )
+                        analytics.logFiltersApplied("authors", newAuthorIds)
+                        analytics.logSearch(
+                            uiState.activeFilters.committedQuery,
+                            uiState.activeFilters.selectedTagIds,
+                            newAuthorIds,
                         )
                         onSearch(
                             uiState.activeFilters.committedQuery,
@@ -282,9 +256,7 @@ private fun SearchScreenContent(
                         searchBarState.animateToCollapsed()
                     }
                 },
-                onDismiss = {
-                    showAuthorSheet.value = false
-                },
+                onDismiss = { showAuthorSheet.value = false },
             )
         }
     }

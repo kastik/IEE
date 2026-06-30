@@ -5,20 +5,19 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.kastik.apps.core.common.extensions.combine
-import com.kastik.apps.core.domain.usecases.AreFabFiltersEnabledUseCase
 import com.kastik.apps.core.domain.usecases.GetFilterOptionsUseCase
 import com.kastik.apps.core.domain.usecases.GetForYouAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetHomeAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
-import com.kastik.apps.core.domain.usecases.IsForYouEnabledUseCase
+import com.kastik.apps.core.domain.usecases.GetUserPreferencesUseCase
 import com.kastik.apps.core.domain.usecases.RefreshFilterOptionsUseCase
 import com.kastik.apps.core.domain.usecases.SetAnnouncementCheckTimeUseCase
 import com.kastik.apps.core.domain.usecases.SetHasSkippedSignInUseCase
 import com.kastik.apps.core.domain.usecases.ShowSignInNoticeRationalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
@@ -31,10 +30,9 @@ class HomeScreenViewModel @Inject constructor(
     isSignedInUseCase: GetIsSignedInUseCase,
     showSignInNoticeRationalUseCase: ShowSignInNoticeRationalUseCase,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
-    isForYouEnabledUseCase: IsForYouEnabledUseCase,
     getForYouAnnouncementsUseCase: GetForYouAnnouncementsUseCase,
     getHomeAnnouncementsUseCase: GetHomeAnnouncementsUseCase,
-    areFabFiltersEnabledUseCase: AreFabFiltersEnabledUseCase,
+    getUserPreferencesUseCase: GetUserPreferencesUseCase,
     private val setAnnouncementCheckTimeUseCase: SetAnnouncementCheckTimeUseCase,
     private val refreshFilterOptionsUseCase: RefreshFilterOptionsUseCase,
     private val setHasSkippedSignInUseCase: SetHasSkippedSignInUseCase,
@@ -53,16 +51,15 @@ class HomeScreenViewModel @Inject constructor(
         showSignInNoticeRationalUseCase(),
         getFilterOptionsUseCase(),
         _quickSearchResultsState,
-        isForYouEnabledUseCase(),
-        areFabFiltersEnabledUseCase(),
-    ) { isSignedIn, showSignInNotice, availableFilters, quickResults, enableForYou, enableFabFilters ->
+        getUserPreferencesUseCase(),
+    ) { isSignedIn, showSignInNotice, availableFilters, quickResults, userPreferences ->
         UiState(
             isSignedIn = isSignedIn,
             showSignInNotice = showSignInNotice,
             availableFilters = availableFilters,
             quickResults = quickResults,
-            enableForYou = enableForYou,
-            enableFabFilters = enableFabFilters
+            enableForYou = userPreferences.isForYouEnabled,
+            enableFabFilters = userPreferences.areFabFiltersEnabled
         )
     }.onStart {
         viewModelScope.launch {

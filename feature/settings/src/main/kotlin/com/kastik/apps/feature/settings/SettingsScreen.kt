@@ -60,13 +60,22 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.kastik.apps.core.common.extensions.launchUrl
-import com.kastik.apps.core.designsystem.component.IEEIconToolTip
-import com.kastik.apps.core.designsystem.component.IEESliderThumbToolTip
+import com.kastik.apps.core.designsystem.component.IeeIconToolTip
+import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeSliderThumbToolTip
+import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
+import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
-import com.kastik.apps.core.model.user.UserTheme
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
-import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
+import com.kastik.apps.core.model.user.Theme
+import com.kastik.apps.core.ui.extensions.logButtonClick
+import com.kastik.apps.core.ui.extensions.logCheckIntervalMinutesPreferenceChanged
+import com.kastik.apps.core.ui.extensions.logDynamicColorPreferenceChanged
+import com.kastik.apps.core.ui.extensions.logFabFiltersPreferenceChanged
+import com.kastik.apps.core.ui.extensions.logForYouPreferenceChanged
+import com.kastik.apps.core.ui.extensions.logSearchScopePreferenceChanged
+import com.kastik.apps.core.ui.extensions.logSortTypePreferenceChanged
+import com.kastik.apps.core.ui.extensions.logThemePreferenceChanged
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
@@ -78,7 +87,11 @@ internal fun SettingsRoute(
     navigateToLicenses: () -> Unit,
     viewModel: SettingsScreenViewModel = hiltViewModel(),
 ) {
-    TrackScreenViewEvent("settings_screen")
+
+    TrackScreenViewEvent(
+        screenClass = "settings_route",
+        screenName = "settings_screen"
+    )
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -88,10 +101,12 @@ internal fun SettingsRoute(
         }) { state ->
         when (state) {
 
-            is UiState.Loading -> LoadingContent(modifier = Modifier.fillMaxSize())
+            is UiState.Loading -> {
+                SettingsScreenLoading()
+            }
 
             is UiState.Success -> {
-                SettingsScreenContent(
+                SettingsScreenSuccess(
                     theme = state.theme,
                     onThemeChange = viewModel::setTheme,
                     sortType = state.sortType,
@@ -115,15 +130,18 @@ internal fun SettingsRoute(
 
         }
     }
+}
 
-
+@Composable
+private fun SettingsScreenLoading() {
+    LoadingContent(modifier = Modifier.fillMaxSize())
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
-private fun SettingsScreenContent(
-    theme: UserTheme,
-    onThemeChange: (UserTheme) -> Unit = {},
+private fun SettingsScreenSuccess(
+    theme: Theme,
+    onThemeChange: (Theme) -> Unit = {},
     sortType: SortType,
     onSortTypeChange: (SortType) -> Unit = {},
     searchScope: SearchScope,
@@ -203,12 +221,7 @@ private fun SettingsScreenContent(
                             },
                             onSelected = { sortType ->
                                 onSortTypeChange(sortType)
-                                analytics.setUserProperty("sort_type", sortType.name)
-                                analytics.logEvent(
-                                    "sort_type_changed", mapOf(
-                                        "sort_type" to sortType.name, "source" to "settings_screen"
-                                    )
-                                )
+                                analytics.logSortTypePreferenceChanged(sortType.name)
                             })
                     }
                     HorizontalDivider()
@@ -221,12 +234,7 @@ private fun SettingsScreenContent(
                         checked = forYouEnabled,
                         onCheckedChange = { enabled ->
                             onForYouChange(enabled)
-                            analytics.setUserProperty("for_you", enabled.toString())
-                            analytics.logEvent(
-                                "for_you_changed", mapOf(
-                                    "for_you" to enabled.toString(), "source" to "settings_screen"
-                                )
-                            )
+                            analytics.logForYouPreferenceChanged(enabled)
                         })
                     HorizontalDivider()
                     SettingSwitchRow(
@@ -234,14 +242,8 @@ private fun SettingsScreenContent(
                         subtitle = stringResource(R.string.fab_filters_description),
                         checked = fabFiltersDisabled,
                         onCheckedChange = { enabled ->
+                            analytics.logFabFiltersPreferenceChanged(enabled)
                             onFabFiltersChange(enabled)
-                            analytics.setUserProperty("fab_filters", enabled.toString())
-                            analytics.logEvent(
-                                "fab_filters_changed", mapOf(
-                                    "fab_filters" to enabled.toString(),
-                                    "source" to "settings_screen"
-                                )
-                            )
                         })
                 }
             }
@@ -272,7 +274,7 @@ private fun SettingsScreenContent(
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                        IEEIconToolTip(tooltipTitle = {
+                        IeeIconToolTip(tooltipTitle = {
                             Text(
                                 text = stringResource(R.string.search_in_warning_title),
                                 style = MaterialTheme.typography.labelMedium,
@@ -303,13 +305,7 @@ private fun SettingsScreenContent(
                         },
                         onSelected = { searchScope ->
                             onSearchScopeChange(searchScope)
-                            analytics.setUserProperty("search_scope", searchScope.name)
-                            analytics.logEvent(
-                                "search_scope_changed", mapOf(
-                                    "search_scope" to searchScope.name,
-                                    "source" to "settings_screen"
-                                )
-                            )
+                            analytics.logSearchScopePreferenceChanged(searchScope.name)
                         })
                 }
 
@@ -342,22 +338,17 @@ private fun SettingsScreenContent(
                         Spacer(Modifier.height(8.dp))
                         SettingSegmentedButton(
                             selected = theme,
-                            options = UserTheme.entries.toImmutableList(),
+                            options = Theme.entries.toImmutableList(),
                             label = {
                                 when (it) {
-                                    UserTheme.FOLLOW_SYSTEM -> stringResource(R.string.theme_system_label)
-                                    UserTheme.LIGHT -> stringResource(R.string.theme_light_label)
-                                    UserTheme.DARK -> stringResource(R.string.theme_dark_label)
+                                    Theme.FOLLOW_SYSTEM -> stringResource(R.string.theme_system_label)
+                                    Theme.LIGHT -> stringResource(R.string.theme_light_label)
+                                    Theme.DARK -> stringResource(R.string.theme_dark_label)
                                 }
                             },
                             onSelected = { theme ->
                                 onThemeChange(theme)
-                                analytics.setUserProperty("theme", theme.name)
-                                analytics.logEvent(
-                                    "theme_changed", mapOf(
-                                        "theme" to theme.name, "source" to "settings_screen"
-                                    )
-                                )
+                                analytics.logThemePreferenceChanged(theme.name)
                             })
                     }
                     HorizontalDivider()
@@ -367,14 +358,8 @@ private fun SettingsScreenContent(
                             subtitle = stringResource(R.string.dynamic_color_description),
                             checked = dynamicColor,
                             onCheckedChange = { enabled ->
+                                analytics.logDynamicColorPreferenceChanged(enabled)
                                 onDynamicColorChange(enabled)
-                                analytics.setUserProperty("dynamic_color", enabled.toString())
-                                analytics.logEvent(
-                                    "dynamic_color_changed", mapOf(
-                                        "dynamic_color" to enabled.toString(),
-                                        "source" to "settings_screen"
-                                    )
-                                )
                             })
                     }
                 }
@@ -397,13 +382,7 @@ private fun SettingsScreenContent(
                         subtitle = stringResource(R.string.push_notifications_description),
                         checked = areNotificationsAllowed,
                         onCheckedChange = {
-                            analytics.setUserProperty("push_notifications", it.toString())
-                            analytics.logEvent(
-                                "push_notifications_changed", mapOf(
-                                    "push_notifications" to it.toString(),
-                                    "source" to "settings_screen"
-                                )
-                            )
+                            analytics.logButtonClick("push_notifications_system_settings")
                             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
                                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
                             }
@@ -421,17 +400,9 @@ private fun SettingsScreenContent(
                         tooltipTitle = stringResource(R.string.announcement_check_interval_warning_title),
                         tooltipBody = stringResource(R.string.announcement_check_interval_warning_body),
                         valueFormatter = { formatInterval(it) },
-                        onValueChangeFinished = {
-                            setAnnouncementCheckIntervalMinutes(it)
-                            analytics.setUserProperty(
-                                "announcement_interval", announcementCheckIntervalMinutes.toString()
-                            )
-                            analytics.logEvent(
-                                "announcement_interval_changed", mapOf(
-                                    "announcement_interval" to announcementCheckIntervalMinutes.toString(),
-                                    "source" to "settings_screen"
-                                )
-                            )
+                        onValueChangeFinished = { minutes ->
+                            setAnnouncementCheckIntervalMinutes(minutes)
+                            analytics.logCheckIntervalMinutesPreferenceChanged(minutes)
                         })
                 }
             }
@@ -452,25 +423,19 @@ private fun SettingsScreenContent(
                         title = stringResource(R.string.about_app_label),
                         subtitle = "${stringResource(R.string.about_app_description)} $versionName",
                         onClick = {
-                            analytics.logEvent(
-                                "about_app_clicked", mapOf("source" to "settings_screen")
-                            )
+                            analytics.logButtonClick("about_app_github")
                             context.launchUrl("https://github.com/kastik/IEE")
                         })
                     HorizontalDivider()
                     SettingNavigationRow(
                         title = stringResource(R.string.open_source_label), onClick = {
-                            analytics.logEvent(
-                                "open_source_licenses_clicked", mapOf("source" to "settings_screen")
-                            )
+                            analytics.logButtonClick("open_source_licenses")
                             navigateToLicenses()
                         })
                     HorizontalDivider()
                     SettingNavigationRow(
                         title = stringResource(R.string.discord_label), onClick = {
-                            analytics.logEvent(
-                                "discord_channel_clicked", mapOf("source" to "settings_screen")
-                            )
+                            analytics.logButtonClick("discord_channel")
                             context.launchUrl("https://discord.com/channels/693584494862794822/1473065482058993765")
                         })
                 }
@@ -574,7 +539,7 @@ private fun SettingsSliderRow(
                 }
             }
             if (tooltipEnabled) {
-                IEEIconToolTip(tooltipTitle = {
+                IeeIconToolTip(tooltipTitle = {
                     Text(
                         text = tooltipTitle,
                         style = MaterialTheme.typography.labelMedium,
@@ -615,7 +580,7 @@ private fun SettingsSliderRow(
                     onValueChangeFinished(sliderValue.roundToInt())
                 },
                 thumb = {
-                    IEESliderThumbToolTip(
+                    IeeSliderThumbToolTip(
                         enabled = enabled,
                         interactionSource = interactionSource,
                         tooltipText = valueFormatter(sliderValue.roundToInt())

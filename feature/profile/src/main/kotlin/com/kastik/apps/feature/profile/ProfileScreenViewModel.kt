@@ -54,7 +54,7 @@ class ProfileScreenViewModel @Inject constructor(
             UiState.Success(
                 profile = profile,
                 subscribedTags = subscribedTags,
-                subscribableTags = subscribableTags,
+                tags = subscribableTags,
                 showTagSheet = showTagSheet,
             )
         } else {

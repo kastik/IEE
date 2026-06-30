@@ -6,7 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
+import com.mikepenz.aboutlibraries.Libs
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 
@@ -15,8 +19,15 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 internal fun LicensesRoute(
     viewModel: LicensesScreenViewModel = hiltViewModel()
 ) {
-    hiltViewModel<LicensesScreenViewModel>()
-    LicensesScreen()
+
+    TrackScreenViewEvent(
+        screenClass = "licenses_route",
+        screenName = "licenses_screen"
+    )
+
+    val libraries by produceLibraries(R.raw.aboutlibraries)
+
+    LicensesScreen(libraries)
 }
 
 @Composable

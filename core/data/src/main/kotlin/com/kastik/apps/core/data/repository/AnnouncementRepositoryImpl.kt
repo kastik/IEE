@@ -54,9 +54,10 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         sortType: SortType,
         titleQuery: String,
         bodyQuery: String,
+        tagIds: List<Int>,
         authorIds: List<Int>,
-        tagIds: List<Int>
-    ) = Pager(
+
+        ) = Pager(
         config = PagingConfig(
             pageSize = 20,
             initialLoadSize = 60,

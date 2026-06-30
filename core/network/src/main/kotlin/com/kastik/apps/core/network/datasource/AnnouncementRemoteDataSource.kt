@@ -33,8 +33,8 @@ internal class AnnouncementRemoteDataSourceImpl @Inject constructor(
         sortBy: SortType,
         title: String?,
         body: String?,
-        authorIds: List<Int>?,
         tagIds: List<Int>?,
+        authorIds: List<Int>?,
         updatedAfter: LocalDateTime?
     ): PagedResponseDto<AnnouncementDto> = aboardApiClient.getAnnouncements(
         page = page,

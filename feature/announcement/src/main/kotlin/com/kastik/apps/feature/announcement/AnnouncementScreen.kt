@@ -1,5 +1,6 @@
 package com.kastik.apps.feature.announcement
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,14 +52,23 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.kastik.apps.core.analytics.AnalyticsEvent
+import com.kastik.apps.core.common.extensions.getEnglishString
 import com.kastik.apps.core.common.extensions.launchInAppReview
 import com.kastik.apps.core.common.extensions.shareAnnouncement
-import com.kastik.apps.core.designsystem.component.IEEDotDivider
-import com.kastik.apps.core.designsystem.component.IEETag
+import com.kastik.apps.core.designsystem.component.IeeDotDivider
+import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeTag
+import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
+import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.model.aboard.Attachment
 import com.kastik.apps.core.model.aboard.Tag
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
-import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
+import com.kastik.apps.core.ui.extensions.logAnnouncementShared
+import com.kastik.apps.core.ui.extensions.logButtonClick
+import com.kastik.apps.core.ui.extensions.logContentLoadState
+import com.kastik.apps.core.ui.extensions.logItemSelection
+import com.kastik.apps.core.ui.extensions.logSheetOpened
+import com.kastik.apps.core.ui.extensions.toFormattedString
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import kotlinx.collections.immutable.ImmutableList
@@ -72,68 +82,82 @@ internal fun AnnouncementRoute(
     navigateBack: () -> Unit,
     viewModel: AnnouncementScreenViewModel = hiltViewModel(),
 ) {
-    TrackScreenViewEvent(
-        "announcement_screen",
-        mapOf("announcement_id" to announcementId)
-    )
-
-
+    val analytics = LocalAnalytics.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    TrackScreenViewEvent(
+        screenClass = "announcement_route",
+        screenName = "announcement_screen",
+        params = listOf(
+            AnalyticsEvent.Param(analytics.paramKeys.ITEM_ID, announcementId.toString()),
+            AnalyticsEvent.Param(analytics.paramKeys.ITEM_CATEGORY, "announcement")
+        )
+    )
 
     AnimatedContent(
         targetState = uiState.value,
         contentKey = { state -> state::class }
     ) { state ->
         when (state) {
-            is UiState.Loading -> LoadingContent(
-                modifier = Modifier.fillMaxSize(),
-                message = stringResource(R.string.fetching_message),
-            )
+            is UiState.Loading -> {
+                AnnouncementScreenLoading(announcementId = announcementId)
+            }
 
-            is UiState.Error -> StatusContent(message = stringResource(state.resId))
+            is UiState.Error -> {
+                AnnouncementScreenError(
+                    resId = state.resId,
+                    announcementId = announcementId,
+                )
+            }
 
-            is UiState.Success -> SuccessState(
-                announcementId = state.announcement.id,
-                title = state.announcement.title,
-                author = state.announcement.author,
-                date = state.announcement.date,
-                prossedBodies = state.processedBody,
-                tags = state.announcement.tags.toImmutableList(),
-                attachments = state.announcement.attachments.toImmutableList(),
-                shouldShowReviewDialog = state.shouldShowReviewDialog,
-                onSuccessfulReview = viewModel::onSuccessfulReview,
-                navigateBack = navigateBack,
-                onAttachmentClick = viewModel::downloadAttachment
-            )
+            is UiState.Success -> {
+                AnnouncementScreenSuccess(
+                    announcementId = state.announcement.id,
+                    title = state.announcement.title,
+                    author = state.announcement.author,
+                    date = state.announcement.date.toFormattedString(),
+                    prossedBodies = state.processedBody,
+                    tags = state.announcement.tags.toImmutableList(),
+                    attachments = state.announcement.attachments.toImmutableList(),
+                    shouldShowReviewDialog = state.shouldShowReviewDialog,
+                    onSuccessfulReview = viewModel::onSuccessfulReview,
+                    navigateBack = navigateBack,
+                    onAttachmentClick = viewModel::downloadAttachment
+                )
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun SuccessState(
+private fun AnnouncementScreenSuccess(
     announcementId: Int,
     title: String,
     author: String,
     date: String,
     prossedBodies: ImmutableList<ProcessedBody>,
-    tags: ImmutableList<Tag>,
-    attachments: ImmutableList<Attachment>,
-    onAttachmentClick: (Int, Int, String, String) -> Unit,
-    shouldShowReviewDialog: Boolean,
-    onSuccessfulReview: () -> Unit,
-    navigateBack: () -> Unit,
+    tags: ImmutableList<Tag> = persistentListOf(),
+    attachments: ImmutableList<Attachment> = persistentListOf(),
+    onAttachmentClick: (Int, Int, String, String) -> Unit = { _, _, _, _ -> },
+    shouldShowReviewDialog: Boolean = false,
+    onSuccessfulReview: () -> Unit = {},
+    navigateBack: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
     val scroll = rememberScrollState()
 
+    LaunchedEffect(announcementId) {
+        analytics.logContentLoadState("announcement", announcementId.toString(), "success")
+    }
+
     LaunchedEffect(shouldShowReviewDialog) {
         if (shouldShowReviewDialog) {
+            analytics.logSheetOpened("in_app_review_dialog")
             context.launchInAppReview(onSuccessfulReview = onSuccessfulReview)
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -141,7 +165,6 @@ private fun SuccessState(
             .padding(horizontal = 20.dp)
             .verticalScroll(scroll), verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-
         Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -158,7 +181,11 @@ private fun SuccessState(
                 ), color = MaterialTheme.colorScheme.onSurface
             )
             IconButton(
-                onClick = { context.shareAnnouncement(announcementId) }
+                onClick = {
+                    analytics.logButtonClick("share_announcement_icon")
+                    analytics.logAnnouncementShared(announcementId)
+                    context.shareAnnouncement(announcementId)
+                }
             ) {
                 Icon(
                     Icons.Outlined.Share,
@@ -185,7 +212,7 @@ private fun SuccessState(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            IEEDotDivider()
+            IeeDotDivider()
 
             Text(
                 text = date,
@@ -230,22 +257,17 @@ private fun SuccessState(
                             vertical = 8.dp
                         ),
                         onClick = {
-                            analytics.logEvent(
-                                "attachment_clicked",
-                                mapOf(
-                                    "item_id" to attachment.id,
-                                    "source" to "announcement_screen"
-                                )
-                            )
+                            analytics.logItemSelection(attachment.id.toString(), "attachment")
                             onAttachmentClick(
                                 announcementId,
                                 attachment.id,
-                                attachment.filename,
+                                attachment.fileName,
                                 attachment.mimeType,
                             )
-                        }, label = {
+                        },
+                        label = {
                             Text(
-                                text = attachment.filename,
+                                text = attachment.fileName,
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -253,7 +275,7 @@ private fun SuccessState(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Outlined.AttachFile,
-                                contentDescription = attachment.filename,
+                                contentDescription = attachment.fileName,
                             )
                         }
                     )
@@ -276,14 +298,13 @@ private fun SuccessState(
                 modifier = Modifier.padding(top = 8.dp)
             ) {
                 tags.forEach { tag ->
-                    IEETag(text = tag.title)
+                    IeeTag(text = tag.title)
                 }
             }
         }
         Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
     }
 }
-
 
 @Composable
 private fun HtmlText(text: ProcessedBody.Text) {
@@ -308,11 +329,59 @@ private fun HtmlImage(image: ProcessedBody.Image) {
     )
 }
 
+@Composable
+private fun AnnouncementScreenLoading(
+    announcementId: Int = 0
+) {
+    val analytics = LocalAnalytics.current
+
+    LaunchedEffect(announcementId) {
+        analytics.logContentLoadState("announcement", announcementId.toString(), "loading")
+    }
+
+    LoadingContent(
+        modifier = Modifier.fillMaxSize(),
+        message = stringResource(R.string.fetching_message),
+    )
+}
+
+@Composable
+private fun AnnouncementScreenError(
+    announcementId: Int,
+    @StringRes resId: Int,
+) {
+    val context = LocalContext.current
+    val analytics = LocalAnalytics.current
+
+    LaunchedEffect(announcementId, resId) {
+        val englishErrorMessage = context.getEnglishString(resId)
+
+        analytics.logContentLoadState(
+            contentType = "announcement",
+            itemId = announcementId.toString(),
+            status = "error",
+            errorMessage = englishErrorMessage
+        )
+    }
+
+    StatusContent(message = stringResource(resId))
+}
+
 @Preview
 @Composable
 fun AnnouncementScreenSuccessPreview() {
     IeePreview {
-        AnnouncementScreenSuccess()
+        AnnouncementScreenSuccess(
+            announcementId = 0,
+            title = "Announcement Title",
+            author = "Author Name",
+            date = "25-12-2026",
+            prossedBodies = persistentListOf(
+                ProcessedBody.Text(
+                    AnnotatedString("The quick brown fox")
+                )
+            )
+        )
     }
 }
 
