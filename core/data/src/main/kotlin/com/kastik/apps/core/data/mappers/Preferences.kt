@@ -17,7 +17,7 @@ fun ThemeProto.toTheme(): Theme {
     }
 }
 
-fun Theme.toTheme(): ThemeProto {
+fun Theme.toThemeProto(): ThemeProto {
     return when (this) {
         Theme.FOLLOW_SYSTEM -> ThemeProto.System
         Theme.LIGHT -> ThemeProto.Light

@@ -6,7 +6,7 @@ import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.kastik.apps.core.config.R
 import com.kastik.apps.core.config.RemoteConfig
-import com.kastik.apps.core.config.impl.RemoteConfigReleaseImpl
+import com.kastik.apps.core.config.RemoteConfigReleaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

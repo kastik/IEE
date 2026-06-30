@@ -2,7 +2,7 @@ package com.kastik.apps.core.crashlytics.di
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kastik.apps.core.crashlytics.Crashlytics
-import com.kastik.apps.core.crashlytics.impl.CrashlyticsReleaseImpl
+import com.kastik.apps.core.crashlytics.CrashlyticsReleaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

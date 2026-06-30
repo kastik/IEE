@@ -66,6 +66,8 @@ dependencies {
     implementation(project(":core:config"))
     implementation(project(":core:analytics"))
     implementation(project(":core:crashlytics"))
+    implementation(project(":core:performance"))
+
     implementation(project(":core:notifications"))
 
     implementation(project(":core:ui"))

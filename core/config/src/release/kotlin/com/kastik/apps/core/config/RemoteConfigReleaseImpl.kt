@@ -1,8 +1,7 @@
-package com.kastik.apps.core.config.impl
+package com.kastik.apps.core.config
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.kastik.apps.core.common.di.IoDispatcher
-import com.kastik.apps.core.config.RemoteConfig
 import com.kastik.apps.core.crashlytics.Crashlytics
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher

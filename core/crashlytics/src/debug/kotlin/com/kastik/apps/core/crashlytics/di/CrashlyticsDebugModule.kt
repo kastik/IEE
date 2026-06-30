@@ -1,7 +1,7 @@
 package com.kastik.apps.core.crashlytics.di
 
 import com.kastik.apps.core.crashlytics.Crashlytics
-import com.kastik.apps.core.crashlytics.impl.CrashlyticsDebugImpl
+import com.kastik.apps.core.crashlytics.CrashlyticsDebugImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

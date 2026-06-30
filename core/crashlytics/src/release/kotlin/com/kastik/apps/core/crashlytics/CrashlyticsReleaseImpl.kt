@@ -1,7 +1,6 @@
-package com.kastik.apps.core.crashlytics.impl
+package com.kastik.apps.core.crashlytics
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.kastik.apps.core.crashlytics.Crashlytics
 import javax.inject.Inject
 import javax.inject.Singleton
 

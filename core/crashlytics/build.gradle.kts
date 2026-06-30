@@ -21,12 +21,7 @@ configure<LibraryExtension> {
 
 
 dependencies {
-    //TODO Create a firebase Convention and apply these and the crashlytics gradle plugin conditionally
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.crashlytics.ndk)
-    implementation(libs.firebase.performance) {
-        exclude(group = "com.google.protobuf", module = "protobuf-javalite")
-        exclude(group = "com.google.firebase", module = "protolite-well-known-types")
-    }
+    releaseImplementation(platform(libs.firebase.bom))
+    releaseImplementation(libs.firebase.crashlytics)
+    releaseImplementation(libs.firebase.crashlytics.ndk)
 }

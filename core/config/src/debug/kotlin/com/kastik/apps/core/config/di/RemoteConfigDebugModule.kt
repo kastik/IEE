@@ -1,7 +1,7 @@
 package com.kastik.apps.core.config.di
 
 import com.kastik.apps.core.config.RemoteConfig
-import com.kastik.apps.core.config.impl.RemoteConfigDebugImpl
+import com.kastik.apps.core.config.RemoteConfigDebugImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

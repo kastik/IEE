@@ -1,7 +1,6 @@
-package com.kastik.apps.core.crashlytics.impl
+package com.kastik.apps.core.crashlytics
 
 import android.util.Log
-import com.kastik.apps.core.crashlytics.Crashlytics
 import javax.inject.Inject
 
 class CrashlyticsDebugImpl @Inject constructor() : Crashlytics {

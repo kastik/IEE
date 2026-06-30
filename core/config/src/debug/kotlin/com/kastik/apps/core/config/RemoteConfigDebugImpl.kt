@@ -1,14 +1,12 @@
-package com.kastik.apps.core.config.impl
-
+package com.kastik.apps.core.config
 
 import android.util.Log
-import com.kastik.apps.core.config.RemoteConfig
 import javax.inject.Inject
 
 internal class RemoteConfigDebugImpl @Inject constructor(
 ) : RemoteConfig {
 
-    override suspend fun refresh(){
+    override suspend fun refresh() {
         Log.d("RemoteConfig", "Refresh called")
     }
 }

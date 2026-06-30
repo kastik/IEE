@@ -4,47 +4,34 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import javax.inject.Inject
 
+
 internal class AnalyticsReleaseImpl @Inject constructor(
-    private val analytics: FirebaseAnalytics
+    private val analytics: FirebaseAnalytics,
+    override val types: AnalyticsEventTypes,
+    override val paramKeys: AnalyticsParamKeys
 ) : Analytics {
 
-    override fun logEvent(name: String, params: Map<String, Any?>) {
-        analytics.logEvent(name) {
-            params.forEach { (key, value) ->
-                when (value) {
-                    null -> Unit
-                    is String -> param(key, value)
-                    is Long -> param(key, value)
-                    is Int -> param(key, value.toLong())
-                    is Float -> param(key, value.toDouble())
-                    is Double -> param(key, value)
-                    is Boolean -> param(key, if (value) 1L else 0L)
-                    is Iterable<*> -> param(key, value.joinToString(","))
-                    else -> param(key, value.toString())
+    override fun setUserId(userId: String?) =
+        analytics.setUserId(userId)
+
+    override fun setUserProperty(propertyName: String, value: String?) =
+        analytics.setUserProperty(propertyName, value)
+
+    override fun logEvent(event: AnalyticsEvent) {
+        analytics.logEvent(event.type) {
+            event.extras.forEach { extra ->
+                val safeKey = extra.key.take(40)
+                when (val value = extra.value) {
+                    is String -> param(safeKey, value.take(100))
+                    is Long -> param(safeKey, value)
+                    is Int -> param(safeKey, value.toLong())
+                    is Double -> param(safeKey, value)
+                    is Float -> param(safeKey, value.toDouble())
+                    is Boolean -> param(safeKey, value.toString())
+                    else -> param(safeKey, value.toString().take(100))
                 }
             }
         }
     }
-
-    override fun logScreenView(screenName: String, params: Map<String, Any?>) {
-        analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_NAME, screenName)
-            param(FirebaseAnalytics.Param.SCREEN_CLASS, "MainActivity")
-            params.forEach { (key, value) ->
-                when (value) {
-                    null -> Unit
-                    is String -> param(key, value)
-                    is Long -> param(key, value)
-                    is Int -> param(key, value.toLong())
-                    is Float -> param(key, value.toDouble())
-                    is Double -> param(key, value)
-                    is Boolean -> param(key, if (value) 1L else 0L)
-                }
-            }
-        }
-    }
-
-    override fun setUserProperty(name: String, value: String?) =
-        analytics.setUserProperty(name, value)
 
 }

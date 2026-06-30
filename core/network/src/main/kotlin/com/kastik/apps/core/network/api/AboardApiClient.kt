@@ -2,14 +2,14 @@ package com.kastik.apps.core.network.api
 
 
 import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.network.model.common.ListResponseDto
 import com.kastik.apps.core.network.model.common.PagedResponseDto
 import com.kastik.apps.core.network.model.common.SingleResponseDto
 import com.kastik.apps.core.network.model.request.SubscribeDto
 import com.kastik.apps.core.network.model.response.AnnouncementDto
-import com.kastik.apps.core.network.model.response.AnnouncementTagsResponseDto
 import com.kastik.apps.core.network.model.response.AuthorDto
 import com.kastik.apps.core.network.model.response.ProfileDto
-import com.kastik.apps.core.network.model.response.TagResponseDto
+import com.kastik.apps.core.network.model.response.TagDto
 import com.kastik.apps.core.network.model.response.TokenDto
 import kotlinx.datetime.LocalDateTime
 import retrofit2.http.Body
@@ -43,7 +43,7 @@ interface AboardApiClient {
     @GET("v2/tags")
     @Headers("Accept: application/json")
     suspend fun getTags(
-    ): AnnouncementTagsResponseDto
+    ): ListResponseDto<TagDto>
 
     @GET("v2/authors")
     @Headers("Accept: application/json")
@@ -53,7 +53,7 @@ interface AboardApiClient {
 
     @GET("v2/subscribetags")
     @Headers("Accept: application/json")
-    suspend fun getAvailableTags(): List<TagResponseDto>
+    suspend fun getAvailableTags(): List<TagDto>
 
 
 
@@ -81,6 +81,6 @@ interface AboardApiClient {
 
     @GET("v2/auth/subscriptions")
     @Headers("Accept: application/json")
-    suspend fun getSubscribedTags(): List<TagResponseDto>
+    suspend fun getSubscribedTags(): List<TagDto>
 
 }
