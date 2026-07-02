@@ -37,7 +37,7 @@ class GetSubscribableTagsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository
 ) {
     operator fun invoke(): Flow<ImmutableList<Tag>> =
-        tagsRepository.tags.map { it.toImmutableList() }
+        tagsRepository.subscribableTags.map { it.toImmutableList() }
 }
 
 class RefreshSubscribableTagsUseCase @Inject constructor(
@@ -55,8 +55,7 @@ class GetSubscriptionsUseCase @Inject constructor(
 class RefreshSubscriptionsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository,
 ) {
-    suspend operator fun invoke() =
-        tagsRepository.refreshSubscribedTags()
+    suspend operator fun invoke() = tagsRepository.refreshSubscribedTags()
 }
 
 class SubscribeToTagsUseCase @Inject constructor(

@@ -8,10 +8,9 @@ import kotlinx.coroutines.flow.Flow
 interface TagsRepository {
     val announcementTags: Flow<List<Tag>>
     val subscribedTags: Flow<List<Tag>>
-    val tags: Flow<List<Tag>>
-
+    val subscribableTags: Flow<List<Tag>>
     suspend fun refreshAnnouncementTags(): Result<Unit, NetworkError>
-    suspend fun refreshSubscribableTags(): Result<Unit, NetworkError>
     suspend fun refreshSubscribedTags(): Result<Unit, NetworkError>
+    suspend fun refreshSubscribableTags(): Result<Unit, NetworkError>
     suspend fun subscribeToTags(tagIds: List<Int>): Result<Unit, NetworkError>
 }

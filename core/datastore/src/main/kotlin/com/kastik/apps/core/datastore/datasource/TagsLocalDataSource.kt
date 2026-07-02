@@ -7,6 +7,8 @@ import com.kastik.apps.core.datastore.di.UserSubscriptionsDatastore
 import com.kastik.apps.core.datastore.proto.SubscribableTagsProto
 import com.kastik.apps.core.datastore.proto.SubscriptionsProto
 import com.kastik.apps.core.datastore.proto.TagProto
+import com.kastik.apps.core.datastore.serializers.SubscribableTagsSerializer
+import com.kastik.apps.core.datastore.serializers.SubscribedTagsSerializer
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -30,7 +32,6 @@ internal class TagsLocalDataSourceImpl @Inject constructor(
 
     override suspend fun setSubscriptions(userSubscriptions: List<TagProto>) {
         subscribedTagsDatastore.updateData { subscribedTags ->
-
             subscribedTags
                 .toBuilder()
                 .clearTags()
@@ -52,9 +53,7 @@ internal class TagsLocalDataSourceImpl @Inject constructor(
 
     override suspend fun clearSubscribableTags() {
         subscribableTagsDatastore.updateData { subscribableTags ->
-            subscribableTags.toBuilder()
-                .clearTags()
-                .build()
+            SubscribableTagsSerializer.defaultValue
         }
     }
 
@@ -63,11 +62,7 @@ internal class TagsLocalDataSourceImpl @Inject constructor(
 
     override suspend fun clearSubscriptions() {
         subscribedTagsDatastore.updateData { subscribedTags ->
-
-            subscribedTags
-                .toBuilder()
-                .clearTags()
-                .build()
+            SubscribedTagsSerializer.defaultValue
         }
     }
 }

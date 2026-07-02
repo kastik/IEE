@@ -6,18 +6,16 @@ package com.kastik.apps.core.datastore.proto;
 import "google/protobuf/timestamp.proto";
 
 message ProfileProto{
-  int32 version = 1;
+  int32 id = 1;
+  string uid = 2;
+  string name = 3;
+  string email = 4;
 
-  int32 id = 2;
-  string uid = 3;
-  string name = 4;
-  string email = 5;
+  bool isAdmin = 5;
+  bool isAuthor = 6;
 
-  bool isAdmin = 6;
-  bool isAuthor = 7;
-
-  google.protobuf.Timestamp createdAt = 8;
-  google.protobuf.Timestamp updatedAt = 9;
-  google.protobuf.Timestamp deletedAt = 10;
-  google.protobuf.Timestamp lastLoginAt = 11;
+  google.protobuf.Timestamp createdAt = 7;
+  google.protobuf.Timestamp updatedAt = 8;
+  google.protobuf.Timestamp deletedAt = 9;
+  google.protobuf.Timestamp lastLoginAt = 10;
 }

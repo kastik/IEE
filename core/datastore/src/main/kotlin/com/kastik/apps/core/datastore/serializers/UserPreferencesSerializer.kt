@@ -5,19 +5,21 @@ import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
 import com.kastik.apps.core.datastore.proto.SearchScopeProto
 import com.kastik.apps.core.datastore.proto.SortTypeProto
+import com.kastik.apps.core.datastore.proto.ThemeProto
 import com.kastik.apps.core.datastore.proto.UserPreferencesProto
 import java.io.InputStream
 import java.io.OutputStream
 
 object UserPreferencesSerializer : Serializer<UserPreferencesProto> {
     override val defaultValue: UserPreferencesProto = UserPreferencesProto.newBuilder()
-        .setIsDynamicColorEnabled(true)
+        .setTheme(ThemeProto.System)
         .setIsForYouEnabled(true)
         .setAreFabFiltersEnabled(false)
-        .setCheckIntervalMinutes(60)
-        .setSortType(SortTypeProto.DESC)
+        .setIsDynamicColorEnabled(true)
+        .setSortType(SortTypeProto.Priority)
         .setSearchScope(SearchScopeProto.Body)
-        .setVersion(1)
+        .setHasSkippedSignIn(false)
+        .setCheckIntervalMinutes(120)
         .build()
 
     override suspend fun readFrom(input: InputStream): UserPreferencesProto {

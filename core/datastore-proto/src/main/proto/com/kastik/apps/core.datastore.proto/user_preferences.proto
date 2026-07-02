@@ -6,21 +6,19 @@ package com.kastik.apps.core.datastore.proto;
 import "google/protobuf/timestamp.proto";
 
 message UserPreferencesProto{
-  int32 version = 1;
+  ThemeProto theme = 1;
+  bool is_for_you_enabled = 2;
+  bool are_fab_filters_enabled = 3;
+  bool is_dynamic_color_enabled = 4;
 
-  ThemeProto theme = 2;
-  bool is_for_you_enabled = 3;
-  bool are_fab_filters_enabled = 4;
-  bool is_dynamic_color_enabled = 5;
+  SortTypeProto sort_type = 5;
+  SearchScopeProto search_scope = 6;
 
-  SortTypeProto sort_type = 6;
-  SearchScopeProto search_scope = 7;
+  bool has_skipped_sign_in = 7;
 
-  bool has_skipped_sign_in = 8;
-
-  google.protobuf.Timestamp last_check_time = 9;
-  int32 check_interval_minutes = 10;
-  int32 important_event_count = 11;
+  google.protobuf.Timestamp last_check_time = 8;
+  int32 check_interval_minutes = 9;
+  int32 important_event_count = 10;
 }
 
 enum ThemeProto {

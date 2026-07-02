@@ -6,12 +6,7 @@ import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 
 @Serializable
-data class AnnouncementTagsResponseDto(
-    val data: List<TagResponseDto>,
-)
-
-@Serializable
-data class TagResponseDto(
+data class TagDto(
 
     @SerialName("id") val id: Int,
     @SerialName("title") val title: String,
@@ -28,5 +23,5 @@ data class TagResponseDto(
     @Serializable(with = InstantSerializer::class)
     @SerialName("deleted_at") val deletedAt: Instant?,
 
-    @SerialName("childrensub_recursive") val subTags: List<TagResponseDto>?
+    @SerialName("childrensub_recursive") val subTags: List<TagDto>?
 )

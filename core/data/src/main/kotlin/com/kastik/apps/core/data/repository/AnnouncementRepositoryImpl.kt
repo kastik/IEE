@@ -56,7 +56,6 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         bodyQuery: String,
         tagIds: List<Int>,
         authorIds: List<Int>,
-
         ) = Pager(
         config = PagingConfig(
             pageSize = 20,

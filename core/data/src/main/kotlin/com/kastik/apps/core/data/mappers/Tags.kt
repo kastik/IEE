@@ -3,9 +3,9 @@ package com.kastik.apps.core.data.mappers
 import com.kastik.apps.core.database.entities.TagEntity
 import com.kastik.apps.core.datastore.proto.TagProto
 import com.kastik.apps.core.model.aboard.Tag
-import com.kastik.apps.core.network.model.response.TagResponseDto
+import com.kastik.apps.core.network.model.response.TagDto
 
-fun TagResponseDto.toTagEntity() = TagEntity(
+fun TagDto.toTagEntity() = TagEntity(
     id = id,
     title = title,
     parentId = parentId,
@@ -20,7 +20,7 @@ fun TagEntity.toTag() = Tag(
     parentId = parentId,
 )
 
-fun TagResponseDto.toTagProto(): TagProto = TagProto.newBuilder().apply {
+fun TagDto.toTagProto(): TagProto = TagProto.newBuilder().apply {
     id = this@toTagProto.id
     title = this@toTagProto.title
     isPublic = this@toTagProto.isPublic

@@ -6,7 +6,5 @@ package com.kastik.apps.core.datastore.proto;
 import "com/kastik/apps/core.datastore.proto/tags_common.proto";
 
 message SubscriptionsProto {
-  int32 version = 1;
-
-  repeated TagProto tags = 2;
+  repeated TagProto tags = 1;
 }

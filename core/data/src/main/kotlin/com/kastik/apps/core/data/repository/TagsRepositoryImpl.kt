@@ -37,7 +37,7 @@ internal class TagsRepositoryImpl @Inject constructor(
         subscribableTagsLocalDataSource.subscriptions
             .map { it.tagsList.map { tag -> tag.toTag() } }
 
-    override val tags: Flow<List<Tag>> =
+    override val subscribableTags: Flow<List<Tag>> =
         subscribableTagsLocalDataSource.subscribableTags
             .map { subscribableTags -> subscribableTags.tagsList.map { tag -> tag.toTag() } }
 

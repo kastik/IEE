@@ -7,6 +7,5 @@ import "com/kastik/apps/core.datastore.proto/tags_common.proto";
 import "google/protobuf/timestamp.proto";
 
 message SubscribableTagsProto {
-  int32 version = 1;
-  repeated TagProto tags = 2;
+  repeated TagProto tags = 1;
 }

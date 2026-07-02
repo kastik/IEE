@@ -3,7 +3,7 @@ package com.kastik.apps.core.data.repository
 import com.kastik.apps.core.common.di.IoDispatcher
 import com.kastik.apps.core.data.mappers.toSearchScopeProto
 import com.kastik.apps.core.data.mappers.toSortTypeProto
-import com.kastik.apps.core.data.mappers.toTheme
+import com.kastik.apps.core.data.mappers.toThemeProto
 import com.kastik.apps.core.data.mappers.toTimestamp
 import com.kastik.apps.core.data.mappers.toUserPreferences
 import com.kastik.apps.core.datastore.datasource.PreferencesLocalDataSource
@@ -33,7 +33,7 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
         }
 
     override suspend fun setTheme(theme: Theme) = withContext(ioDispatcher) {
-        preferencesLocalDataSource.setTheme(theme.toTheme())
+        preferencesLocalDataSource.setTheme(theme.toThemeProto())
     }
 
     override suspend fun setDynamicColor(isEnabled: Boolean) = withContext(ioDispatcher) {

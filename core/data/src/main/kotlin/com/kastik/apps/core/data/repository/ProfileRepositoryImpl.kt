@@ -27,8 +27,8 @@ internal class ProfileRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ProfileRepository {
 
-    override val profile: Flow<Profile> =
-        profileLocalDataSource.profile.map { profile -> profile.toProfile() }
+    override val profile: Flow<Profile?> =
+        profileLocalDataSource.profile.map { profile -> profile?.toProfile() }
 
 
     override suspend fun refreshProfile() = withContext(ioDispatcher) {
@@ -42,9 +42,7 @@ internal class ProfileRepositoryImpl @Inject constructor(
             crashlytics.recordException(e)
             Result.Error(e.toNetworkError())
         }
-
     }
-
 
     override suspend fun clearLocalData() = withContext(ioDispatcher) {
         try {
