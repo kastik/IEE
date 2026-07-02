@@ -1,10 +1,10 @@
 package com.kastik.apps.core.testing.testdata
 
-import com.kastik.apps.core.database.entities.RemoteKeys
+import com.kastik.apps.core.database.entities.RemoteKeysEntity
 import com.kastik.apps.core.model.aboard.SortType
 
-val noFilteredRemoteKeys = (1..20).map { id ->
-    RemoteKeys(
+val baseRemoteKeyEntities = (1..20).map { id ->
+    RemoteKeysEntity(
         announcementId = id,
         titleQuery = "",
         bodyQuery = "",
