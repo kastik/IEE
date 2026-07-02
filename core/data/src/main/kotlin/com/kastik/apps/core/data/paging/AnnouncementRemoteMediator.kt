@@ -33,7 +33,7 @@ class AnnouncementRemoteMediator(
     private val crashlytics: Crashlytics,
     private val database: AppDatabase,
     private val announcementRemoteDataSource: AnnouncementRemoteDataSource,
-    private val base64ImageExtractor: Base64ImageExtractor
+    private val base64ImageExtractor: Base64ImageExtractor,
 ) : RemoteMediator<Int, AnnouncementPreviewRelation>() {
     private val remoteKeysDao = database.remoteKeysDao()
     private val announcementLocalDataSource = database.announcementDao()
@@ -41,6 +41,7 @@ class AnnouncementRemoteMediator(
     private val tagsLocalDataSource = database.tagsDao()
 
     override suspend fun initialize(): InitializeAction {
+        //TODO We should schedule sync manager and SKIP_INITIAL_REFRESH if recent sync
         return InitializeAction.LAUNCH_INITIAL_REFRESH
     }
 
