@@ -1,4 +1,4 @@
-package com.kastik.apps.di
+package com.kastik.apps.dev.tools.di
 
 import com.kastik.apps.core.dev.tools.DevTools
 import com.kastik.apps.dev.tools.DevToolsReleaseImpl

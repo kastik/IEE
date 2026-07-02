@@ -1,8 +1,10 @@
 package com.kastik.apps.core.analytics
 
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 class AnalyticsParamKeysDebugImpl @Inject constructor(
 ) : AnalyticsParamKeys {
     override val SCREEN_NAME = "screen_name"

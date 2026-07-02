@@ -2,8 +2,10 @@ package com.kastik.apps.core.analytics
 
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 class AnalyticsEventTypesReleaseImpl @Inject constructor(
 ) : AnalyticsEventTypes {
     override val LOGIN = FirebaseAnalytics.Event.LOGIN

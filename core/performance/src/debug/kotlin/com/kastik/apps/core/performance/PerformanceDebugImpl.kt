@@ -1,7 +1,10 @@
 package com.kastik.apps.core.performance
 
 import javax.inject.Inject
+import javax.inject.Singleton
 
+
+@Singleton
 class PerformanceDebugImpl @Inject constructor(
 
 ) : Performance {

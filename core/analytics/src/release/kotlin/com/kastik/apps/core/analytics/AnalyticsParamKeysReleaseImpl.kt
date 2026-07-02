@@ -2,8 +2,10 @@ package com.kastik.apps.core.analytics
 
 import com.google.firebase.analytics.FirebaseAnalytics
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 class AnalyticsParamKeysReleaseImpl @Inject constructor(
 ) : AnalyticsParamKeys {
     override val SCREEN_NAME = FirebaseAnalytics.Param.SCREEN_NAME

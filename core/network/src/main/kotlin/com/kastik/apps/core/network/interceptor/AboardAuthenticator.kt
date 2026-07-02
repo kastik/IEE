@@ -10,7 +10,9 @@ import okhttp3.Response
 import okhttp3.Route
 import retrofit2.HttpException
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AboardAuthenticator @Inject constructor(
     private val tokenManager: TokenManager,
     private val crashlytics: Crashlytics,

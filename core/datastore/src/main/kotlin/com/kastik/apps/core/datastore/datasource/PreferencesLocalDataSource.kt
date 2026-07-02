@@ -2,13 +2,14 @@ package com.kastik.apps.core.datastore.datasource
 
 import androidx.datastore.core.DataStore
 import com.google.protobuf.Timestamp
+import com.kastik.apps.core.datastore.di.UserPrefsDatastore
 import com.kastik.apps.core.datastore.proto.SearchScopeProto
 import com.kastik.apps.core.datastore.proto.SortTypeProto
 import com.kastik.apps.core.datastore.proto.ThemeProto
 import com.kastik.apps.core.datastore.proto.UserPreferencesProto
-import com.kastik.apps.core.datastore.di.UserPrefsDatastore
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface PreferencesLocalDataSource {
     val userPreferences: Flow<UserPreferencesProto>
@@ -25,6 +26,7 @@ interface PreferencesLocalDataSource {
     suspend fun resetImportantEventCount()
 }
 
+@Singleton
 internal class PreferencesLocalDataSourceImpl @Inject constructor(
     @UserPrefsDatastore private val dataStore: DataStore<UserPreferencesProto>
 ) : PreferencesLocalDataSource {

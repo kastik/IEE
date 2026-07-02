@@ -7,6 +7,7 @@ import com.kastik.apps.core.datastore.serializers.ProfileSerializer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface ProfileLocalDataSource {
     val profile: Flow<ProfileProto?>
@@ -14,6 +15,7 @@ interface ProfileLocalDataSource {
     suspend fun clearProfile()
 }
 
+@Singleton
 internal class ProfileLocalDataSourceImpl @Inject constructor(
     @UserProfileDatastore private val profileDataStore: DataStore<ProfileProto>,
 ) : ProfileLocalDataSource {

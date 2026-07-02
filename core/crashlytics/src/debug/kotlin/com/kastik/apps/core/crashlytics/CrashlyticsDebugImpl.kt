@@ -2,7 +2,10 @@ package com.kastik.apps.core.crashlytics
 
 import android.util.Log
 import javax.inject.Inject
+import javax.inject.Singleton
 
+
+@Singleton
 class CrashlyticsDebugImpl @Inject constructor() : Crashlytics {
     override fun log(message: String) {
         Log.e("Crashlytics", message)

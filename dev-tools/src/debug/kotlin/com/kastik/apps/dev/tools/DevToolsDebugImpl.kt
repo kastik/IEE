@@ -5,7 +5,9 @@ import com.kastik.apps.core.dev.tools.DevTools
 import leakcanary.AppWatcher
 import leakcanary.LeakCanary
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 internal class DevToolsDebugImpl @Inject constructor(
 
 ) : DevTools {

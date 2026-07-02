@@ -11,6 +11,7 @@ import com.kastik.apps.core.datastore.serializers.SubscribableTagsSerializer
 import com.kastik.apps.core.datastore.serializers.SubscribedTagsSerializer
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface TagsLocalDataSource {
     val subscriptions: Flow<SubscriptionsProto>
@@ -21,6 +22,7 @@ interface TagsLocalDataSource {
     suspend fun clearSubscriptions()
 }
 
+@Singleton
 internal class TagsLocalDataSourceImpl @Inject constructor(
     @UserSubscriptionsDatastore private val subscribedTagsDatastore: DataStore<SubscriptionsProto>,
     @UserSubscribableTagsDatastore private val subscribableTagsDatastore: DataStore<SubscribableTagsProto>,

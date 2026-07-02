@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import javax.inject.Singleton
 
-
+@Singleton
 class WorkSchedulerImpl @Inject constructor(
     @ApplicationContext context: Context
 ) : WorkScheduler {

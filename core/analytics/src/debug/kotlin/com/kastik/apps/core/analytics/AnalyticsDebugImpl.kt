@@ -2,8 +2,10 @@ package com.kastik.apps.core.analytics
 
 import android.util.Log
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 internal class AnalyticsDebugImpl @Inject constructor(
     override val types: AnalyticsEventTypes,
     override val paramKeys: AnalyticsParamKeys,

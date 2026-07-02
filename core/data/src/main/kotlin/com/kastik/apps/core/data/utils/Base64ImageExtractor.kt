@@ -12,12 +12,14 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface Base64ImageExtractor {
     suspend fun process(html: String): String
 }
 
 
+@Singleton
 internal class Base64ImageExtractorImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,

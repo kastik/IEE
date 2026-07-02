@@ -3,8 +3,10 @@ package com.kastik.apps.core.analytics
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 internal class AnalyticsReleaseImpl @Inject constructor(
     private val analytics: FirebaseAnalytics,
     override val types: AnalyticsEventTypes,

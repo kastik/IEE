@@ -1,8 +1,10 @@
 package com.kastik.apps.core.analytics
 
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 class AnalyticsEventTypesDebugImpl @Inject constructor(
 ) : AnalyticsEventTypes {
     override val LOGIN = "login"

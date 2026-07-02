@@ -7,7 +7,9 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 internal class RemoteConfigReleaseImpl @Inject constructor(
     private val crashlytics: Crashlytics,
     private val remoteConfig: FirebaseRemoteConfig,

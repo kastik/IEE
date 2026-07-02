@@ -6,6 +6,7 @@ import com.kastik.apps.core.network.model.common.ListResponseDto
 import com.kastik.apps.core.network.model.request.SubscribeDto
 import com.kastik.apps.core.network.model.response.TagDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface TagsRemoteDataSource {
     suspend fun fetchAnnouncementTags(): ListResponseDto<TagDto>
@@ -14,6 +15,7 @@ interface TagsRemoteDataSource {
     suspend fun subscribeToTags(tagIds: List<Int>)
 }
 
+@Singleton
 internal class TagsRemoteDataSourceImpl @Inject constructor(
     @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient
 ) : TagsRemoteDataSource {
