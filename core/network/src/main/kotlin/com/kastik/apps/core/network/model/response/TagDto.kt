@@ -1,6 +1,6 @@
 package com.kastik.apps.core.network.model.response
 
-import com.kastik.apps.core.network.serializers.InstantSerializer
+import com.kastik.apps.core.network.serializers.StringToInstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
@@ -14,13 +14,13 @@ data class TagDto(
     @SerialName("is_public") val isPublic: Boolean,
     @SerialName("maillist_name") val mailListName: String,
 
-    @Serializable(with = InstantSerializer::class)
+    @Serializable(with = StringToInstantSerializer::class)
     @SerialName("created_at") val createdAt: Instant?,
 
-    @Serializable(with = InstantSerializer::class)
+    @Serializable(with = StringToInstantSerializer::class)
     @SerialName("updated_at") val updatedAt: Instant?,
 
-    @Serializable(with = InstantSerializer::class)
+    @Serializable(with = StringToInstantSerializer::class)
     @SerialName("deleted_at") val deletedAt: Instant?,
 
     @SerialName("childrensub_recursive") val subTags: List<TagDto>?

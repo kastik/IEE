@@ -14,7 +14,7 @@ class AuthenticationRemoteDataSourceImplTest {
 
     @Test
     fun exchangeCodeForAboardTokenReturnDataFromApi() = runTest {
-        val remote = fakeAboardApiClient.exchangeCodeForAboardToken("1234")
+        val remote = fakeAboardApiClient.exchangeAuthCode("1234")
         val result = authenticationRemoteDataSourceImpl.exchangeCodeForAboardToken("1234")
         assertThat(result).isEqualTo(remote)
     }

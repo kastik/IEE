@@ -2,24 +2,19 @@ package com.kastik.apps.core.network.api
 
 
 import com.kastik.apps.core.model.aboard.SortType
-import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
-import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
-import com.kastik.apps.core.network.model.aboard.auth.AboardTokenResponseDto
-import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
-import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
-import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDto
-import com.kastik.apps.core.network.model.aboard.tags.SubscribeToTagsRequestDto
-import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
-import com.kastik.apps.core.network.model.aboard.tags.TagsResponseDto
-import com.kastik.apps.core.network.testdata.aboardTokenResponseDtoTestData
-import com.kastik.apps.core.network.testdata.announcementPageResponseTestData
-import com.kastik.apps.core.network.testdata.authorDtoTestData
-import com.kastik.apps.core.network.testdata.subscribableTagsDtoTestData
-import com.kastik.apps.core.network.testdata.subscribedTagDtoTestData
-import com.kastik.apps.core.network.testdata.tagsResponseDtoTestData
-import com.kastik.apps.core.network.testdata.userProfileDtoTestData
+import com.kastik.apps.core.network.model.common.ListResponseDto
+import com.kastik.apps.core.network.model.common.SingleResponseDto
+import com.kastik.apps.core.network.model.request.SubscribeDto
+import com.kastik.apps.core.network.model.response.AnnouncementDto
+import com.kastik.apps.core.network.model.response.ProfileDto
+import com.kastik.apps.core.network.model.response.TokenDto
+import com.kastik.apps.core.network.testdata.baseAuthorDto
+import com.kastik.apps.core.network.testdata.basePagedAnnouncementDto
+import com.kastik.apps.core.network.testdata.baseProfileDto
+import com.kastik.apps.core.network.testdata.baseSingleResponseAnnouncementDto
+import com.kastik.apps.core.network.testdata.baseTagDto
+import com.kastik.apps.core.network.testdata.baseTokenDto
 import kotlinx.datetime.LocalDateTime
-import okhttp3.ResponseBody
 
 
 class FakeAboardApiClient : AboardApiClient {
@@ -36,68 +31,55 @@ class FakeAboardApiClient : AboardApiClient {
         sortType: SortType,
         page: Int,
         perPage: Int,
-        authorId: List<Int>?,
-        tagsIds: List<Int>?,
+        authorIds: List<Int>?,
+        tagIds: List<Int>?,
         title: String?,
         body: String?,
         updatedAfter: LocalDateTime?
-    ): PagedAnnouncementsResponseDto {
-        return announcementPageResponseTestData[page - 1]
-    }
+    ) = basePagedAnnouncementDto
 
 
-    override suspend fun getAnnouncement(id: Int): AnnouncementResponseDto {
-        announcementPageResponseTestData.forEach { page ->
-            page.data.forEach { announcement ->
-                if (announcement.id == id) {
-                    return AnnouncementResponseDto(data = announcement)
-                }
-            }
+    override suspend fun getAnnouncement(id: Int): SingleResponseDto<AnnouncementDto> {
+        throwOnApiCall?.let { exception ->
+            throw exception
         }
-        throw Exception("Announcement not found")
+
+        return baseSingleResponseAnnouncementDto
     }
 
-    override suspend fun exchangeCodeForAboardToken(code: String): AboardTokenResponseDto {
+    override suspend fun exchangeAuthCode(code: String): TokenDto {
         throwOnApiCall?.let {
             throw it
         }
-        return aboardTokenResponseDtoTestData
+        return baseTokenDto
     }
 
-    override suspend fun refreshToken(): AboardTokenResponseDto {
-        return aboardTokenResponseDtoTestData
+    override suspend fun refreshToken(): TokenDto {
+        return baseTokenDto
     }
 
-    override suspend fun getUserInfo(): ProfileResponseDto {
+    override suspend fun getCurrentUser(): ProfileDto {
         throwOnApiCall?.let {
             throw it
         }
-        return userProfileDtoTestData.first()
+        return baseProfileDto
     }
 
-    override suspend fun getUserSubscriptions(): List<SubscribedTagResponseDto> {
-        return subscribedTagDtoTestData
-    }
+    override suspend fun getSubscribedTags() = listOf(baseTagDto)
 
-    override suspend fun getUserSubscribableTags(): List<SubscribableTagsResponseDto> {
-        return subscribableTagsDtoTestData
-    }
 
-    override suspend fun subscribeToTags(updatedTags: SubscribeToTagsRequestDto) {
+    override suspend fun getAvailableTags() = listOf(baseTagDto)
+
+
+    override suspend fun subscribeToTags(tags: SubscribeDto) {
         _subscribedIds.clear()
-        _subscribedIds.addAll(updatedTags.tags)
+        _subscribedIds.addAll(tags.tags)
     }
 
-    override suspend fun searchAnnouncements(id: Int, attachmentId: Int): ResponseBody {
-        throw Exception("Not implemented")
-    }
+    override suspend fun getTags() = ListResponseDto(listOf(baseTagDto))
 
-    override suspend fun getTags(): TagsResponseDto {
-        return tagsResponseDtoTestData
-    }
 
-    override suspend fun getAuthors(): List<AuthorResponseDto> {
-        return authorDtoTestData
-    }
+    override suspend fun getAuthors() = listOf(baseAuthorDto)
+
 
 }

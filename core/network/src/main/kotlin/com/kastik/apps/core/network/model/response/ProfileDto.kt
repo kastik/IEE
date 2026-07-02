@@ -1,7 +1,7 @@
 package com.kastik.apps.core.network.model.response
 
-import com.kastik.apps.core.network.serializers.InstantSerializer
 import com.kastik.apps.core.network.serializers.IntAsBooleanSerializer
+import com.kastik.apps.core.network.serializers.StringToInstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
@@ -20,10 +20,10 @@ data class ProfileDto(
     @Serializable(with = IntAsBooleanSerializer::class)
     @SerialName("is_author") val isAuthor: Boolean,
 
-    @Serializable(with = InstantSerializer::class)
+    @Serializable(with = StringToInstantSerializer::class)
     @SerialName("created_at") val createdAt: Instant?,
 
-    @Serializable(with = InstantSerializer::class)
+    @Serializable(with = StringToInstantSerializer::class)
     @SerialName("last_login_at") val lastLoginAt: Instant?,
 
 )

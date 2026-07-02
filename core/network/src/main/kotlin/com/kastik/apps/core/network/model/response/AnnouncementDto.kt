@@ -1,7 +1,7 @@
 package com.kastik.apps.core.network.model.response
 
-import com.kastik.apps.core.network.serializers.InstantSerializer
 import com.kastik.apps.core.network.serializers.IntAsBooleanSerializer
+import com.kastik.apps.core.network.serializers.StringToInstantSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Instant
@@ -14,10 +14,10 @@ data class AnnouncementDto(
     @SerialName("body") val body: String,
     @SerialName("preview")  val preview: String,
 
-    @Serializable(with = InstantSerializer::class)
+    @Serializable(with = StringToInstantSerializer::class)
     @SerialName("created_at") val createdAt: Instant,
 
-    @Serializable(with = InstantSerializer::class)
+    @Serializable(with = StringToInstantSerializer::class)
     @SerialName("updated_at") val updatedAt: Instant,
 
 
