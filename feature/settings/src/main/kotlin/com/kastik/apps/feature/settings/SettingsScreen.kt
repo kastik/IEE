@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -38,7 +37,6 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,6 +61,7 @@ import com.kastik.apps.core.common.extensions.launchUrl
 import com.kastik.apps.core.designsystem.component.IeeIconToolTip
 import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.apps.core.designsystem.component.IeeSliderThumbToolTip
+import com.kastik.apps.core.designsystem.component.IeeSwitchRow
 import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
 import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.model.aboard.SortType
@@ -96,16 +95,16 @@ internal fun SettingsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AnimatedContent(
-        targetState = uiState, contentKey = { state ->
-            state::class
-        }) { state ->
+        targetState = uiState,
+        contentKey = { state -> state::class }
+    ) { state ->
         when (state) {
 
-            is UiState.Loading -> {
+            is SettingsUiState.Loading -> {
                 SettingsScreenLoading()
             }
 
-            is UiState.Success -> {
+            is SettingsUiState.Success -> {
                 SettingsScreenSuccess(
                     theme = state.theme,
                     onThemeChange = viewModel::setTheme,
@@ -124,7 +123,7 @@ internal fun SettingsRoute(
                     isAnnouncementCheckIntervalAvailable = state.isAnnouncementCheckIntervalAvailable,
                     setAnnouncementCheckIntervalMinutes = viewModel::setAnnouncementCheckIntervalMinutes,
                     areNotificationsAllowed = state.areNotificationsAllowed,
-                    navigateToLicenses = navigateToLicenses
+                    navigateToLicenses = navigateToLicenses,
                 )
             }
 
@@ -225,7 +224,7 @@ private fun SettingsScreenSuccess(
                             })
                     }
                     HorizontalDivider()
-                    SettingSwitchRow(
+                    IeeSwitchRow(
                         title = stringResource(R.string.for_you_label),
                         subtitle = if (isForYouAvailable) stringResource(R.string.for_you_available_description) else stringResource(
                             R.string.for_you_unavailable_description
@@ -237,7 +236,7 @@ private fun SettingsScreenSuccess(
                             analytics.logForYouPreferenceChanged(enabled)
                         })
                     HorizontalDivider()
-                    SettingSwitchRow(
+                    IeeSwitchRow(
                         title = stringResource(R.string.fab_filters_label),
                         subtitle = stringResource(R.string.fab_filters_description),
                         checked = fabFiltersDisabled,
@@ -353,7 +352,7 @@ private fun SettingsScreenSuccess(
                     }
                     HorizontalDivider()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        SettingSwitchRow(
+                        IeeSwitchRow(
                             title = stringResource(R.string.dynamic_color_label),
                             subtitle = stringResource(R.string.dynamic_color_description),
                             checked = dynamicColor,
@@ -377,7 +376,7 @@ private fun SettingsScreenSuccess(
 
             ) {
                 Column {
-                    SettingSwitchRow(
+                    IeeSwitchRow(
                         title = stringResource(R.string.push_notifications_label),
                         subtitle = stringResource(R.string.push_notifications_description),
                         checked = areNotificationsAllowed,
@@ -592,49 +591,6 @@ private fun SettingsSliderRow(
 }
 
 @Composable
-private fun SettingSwitchRow(
-    title: String,
-    subtitle: String? = null,
-    enabled: Boolean = true,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    val vibrator = LocalHapticFeedback.current
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 14.dp)
-            .toggleable(
-                enabled = enabled, value = checked,
-                onValueChange = {
-                    vibrator.performHapticFeedback(if (it) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
-                    onCheckedChange(it)
-                },
-
-                ), verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(Modifier.weight(1f)) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            if (subtitle != null) {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-        Switch(
-            enabled = enabled, checked = checked, onCheckedChange = null
-        )
-    }
-}
-
-@Composable
 private fun SettingNavigationRow(
     title: String, subtitle: String? = null, onClick: () -> Unit
 ) {
@@ -665,7 +621,7 @@ private fun SettingNavigationRow(
 
 @Preview
 @Composable
-fun SettingsScreenSuccessPreview() {
+private fun SettingsScreenSuccessPreview() {
     IeePreview {
         SettingsScreenSuccess(
             theme = Theme.FOLLOW_SYSTEM,
@@ -693,9 +649,8 @@ fun SettingsScreenSuccessPreview() {
 
 @Preview
 @Composable
-fun SettingsScreenLoadingPreview() {
+private fun SettingsScreenLoadingPreview() {
     IeePreview {
         SettingsScreenLoading()
     }
 }
-

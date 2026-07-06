@@ -6,7 +6,9 @@ import com.kastik.apps.core.data.mappers.toNetworkError
 import com.kastik.apps.core.data.mappers.toTag
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.data.mappers.toTagProto
+import com.kastik.apps.core.data.utils.safeCall
 import com.kastik.apps.core.database.dao.TagsDao
+import com.kastik.apps.core.datastore.datasource.AuthenticationLocalDataSource
 import com.kastik.apps.core.datastore.datasource.TagsLocalDataSource
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.model.aboard.Tag
@@ -15,11 +17,11 @@ import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.TagsRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 internal class TagsRepositoryImpl @Inject constructor(
@@ -27,6 +29,7 @@ internal class TagsRepositoryImpl @Inject constructor(
     private val announcementTagsLocalDataSource: TagsDao,
     private val subscribableTagsLocalDataSource: TagsLocalDataSource,
     private val tagsRemoteDataSource: TagsRemoteDataSource,
+    private val authenticationLocalDataSource: AuthenticationLocalDataSource,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : TagsRepository {
 
@@ -42,57 +45,56 @@ internal class TagsRepositoryImpl @Inject constructor(
             .map { subscribableTags -> subscribableTags.tagsList.map { tag -> tag.toTag() } }
 
 
-    override suspend fun refreshAnnouncementTags() = withContext(ioDispatcher) {
-        try {
+    override suspend fun syncAnnouncementTags() = withContext(ioDispatcher) {
+        safeCall(
+            mapException = Exception::toNetworkError,
+            recordException = crashlytics::recordException
+        ) {
             val remoteTags =
                 tagsRemoteDataSource.fetchAnnouncementTags().data.map { it.toTagEntity() }
             announcementTagsLocalDataSource.upsertTags(remoteTags)
-            Result.Success(Unit)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            crashlytics.recordException(e)
-            Result.Error(e.toNetworkError())
         }
     }
 
-    override suspend fun refreshSubscribableTags() = withContext(ioDispatcher) {
-        try {
+    override suspend fun syncSubscribableTags() = withContext(ioDispatcher) {
+        safeCall(
+            mapException = Exception::toNetworkError,
+            recordException = crashlytics::recordException
+        ) {
             val subscribableTags = tagsRemoteDataSource.fetchSubscribableTags()
             subscribableTagsLocalDataSource.setSubscribableTags(subscribableTags.map { tag -> tag.toTagProto() })
-            Result.Success(Unit)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            crashlytics.recordException(e)
-            Result.Error(e.toNetworkError())
+
         }
     }
 
 
-    override suspend fun refreshSubscribedTags() = withContext(ioDispatcher) {
-        try {
+    override suspend fun syncSubscribedTags() = withContext(ioDispatcher) {
+
+        if (!authenticationLocalDataSource.isSignedIn.first()) {
+            return@withContext Result.Success(Unit)
+        }
+
+        safeCall(
+            mapException = Exception::toNetworkError,
+            recordException = crashlytics::recordException
+        ) {
             val subscribedTags = tagsRemoteDataSource.fetchSubscriptions()
             subscribableTagsLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toTagProto() })
-            Result.Success(Unit)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            crashlytics.recordException(e)
-            Result.Error(e.toNetworkError())
         }
     }
 
     override suspend fun subscribeToTags(tagIds: List<Int>): Result<Unit, NetworkError> =
         withContext(ioDispatcher) {
-            try {
+            safeCall(
+                mapException = Exception::toNetworkError,
+                recordException = crashlytics::recordException
+            ) {
                 tagsRemoteDataSource.subscribeToTags(tagIds)
-                Result.Success(Unit)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                crashlytics.recordException(e)
-                Result.Error(e.toNetworkError())
+
+                val syncStatus = syncSubscribedTags()
+                if (syncStatus is Result.Error) {
+                    throw Exception("Failed to sync tags after subscribing")
+                }
             }
         }
 }

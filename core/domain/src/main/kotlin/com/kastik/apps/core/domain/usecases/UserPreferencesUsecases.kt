@@ -13,13 +13,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class HasSkippedSignInUseCase @Inject constructor(
+class GetUserPreferencesUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
-    operator fun invoke(): Flow<Boolean> =
-        userPreferencesRepository.userPreferences.map { userPreferences ->
-            userPreferences.hasSkippedSignedIn
-        }
+    operator fun invoke() = userPreferencesRepository.userPreferences
 }
 
 class SetHasSkippedSignInUseCase @Inject constructor(
@@ -81,6 +78,20 @@ class IsForYouAvailableUseCase @Inject constructor(
             authenticationRepository.isSignedIn,
         ) { subscriptions, isSignedIn ->
             isSignedIn && subscriptions.isNotEmpty()
+        }
+}
+
+
+class IsForYouEnabledUseCase @Inject constructor(
+    private val isForYouAvailableUseCase: IsForYouAvailableUseCase,
+    private val userPreferencesRepository: UserPreferencesRepository
+) {
+    operator fun invoke(): Flow<Boolean> =
+        combine(
+            isForYouAvailableUseCase(),
+            userPreferencesRepository.userPreferences
+        ) { isForYouAvailable, userPreferences ->
+            isForYouAvailable && userPreferences.isForYouEnabled
         }
 }
 

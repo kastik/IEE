@@ -4,12 +4,9 @@ import com.kastik.apps.core.common.extensions.removeAccents
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
-import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.model.result.Result
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -27,23 +24,10 @@ class GetAnnouncementTagsUseCase @Inject constructor(
     }.map { it.toImmutableList() }
 }
 
-class RefreshAnnouncementTagsUseCase @Inject constructor(
-    private val tagsRepository: TagsRepository
-) {
-    suspend operator fun invoke() = tagsRepository.refreshAnnouncementTags()
-}
-
 class GetSubscribableTagsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository
 ) {
-    operator fun invoke(): Flow<ImmutableList<Tag>> =
-        tagsRepository.subscribableTags.map { it.toImmutableList() }
-}
-
-class RefreshSubscribableTagsUseCase @Inject constructor(
-    private val tagsRepository: TagsRepository
-) {
-    suspend operator fun invoke() = tagsRepository.refreshSubscribableTags()
+    operator fun invoke() = tagsRepository.subscribableTags.map { it.toImmutableList() }
 }
 
 class GetSubscriptionsUseCase @Inject constructor(
@@ -52,10 +36,24 @@ class GetSubscriptionsUseCase @Inject constructor(
     operator fun invoke() = tagsRepository.subscribedTags.map { it.toImmutableList() }
 }
 
-class RefreshSubscriptionsUseCase @Inject constructor(
+class SyncAnnouncementTagsUseCase @Inject constructor(
+    private val tagsRepository: TagsRepository
+) {
+    suspend operator fun invoke() = tagsRepository.syncAnnouncementTags()
+}
+
+
+class SyncSubscribableTagsUseCase @Inject constructor(
+    private val tagsRepository: TagsRepository
+) {
+    suspend operator fun invoke() = tagsRepository.syncSubscribableTags()
+}
+
+
+class SyncSubscriptionsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository,
 ) {
-    suspend operator fun invoke() = tagsRepository.refreshSubscribedTags()
+    suspend operator fun invoke() = tagsRepository.syncSubscribedTags()
 }
 
 class SubscribeToTagsUseCase @Inject constructor(
@@ -72,7 +70,7 @@ class SubscribeToTagsUseCase @Inject constructor(
 }
 
 
-class GetTagsQuickResults @Inject constructor(
+class GetTagsQuickResultsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository,
     private val authenticationRepository: AuthenticationRepository,
 ) {

@@ -1,11 +1,12 @@
 package com.kastik.apps.feature.announcement
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,13 +23,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AttachFile
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,11 +51,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.kastik.apps.core.analytics.AnalyticsEvent
-import com.kastik.apps.core.common.extensions.getEnglishString
 import com.kastik.apps.core.common.extensions.launchInAppReview
 import com.kastik.apps.core.common.extensions.shareAnnouncement
+import com.kastik.apps.core.designsystem.component.IeeAttachment
 import com.kastik.apps.core.designsystem.component.IeeDotDivider
+import com.kastik.apps.core.designsystem.component.IeeLinearWavyProgressIndicator
 import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeStatusBanner
 import com.kastik.apps.core.designsystem.component.IeeTag
 import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
 import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
@@ -73,14 +73,12 @@ import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun AnnouncementRoute(
     announcementId: Int,
     navigateBack: () -> Unit,
-    viewModel: AnnouncementScreenViewModel = hiltViewModel(),
+    viewModel: AnnouncementViewModel = hiltViewModel(),
 ) {
     val analytics = LocalAnalytics.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -99,29 +97,34 @@ internal fun AnnouncementRoute(
         contentKey = { state -> state::class }
     ) { state ->
         when (state) {
-            is UiState.Loading -> {
+
+            is AnnouncementUiState.Loading -> {
                 AnnouncementScreenLoading(announcementId = announcementId)
             }
 
-            is UiState.Error -> {
+            //TODO: We need a different state for auth and network erros to enable Retry logic
+            //we could also route the api call for refresh to WM
+
+            is AnnouncementUiState.Error -> {
                 AnnouncementScreenError(
-                    resId = state.resId,
                     announcementId = announcementId,
+                    message = stringResource(state.messageResId)
                 )
             }
 
-            is UiState.Success -> {
+            is AnnouncementUiState.Success -> {
                 AnnouncementScreenSuccess(
-                    announcementId = state.announcement.id,
-                    title = state.announcement.title,
-                    author = state.announcement.author,
-                    date = state.announcement.date.toFormattedString(),
-                    prossedBodies = state.processedBody,
-                    tags = state.announcement.tags.toImmutableList(),
-                    attachments = state.announcement.attachments.toImmutableList(),
+                    id = state.id,
+                    title = state.title,
+                    author = state.author,
+                    date = state.date.toFormattedString(),
+                    prossedBodies = state.processedBodies,
+                    tags = state.tags,
+                    attachments = state.attachments,
                     shouldShowReviewDialog = state.shouldShowReviewDialog,
+                    isSyncing = state.isSyncing,
+                    syncError = state.syncErrorMessageResId?.let { stringResource(it) },
                     onSuccessfulReview = viewModel::onSuccessfulReview,
-                    navigateBack = navigateBack,
                     onAttachmentClick = viewModel::downloadAttachment
                 )
             }
@@ -129,27 +132,27 @@ internal fun AnnouncementRoute(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun AnnouncementScreenSuccess(
-    announcementId: Int,
+    id: Int,
     title: String,
     author: String,
     date: String,
     prossedBodies: ImmutableList<ProcessedBody>,
     tags: ImmutableList<Tag> = persistentListOf(),
     attachments: ImmutableList<Attachment> = persistentListOf(),
-    onAttachmentClick: (Int, Int, String, String) -> Unit = { _, _, _, _ -> },
+    onAttachmentClick: (Int, String, String) -> Unit = { _, _, _ -> },
     shouldShowReviewDialog: Boolean = false,
+    isSyncing: Boolean = false,
+    syncError: String? = null,
     onSuccessfulReview: () -> Unit = {},
-    navigateBack: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
     val scroll = rememberScrollState()
 
-    LaunchedEffect(announcementId) {
-        analytics.logContentLoadState("announcement", announcementId.toString(), "success")
+    LaunchedEffect(id) {
+        analytics.logContentLoadState("announcement", id.toString(), "success")
     }
 
     LaunchedEffect(shouldShowReviewDialog) {
@@ -166,6 +169,34 @@ private fun AnnouncementScreenSuccess(
             .verticalScroll(scroll), verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
+
+        AnimatedVisibility(
+            visible = isSyncing && syncError == null,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                IeeLinearWavyProgressIndicator(
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = syncError != null
+        ) {
+            syncError?.let { errorMessage ->
+                IeeStatusBanner(
+                    text = errorMessage,
+                    icon = Icons.Default.CloudOff,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
@@ -183,8 +214,8 @@ private fun AnnouncementScreenSuccess(
             IconButton(
                 onClick = {
                     analytics.logButtonClick("share_announcement_icon")
-                    analytics.logAnnouncementShared(announcementId)
-                    context.shareAnnouncement(announcementId)
+                    analytics.logAnnouncementShared(id)
+                    context.shareAnnouncement(id)
                 }
             ) {
                 Icon(
@@ -240,69 +271,74 @@ private fun AnnouncementScreenSuccess(
         }
 
         if (attachments.isNotEmpty()) {
-            Text(
-                text = stringResource(R.string.attachments_label),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                attachments.forEach { attachment ->
-                    AssistChip(
-                        contentPadding = PaddingValues(
-                            horizontal = 16.dp,
-                            vertical = 8.dp
-                        ),
-                        onClick = {
-                            analytics.logItemSelection(attachment.id.toString(), "attachment")
-                            onAttachmentClick(
-                                announcementId,
-                                attachment.id,
-                                attachment.fileName,
-                                attachment.mimeType,
-                            )
-                        },
-                        label = {
-                            Text(
-                                text = attachment.fileName,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Outlined.AttachFile,
-                                contentDescription = attachment.fileName,
-                            )
-                        }
-                    )
-                }
+            Attachments(
+                attachments = attachments,
+            ) { attachment ->
+                analytics.logItemSelection(attachment.id.toString(), "attachment")
+                onAttachmentClick(
+                    attachment.id,
+                    attachment.fileName,
+                    attachment.mimeType,
+                )
             }
         }
 
         if (tags.isNotEmpty()) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-
-            Text(
-                text = stringResource(R.string.tags_label),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(top = 8.dp)
-            ) {
-                tags.forEach { tag ->
-                    IeeTag(text = tag.title)
-                }
-            }
+            Tags(tags = tags)
         }
         Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
+    }
+}
+
+
+@Composable
+private fun Attachments(
+    modifier: Modifier = Modifier,
+    attachments: ImmutableList<Attachment> = persistentListOf(),
+    onAttachmentClick: (Attachment) -> Unit = {},
+) {
+    Text(
+        text = stringResource(R.string.attachments_label),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary
+    )
+
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        attachments.forEach { attachment ->
+            IeeAttachment(
+                fileName = attachment.fileName,
+            ) {
+                onAttachmentClick(attachment)
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun Tags(
+    modifier: Modifier = Modifier,
+    tags: ImmutableList<Tag> = persistentListOf(),
+) {
+    Text(
+        text = stringResource(R.string.tags_label),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary
+    )
+
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(top = 8.dp)
+    ) {
+        tags.forEach { tag ->
+            IeeTag(text = tag.title)
+        }
     }
 }
 
@@ -348,13 +384,13 @@ private fun AnnouncementScreenLoading(
 @Composable
 private fun AnnouncementScreenError(
     announcementId: Int,
-    @StringRes resId: Int,
+    message: String
 ) {
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
 
-    LaunchedEffect(announcementId, resId) {
-        val englishErrorMessage = context.getEnglishString(resId)
+    LaunchedEffect(announcementId, message) {
+        val englishErrorMessage = "ABC"//TODOcontext.getEnglishString(message)
 
         analytics.logContentLoadState(
             contentType = "announcement",
@@ -364,15 +400,42 @@ private fun AnnouncementScreenError(
         )
     }
 
-    StatusContent(message = stringResource(resId))
+    StatusContent(
+        {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    )
 }
 
 @Preview
 @Composable
-fun AnnouncementScreenSuccessPreview() {
+private fun AnnouncementScreenLoadingPreview() {
+    IeePreview {
+        AnnouncementScreenLoading()
+    }
+}
+
+@Preview
+@Composable
+private fun AnnouncementScreenErrorPreview() {
+    IeePreview {
+        AnnouncementScreenError(
+            announcementId = 0,
+            message = "Something went wrong"
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AnnouncementScreenSuccessPreview() {
     IeePreview {
         AnnouncementScreenSuccess(
-            announcementId = 0,
+            id = 0,
             title = "Announcement Title",
             author = "Author Name",
             date = "25-12-2026",
@@ -381,25 +444,6 @@ fun AnnouncementScreenSuccessPreview() {
                     AnnotatedString("The quick brown fox")
                 )
             )
-        )
-    }
-}
-
-@Preview
-@Composable
-fun AnnouncementScreenLoadingPreview() {
-    IeePreview {
-        AnnouncementScreenLoading()
-    }
-}
-
-@Preview
-@Composable
-fun AnnouncementScreenErrorPreview() {
-    IeePreview {
-        AnnouncementScreenError(
-            resId = 0,
-            announcementId = 0
         )
     }
 }

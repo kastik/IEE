@@ -11,7 +11,6 @@ import androidx.paging.cachedIn
 import com.kastik.apps.core.domain.usecases.GetFilterOptionsUseCase
 import com.kastik.apps.core.domain.usecases.GetFilteredAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
-import com.kastik.apps.core.domain.usecases.RefreshFilterOptionsUseCase
 import com.kastik.apps.core.ui.topbar.ActiveFilters
 import com.kastik.apps.feature.search.navigation.SearchRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,24 +21,21 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchScreenViewModel @Inject constructor(
+internal class SearchScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
     private val getQuickResultsUseCase: GetQuickResultsUseCase,
-    private val refreshFilterOptionsUseCase: RefreshFilterOptionsUseCase,
     private val getFilteredAnnouncementsUseCase: GetFilteredAnnouncementsUseCase,
 ) : ViewModel() {
 
-    private val args = savedStateHandle.toRoute<SearchRoute>()
+    private val _args = savedStateHandle.toRoute<SearchRoute>()
     val searchBarTextFieldState = TextFieldState(
-        initialText = args.query
+        initialText = _args.query
     )
 
     private val _availableFilters = getFilterOptionsUseCase()
@@ -51,9 +47,9 @@ class SearchScreenViewModel @Inject constructor(
 
     private val _activeFeedFilters = MutableStateFlow(
         ActiveFilters(
-            committedQuery = args.query,
-            selectedTagIds = args.tags.toImmutableList(),
-            selectedAuthorIds = args.authors.toImmutableList()
+            committedQuery = _args.query,
+            selectedTagIds = _args.tags.toImmutableList(),
+            selectedAuthorIds = _args.authors.toImmutableList()
         )
     )
 
@@ -62,27 +58,23 @@ class SearchScreenViewModel @Inject constructor(
             activeFilters.committedQuery,
             activeFilters.selectedAuthorIds,
             activeFilters.selectedTagIds
-        ).cachedIn(
-            viewModelScope
         )
-    }
+    }.cachedIn(
+        viewModelScope
+    )
 
     val uiState = combine(
         _availableFilters, _activeFeedFilters, _quickSearchResultsState
     ) { availableFilters, activeFilters, quickResults ->
-        UiState(
+        SearchUiState(
             availableFilters = availableFilters,
             activeFilters = activeFilters,
             quickResults = quickResults
         )
-    }.onStart {
-        viewModelScope.launch {
-            refreshFilterOptionsUseCase()
-        }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = UiState()
+        initialValue = SearchUiState()
     )
 
     fun onSearch(

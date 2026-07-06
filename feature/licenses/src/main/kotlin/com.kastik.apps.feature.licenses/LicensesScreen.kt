@@ -31,8 +31,8 @@ internal fun LicensesRoute(
 }
 
 @Composable
-internal fun LicensesScreen(
-    libraries: Libs?,
+private fun LicensesScreen(
+    libraries: Libs? = null,
 ) {
     Scaffold { paddingValues ->
         LibrariesContainer(
@@ -47,8 +47,8 @@ internal fun LicensesScreen(
 
 @Preview
 @Composable
-fun LicensesScreenPreview() {
+private fun LicensesScreenPreview() {
     IeePreview {
-        LicensesScreen(null)
+        LicensesScreen()
     }
 }

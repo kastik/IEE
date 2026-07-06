@@ -19,14 +19,13 @@ import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.Theme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SettingsScreenViewModel @Inject constructor(
+internal class SettingsScreenViewModel @Inject constructor(
     isForYouAvailableUseCase: IsForYouAvailableUseCase,
     getUserPreferencesUseCase: GetUserPreferencesUseCase,
     areNotificationsAllowedUseCase: AreNotificationsAllowedUseCase,
@@ -41,13 +40,13 @@ class SettingsScreenViewModel @Inject constructor(
     private val setAnnouncementCheckIntervalUseCase: SetAnnouncementCheckIntervalUseCase,
 ) : ViewModel() {
 
-    val uiState: StateFlow<UiState> = combine(
+    val uiState = combine(
         getUserPreferencesUseCase(),
         isForYouAvailableUseCase(),
         areNotificationsAllowedUseCase(),
         isAnnouncementCheckIntervalAvailableUseCase(),
     ) { preferences, isForYouAvailable, areNotificationsAllowed, isAnnouncementCheckIntervalAvailable ->
-        UiState.Success(
+        SettingsUiState.Success(
             theme = preferences.theme,
             sortType = preferences.sortType,
             isDynamicColorEnabled = preferences.isDynamicColorEnabled,
@@ -62,7 +61,7 @@ class SettingsScreenViewModel @Inject constructor(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-        initialValue = UiState.Loading
+        initialValue = SettingsUiState.Loading
     )
 
     fun setDynamicColor(value: Boolean) {

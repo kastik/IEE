@@ -9,15 +9,13 @@ import javax.inject.Inject
 class GetAuthorsUseCase @Inject constructor(
     private val authorRepository: AuthorRepository
 ) {
-    operator fun invoke() =
-        authorRepository.authors.map { it.toImmutableList() }
+    operator fun invoke() = authorRepository.authors.map { it.toImmutableList() }
 }
 
-class RefreshAuthorsUseCase @Inject constructor(
+class SyncAuthorsUseCase @Inject constructor(
     private val authorRepository: AuthorRepository
 ) {
-    suspend operator fun invoke() =
-        authorRepository.refreshAuthors()
+    suspend operator fun invoke() = authorRepository.syncAuthors()
 }
 
 class GetAuthorQuickResultsUseCase @Inject constructor(
