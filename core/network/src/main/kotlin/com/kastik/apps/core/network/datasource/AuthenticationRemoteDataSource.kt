@@ -8,7 +8,6 @@ import javax.inject.Singleton
 
 interface AuthenticationRemoteDataSource {
     suspend fun exchangeCodeForAboardToken(code: String): TokenDto
-    suspend fun checkIfTokenIsValid(): Boolean
 }
 
 @Singleton
@@ -18,10 +17,5 @@ internal class AuthenticationRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun exchangeCodeForAboardToken(code: String): TokenDto =
         aboardApiClient.exchangeAuthCode(code = code)
-
-    override suspend fun checkIfTokenIsValid(): Boolean {
-            aboardApiClient.getCurrentUser()
-        return true
-    }
 
 }

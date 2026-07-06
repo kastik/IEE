@@ -40,7 +40,7 @@ class SetDynamicColorUseCase @Inject constructor(
         userPreferencesRepository.setDynamicColor(enabled)
 }
 
-class ShowSignInNoticeRationalUseCase @Inject constructor(
+class ShowSignInNoticeRationaleUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {

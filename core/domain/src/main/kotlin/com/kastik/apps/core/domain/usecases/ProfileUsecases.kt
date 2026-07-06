@@ -9,8 +9,8 @@ class GetUserProfileUseCase @Inject constructor(
     operator fun invoke() = profileRepository.profile
 }
 
-class RefreshProfileUseCase @Inject constructor(
+class SyncProfileUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    suspend operator fun invoke() = profileRepository.refreshProfile()
+    suspend operator fun invoke() = profileRepository.syncProfile()
 }

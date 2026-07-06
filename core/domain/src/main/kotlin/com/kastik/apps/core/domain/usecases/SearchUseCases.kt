@@ -1,25 +1,19 @@
 package com.kastik.apps.core.domain.usecases
 
-import com.kastik.apps.core.domain.repository.AuthorRepository
-import com.kastik.apps.core.domain.repository.TagsRepository
-import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.model.search.FilterOptions
 import com.kastik.apps.core.model.search.QuickResults
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 class GetQuickResultsUseCase @Inject constructor(
-    private val getTagsQuickResults: GetTagsQuickResults,
     private val getAuthorQuickResults: GetAuthorQuickResultsUseCase,
+    private val getTagsQuickResultsUseCase: GetTagsQuickResultsUseCase,
     private val getAnnouncementsQuickResults: GetAnnouncementQuickResultsUseCase
 ) {
     operator fun invoke(query: String): Flow<QuickResults> {
         return combine(
-            getTagsQuickResults(query),
+            getTagsQuickResultsUseCase(query),
             getAuthorQuickResults(query),
             getAnnouncementsQuickResults(query)
         ) { tags, authors, announcements ->
@@ -46,23 +40,5 @@ class GetFilterOptionsUseCase @Inject constructor(
                 authors = authors,
             )
         }
-    }
-}
-
-class RefreshFilterOptionsUseCase @Inject constructor(
-    private val authorRepository: AuthorRepository,
-    private val tagsRepository: TagsRepository,
-) {
-    suspend operator fun invoke() = coroutineScope {
-        val authorsDeferred = async { authorRepository.refreshAuthors() }
-        val tagsDeferred = async { tagsRepository.refreshAnnouncementTags() }
-        val (authorsResult, tagsResult) = awaitAll(authorsDeferred, tagsDeferred)
-        if (authorsResult is Result.Error) {
-            return@coroutineScope authorsResult
-        }
-        if (tagsResult is Result.Error) {
-            return@coroutineScope tagsResult
-        }
-        return@coroutineScope Result.Success(Unit)
     }
 }

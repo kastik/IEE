@@ -10,7 +10,6 @@ class DownloadAttachmentUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         attachmentId: Int,
-        announcementId: Int,
         fileName: String,
         mimeType: String
     ) {

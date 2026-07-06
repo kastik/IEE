@@ -102,9 +102,6 @@ internal fun AnnouncementRoute(
                 AnnouncementScreenLoading(announcementId = announcementId)
             }
 
-            //TODO: We need a different state for auth and network erros to enable Retry logic
-            //we could also route the api call for refresh to WM
-
             is AnnouncementUiState.Error -> {
                 AnnouncementScreenError(
                     announcementId = announcementId,
@@ -114,13 +111,13 @@ internal fun AnnouncementRoute(
 
             is AnnouncementUiState.Success -> {
                 AnnouncementScreenSuccess(
-                    id = state.id,
-                    title = state.title,
-                    author = state.author,
-                    date = state.date.toFormattedString(),
+                    id = state.announcement.id,
+                    title = state.announcement.title,
+                    author = state.announcement.author,
+                    date = state.announcement.date.toFormattedString(),
                     prossedBodies = state.processedBodies,
-                    tags = state.tags,
-                    attachments = state.attachments,
+                    tags = state.announcement.tags,
+                    attachments = state.announcement.attachments,
                     shouldShowReviewDialog = state.shouldShowReviewDialog,
                     isSyncing = state.isSyncing,
                     syncError = state.syncErrorMessageResId?.let { stringResource(it) },
