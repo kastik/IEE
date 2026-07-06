@@ -6,7 +6,11 @@ import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.service.WorkScheduler
-import kotlinx.coroutines.flow.Flow
+import com.kastik.apps.core.model.error.NetworkError
+import com.kastik.apps.core.model.result.Result
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -14,29 +18,56 @@ import javax.inject.Inject
 class GetIsSignedInUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository
 ) {
-    operator fun invoke(): Flow<Boolean> =
-        authenticationRepository.isSignedIn
+    operator fun invoke() = authenticationRepository.isSignedIn
 }
 
-class SignInUserUseCase @Inject constructor(
+class SignInUseCase @Inject constructor(
     private val workScheduler: WorkScheduler,
     private val tagsRepository: TagsRepository,
     private val profileRepository: ProfileRepository,
     private val authenticationRepository: AuthenticationRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
-    suspend operator fun invoke(code: String) {
-        authenticationRepository.exchangeCodeForAbroadToken(code)
-        profileRepository.refreshProfile()
-        tagsRepository.refreshSubscribedTags()
-        workScheduler.scheduleAnnouncementAlerts(
-            userPreferencesRepository.userPreferences.first().checkIntervalMinutes
-        )
+    suspend operator fun invoke(code: String): Result<Unit, NetworkError> {
+        val authResult = authenticationRepository.signIn(code)
+        if (authResult is Result.Error) {
+            return authResult
+        }
+
+        coroutineScope {
+            val profileSync = async { profileRepository.syncProfile() }
+            val subscribedSync = async { tagsRepository.syncSubscribedTags() }
+            val announcementSync = async { tagsRepository.syncAnnouncementTags() }
+            val subscribableSync = async { tagsRepository.syncSubscribableTags() }
+            awaitAll(profileSync, subscribedSync, announcementSync, subscribableSync)
+        }
+
+        val interval = userPreferencesRepository.userPreferences.first().checkIntervalMinutes
+        workScheduler.scheduleAnnouncementAlerts(interval)
+
+        return Result.Success(Unit)
+    }
+}
+
+class SignOutUseCase @Inject constructor(
+    private val workScheduler: WorkScheduler,
+    private val profileRepository: ProfileRepository,
+    private val announcementRepository: AnnouncementRepository,
+    private val authenticationRepository: AuthenticationRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
+) {
+    suspend operator fun invoke() {
+        profileRepository.clearProfile()
+        authenticationRepository.signOut()
+        announcementRepository.clearAnnouncementCache()
+
+        userPreferencesRepository.setSkippedSignIn(false)
+        workScheduler.cancelAnnouncementAlerts()
     }
 }
 
 class TriggerSignOutOnStatusChangeUseCase @Inject constructor(
-    private val signOutUserUseCase: SignOutUserUseCase,
+    private val signOutUseCase: SignOutUseCase,
     private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke() {
@@ -45,26 +76,9 @@ class TriggerSignOutOnStatusChangeUseCase @Inject constructor(
             .distinctUntilChanged()
             .collect { isSignedIn ->
                 if (wasSignedIn && !isSignedIn) {
-                    signOutUserUseCase()
+                    signOutUseCase()
                 }
                 wasSignedIn = isSignedIn
             }
-    }
-}
-
-class SignOutUserUseCase @Inject constructor(
-    private val workScheduler: WorkScheduler,
-    private val profileRepository: ProfileRepository,
-    private val announcementRepository: AnnouncementRepository,
-    private val authenticationRepository: AuthenticationRepository,
-    private val userPreferencesRepository: UserPreferencesRepository,
-) {
-    suspend operator fun invoke() {
-        //TODO Make this also return Result
-        profileRepository.clearLocalData()
-        authenticationRepository.clearAuthenticationData()
-        announcementRepository.clearAnnouncementCache()
-        userPreferencesRepository.setSkippedSignIn(false)
-        workScheduler.cancelAnnouncementAlerts()
     }
 }

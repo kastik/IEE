@@ -1,13 +1,12 @@
 package com.kastik.apps.feature.auth
 
-import android.annotation.SuppressLint
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -19,6 +18,8 @@ import com.kastik.apps.core.ui.extensions.logContentLoadState
 import com.kastik.apps.core.ui.extensions.logUserLogin
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 internal fun AuthenticationRoute(
@@ -37,33 +38,29 @@ internal fun AuthenticationRoute(
         contentKey = { state -> state::class }
     ) { state ->
         when (state) {
-            is UiState.Loading -> {
+            is AuthenticationUiState.Loading -> {
                 AuthenticationLoading()
             }
 
-            is UiState.LocalError -> {
-                AuthenticationLocalError(
-                    message = state.resId,
+            is AuthenticationUiState.Error -> {
+                AuthenticationError(
                     navigateBack = navigateBack
                 )
             }
 
-            is UiState.ServerError -> {
-                AuthenticationServerError(
-                    message = state.message,
+            is AuthenticationUiState.Success -> {
+                AuthenticationSuccess(
                     navigateBack = navigateBack
                 )
-            }
-
-            is UiState.Success -> {
-                AuthenticationSuccess(navigateBack = navigateBack)
             }
         }
     }
 }
 
 @Composable
-private fun AuthenticationLoading() {
+private fun AuthenticationLoading(
+
+) {
     val analytics = LocalAnalytics.current
 
     LaunchedEffect(Unit) {
@@ -77,6 +74,29 @@ private fun AuthenticationLoading() {
 }
 
 @Composable
+private fun AuthenticationError(
+    navigateBack: () -> Unit = {},
+) {
+    val analytics = LocalAnalytics.current
+
+    LaunchedEffect(Unit) {
+        analytics.logContentLoadState("authentication", "login", "error")
+        delay(2.seconds)
+        navigateBack()
+    }
+
+    StatusContent(
+        message = {
+            Text(
+                text = stringResource(R.string.error_generic),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    )
+}
+
+@Composable
 private fun AuthenticationSuccess(
     navigateBack: () -> Unit = {},
 ) {
@@ -85,50 +105,25 @@ private fun AuthenticationSuccess(
     LaunchedEffect(Unit) {
         analytics.logUserLogin()
         analytics.logContentLoadState("authentication", "login", "success")
+        delay(2.seconds)
         navigateBack()
     }
-}
-
-@SuppressLint("LocalContextGetResourceValueCall")
-@Composable
-private fun AuthenticationLocalError(
-    @StringRes message: Int = 0,
-    navigateBack: () -> Unit = {},
-) {
-    val context = LocalContext.current
-    val analytics = LocalAnalytics.current
-
-    LaunchedEffect(message) {
-        val errorMessage = context.getString(message)
-        analytics.logContentLoadState("authentication", "login", "error", errorMessage)
-    }
 
     StatusContent(
-        message = stringResource(message),
-        automaticAction = navigateBack
+        message = {
+            Text(
+                text = stringResource(R.string.sign_in_success),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     )
 }
 
-@Composable
-private fun AuthenticationServerError(
-    message: String = "",
-    navigateBack: () -> Unit = {},
-) {
-    val analytics = LocalAnalytics.current
-
-    LaunchedEffect(message) {
-        analytics.logContentLoadState("authentication", "login", "error", message)
-    }
-
-    StatusContent(
-        message = message,
-        automaticAction = navigateBack
-    )
-}
 
 @Preview
 @Composable
-fun AuthenticationLoadingPreview() {
+private fun AuthenticationLoadingPreview() {
     IeePreview {
         AuthenticationLoading()
     }
@@ -136,24 +131,16 @@ fun AuthenticationLoadingPreview() {
 
 @Preview
 @Composable
-fun AuthenticationSuccessPreview() {
+private fun AuthenticationErrorPreview() {
+    IeePreview {
+        AuthenticationError()
+    }
+}
+
+@Preview
+@Composable
+private fun AuthenticationSuccessPreview() {
     IeePreview {
         AuthenticationSuccess()
-    }
-}
-
-@Preview
-@Composable
-fun AuthenticationLocalErrorPreview() {
-    IeePreview {
-        AuthenticationLocalError()
-    }
-}
-
-@Preview
-@Composable
-fun AuthenticationServerErrorPreview() {
-    IeePreview {
-        AuthenticationServerError()
     }
 }
