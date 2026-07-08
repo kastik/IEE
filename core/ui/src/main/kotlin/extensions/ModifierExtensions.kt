@@ -11,7 +11,6 @@ fun Modifier.predictiveBackPagerEffect(
     backState: PagerPredictiveBackState
 ): Modifier = this.then(
     Modifier.graphicsLayer {
-        // Only apply the visual distortions to the active page the user is dragging away from
         if (page == currentPage) {
             transformOrigin = TransformOrigin(0.5f, 0.5f)
             scaleX = backState.scale

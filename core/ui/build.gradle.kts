@@ -17,4 +17,5 @@ dependencies {
     implementation(project(":core:common"))
     implementation(libs.paging.compose)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.androidx.activity.compose)
 }

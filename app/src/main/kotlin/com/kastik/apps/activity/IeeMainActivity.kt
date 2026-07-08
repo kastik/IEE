@@ -33,6 +33,7 @@ class IeeMainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        workScheduler.scheduleStartupSync()
         setContent {
             val viewModel: IeeMainActivityViewModel = hiltViewModel()
             val appState by viewModel.appState.collectAsStateWithLifecycle()
