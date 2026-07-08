@@ -8,8 +8,6 @@ import com.kastik.apps.core.domain.usecases.SyncAnnouncementWithIdUseCase
 import com.kastik.apps.core.model.result.fold
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
 
 
 @HiltWorker
@@ -27,7 +25,6 @@ internal class AnnouncementSyncWorker @AssistedInject constructor(
 
         val announcementId = inputData.getInt(KEY_ANNOUNCEMENT_ID, 0)
 
-        delay(5.seconds)
         return syncAnnouncementWithIdUseCase(announcementId).fold(
             onSuccess = {
                 Result.success()
