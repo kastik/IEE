@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import kotlin.time.Clock
@@ -51,24 +52,37 @@ class GetForYouAnnouncementsUseCase @Inject constructor(
     private val tagsRepository: TagsRepository,
     private val announcementRepository: AnnouncementRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val isForYouAvailableUseCase: IsForYouAvailableUseCase,
+    private val isForYouEnabledUseCase: IsForYouEnabledUseCase,
 ) {
     private data class FilterParams(
         val sortType: SortType,
-        val subscribedTagIds: List<Int>
+        val subscribedTagIds: List<Int>,
+        val isForYouEnabled: Boolean,
+        val isForYouAvailable: Boolean,
     )
 
     operator fun invoke(): Flow<PagingData<Announcement>> = combine(
         tagsRepository.subscribedTags,
         userPreferencesRepository.userPreferences,
-    ) { subscribedTags, userPreferences ->
+        isForYouEnabledUseCase(),
+        isForYouAvailableUseCase(),
+    ) { subscribedTags, userPreferences, isForYouEnabled, isForYouAvailable ->
         FilterParams(
-            userPreferences.sortType, subscribedTags.map { it.id }
+            sortType = userPreferences.sortType,
+            subscribedTagIds = subscribedTags.map { it.id },
+            isForYouEnabled = isForYouEnabled,
+            isForYouAvailable = isForYouAvailable,
         )
     }.distinctUntilChanged().flatMapLatest { params ->
-        announcementRepository.getPagedAnnouncements(
-            sortType = params.sortType,
-            tagIds = params.subscribedTagIds,
-        )
+        if (!params.isForYouEnabled || !params.isForYouAvailable) {
+            flowOf(PagingData.empty())
+        } else {
+            announcementRepository.getPagedAnnouncements(
+                sortType = params.sortType,
+                tagIds = params.subscribedTagIds,
+            )
+        }
     }
 }
 
@@ -101,7 +115,7 @@ class GetFilteredAnnouncementsUseCase @Inject constructor(
                 titleQuery = params.titleQuery,
                 bodyQuery = params.bodyQuery,
                 authorIds = params.authorIds,
-                tagIds = params.tagIds
+                tagIds = params.tagIds,
             )
         }
 }
@@ -128,10 +142,10 @@ class GetAnnouncementWithIdUseCase @Inject constructor(
 }
 
 
-class RefreshAnnouncementWithIdUseCase @Inject constructor(
+class SyncAnnouncementWithIdUseCase @Inject constructor(
     private val announcementRepository: AnnouncementRepository
 ) {
-    suspend operator fun invoke(id: Int) = announcementRepository.refreshAnnouncementWithId(id)
+    suspend operator fun invoke(id: Int) = announcementRepository.syncAnnouncementWithId(id)
 }
 
 class SetAnnouncementCheckTimeUseCase @Inject constructor(
@@ -149,8 +163,7 @@ class CheckNewAnnouncementsUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     suspend operator fun invoke(): Result<List<Announcement>, NetworkError> {
-
-        val subscriptionResult = tagsRepository.refreshSubscribedTags()
+        val subscriptionResult = tagsRepository.syncSubscribedTags()
 
         if (subscriptionResult is Result.Error && subscriptionResult.error is NetworkError.Authentication) {
             return subscriptionResult

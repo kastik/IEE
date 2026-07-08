@@ -168,9 +168,3 @@ class IsAnnouncementCheckIntervalAvailableUseCase @Inject constructor(
         }
     }
 }
-
-class GetUserPreferencesUseCase @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
-    operator fun invoke() = userPreferencesRepository.userPreferences
-}
