@@ -5,6 +5,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.kastik.apps.core.domain.usecases.SyncAnnouncementWithIdUseCase
+import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.fold
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -29,8 +30,8 @@ internal class AnnouncementSyncWorker @AssistedInject constructor(
             onSuccess = {
                 Result.success()
             },
-            onError = {
-                if (runAttemptCount < 3) {
+            onError = { error ->
+                if (runAttemptCount < 3 && error !is NetworkError.Authentication) {
                     Result.retry()
                 } else {
                     Result.failure()
