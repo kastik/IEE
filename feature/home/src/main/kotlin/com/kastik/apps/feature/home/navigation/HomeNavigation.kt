@@ -29,14 +29,14 @@ data class HomeRoute(
 
 fun NavController.navigateToHome(
     navOptions: NavOptions = navOptions {
-        popUpTo(HomeRoute) {
+        popUpTo<HomeRoute> {
             inclusive = false
             saveState = true
         }
         restoreState = true
         launchSingleTop = true
     },
-) = navigate(route = HomeRoute, navOptions)
+) = navigate(route = HomeRoute(), navOptions)
 
 
 fun NavGraphBuilder.homeScreen(

@@ -4,20 +4,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,47 +27,46 @@ fun IeeStatusBanner(
     icon: ImageVector? = null,
     actionLabel: String? = null,
     onActionClick: (() -> Unit)? = null,
-    containerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
-    contentColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
-    shape: Shape = RoundedCornerShape(16.dp)
+    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    actionTextColor: Color = MaterialTheme.colorScheme.primary,
 ) {
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor,
-            contentColor = contentColor
-        ),
-        shape = shape,
+    ElevatedCard(
         modifier = modifier
     ) {
         Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(26.dp, Alignment.CenterHorizontally)
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
         ) {
-            if (icon != null) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = contentColor
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = contentColor
+                    )
+                }
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = contentColor,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyMedium,
-                color = contentColor,
-                modifier = Modifier.weight(1f),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (actionLabel != null && onActionClick != null) {
-                TextButton(onClick = onActionClick) {
+            if (!actionLabel.isNullOrEmpty() && onActionClick != null) {
+                FilledTonalButton(
+                    onClick = onActionClick
+                ) {
                     Text(
                         text = actionLabel,
-                        color = contentColor,
+                        color = actionTextColor,
                         style = MaterialTheme.typography.labelLarge
                     )
                 }
@@ -81,7 +77,7 @@ fun IeeStatusBanner(
 
 @Preview
 @Composable
-fun IeeStatusBannerWithoutActionAndIconPreview() {
+private fun IeeStatusBannerWithoutActionAndIconPreview() {
     IeePreview {
         IeeStatusBanner(
             text = "You are offline",
@@ -94,7 +90,7 @@ fun IeeStatusBannerWithoutActionAndIconPreview() {
 
 @Preview
 @Composable
-fun IeeStatusBannerWithoutActionPreview() {
+private fun IeeStatusBannerWithoutActionPreview() {
     IeePreview {
         IeeStatusBanner(
             text = "You are offline",
@@ -106,7 +102,7 @@ fun IeeStatusBannerWithoutActionPreview() {
 
 @Preview
 @Composable
-fun IeeStatusBannerWithActionPreview() {
+private fun IeeStatusBannerWithActionPreview() {
     IeePreview {
         IeeStatusBanner(
             text = "You are offline",

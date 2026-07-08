@@ -28,7 +28,7 @@ fun IeeLinearWavyProgressIndicator(
 
 @Preview
 @Composable
-fun IeeLinearWavyProgressIndicatorPreview() {
+private fun IeeLinearWavyProgressIndicatorPreview() {
     IeePreview {
         IeeLinearWavyProgressIndicator()
     }

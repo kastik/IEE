@@ -2,15 +2,24 @@ package com.kastik.apps.feature.home
 
 import android.Manifest
 import android.os.Build
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -23,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -59,6 +69,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -74,6 +85,7 @@ import com.kastik.apps.core.common.extensions.shareAnnouncement
 import com.kastik.apps.core.designsystem.component.IeeDialog
 import com.kastik.apps.core.designsystem.component.IeeFloatingToolBar
 import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeStatusBanner
 import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
 import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.model.aboard.Announcement
@@ -99,7 +111,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreenRoute(
     initialTab: HomeTab,
@@ -136,7 +147,7 @@ internal fun HomeScreenRoute(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun HomeScreen(
-    uiState: UiState = UiState(),
+    uiState: HomeUiState = HomeUiState(),
     initialTab: HomeTab = HomeTab.HOME,
     searchBarTextFieldState: TextFieldState = rememberTextFieldState(),
     homeFeedAnnouncements: LazyPagingItems<Announcement>,
@@ -166,6 +177,9 @@ private fun HomeScreen(
             R.string.home_feed_label, R.string.for_you_feed_label
         ) else listOf(R.string.home_feed_label)
     }
+
+    val homeRefreshLoadState = homeFeedAnnouncements.loadState.refresh
+    val forYouRefreshLoadState = forYouAnnouncements.loadState.refresh
 
     LaunchedEffect(uiState.enableForYou) {
         val targetPage = when (initialTab) {
@@ -287,26 +301,81 @@ private fun HomeScreen(
                     })
             },
             collapsedSecondaryActions = {
-                AnimatedVisibility(
-                    visible = uiState.enableForYou,
-                    enter = slideInVertically(),
-                    exit = slideOutVertically()
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.animateContentSize(),
                 ) {
-                    SecondaryTabRow(
-                        selectedTabIndex = pagerState.currentPage,
+                    AnimatedVisibility(
+                        visible = uiState.enableForYou,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
                     ) {
-                        titles.forEachIndexed { index, title ->
-                            Tab(
-                                selected = pagerState.currentPage == index,
-                                selectedContentColor = MaterialTheme.colorScheme.primary,
-                                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
-                                text = {
-                                    Text(
-                                        text = stringResource(title),
-                                        style = MaterialTheme.typography.titleSmall
+                        SecondaryTabRow(
+                            selectedTabIndex = pagerState.currentPage,
+                        ) {
+                            titles.forEachIndexed { index, title ->
+                                Tab(
+                                    selected = pagerState.currentPage == index,
+                                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
+                                    text = {
+                                        Text(
+                                            text = stringResource(title),
+                                            style = MaterialTheme.typography.titleSmall
+                                        )
+                                    })
+                            }
+                        }
+                    }
+
+                    val showHomeError = pagerState.currentPage == 0 &&
+                            homeRefreshLoadState is LoadState.Error &&
+                            homeFeedAnnouncements.itemCount > 0
+
+                    val showForYouError = pagerState.currentPage == 1 &&
+                            forYouRefreshLoadState is LoadState.Error &&
+                            forYouAnnouncements.itemCount > 0
+
+                    AnimatedVisibility(
+                        visible = showHomeError || showForYouError,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+
+                        AnimatedContent(
+                            targetState = pagerState.currentPage,
+                            transitionSpec = {
+                                fadeIn() togetherWith fadeOut() using SizeTransform(clip = false)
+                            },
+                            label = "ErrorBannerTransition"
+                        ) { page ->
+                            when (page) {
+                                0 -> {
+                                    IeeStatusBanner(
+                                        text = "Home Feed Sync Failed.",
+                                        icon = Icons.Default.CloudOff,
+                                        actionLabel = "Retry",
+                                        onActionClick = homeFeedAnnouncements::retry,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
                                     )
-                                })
+                                }
+
+                                1 -> {
+                                    IeeStatusBanner(
+                                        text = "For You Feed Sync Failed.",
+                                        icon = Icons.Default.CloudOff,
+                                        actionLabel = "Retry",
+                                        onActionClick = forYouAnnouncements::retry,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -351,9 +420,9 @@ private fun HomeScreen(
             HorizontalPager(state = pagerState) { page ->
                 when (page) {
                     0 -> {
-                        val refreshState = homeFeedAnnouncements.loadState.refresh
+
                         PullToRefreshBox(
-                            isRefreshing = refreshState is LoadState.Loading,
+                            isRefreshing = homeRefreshLoadState is LoadState.Loading,
                             state = homeFeedPullToRefreshState,
                             onRefresh = {
                                 analytics.logNavigationAction("refresh_gesture", "home")
@@ -364,16 +433,17 @@ private fun HomeScreen(
                                 LoadingIndicator(
                                     modifier = Modifier.align(Alignment.TopCenter),
                                     state = homeFeedPullToRefreshState,
-                                    isRefreshing = refreshState is LoadState.Loading,
+                                    isRefreshing = homeRefreshLoadState is LoadState.Loading,
                                 )
                             }) {
                             AnnouncementFeed(
-                                loadingPlaceHolderText = stringResource(R.string.feed_placeholder),
-                                nextPagePlaceHolderText = stringResource(R.string.feed_footer_loading),
-                                emptyPlaceHolderText = stringResource(R.string.feed_empty),
-                                errorPlaceHolderText = stringResource(R.string.error_generic),
-                                errorPlaceHolderRetryText = stringResource(R.string.action_retry),
-                                errorNextPagePlaceHolderText = stringResource(R.string.feed_footer_failed),
+                                refreshEmptyText = stringResource(R.string.feed_empty),
+                                refreshLoadingText = stringResource(R.string.feed_placeholder),
+                                refreshErrorText = stringResource(R.string.error_generic),
+                                refreshRetryText = stringResource(R.string.action_retry),
+                                appendLoadingText = stringResource(R.string.feed_footer_loading),
+                                appendErrorText = stringResource(R.string.error_generic),
+                                appendErrorRetryText = stringResource(R.string.action_retry),
                                 endOfPaginationText = stringResource(R.string.feed_footer_finished),
                                 announcements = homeFeedAnnouncements,
                                 lazyListState = homeFeedLazyListState,
@@ -394,9 +464,8 @@ private fun HomeScreen(
                     }
 
                     1 -> {
-                        val refreshState = forYouAnnouncements.loadState.refresh
                         PullToRefreshBox(
-                            isRefreshing = refreshState is LoadState.Loading,
+                            isRefreshing = forYouRefreshLoadState is LoadState.Loading,
                             state = forYouFeedPullToRefreshState,
                             onRefresh = {
                                 analytics.logNavigationAction("refresh_gesture", "for_you")
@@ -407,17 +476,18 @@ private fun HomeScreen(
                                 LoadingIndicator(
                                     modifier = Modifier.align(Alignment.TopCenter),
                                     state = forYouFeedPullToRefreshState,
-                                    isRefreshing = refreshState is LoadState.Loading,
+                                    isRefreshing = forYouRefreshLoadState is LoadState.Loading,
                                 )
                             },
                             content = {
                                 AnnouncementFeed(
-                                    loadingPlaceHolderText = stringResource(R.string.feed_placeholder),
-                                    nextPagePlaceHolderText = stringResource(R.string.feed_footer_loading),
-                                    emptyPlaceHolderText = stringResource(R.string.feed_for_you_empty),
-                                    errorPlaceHolderText = stringResource(R.string.error_generic),
-                                    errorPlaceHolderRetryText = stringResource(R.string.action_retry),
-                                    errorNextPagePlaceHolderText = stringResource(R.string.feed_footer_failed),
+                                    refreshEmptyText = stringResource(R.string.feed_empty),
+                                    refreshLoadingText = stringResource(R.string.feed_placeholder),
+                                    refreshErrorText = stringResource(R.string.error_generic),
+                                    refreshRetryText = stringResource(R.string.action_retry),
+                                    appendLoadingText = stringResource(R.string.feed_footer_loading),
+                                    appendErrorText = stringResource(R.string.error_generic),
+                                    appendErrorRetryText = stringResource(R.string.action_retry),
                                     endOfPaginationText = stringResource(R.string.feed_footer_finished),
                                     announcements = forYouAnnouncements,
                                     lazyListState = forYouLazyListState,
