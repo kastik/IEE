@@ -17,6 +17,7 @@ class AnalyticsEventTypesReleaseImpl @Inject constructor(
     override val VIEW_SEARCH_RESULTS = FirebaseAnalytics.Event.VIEW_SEARCH_RESULTS
 
     //Custom definitions
+    override val LOGOUT = "logout"
     override val BUTTON_CLICK = "button_click"
     override val PREFERENCE_UPDATED = "preference_updated"
     override val CONTENT_LOAD_STATUS = "content_load_status"

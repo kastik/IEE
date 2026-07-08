@@ -4,6 +4,8 @@ package com.kastik.apps.core.analytics
 object EmptyAnalyticsEventTypes : AnalyticsEventTypes {
     override val LOGIN: String
         get() = ""
+    override val LOGOUT: String
+        get() = ""
     override val SHARE: String
         get() = ""
     override val SCREEN_VIEW: String

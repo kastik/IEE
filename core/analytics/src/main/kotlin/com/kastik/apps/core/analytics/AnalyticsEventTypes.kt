@@ -2,6 +2,7 @@ package com.kastik.apps.core.analytics
 
 interface AnalyticsEventTypes {
     val LOGIN: String
+    val LOGOUT: String
     val SHARE: String
     val SCREEN_VIEW: String
     val SEARCH: String

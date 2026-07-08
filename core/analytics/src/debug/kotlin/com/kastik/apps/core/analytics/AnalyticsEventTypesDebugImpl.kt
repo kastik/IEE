@@ -8,6 +8,7 @@ import javax.inject.Singleton
 class AnalyticsEventTypesDebugImpl @Inject constructor(
 ) : AnalyticsEventTypes {
     override val LOGIN = "login"
+    override val LOGOUT = "logout"
     override val SHARE = "share"
     override val SCREEN_VIEW = "screen_view"
     override val SEARCH = "search"
