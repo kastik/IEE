@@ -112,6 +112,8 @@ fun Analytics.logFiltersApplied(filterCategory: String, appliedIds: List<Int>) =
 
 fun Analytics.logUserLogin() = logEvent(AnalyticsEvent(type = types.LOGIN))
 
+fun Analytics.logUserLogout() = logEvent(AnalyticsEvent(type = types.LOGOUT))
+
 fun Analytics.logSearch(
     query: String = "",
     authorIds: List<Int> = emptyList(),
