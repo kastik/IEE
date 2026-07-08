@@ -10,4 +10,8 @@
     <string name="error_server">Something went wrong on the server</string>
     <string name="error_time_out">Timed out</string>
     <string name="error_generic">Something went wrong</string>
+
+    <string name="sync_status_enqueued">Sync queued, waiting for network…</string>
+    <string name="sync_status_blocked">Sync paused due to system constraints.</string>
+    <string name="sync_status_error">Failed to sync this announcement.</string>
 </resources>

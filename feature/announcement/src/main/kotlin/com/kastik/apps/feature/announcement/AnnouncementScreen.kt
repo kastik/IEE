@@ -77,8 +77,8 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 internal fun AnnouncementRoute(
     announcementId: Int,
-    navigateBack: () -> Unit,
     viewModel: AnnouncementViewModel = hiltViewModel(),
+    navigateBack: () -> Unit,
 ) {
     val analytics = LocalAnalytics.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -99,23 +99,24 @@ internal fun AnnouncementRoute(
         when (state) {
 
             is AnnouncementUiState.Loading -> {
-                AnnouncementScreenLoading(announcementId = announcementId)
+                AnnouncementScreenLoading(
+                    announcementId = announcementId
+                )
             }
 
             is AnnouncementUiState.Error -> {
                 AnnouncementScreenError(
                     announcementId = announcementId,
-                    message = stringResource(state.messageResId)
                 )
             }
 
             is AnnouncementUiState.Success -> {
                 AnnouncementScreenSuccess(
-                    id = state.announcement.id,
+                    id = announcementId,
                     title = state.announcement.title,
                     author = state.announcement.author,
                     date = state.announcement.date.toFormattedString(),
-                    prossedBodies = state.processedBodies,
+                    prossedBodies = state.announcement.processedBodies,
                     tags = state.announcement.tags,
                     attachments = state.announcement.attachments,
                     shouldShowReviewDialog = state.shouldShowReviewDialog,
@@ -381,26 +382,21 @@ private fun AnnouncementScreenLoading(
 @Composable
 private fun AnnouncementScreenError(
     announcementId: Int,
-    message: String
 ) {
-    val context = LocalContext.current
     val analytics = LocalAnalytics.current
 
-    LaunchedEffect(announcementId, message) {
-        val englishErrorMessage = "ABC"//TODOcontext.getEnglishString(message)
-
+    LaunchedEffect(announcementId) {
         analytics.logContentLoadState(
             contentType = "announcement",
             itemId = announcementId.toString(),
             status = "error",
-            errorMessage = englishErrorMessage
         )
     }
 
     StatusContent(
         {
             Text(
-                text = message,
+                text = stringResource(R.string.sync_status_error),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -422,7 +418,6 @@ private fun AnnouncementScreenErrorPreview() {
     IeePreview {
         AnnouncementScreenError(
             announcementId = 0,
-            message = "Something went wrong"
         )
     }
 }
