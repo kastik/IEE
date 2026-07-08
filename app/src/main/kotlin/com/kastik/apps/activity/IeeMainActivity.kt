@@ -33,7 +33,12 @@ class IeeMainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        splashScreen.setKeepOnScreenCondition {
+            viewModel.appState.value is IeeAppState.Loading
+        }
+
         workScheduler.scheduleStartupSync()
+
         setContent {
             val viewModel: IeeMainActivityViewModel = hiltViewModel()
             val appState by viewModel.appState.collectAsStateWithLifecycle()
