@@ -7,25 +7,25 @@ kotlin = "2.4.0"
 coreKtx = "1.19.0"
 coroutines = "1.11.0"
 kotlinxSerialization = "1.11.0"
-kotlinx-collections = "0.5.0"
+kotlinx-collections = "0.5.1"
 kotlinxDatetime = "0.8.0"
 
 okhttp = "5.4.0"
 retrofit = "3.0.0"
 
 hiltAndroid = "2.60"
-hiltCompiler = "1.3.0"
+hiltCompiler = "1.4.0"
 
 activity = "1.13.0"
 lifecycle = "2.11.0"
 
 workRuntimeKtx = "2.11.2"
 
-material3 = "1.5.0-alpha22"
-composeBom = "2026.06.00"
+material3 = "1.5.0-alpha23"
+composeBom = "2026.06.01"
 activityCompose = "1.13.0"
 navigationCompose = "2.9.8"
-hiltNavigationCompose = "1.3.0"
+hiltNavigationCompose = "1.4.0"
 accompanistPermissions = "0.37.3"
 splashScreen = "1.2.0"
 composeStabilityAnalyzer = "0.10.0"
@@ -51,9 +51,9 @@ mockk = "1.14.11"
 robolectric = "4.16.1"
 espressoCore = "3.7.0"
 
-uiautomator = "2.4.0-rc01"
+uiautomator = "2.4.0"
 profileinstaller = "1.4.1"
-androidx-macro-benchmark = "1.5.0-alpha06"
+androidx-macro-benchmark = "1.5.0-alpha07"
 
 
 
@@ -68,7 +68,8 @@ appcompat = "1.7.1"
 material = "1.14.0"
 
 coilCompose = "3.5.0"
-aboutLibraries = "15.0.2"
+aboutLibraries = "15.0.3"
+junit = "4.13.2"
 
 
 [libraries]
@@ -190,6 +191,7 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltCompiler" }
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltCompiler" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 
 [plugins]
