@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.crashlytics.FakeCrashlytics
 import com.kastik.apps.core.data.mappers.toProfile
 import com.kastik.apps.core.data.mappers.toProfileProto
+import com.kastik.apps.core.datastore.datasource.FakeAuthenticationLocalDataSource
 import com.kastik.apps.core.datastore.datasource.FakeProfileLocalDataSource
 import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.datastore.testdata.baseProfileProto
@@ -20,12 +21,14 @@ class ProfileRepositoryImplTest {
     private val fakeCrashlytics = FakeCrashlytics()
     private val profileLocalDataSource = FakeProfileLocalDataSource()
     private val profileRemoteDataSource = FakeProfileRemoteDataSource()
+    private val fakeAuthenticationLocalDataSource = FakeAuthenticationLocalDataSource()
 
     private val profileRepository = ProfileRepositoryImpl(
         crashlytics = fakeCrashlytics,
         profileLocalDataSource = profileLocalDataSource,
         profileRemoteDataSource = profileRemoteDataSource,
         ioDispatcher = testDispatcher,
+        authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
     )
 
     @Test
@@ -46,8 +49,8 @@ class ProfileRepositoryImplTest {
     }
 
     @Test
-    fun refreshProfileSuccessRefreshesProfile() = runTest(testDispatcher) {
-        val result = profileRepository.refreshProfile()
+    fun syncProfileSuccessRefreshesProfile() = runTest(testDispatcher) {
+        val result = profileRepository.syncProfile()
 
         assertThat(result).isInstanceOf(Result.Success::class.java)
 
@@ -56,9 +59,9 @@ class ProfileRepositoryImplTest {
     }
 
     @Test
-    fun clearLocalDataClearsProfileAndSubscriptions() = runTest(testDispatcher) {
+    fun clearProfileClearsProfileAndSubscriptions() = runTest(testDispatcher) {
         profileLocalDataSource.setProfile(baseProfileProto)
-        profileRepository.clearLocalData()
+        profileRepository.clearProfile()
 
         val profileResult = profileRepository.profile.first()
         assertThat(profileResult?.id).isEqualTo(0)

@@ -6,6 +6,7 @@ import com.kastik.apps.core.data.mappers.toTag
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.data.mappers.toTagProto
 import com.kastik.apps.core.database.dao.TagsDao
+import com.kastik.apps.core.datastore.datasource.FakeAuthenticationLocalDataSource
 import com.kastik.apps.core.datastore.datasource.FakeTagsLocalDataSource
 import com.kastik.apps.core.datastore.datasource.TagsLocalDataSource
 import com.kastik.apps.core.model.result.Result
@@ -28,6 +29,7 @@ class TagsRepositoryImplTest {
     private val announcementTagsLocalDataSource: TagsDao = FakeTagsDao()
     private val subscribableTagsLocalDataSource: TagsLocalDataSource = FakeTagsLocalDataSource()
     private val tagsRemoteDataSource: TagsRemoteDataSource = FakeTagsRemoteDataSource()
+    private val fakeAuthenticationLocalDataSource = FakeAuthenticationLocalDataSource()
 
     private lateinit var repository: TagsRepositoryImpl
 
@@ -39,6 +41,7 @@ class TagsRepositoryImplTest {
             subscribableTagsLocalDataSource = subscribableTagsLocalDataSource,
             tagsRemoteDataSource = tagsRemoteDataSource,
             ioDispatcher = testDispatcher,
+            authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
         )
     }
 
@@ -62,7 +65,7 @@ class TagsRepositoryImplTest {
     }
 
     @Test
-    fun refreshAnnouncementTagsFetchesRemoteTagsAndSavesToLocal() = runTest(testDispatcher) {
+    fun syncAnnouncementTagsFetchesRemoteTagsAndSavesToLocal() = runTest(testDispatcher) {
         // Enforce the use of baseTagDto for remote fetches using delegation
         val mockRemoteSource = object : TagsRemoteDataSource by tagsRemoteDataSource {
             override suspend fun fetchAnnouncementTags(): ListResponseDto<TagDto> {
@@ -75,10 +78,11 @@ class TagsRepositoryImplTest {
             announcementTagsLocalDataSource = announcementTagsLocalDataSource,
             subscribableTagsLocalDataSource = subscribableTagsLocalDataSource,
             tagsRemoteDataSource = mockRemoteSource,
-            ioDispatcher = testDispatcher
+            ioDispatcher = testDispatcher,
+            authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
         )
 
-        refreshRepo.refreshAnnouncementTags()
+        refreshRepo.syncAnnouncementTags()
         val result = refreshRepo.announcementTags.first()
 
         assertThat(result).isNotEmpty()
@@ -86,7 +90,7 @@ class TagsRepositoryImplTest {
     }
 
     @Test
-    fun refreshAnnouncementTagsRethrowsCancellationException() = runTest(testDispatcher) {
+    fun syncAnnouncementTagsRethrowsCancellationException() = runTest(testDispatcher) {
         val errorRepo = TagsRepositoryImpl(
             crashlytics = fakeCrashlytics,
             announcementTagsLocalDataSource = announcementTagsLocalDataSource,
@@ -96,12 +100,13 @@ class TagsRepositoryImplTest {
                     throw CancellationException()
                 }
             },
-            ioDispatcher = testDispatcher
+            ioDispatcher = testDispatcher,
+            authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
         )
 
         var caughtCancellation = false
         try {
-            errorRepo.refreshAnnouncementTags()
+            errorRepo.syncAnnouncementTags()
         } catch (e: CancellationException) {
             caughtCancellation = true
         }
@@ -129,7 +134,7 @@ class TagsRepositoryImplTest {
     }
 
     @Test
-    fun refreshSubscribableTagsFetchesRemoteTagsAndSavesToLocal() = runTest(testDispatcher) {
+    fun syncSubscribableTagsFetchesRemoteTagsAndSavesToLocal() = runTest(testDispatcher) {
         val mockRemoteSource = object : TagsRemoteDataSource by tagsRemoteDataSource {
             override suspend fun fetchSubscribableTags(): List<TagDto> = listOf(baseTagDto)
         }
@@ -138,10 +143,11 @@ class TagsRepositoryImplTest {
             announcementTagsLocalDataSource = announcementTagsLocalDataSource,
             subscribableTagsLocalDataSource = subscribableTagsLocalDataSource,
             tagsRemoteDataSource = mockRemoteSource,
-            ioDispatcher = testDispatcher
+            ioDispatcher = testDispatcher,
+            authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
         )
 
-        refreshRepo.refreshSubscribableTags()
+        refreshRepo.syncSubscribableTags()
         val result = refreshRepo.subscribableTags.first()
 
         assertThat(result).isNotEmpty()
@@ -173,7 +179,7 @@ class TagsRepositoryImplTest {
     }
 
     @Test
-    fun refreshSubscribedTagsFetchesFromRemoteAndSavesToLocal() = runTest(testDispatcher) {
+    fun syncSubscribedTagsFetchesFromRemoteAndSavesToLocal() = runTest(testDispatcher) {
         val mockRemoteSource = object : TagsRemoteDataSource by tagsRemoteDataSource {
             override suspend fun fetchSubscriptions(): List<TagDto> = listOf(baseTagDto)
         }
@@ -182,10 +188,11 @@ class TagsRepositoryImplTest {
             announcementTagsLocalDataSource = announcementTagsLocalDataSource,
             subscribableTagsLocalDataSource = subscribableTagsLocalDataSource,
             tagsRemoteDataSource = mockRemoteSource,
-            ioDispatcher = testDispatcher
+            ioDispatcher = testDispatcher,
+            authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
         )
 
-        refreshRepo.refreshSubscribedTags()
+        refreshRepo.syncSubscribedTags()
         val result = refreshRepo.subscribedTags.first()
 
         assertThat(result).isNotEmpty()
@@ -214,7 +221,8 @@ class TagsRepositoryImplTest {
                     throw RuntimeException("Network issue")
                 }
             },
-            ioDispatcher = testDispatcher
+            ioDispatcher = testDispatcher,
+            authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
         )
 
         val result = errorRepo.subscribeToTags(listOf(1))

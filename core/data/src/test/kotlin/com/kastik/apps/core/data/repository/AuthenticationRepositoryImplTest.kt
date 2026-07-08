@@ -32,7 +32,7 @@ class AuthenticationRepositoryImplTest {
         val response = baseTokenDto
         fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
 
-        authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
+        authenticationRepositoryImpl.signIn("code")
 
         val result = fakeAuthenticationLocalDataSource.aboardAccessToken.value
         assertThat(result).isEqualTo(response.accessToken)
@@ -43,7 +43,7 @@ class AuthenticationRepositoryImplTest {
         val response = baseTokenDto
         fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
 
-        authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
+        authenticationRepositoryImpl.signIn("code")
 
         val result = fakeAuthenticationLocalDataSource.isSignedIn.value
         assertThat(result).isTrue()
@@ -55,8 +55,8 @@ class AuthenticationRepositoryImplTest {
         val response = baseTokenDto
         fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
 
-        authenticationRepositoryImpl.exchangeCodeForAbroadToken("code")
-        authenticationRepositoryImpl.clearAuthenticationData()
+        authenticationRepositoryImpl.signIn("code")
+        authenticationRepositoryImpl.signOut()
 
         val tokenResult = fakeAuthenticationLocalDataSource.aboardAccessToken.value
         val isSignedInResult = fakeAuthenticationLocalDataSource.isSignedIn.value
