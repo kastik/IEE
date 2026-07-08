@@ -70,6 +70,12 @@ internal abstract class DataStoreModule {
         impl: TagsLocalDataSourceImpl
     ): TagsLocalDataSource
 
+    @Binds
+    @Singleton
+    abstract fun bindOnboardLocalDatasource(
+        impl: OnboardLocalDatasourceImpl
+    ): OnboardLocalDatasource
+
     companion object {
         @Provides
         @Singleton
@@ -149,6 +155,21 @@ internal abstract class DataStoreModule {
             corruptionHandler = ReplaceFileCorruptionHandler { exception ->
                 crashlytics.recordException(exception)
                 SubscribableTagsSerializer.defaultValue
+            },
+        )
+
+        @Provides
+        @Singleton
+        @OnboardDatastore
+        fun provideOnboardDatastore(
+            crashlytics: Crashlytics,
+            @ApplicationContext context: Context
+        ): DataStore<OnboardStageProto> = DataStoreFactory.create(
+            serializer = OnboardSerializer,
+            produceFile = { context.dataStoreFile("onboard.pb") },
+            corruptionHandler = ReplaceFileCorruptionHandler { exception ->
+                crashlytics.recordException(exception)
+                OnboardSerializer.defaultValue
             },
         )
     }

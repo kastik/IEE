@@ -90,6 +90,7 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:licenses"))
     implementation(project(":feature:search"))
+    implementation(project(":feature:onboard"))
 
     baselineProfile(project(":benchmark"))
     implementation(libs.androidx.profileinstaller)

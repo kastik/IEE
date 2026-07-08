@@ -75,7 +75,13 @@ internal abstract class DataModule {
 
     @Binds
     @Singleton
-    internal abstract fun bindTokenProvider(
+    abstract fun bindOnboardRepository(
+        onboardRepositoryImpl: OnboardRepositoryImpl
+    ): OnboardRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTokenProvider(
         tokenProvider: AboardTokenManagerImpl
     ): TokenManager
 

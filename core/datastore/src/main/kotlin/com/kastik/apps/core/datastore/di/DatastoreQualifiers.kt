@@ -21,3 +21,7 @@ annotation class UserSubscriptionsDatastore
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class UserSubscribableTagsDatastore
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class OnboardDatastore
