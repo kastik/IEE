@@ -26,4 +26,8 @@
     <string name="error_generic">Something went wrong</string>
 
     <string name="toast_subscription_update_failed_message">Connection issue. We will try again automatically</string>
+
+    <string name="sync_status_enqueued">Sync queued, waiting for network…</string>
+    <string name="sync_status_blocked">Sync paused due to system constraints.</string>
+    <string name="sync_status_error">Failed to save subscriptions.</string>
 </resources>

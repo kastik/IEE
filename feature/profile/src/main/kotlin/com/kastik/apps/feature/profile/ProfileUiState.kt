@@ -6,14 +6,17 @@ import com.kastik.apps.core.model.aboard.Tag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-sealed class UiState {
+internal sealed class ProfileUiState {
+    data object Loading : ProfileUiState()
+
     data class Success(
         val profile: Profile,
         val subscribedTags: ImmutableList<Tag> = persistentListOf(),
-        val tags: ImmutableList<Tag> = persistentListOf(),
-        val showTagSheet: Boolean = false,
-    ) : UiState()
-    data class SignedOut(@StringRes val resId: Int) : UiState()
-    data class Loading(@StringRes val resId: Int) : UiState()
-    data class Error(@StringRes val resId: Int) : UiState()
+        val subscribableTags: ImmutableList<Tag> = persistentListOf(),
+        val isSubscribeSheetVisible: Boolean = false,
+        val isSyncingSubscriptions: Boolean = false,
+        @StringRes val subscribeSyncErrorMessageResId: Int? = null,
+    ) : ProfileUiState()
+
+    data object SignedOut : ProfileUiState()
 }

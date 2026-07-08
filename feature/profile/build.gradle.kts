@@ -7,3 +7,8 @@ plugins {
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.feature.profile"
 }
+
+
+dependencies {
+    implementation(project(":core:common"))
+}

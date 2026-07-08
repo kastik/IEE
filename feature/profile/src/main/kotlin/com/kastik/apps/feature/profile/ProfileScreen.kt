@@ -1,8 +1,10 @@
 package com.kastik.apps.feature.profile
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +45,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,14 +56,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kastik.apps.core.designsystem.component.IeeLinearWavyProgressIndicator
 import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeStatusBanner
 import com.kastik.apps.core.designsystem.component.IeeTag
 import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
 import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
-import com.kastik.apps.core.model.aboard.Profile
+import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.extensions.logButtonClick
 import com.kastik.apps.core.ui.extensions.logFiltersApplied
 import com.kastik.apps.core.ui.extensions.logSheetOpened
+import com.kastik.apps.core.ui.extensions.logUserLogout
 import com.kastik.apps.core.ui.extensions.toFormattedString
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
@@ -67,6 +74,8 @@ import com.kastik.apps.core.ui.sheet.SubscribableTagSheet
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 
 @Composable
@@ -79,69 +88,102 @@ internal fun ProfileRoute(
         screenName = "profile_screen",
     )
 
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AnimatedContent(
-        targetState = uiState.value, contentKey = { state ->
-            state::class
-        }) { state ->
+        targetState = uiState,
+        contentKey = { state -> state::class }
+    ) { state ->
         when (state) {
-            is UiState.Loading -> ProfileLoading(message = state.resId)
-            is UiState.Error -> ProfileError(state.resId)
-            is UiState.SignedOut -> ProfileSignedOut(
-                message = state.resId,
-                navigateBack = navigateBack
-            )
 
-            is UiState.Success -> {
+            is ProfileUiState.Loading -> {
+                ProfileLoading()
+            }
+
+            is ProfileUiState.SignedOut -> {
+                ProfileSignedOut(
+                    navigateBack = navigateBack
+                )
+            }
+
+            is ProfileUiState.Success -> {
                 ProfileSuccess(
-                    uiState = state,
+                    name = state.profile.name,
+                    email = state.profile.email,
+                    isAdmin = state.profile.isAdmin,
+                    isAuthor = state.profile.isAuthor,
+                    lastLoginAt = state.profile.lastLoginAt.toFormattedString(),
+                    createdAt = state.profile.createdAt.toFormattedString(),
+                    isSyncingSubscriptions = state.isSyncingSubscriptions,
+                    subscriptionSyncError = state.subscribeSyncErrorMessageResId?.let {
+                        stringResource(
+                            it
+                        )
+                    },
+                    subscribableTags = state.subscribableTags,
+                    subscribedTags = state.subscribedTags,
                     applySelectedTags = viewModel::updateSelectedTagIds,
-                    showTagSheet = viewModel::toggleTagsSheet,
-                    onSignOutClick = viewModel::onSignOutClick
+                    isSubscribeSheetVisible = state.isSubscribeSheetVisible,
+                    toggleSubscribeSheet = viewModel::toggleTagsSheet,
+                    onSignOutClick = viewModel::onSignOutClick,
                 )
             }
         }
     }
 }
 
-
 @Composable
-fun ProfileSignedOut(
-    @StringRes message: Int = 0,
-    navigateBack: () -> Unit = {},
-) {
-    StatusContent(
-        message = stringResource(message),
-        automaticAction = navigateBack
-    )
-}
-
-@Composable
-fun ProfileLoading(
-    @StringRes message: Int = 0,
+private fun ProfileLoading(
 ) {
     LoadingContent(
         modifier = Modifier.fillMaxSize(),
-        message = stringResource(message),
+        message = stringResource(R.string.fetching_profile_message),
     )
 }
 
+
 @Composable
-fun ProfileError(
-    @StringRes message: Int = 0,
+private fun ProfileSignedOut(
+    navigateBack: () -> Unit = {},
 ) {
-    StatusContent(stringResource(message))
+    val analytics = LocalAnalytics.current
+
+    LaunchedEffect(Unit) {
+        analytics.logUserLogout()
+        delay(1.seconds)
+        navigateBack()
+    }
+
+    StatusContent(
+        modifier = Modifier.fillMaxSize(),
+        message = {
+            Text(
+                text = stringResource(R.string.logged_out_message),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    )
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ProfileSuccess(
-    uiState: UiState.Success,
-    applySelectedTags: (ImmutableList<Int>) -> Unit,
-    showTagSheet: (Boolean) -> Unit,
-    onSignOutClick: () -> Unit
+    name: String,
+    email: String,
+    isAdmin: Boolean = false,
+    isAuthor: Boolean = false,
+    lastLoginAt: String = "25/12/2026",
+    createdAt: String = "25/12/2026",
+    isSyncingSubscriptions: Boolean = false,
+    subscriptionSyncError: String? = null,
+    subscribedTags: ImmutableList<Tag>,
+    subscribableTags: ImmutableList<Tag>,
+    applySelectedTags: (ImmutableList<Int>) -> Unit = {},
+    isSubscribeSheetVisible: Boolean = false,
+    toggleSubscribeSheet: (Boolean) -> Unit = {},
+    onSignOutClick: () -> Unit = {},
 ) {
     val analytics = LocalAnalytics.current
 
@@ -149,15 +191,15 @@ private fun ProfileSuccess(
         contentWindowInsets = WindowInsets()
     ) { innerPadding ->
 
-        if (uiState.showTagSheet) {
+        if (isSubscribeSheetVisible) {
             SubscribableTagSheet(
-                tags = uiState.tags,
-                subscribedTags = uiState.subscribedTags.map { it.id }.toImmutableList(),
+                tags = subscribableTags,
+                subscribedTags = subscribedTags.map { it.id }.toImmutableList(),
                 onApply = { newTagIds ->
                     analytics.logFiltersApplied("subscribed_tags", newTagIds)
                     applySelectedTags(newTagIds)
                 },
-                onDismiss = { showTagSheet(false) }
+                onDismiss = { toggleSubscribeSheet(false) }
             )
         }
 
@@ -166,55 +208,65 @@ private fun ProfileSuccess(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp), verticalArrangement = Arrangement.spacedBy(28.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(28.dp)
         ) {
             Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
-            ProfilePicture(name = uiState.profile.name)
-            ProfileName(name = uiState.profile.name, email = uiState.profile.email)
+
+            AnimatedVisibility(
+                visible = isSyncingSubscriptions && subscriptionSyncError == null,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    IeeLinearWavyProgressIndicator(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = subscriptionSyncError != null,
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
+                subscriptionSyncError?.let { error ->
+                    IeeStatusBanner(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = error,
+                    )
+                }
+            }
+
+            ProfilePicture(name = name)
+            ProfileName(name = name, email = email)
 
             ProfileSubscribedTags(
-                subscribedTagTitles = uiState.subscribedTags.map { it.title }.toImmutableList(),
+                subscribedTagTitles = subscribedTags.map { it.title }.toImmutableList(),
                 showTagSheet = { value ->
                     if (value) analytics.logSheetOpened("subscribed_tags_sheet")
-                    showTagSheet(value)
+                    toggleSubscribeSheet(value)
                 }
             )
 
             ProfileMeta(
-                isAdmin = uiState.profile.isAdmin,
-                isAuthor = uiState.profile.isAuthor,
-                lastLogin = uiState.profile.lastLoginAt.toFormattedString(),
-                createdAt = uiState.profile.createdAt.toFormattedString()
+                isAdmin = isAdmin,
+                isAuthor = isAuthor,
+                lastLogin = lastLoginAt,
+                createdAt = createdAt
             )
 
-            Button(
+            ProfileSignOut(
                 onClick = {
                     analytics.logButtonClick("sign_out")
                     onSignOutClick()
-                },
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth()
-                    .height(46.dp),
-                shape = MaterialTheme.shapes.medium,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                ),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.action_sign_out),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
+                }
+            )
             Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
         }
     }
@@ -398,17 +450,41 @@ private fun ProfileSubscribedTags(
     }
 }
 
-@Preview
+
 @Composable
-fun ProfileErrorPreview() {
-    IeePreview {
-        ProfileError()
+private fun ProfileSignOut(
+    onClick: () -> Unit = {},
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(12.dp)
+            .fillMaxWidth()
+            .height(46.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer
+        ),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.Logout,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = stringResource(R.string.action_sign_out),
+            style = MaterialTheme.typography.titleMedium
+        )
     }
 }
 
+
 @Preview
 @Composable
-fun ProfileLoadingPreview() {
+private fun ProfileLoadingPreview() {
     IeePreview {
         ProfileLoading()
     }
@@ -416,7 +492,7 @@ fun ProfileLoadingPreview() {
 
 @Preview
 @Composable
-fun ProfileSignedOutPreview() {
+private fun ProfileSignedOutPreview() {
     IeePreview {
         ProfileSignedOut()
     }
@@ -425,22 +501,13 @@ fun ProfileSignedOutPreview() {
 
 @Preview
 @Composable
-fun ProfileProfileSuccesPreview() {
+private fun ProfileSuccessPreview() {
     IeePreview {
         ProfileSuccess(
-            uiState = UiState.Success(
-                profile = Profile(
-                    id = 5,
-                    uid = "134234",
-                    name = "John Doe",
-                    email = "john.quincy.adams@examplepetstore.com",
-                ),
-                subscribedTags = persistentListOf(),
-                tags = persistentListOf(),
-            ),
-            applySelectedTags = {},
-            showTagSheet = {},
-            onSignOutClick = {},
+            name = "Kostas Papastathopoulos",
+            email = "example@gmail.com",
+            subscribableTags = persistentListOf(),
+            subscribedTags = persistentListOf()
         )
     }
 }
