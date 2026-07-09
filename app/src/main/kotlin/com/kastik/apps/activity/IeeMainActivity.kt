@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kastik.apps.core.analytics.Analytics
 import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
 import com.kastik.apps.core.designsystem.theme.IeeTheme
+import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.user.Theme
 import com.kastik.apps.core.ui.extensions.shouldUseDarkTheme
 import com.kastik.apps.navigation.IeeNavHost
@@ -28,14 +29,13 @@ class IeeMainActivity : ComponentActivity() {
     @Inject
     lateinit var analytics: Analytics
 
+    @Inject
+    lateinit var workScheduler: WorkScheduler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        splashScreen.setKeepOnScreenCondition {
-            viewModel.appState.value is IeeAppState.Loading
-        }
 
         workScheduler.scheduleStartupSync()
 
