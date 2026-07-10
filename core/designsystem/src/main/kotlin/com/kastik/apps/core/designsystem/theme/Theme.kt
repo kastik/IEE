@@ -2,7 +2,7 @@ package com.kastik.apps.core.designsystem.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -87,7 +87,7 @@ private val darkScheme = darkColorScheme(
 )
 
 @Composable
-fun AppsAboardTheme(
+fun IeeTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
@@ -102,9 +102,10 @@ fun AppsAboardTheme(
         else -> lightScheme
     }
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        motionScheme = ieeMotionScheme,
+        typography = ieeTypography,
         content = content
     )
 }

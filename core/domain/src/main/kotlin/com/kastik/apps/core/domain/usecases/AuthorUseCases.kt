@@ -9,22 +9,20 @@ import javax.inject.Inject
 class GetAuthorsUseCase @Inject constructor(
     private val authorRepository: AuthorRepository
 ) {
-    operator fun invoke() =
-        authorRepository.getAuthors().map { it.toImmutableList() }
+    operator fun invoke() = authorRepository.authors.map { it.toImmutableList() }
 }
 
-class RefreshAuthorsUseCase @Inject constructor(
+class SyncAuthorsUseCase @Inject constructor(
     private val authorRepository: AuthorRepository
 ) {
-    suspend operator fun invoke() =
-        authorRepository.refreshAuthors()
+    suspend operator fun invoke() = authorRepository.syncAuthors()
 }
 
 class GetAuthorQuickResultsUseCase @Inject constructor(
     private val authorRepository: AuthorRepository
 ) {
     operator fun invoke(query: String) =
-        authorRepository.getAuthors().map { authors ->
+        authorRepository.authors.map { authors ->
             authors.filter {
                 it.name.removeAccents().contains(query.removeAccents(), ignoreCase = true)
             }.take(5).toImmutableList()

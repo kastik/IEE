@@ -1,10 +1,5 @@
 package com.kastik.apps.core.ui.paging
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,14 +15,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarScrollBehavior
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -42,34 +39,33 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
-import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
+import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.apps.core.designsystem.theme.ieeListSpring
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.announcement.AnnouncementCard
 import com.kastik.apps.core.ui.announcement.AnnouncementCardShimmer
+import com.kastik.apps.core.ui.extensions.toFormattedString
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOf
+import kotlin.time.Clock
 
-private enum class FeedState {
-    Loading,
-    Error,
-    Empty,
-    Content
-}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnnouncementFeed(
-    loadingPlaceHolderText: String,
-    nextPagePlaceHolderText: String,
-    emptyPlaceHolderText: String,
-    errorPlaceHolderText: String,
-    errorPlaceHolderRetryText: String,
-    errorNextPagePlaceHolderText: String,
+    refreshEmptyText: String,
+    refreshLoadingText: String,
+    refreshErrorText: String,
+    refreshRetryText: String,
+    appendLoadingText: String,
+    appendErrorText: String,
+    appendErrorRetryText: String,
     endOfPaginationText: String,
     announcements: LazyPagingItems<Announcement>,
     modifier: Modifier = Modifier,
@@ -79,140 +75,225 @@ fun AnnouncementFeed(
     onAnnouncementLongClick: (Int) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    val refreshState = announcements.loadState.refresh
-    val appendState = announcements.loadState.append
+
     val vibrator = LocalHapticFeedback.current
 
+    val refreshState = announcements.loadState.refresh
+    val appendState = announcements.loadState.append
+    val isEmpty = announcements.itemCount == 0
 
-    val currentFeedState = when (refreshState) {
-        is LoadState.Loading if announcements.itemCount == 0 -> FeedState.Loading
-        is LoadState.Error if announcements.itemCount == 0 -> FeedState.Error
-        is LoadState.NotLoading if announcements.itemCount == 0 -> FeedState.Empty
-        else -> FeedState.Content
+    LaunchedEffect(announcements) {
+        snapshotFlow { announcements.itemSnapshotList.firstOrNull()?.id }
+            .filterNotNull()
+            .distinctUntilChanged()
+            .collect {
+                lazyListState.animateScrollToItem(0)
+            }
     }
 
-    AnimatedContent(
-        targetState = currentFeedState,
-        transitionSpec = {
-            fadeIn(animationSpec = tween(400)) togetherWith fadeOut(animationSpec = tween(400))
-        },
-        label = "feed_state_transition",
+    LazyColumn(
         modifier = modifier
-    ) { state ->
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
+            .testTag("announcement_feed"),
+        state = lazyListState,
+        contentPadding = contentPadding
+    ) {
 
-        when (state) {
-            FeedState.Loading -> {
-                LoadingContent(
-                    message = loadingPlaceHolderText,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-
-            FeedState.Error -> {
-                StatusContent(
-                    message = errorPlaceHolderText,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-
-            FeedState.Empty -> {
-                StatusContent(
-                    message = emptyPlaceHolderText,
-                    modifier = Modifier.fillMaxSize(),
-                )
-            }
-
-            FeedState.Content -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .nestedScroll(scrollBehavior.nestedScrollConnection)
-                        .testTag("announcement_feed"),
-                    state = lazyListState,
-                    contentPadding = contentPadding
-                ) {
-                    items(
-                        count = announcements.itemCount,
-                        key = announcements.itemKey { it.id },
-                        contentType = announcements.itemContentType { "announcement_card" }) { index ->
-                        val item = announcements[index]
-                        item?.let {
-                            AnnouncementCard(
-                                onClick = {
-                                    vibrator.performHapticFeedback(HapticFeedbackType.Confirm)
-                                    onAnnouncementClick(item.id)
-                                },
-                                onLonClick = {
-                                    vibrator.performHapticFeedback(HapticFeedbackType.LongPress)
-                                    onAnnouncementLongClick(item.id)
-                                },
-                                publisher = item.author,
-                                title = item.title,
-                                categories = remember(item.tags) {
-                                    item.tags.map { it.title }.toImmutableList()
-                                },
-                                date = item.date,
-                                content = remember(item.preview) { item.preview },
-                                isPinned = item.pinned,
-                                modifier = Modifier
-                                    .padding(6.dp)
-                                    .animateItem(
-                                        fadeInSpec = ieeListSpring(),
-                                        fadeOutSpec = ieeListSpring(),
-                                        placementSpec = ieeListSpring()
-                                    )
-                            )
-                        } ?: AnnouncementCardShimmer(
-                            modifier = Modifier
-                                .padding(6.dp)
-                                .animateItem(
-                                    fadeInSpec = ieeListSpring(),
-                                    fadeOutSpec = ieeListSpring(),
-                                    placementSpec = ieeListSpring()
+        when (refreshState) {
+            is LoadState.Loading ->
+                if (isEmpty) {
+                    item(
+                        key = "refresh_state_loading",
+                        contentType = "refresh_indicators"
+                    ) {
+                        StatusContent(
+                            modifier = Modifier.fillParentMaxSize(),
+                            message = {
+                                Text(
+                                    text = refreshLoadingText,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                 )
+                            },
                         )
                     }
+                }
+
+            is LoadState.Error ->
+                if (isEmpty) {
                     item(
-                        key = "append_state",
-                        contentType = "append_indicators"
+                        key = "refresh_state_error",
+                        contentType = "refresh_indicators"
                     ) {
-                        when (appendState) {
-                            is LoadState.Loading -> LoadingContent(
-                                message = nextPagePlaceHolderText,
-                                progressIndicatorSize = 32.dp,
-                                modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
-                            )
+                        StatusContent(
+                            modifier = Modifier.fillParentMaxSize(),
+                            message = {
+                                Text(
+                                    text = refreshErrorText,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                            },
+                            action = {
+                                FilledTonalButton(
+                                    onClick = announcements::retry
+                                ) {
+                                    Text(
+                                        text = refreshRetryText,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.primary,
+                                    )
+                                }
+                            },
+                        )
+                    }
+                }
 
-                            is LoadState.Error -> StatusContent(
-                                message = errorNextPagePlaceHolderText,
-                                action = { announcements.retry() },
-                                actionText = errorPlaceHolderRetryText
-                            )
+            is LoadState.NotLoading -> {
+                if (isEmpty && refreshState.endOfPaginationReached) {
+                    item(
+                        key = "refresh_state_not_loading",
+                        contentType = "refresh_indicators"
+                    ) {
+                        StatusContent(
+                            modifier = Modifier.fillParentMaxSize(),
+                            message = {
+                                Text(
+                                    text = refreshEmptyText,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                            },
+                        )
+                    }
+                }
+            }
+        }
 
-                            is LoadState.NotLoading -> {
-                                if (appendState.endOfPaginationReached) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.Center,
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 16.dp, bottom = 32.dp)
+        items(
+            count = announcements.itemCount,
+            key = announcements.itemKey { it.id },
+            contentType = announcements.itemContentType { "announcement_card" }) { index ->
+            val item = announcements[index]
+            item?.let {
+                AnnouncementCard(
+                    onClick = {
+                        vibrator.performHapticFeedback(HapticFeedbackType.Confirm)
+                        onAnnouncementClick(item.id)
+                    },
+                    onLonClick = {
+                        vibrator.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onAnnouncementLongClick(item.id)
+                    },
+                    publisher = item.author,
+                    title = item.title,
+                    categories = remember(item.tags) {
+                        item.tags.map { it.title }.toImmutableList()
+                    },
+                    date = item.date.toFormattedString(),
+                    content = remember(item.preview) { item.preview },
+                    isPinned = item.isPinned,
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .animateItem(
+                            fadeInSpec = ieeListSpring(),
+                            fadeOutSpec = ieeListSpring(),
+                            placementSpec = ieeListSpring()
+                        )
+                )
+            } ?: AnnouncementCardShimmer(
+                modifier = Modifier
+                    .padding(6.dp)
+                    .animateItem(
+                        fadeInSpec = ieeListSpring(),
+                        fadeOutSpec = ieeListSpring(),
+                        placementSpec = ieeListSpring()
+                    )
+            )
+        }
+
+        item(
+            key = "append_state",
+            contentType = "append_indicators"
+        ) {
+            when (appendState) {
+                is LoadState.Loading -> LoadingContent(
+                    message = appendLoadingText,
+                    progressIndicatorSize = 32.dp,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
+                )
+
+                is LoadState.Error -> StatusContent(
+                    modifier = Modifier.padding(24.dp),
+                    message = {
+                        Text(
+                            text = appendErrorText,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                    },
+                    action = {
+                        FilledTonalButton(
+                            onClick = announcements::retry
+                        ) {
+                            Text(
+                                text = appendErrorRetryText,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        }
+                    },
+                )
+
+                is LoadState.NotLoading -> {
+                    if (appendState.endOfPaginationReached && !isEmpty) {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp, bottom = 32.dp)
+                        ) {
+                            Text(
+                                text = endOfPaginationText,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Icon(
+                                Icons.Default.Celebration,
+                                contentDescription = null,
+                            )
+                        }
+                    } else if (!isEmpty) {
+
+                        val hasError = announcements.loadState.append as? LoadState.Error
+                            ?: announcements.loadState.refresh as? LoadState.Error
+
+                        if (hasError != null) {
+                            StatusContent(
+                                modifier = Modifier.padding(24.dp),
+                                message = {
+                                    Text(
+                                        text = appendErrorText,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    )
+                                },
+                                action = {
+                                    FilledTonalButton(
+                                        onClick = announcements::retry
                                     ) {
                                         Text(
-                                            text = endOfPaginationText,
+                                            text = appendErrorRetryText,
                                             style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                        Icon(
-                                            Icons.Default.Celebration,
-                                            contentDescription = null,
+                                            color = MaterialTheme.colorScheme.primary,
                                         )
                                     }
-                                } else {
-                                    Spacer(modifier = Modifier.height(116.dp))
-                                }
-                            }
-
+                                },
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(116.dp))
                         }
                     }
                 }
@@ -220,6 +301,7 @@ fun AnnouncementFeed(
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -230,40 +312,49 @@ private fun AnnouncementFeedPreview() {
             id = 1,
             author = "Admin",
             title = "Welcome to AppsAboard!",
-            date = "2024-01-01",
+            date = Clock.System.now(),
             tags = persistentListOf(Tag(1, "General"), Tag(2, "New")),
             preview = "This is the first announcement.",
-            pinned = true,
+            isPinned = true,
             body = "",
-            attachments = emptyList(),
-        ),
-        Announcement(
+        ), Announcement(
             id = 2,
             author = "Admin",
             title = "Second Announcement",
-            date = "2024-01-02",
+            date = Clock.System.now(),
             tags = persistentListOf(Tag(1, "General")),
             preview = "This is the second announcement with a bit longer preview text to see how it renders.",
-            pinned = false,
+            isPinned = false,
             body = "",
-            attachments = emptyList(),
         )
     )
     val lazyPagingItems = flowOf(PagingData.from(sampleAnnouncements)).collectAsLazyPagingItems()
 
-    Surface {
-        AppsAboardTheme {
-            AnnouncementFeed(
-                announcements = lazyPagingItems,
-                loadingPlaceHolderText = "",
-                nextPagePlaceHolderText = "",
-                emptyPlaceHolderText = "",
-                errorPlaceHolderText = "",
-                errorPlaceHolderRetryText = "",
-                errorNextPagePlaceHolderText = "",
-                endOfPaginationText = ""
-            )
-        }
+    IeePreview {
+        AnnouncementFeed(
+            announcements = lazyPagingItems,
+            refreshEmptyText = "",
+            refreshLoadingText = "",
+            refreshErrorText = "",
+            refreshRetryText = "",
+            appendLoadingText = "",
+            appendErrorText = "",
+            appendErrorRetryText = "",
+            endOfPaginationText = "",
+        )
+    }
+}
+
+
+@Preview
+@Composable
+fun LoadingContentPagingPreview() {
+    IeePreview {
+        LoadingContent(
+            message = "Getting next page...",
+            progressIndicatorSize = 32.dp,
+            modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
+        )
     }
 }
 

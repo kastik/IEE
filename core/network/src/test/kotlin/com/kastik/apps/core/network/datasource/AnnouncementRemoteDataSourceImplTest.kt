@@ -4,7 +4,6 @@ package com.kastik.apps.core.network.datasource
 import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.api.FakeAboardApiClient
-import com.kastik.apps.core.network.testdata.announcementPageResponseTestData
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
@@ -50,12 +49,9 @@ class AnnouncementRemoteDataSourceImplTest {
 
     @Test
     fun fetchAnnouncementWithIdForwardsCorrectIdToApi() = runTest {
-        val ids = announcementPageResponseTestData.map { it.data.first().id }
-        ids.forEach { id ->
-            val remote = fakeAboardApiClient.getAnnouncement(id)
-            val result = dataSourceImpl.fetchAnnouncementWithId(id)
-            assertThat(result).isEqualTo(remote)
-        }
+        val remote = fakeAboardApiClient.getAnnouncement(1)
+        val result = dataSourceImpl.fetchAnnouncementWithId(1)
+        assertThat(result).isEqualTo(remote)
     }
 }
 

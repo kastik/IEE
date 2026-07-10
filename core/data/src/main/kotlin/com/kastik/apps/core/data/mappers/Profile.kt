@@ -2,31 +2,27 @@ package com.kastik.apps.core.data.mappers
 
 import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.model.aboard.Profile
-import com.kastik.apps.core.network.model.aboard.profile.ProfileResponseDto
+import com.kastik.apps.core.network.model.response.ProfileDto
 
-fun ProfileResponseDto.toProfileProto(): ProfileProto = let { dto ->
-    ProfileProto.newBuilder().apply {
-        setId(dto.id)
-        setName(dto.name.ifEmpty { nameEng })
-        setEmail(dto.email)
-        setCreatedAt(dto.createdAt)
-        setUpdatedAt(dto.updatedAt)
-        setIsAuthor(dto.isAuthor)
-        setIsAdmin(dto.isAdmin)
-        setLastLoginAt(dto.lastLoginAt)
-        setUid(dto.uid)
-        setDeletedAt(dto.deletedAt ?: "")
-    }.build()
-}
-fun ProfileProto.toProfile() = Profile(
+fun ProfileDto.toProfileProto(): ProfileProto = ProfileProto.newBuilder().apply {
+    id = this@toProfileProto.id
+    uid = this@toProfileProto.uid
+    name = this@toProfileProto.name
+    email = this@toProfileProto.email
+    isAdmin = this@toProfileProto.isAdmin
+    isAuthor = this@toProfileProto.isAuthor
+
+    this@toProfileProto.createdAt?.toTimestamp()?.let { createdAt = it }
+    this@toProfileProto.lastLoginAt?.toTimestamp()?.let { lastLoginAt = it }
+}.build()
+
+fun ProfileProto.toProfile(): Profile = Profile(
     id = id,
+    uid = uid,
     name = name,
     email = email,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-    isAuthor = isAuthor,
     isAdmin = isAdmin,
-    lastLoginAt = lastLoginAt,
-    uid = uid,
-    deletedAt = deletedAt
+    isAuthor = isAuthor,
+    createdAt = createdAt.toInstant(),
+    lastLoginAt = lastLoginAt.toInstant()
 )

@@ -25,6 +25,7 @@ import com.kastik.apps.core.designsystem.theme.roundShape
 import com.kastik.apps.core.designsystem.theme.roundTopShape
 import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.ui.announcement.AnnouncementCard
+import com.kastik.apps.core.ui.extensions.toFormattedString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -137,9 +138,9 @@ fun LazyListScope.searchBarQuickResults(
             categories = remember(item.tags) {
                 item.tags.map { it.title }.toImmutableList()
             },
-            date = item.date,
+            date = item.date.toFormattedString(),
             content = remember(item.preview) { item.preview },
-            isPinned = item.pinned
+            isPinned = item.isPinned
         )
     }
 }

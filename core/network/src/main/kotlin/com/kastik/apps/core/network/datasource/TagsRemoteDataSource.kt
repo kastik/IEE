@@ -1,36 +1,35 @@
 package com.kastik.apps.core.network.datasource
 
-import com.kastik.apps.core.di.AuthenticatorAboardClient
 import com.kastik.apps.core.network.api.AboardApiClient
-import com.kastik.apps.core.network.model.aboard.tags.SubscribableTagsResponseDto
-import com.kastik.apps.core.network.model.aboard.tags.SubscribeToTagsRequestDto
-import com.kastik.apps.core.network.model.aboard.tags.SubscribedTagResponseDto
-import com.kastik.apps.core.network.model.aboard.tags.TagsResponseDto
+import com.kastik.apps.core.network.di.AuthenticatorAboardClient
+import com.kastik.apps.core.network.model.common.ListResponseDto
+import com.kastik.apps.core.network.model.request.SubscribeDto
+import com.kastik.apps.core.network.model.response.TagDto
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface TagsRemoteDataSource {
-    suspend fun fetchAnnouncementTags(): TagsResponseDto
-    suspend fun fetchSubscribableTags(): List<SubscribableTagsResponseDto>
-    suspend fun fetchSubscriptions(): List<SubscribedTagResponseDto>
+    suspend fun fetchAnnouncementTags(): ListResponseDto<TagDto>
+    suspend fun fetchSubscribableTags(): List<TagDto>
+    suspend fun fetchSubscriptions(): List<TagDto>
     suspend fun subscribeToTags(tagIds: List<Int>)
 }
 
+@Singleton
 internal class TagsRemoteDataSourceImpl @Inject constructor(
     @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient
 ) : TagsRemoteDataSource {
-    override suspend fun fetchAnnouncementTags(): TagsResponseDto =
+
+    override suspend fun fetchAnnouncementTags() =
         aboardApiClient.getTags()
 
-    override suspend fun fetchSubscribableTags(): List<SubscribableTagsResponseDto> {
-        return aboardApiClient.getUserSubscribableTags()
-    }
+    override suspend fun fetchSubscribableTags() =
+        aboardApiClient.getAvailableTags()
 
-    override suspend fun fetchSubscriptions(): List<SubscribedTagResponseDto> {
-        return aboardApiClient.getUserSubscriptions()
-    }
+    override suspend fun fetchSubscriptions() =
+        aboardApiClient.getSubscribedTags()
 
-    override suspend fun subscribeToTags(tagIds: List<Int>) {
-        aboardApiClient.subscribeToTags(SubscribeToTagsRequestDto(tagIds))
-    }
+    override suspend fun subscribeToTags(tagIds: List<Int>) =
+        aboardApiClient.subscribeToTags(SubscribeDto(tagIds))
 
 }

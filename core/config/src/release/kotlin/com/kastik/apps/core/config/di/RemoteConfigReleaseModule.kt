@@ -1,0 +1,39 @@
+package com.kastik.apps.core.config.di
+
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.remoteConfig
+import com.google.firebase.remoteconfig.remoteConfigSettings
+import com.kastik.apps.core.config.R
+import com.kastik.apps.core.config.RemoteConfig
+import com.kastik.apps.core.config.RemoteConfigReleaseImpl
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+internal abstract class RemoteConfigReleaseModule {
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig {
+            val config = Firebase.remoteConfig
+            val settings = remoteConfigSettings {
+                minimumFetchIntervalInSeconds = 43200
+            }
+            config.setConfigSettingsAsync(settings)
+            config.setDefaultsAsync(R.xml.remote_config_defaults)
+            return config
+        }
+    }
+
+    @Binds
+    @Singleton
+    abstract fun bindRemoteConfig(impl: RemoteConfigReleaseImpl): RemoteConfig
+
+}

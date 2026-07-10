@@ -1,10 +1,12 @@
 package com.kastik.apps.feature.announcement
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,13 +23,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AttachFile
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Share
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,89 +50,115 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.kastik.apps.core.analytics.AnalyticsEvent
 import com.kastik.apps.core.common.extensions.launchInAppReview
 import com.kastik.apps.core.common.extensions.shareAnnouncement
-import com.kastik.apps.core.designsystem.component.IEEDotDivider
-import com.kastik.apps.core.designsystem.component.IEETag
+import com.kastik.apps.core.designsystem.component.IeeAttachment
+import com.kastik.apps.core.designsystem.component.IeeDotDivider
+import com.kastik.apps.core.designsystem.component.IeeLinearWavyProgressIndicator
+import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeStatusBanner
+import com.kastik.apps.core.designsystem.component.IeeTag
+import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
+import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.model.aboard.Attachment
 import com.kastik.apps.core.model.aboard.Tag
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
-import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
+import com.kastik.apps.core.ui.extensions.logAnnouncementShared
+import com.kastik.apps.core.ui.extensions.logButtonClick
+import com.kastik.apps.core.ui.extensions.logContentLoadState
+import com.kastik.apps.core.ui.extensions.logItemSelection
+import com.kastik.apps.core.ui.extensions.logSheetOpened
+import com.kastik.apps.core.ui.extensions.toFormattedString
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 internal fun AnnouncementRoute(
     announcementId: Int,
+    viewModel: AnnouncementViewModel = hiltViewModel(),
     navigateBack: () -> Unit,
-    viewModel: AnnouncementScreenViewModel = hiltViewModel(),
 ) {
-    TrackScreenViewEvent(
-        "announcement_screen",
-        mapOf("announcement_id" to announcementId)
-    )
-
-
+    val analytics = LocalAnalytics.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    TrackScreenViewEvent(
+        screenClass = "announcement_route",
+        screenName = "announcement_screen",
+        params = listOf(
+            AnalyticsEvent.Param(analytics.paramKeys.ITEM_ID, announcementId.toString()),
+            AnalyticsEvent.Param(analytics.paramKeys.ITEM_CATEGORY, "announcement")
+        )
+    )
 
     AnimatedContent(
         targetState = uiState.value,
         contentKey = { state -> state::class }
     ) { state ->
         when (state) {
-            is UiState.Loading -> LoadingContent(
-                modifier = Modifier.fillMaxSize(),
-                message = stringResource(R.string.fetching_message),
-            )
 
-            is UiState.Error -> StatusContent(message = stringResource(state.resId))
+            is AnnouncementUiState.Loading -> {
+                AnnouncementScreenLoading(
+                    announcementId = announcementId
+                )
+            }
 
-            is UiState.Success -> SuccessState(
-                announcementId = state.announcement.id,
-                title = state.announcement.title,
-                author = state.announcement.author,
-                date = state.announcement.date,
-                prossedBodies = state.processedBody,
-                tags = state.announcement.tags.toImmutableList(),
-                attachments = state.announcement.attachments.toImmutableList(),
-                shouldShowReviewDialog = state.shouldShowReviewDialog,
-                onSuccessfulReview = viewModel::onSuccessfulReview,
-                navigateBack = navigateBack,
-                onAttachmentClick = viewModel::downloadAttachment
-            )
+            is AnnouncementUiState.Error -> {
+                AnnouncementScreenError(
+                    announcementId = announcementId,
+                )
+            }
+
+            is AnnouncementUiState.Success -> {
+                AnnouncementScreenSuccess(
+                    id = announcementId,
+                    title = state.announcement.title,
+                    author = state.announcement.author,
+                    date = state.announcement.date.toFormattedString(),
+                    prossedBodies = state.announcement.processedBodies,
+                    tags = state.announcement.tags,
+                    attachments = state.announcement.attachments,
+                    shouldShowReviewDialog = state.shouldShowReviewDialog,
+                    isSyncing = state.isSyncing,
+                    syncError = state.syncErrorMessageResId?.let { stringResource(it) },
+                    onSuccessfulReview = viewModel::onSuccessfulReview,
+                    onAttachmentClick = viewModel::downloadAttachment
+                )
+            }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun SuccessState(
-    announcementId: Int,
+private fun AnnouncementScreenSuccess(
+    id: Int,
     title: String,
     author: String,
     date: String,
     prossedBodies: ImmutableList<ProcessedBody>,
-    tags: ImmutableList<Tag>,
-    attachments: ImmutableList<Attachment>,
-    onAttachmentClick: (Int, Int, String, String) -> Unit,
-    shouldShowReviewDialog: Boolean,
-    onSuccessfulReview: () -> Unit,
-    navigateBack: () -> Unit,
+    tags: ImmutableList<Tag> = persistentListOf(),
+    attachments: ImmutableList<Attachment> = persistentListOf(),
+    onAttachmentClick: (Int, String, String) -> Unit = { _, _, _ -> },
+    shouldShowReviewDialog: Boolean = false,
+    isSyncing: Boolean = false,
+    syncError: String? = null,
+    onSuccessfulReview: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
     val scroll = rememberScrollState()
 
+    LaunchedEffect(id) {
+        analytics.logContentLoadState("announcement", id.toString(), "success")
+    }
+
     LaunchedEffect(shouldShowReviewDialog) {
         if (shouldShowReviewDialog) {
+            analytics.logSheetOpened("in_app_review_dialog")
             context.launchInAppReview(onSuccessfulReview = onSuccessfulReview)
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -141,8 +166,35 @@ private fun SuccessState(
             .padding(horizontal = 20.dp)
             .verticalScroll(scroll), verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-
         Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
+
+        AnimatedVisibility(
+            visible = isSyncing && syncError == null,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                IeeLinearWavyProgressIndicator(
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = syncError != null
+        ) {
+            syncError?.let { errorMessage ->
+                IeeStatusBanner(
+                    text = errorMessage,
+                    icon = Icons.Default.CloudOff,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
@@ -158,7 +210,11 @@ private fun SuccessState(
                 ), color = MaterialTheme.colorScheme.onSurface
             )
             IconButton(
-                onClick = { context.shareAnnouncement(announcementId) }
+                onClick = {
+                    analytics.logButtonClick("share_announcement_icon")
+                    analytics.logAnnouncementShared(id)
+                    context.shareAnnouncement(id)
+                }
             ) {
                 Icon(
                     Icons.Outlined.Share,
@@ -185,7 +241,7 @@ private fun SuccessState(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            IEEDotDivider()
+            IeeDotDivider()
 
             Text(
                 text = date,
@@ -213,77 +269,76 @@ private fun SuccessState(
         }
 
         if (attachments.isNotEmpty()) {
-            Text(
-                text = stringResource(R.string.attachments_label),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                attachments.forEach { attachment ->
-                    AssistChip(
-                        contentPadding = PaddingValues(
-                            horizontal = 16.dp,
-                            vertical = 8.dp
-                        ),
-                        onClick = {
-                            analytics.logEvent(
-                                "attachment_clicked",
-                                mapOf(
-                                    "item_id" to attachment.id,
-                                    "source" to "announcement_screen"
-                                )
-                            )
-                            onAttachmentClick(
-                                announcementId,
-                                attachment.id,
-                                attachment.filename,
-                                attachment.mimeType,
-                            )
-                        }, label = {
-                            Text(
-                                text = attachment.filename,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Outlined.AttachFile,
-                                contentDescription = attachment.filename,
-                            )
-                        }
-                    )
-                }
+            Attachments(
+                attachments = attachments,
+            ) { attachment ->
+                analytics.logItemSelection(attachment.id.toString(), "attachment")
+                onAttachmentClick(
+                    attachment.id,
+                    attachment.fileName,
+                    attachment.mimeType,
+                )
             }
         }
 
         if (tags.isNotEmpty()) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-
-            Text(
-                text = stringResource(R.string.tags_label),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(top = 8.dp)
-            ) {
-                tags.forEach { tag ->
-                    IEETag(text = tag.title)
-                }
-            }
+            Tags(tags = tags)
         }
         Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
     }
 }
 
+
+@Composable
+private fun Attachments(
+    modifier: Modifier = Modifier,
+    attachments: ImmutableList<Attachment> = persistentListOf(),
+    onAttachmentClick: (Attachment) -> Unit = {},
+) {
+    Text(
+        text = stringResource(R.string.attachments_label),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary
+    )
+
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        attachments.forEach { attachment ->
+            IeeAttachment(
+                fileName = attachment.fileName,
+            ) {
+                onAttachmentClick(attachment)
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun Tags(
+    modifier: Modifier = Modifier,
+    tags: ImmutableList<Tag> = persistentListOf(),
+) {
+    Text(
+        text = stringResource(R.string.tags_label),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary
+    )
+
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(top = 8.dp)
+    ) {
+        tags.forEach { tag ->
+            IeeTag(text = tag.title)
+        }
+    }
+}
 
 @Composable
 private fun HtmlText(text: ProcessedBody.Text) {
@@ -308,34 +363,79 @@ private fun HtmlImage(image: ProcessedBody.Image) {
     )
 }
 
+@Composable
+private fun AnnouncementScreenLoading(
+    announcementId: Int = 0
+) {
+    val analytics = LocalAnalytics.current
+
+    LaunchedEffect(announcementId) {
+        analytics.logContentLoadState("announcement", announcementId.toString(), "loading")
+    }
+
+    LoadingContent(
+        modifier = Modifier.fillMaxSize(),
+        message = stringResource(R.string.fetching_message),
+    )
+}
+
+@Composable
+private fun AnnouncementScreenError(
+    announcementId: Int,
+) {
+    val analytics = LocalAnalytics.current
+
+    LaunchedEffect(announcementId) {
+        analytics.logContentLoadState(
+            contentType = "announcement",
+            itemId = announcementId.toString(),
+            status = "error",
+        )
+    }
+
+    StatusContent(
+        {
+            Text(
+                text = stringResource(R.string.sync_status_error),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    )
+}
+
 @Preview
 @Composable
-fun SuccessStatePreview() {
-    SuccessState(
-        announcementId = 1,
-        title = "Announcement Title",
-        author = "Kostas Papastathopoulos",
-        prossedBodies = persistentListOf(ProcessedBody.Text(AnnotatedString.fromHtml("Announcement Body"))),
-        date = "2/10/2025",
-        tags = persistentListOf(
-            Tag(id = 1, title = "Tag 1"),
-            Tag(id = 2, title = "Tag 3"),
-            Tag(id = 3, title = "Tag 2"),
-        ),
-        attachments = persistentListOf(
-            Attachment(
-                id = 1, filename = "Attachment 1", fileSize = 1000, mimeType = "TODO()"
-            ),
-            Attachment(
-                id = 2, filename = "Attachment 2", fileSize = 1000, mimeType = "TODO()"
-            ),
-            Attachment(
-                id = 3, filename = "Attachment 3", fileSize = 1000, mimeType = "TODO()"
-            ),
-        ),
-        navigateBack = {},
-        onAttachmentClick = { _, _, _, _ -> },
-        shouldShowReviewDialog = false,
-        onSuccessfulReview = {},
-    )
+private fun AnnouncementScreenLoadingPreview() {
+    IeePreview {
+        AnnouncementScreenLoading()
+    }
+}
+
+@Preview
+@Composable
+private fun AnnouncementScreenErrorPreview() {
+    IeePreview {
+        AnnouncementScreenError(
+            announcementId = 0,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AnnouncementScreenSuccessPreview() {
+    IeePreview {
+        AnnouncementScreenSuccess(
+            id = 0,
+            title = "Announcement Title",
+            author = "Author Name",
+            date = "25-12-2026",
+            prossedBodies = persistentListOf(
+                ProcessedBody.Text(
+                    AnnotatedString("The quick brown fox")
+                )
+            )
+        )
+    }
 }

@@ -1,15 +1,16 @@
 package com.kastik.apps.core.model.aboard
 
+import kotlin.time.Clock
+import kotlin.time.Instant
+
 
 data class Profile(
     val id: Int,
+    val uid: String,
     val name: String,
     val email: String,
-    val createdAt: String,
-    val updatedAt: String,
-    val isAuthor: Boolean,
-    val isAdmin: Boolean,
-    val lastLoginAt: String,
-    val uid: String,
-    val deletedAt: String?
+    val isAdmin: Boolean = false,
+    val isAuthor: Boolean = false,
+    val createdAt: Instant = Clock.System.now(),
+    val lastLoginAt: Instant = Clock.System.now(),
 )

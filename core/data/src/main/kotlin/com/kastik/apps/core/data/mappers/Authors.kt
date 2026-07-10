@@ -2,9 +2,9 @@ package com.kastik.apps.core.data.mappers
 
 import com.kastik.apps.core.database.entities.AuthorEntity
 import com.kastik.apps.core.model.aboard.Author
-import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
+import com.kastik.apps.core.network.model.response.AuthorDto
 
-fun AuthorResponseDto.toAuthorEntity() = AuthorEntity(
+fun AuthorDto.toAuthorEntity() = AuthorEntity(
     id = id,
     name = name,
     announcementCount = announcementCount

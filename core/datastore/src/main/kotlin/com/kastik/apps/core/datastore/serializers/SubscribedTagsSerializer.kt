@@ -8,8 +8,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 object SubscribedTagsSerializer : Serializer<SubscriptionsProto> {
-    override val defaultValue: SubscriptionsProto = SubscriptionsProto.newBuilder()
-        .build()
+    override val defaultValue: SubscriptionsProto = SubscriptionsProto.getDefaultInstance()
 
     override suspend fun readFrom(input: InputStream): SubscriptionsProto {
         try {

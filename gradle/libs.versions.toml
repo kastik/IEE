@@ -1,41 +1,41 @@
 [versions]
 
 agp = "9.2.1"
-ksp = "2.3.4"
+ksp = "2.3.9"
 
 kotlin = "2.4.0"
 coreKtx = "1.19.0"
 coroutines = "1.11.0"
 kotlinxSerialization = "1.11.0"
-kotlinx-collections = "0.5.0"
+kotlinx-collections = "0.5.1"
 kotlinxDatetime = "0.8.0"
 
 okhttp = "5.4.0"
 retrofit = "3.0.0"
 
-hiltAndroid = "2.59.2"
-hiltCompiler = "1.3.0"
+hiltAndroid = "2.60"
+hiltCompiler = "1.4.0"
 
 activity = "1.13.0"
-lifecycle = "2.10.0"
+lifecycle = "2.11.0"
 
 workRuntimeKtx = "2.11.2"
 
-material3 = "1.5.0-alpha21"
-composeBom = "2026.05.01"
+material3 = "1.5.0-alpha23"
+composeBom = "2026.06.01"
 activityCompose = "1.13.0"
 navigationCompose = "2.9.8"
-hiltNavigationCompose = "1.3.0"
+hiltNavigationCompose = "1.4.0"
 accompanistPermissions = "0.37.3"
 splashScreen = "1.2.0"
-composeStabilityAnalyzer = "0.9.0"
+composeStabilityAnalyzer = "0.10.0"
 
 
 
 room = "2.8.4"
 paging = "3.5.0"
 
-protobuf = "4.35.0"
+protobuf = "4.35.1"
 protobufPlugin = "0.10.0"
 
 datastore = "1.2.1"
@@ -44,21 +44,21 @@ datastore = "1.2.1"
 
 androidx-junit = "1.3.0"
 androidx-test-core = "1.7.0"
-junitPlatformSuiteEngine = "6.1.0"
+junitPlatformSuiteEngine = "6.1.1"
 leakCanary = "2.14"
 
 mockk = "1.14.11"
 robolectric = "4.16.1"
 espressoCore = "3.7.0"
 
-uiautomator = "2.4.0-beta02"
+uiautomator = "2.4.0"
 profileinstaller = "1.4.1"
-androidx-macro-benchmark = "1.5.0-alpha06"
+androidx-macro-benchmark = "1.5.0-alpha07"
 
 
 
-gms = "4.4.4"
-firebase-bom = "34.14.1"
+gms = "4.5.0"
+firebase-bom = "34.15.0"
 crashlyticsGradle = "3.0.7"
 performanceGradle = "2.0.2"
 
@@ -68,7 +68,11 @@ appcompat = "1.7.1"
 material = "1.14.0"
 
 coilCompose = "3.5.0"
-aboutLibraries = "14.2.1"
+aboutLibraries = "15.0.3"
+junit = "4.13.2"
+
+
+spotless = "8.8.0"
 
 
 [libraries]
@@ -190,6 +194,7 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltCompiler" }
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltCompiler" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 
 [plugins]
@@ -210,6 +215,7 @@ baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidx-mac
 android-test = { id = "com.android.test", version.ref = "agp" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "composeStabilityAnalyzer" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 
 ####### Convention plugins #######

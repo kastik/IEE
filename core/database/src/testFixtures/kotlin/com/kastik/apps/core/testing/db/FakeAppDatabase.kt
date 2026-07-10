@@ -13,8 +13,7 @@ import com.kastik.apps.core.testing.dao.FakeRemoteKeysDao
 import com.kastik.apps.core.testing.dao.FakeTagsDao
 
 class FakeAppDatabase : AppDatabase() {
-    val fakeAnnouncementDao =
-        FakeAnnouncementDao()
+    val fakeAnnouncementDao = FakeAnnouncementDao()
     val fakeRemoteKeysDao = FakeRemoteKeysDao()
     val fakeAuthorDao = FakeAuthorsDao()
     val fakeTagsDao = FakeTagsDao()

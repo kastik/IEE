@@ -7,7 +7,9 @@ import com.kastik.apps.core.database.entities.TagsCrossRefEntity
 import com.kastik.apps.core.database.relations.AnnouncementDetailRelation
 import com.kastik.apps.core.database.relations.AnnouncementPreviewRelation
 import com.kastik.apps.core.model.aboard.Announcement
-import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementDto
+import com.kastik.apps.core.network.model.response.AnnouncementDto
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.collections.immutable.toPersistentSet
 
 fun AnnouncementDto.toAnnouncement() = Announcement(
     id = id,
@@ -16,26 +18,17 @@ fun AnnouncementDto.toAnnouncement() = Announcement(
     body = body,
     author = author.name,
     date = createdAt,
-    pinned = isPinned,
+    isPinned = isPinned,
 )
 
 fun AnnouncementDto.toAnnouncementEntity() = AnnouncementEntity(
     id = id,
     title = title,
-    engTitle = engTitle,
-    hasEng = hasEng ?: false,
     preview = preview,
-    engPreview = engPreview,
     createdAt = createdAt,
     updatedAt = updatedAt,
     isPinned = isPinned,
     pinnedUntil = pinnedUntil,
-    isEvent = isEvent,
-    eventStartTime = eventStartTime,
-    eventEndTime = eventEndTime,
-    eventLocation = eventLocation,
-    gmaps = gmaps,
-    announcementUrl = announcementUrl,
     authorId = author.id,
 )
 
@@ -53,18 +46,17 @@ suspend fun AnnouncementDto.extractImages(extractor: Base64ImageExtractor) =
 fun AnnouncementDto.toBodyEntity() = BodyEntity(
     announcementId = this.id,
     body = body,
-    engBody = engBody ?: ""
 )
 
 fun AnnouncementPreviewRelation.toAnnouncement() = Announcement(
     id = announcement.id,
     title = announcement.title,
     preview = announcement.preview,
-    tags = tags.map { it.toTag() },
-    attachments = attachments.map { it.toAttachment() },
+    tags = tags.map { it.toTag() }.toPersistentList(),
+    attachments = attachments.map { it.toAttachment() }.toPersistentList(),
     author = author.name,
     date = announcement.updatedAt,
-    pinned = announcement.isPinned,
+    isPinned = announcement.isPinned,
     body = ""
 )
 
@@ -72,10 +64,10 @@ fun AnnouncementDetailRelation.toAnnouncement() = Announcement(
     id = announcement.id,
     title = announcement.title,
     body = body.body,
-    tags = tags.map { it.toTag() },
-    attachments = attachments.map { it.toAttachment() },
+    tags = tags.map { it.toTag() }.toPersistentList(),
+    attachments = attachments.map { it.toAttachment() }.toPersistentList(),
     author = author.name,
     date = announcement.updatedAt,
-    pinned = announcement.isPinned,
+    isPinned = announcement.isPinned,
     preview = announcement.preview
 )

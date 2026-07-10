@@ -5,12 +5,11 @@ import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.toAuthor
 import com.kastik.apps.core.data.mappers.toAuthorEntity
 import com.kastik.apps.core.data.mappers.toNetworkError
+import com.kastik.apps.core.data.utils.safeCall
 import com.kastik.apps.core.database.dao.AuthorsDao
 import com.kastik.apps.core.domain.repository.AuthorRepository
 import com.kastik.apps.core.model.aboard.Author
-import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.AuthorRemoteDataSource
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -26,20 +25,17 @@ internal class AuthorRepositoryImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : AuthorRepository {
 
-    override fun getAuthors(): Flow<List<Author>> {
-        return authorLocalDataSource.getAuthors().map { it.map { it.toAuthor() } }
-    }
+    override val authors: Flow<List<Author>> =
+        authorLocalDataSource.getAuthors().map { it.map { it.toAuthor() } }
 
-    override suspend fun refreshAuthors() = withContext(ioDispatcher) {
-        try {
+
+    override suspend fun syncAuthors() = withContext(ioDispatcher) {
+        safeCall(
+            mapException = Exception::toNetworkError,
+            recordException = crashlytics::recordException,
+        ) {
             val authors = authorRemoteDataSource.fetchAuthors()
             authorLocalDataSource.upsertAuthors(authors.map { it.toAuthorEntity() })
-            Result.Success(Unit)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            crashlytics.recordException(e)
-            Result.Error(e.toNetworkError())
         }
     }
 }

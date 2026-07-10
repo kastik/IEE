@@ -1,28 +1,31 @@
 package com.kastik.apps.core.network.datasource
 
-import com.kastik.apps.core.di.AuthenticatorAboardClient
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.api.AboardApiClient
-import com.kastik.apps.core.network.model.aboard.announcement.AnnouncementResponseDto
-import com.kastik.apps.core.network.model.aboard.announcement.PagedAnnouncementsResponseDto
+import com.kastik.apps.core.network.di.AuthenticatorAboardClient
+import com.kastik.apps.core.network.model.common.PagedResponseDto
+import com.kastik.apps.core.network.model.common.SingleResponseDto
+import com.kastik.apps.core.network.model.response.AnnouncementDto
 import kotlinx.datetime.LocalDateTime
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface AnnouncementRemoteDataSource {
     suspend fun fetchPagedAnnouncements(
-        page: Int,
-        perPage: Int,
-        sortBy: SortType,
+        page: Int = 1,
+        perPage: Int = 20,
+        sortBy: SortType = SortType.Priority,
         title: String? = null,
         body: String? = null,
-        authorId: List<Int>? = null,
-        tagId: List<Int>? = null,
+        tagIds: List<Int>? = null,
+        authorIds: List<Int>? = null,
         updatedAfter: LocalDateTime? = null,
-    ): PagedAnnouncementsResponseDto
+    ): PagedResponseDto<AnnouncementDto>
 
-    suspend fun fetchAnnouncementWithId(id: Int): AnnouncementResponseDto
+    suspend fun fetchAnnouncementWithId(id: Int): SingleResponseDto<AnnouncementDto>
 }
 
+@Singleton
 internal class AnnouncementRemoteDataSourceImpl @Inject constructor(
     @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient
 ) : AnnouncementRemoteDataSource {
@@ -32,21 +35,21 @@ internal class AnnouncementRemoteDataSourceImpl @Inject constructor(
         sortBy: SortType,
         title: String?,
         body: String?,
-        authorId: List<Int>?,
-        tagId: List<Int>?,
+        tagIds: List<Int>?,
+        authorIds: List<Int>?,
         updatedAfter: LocalDateTime?
-    ): PagedAnnouncementsResponseDto = aboardApiClient.getAnnouncements(
+    ): PagedResponseDto<AnnouncementDto> = aboardApiClient.getAnnouncements(
         page = page,
         perPage = perPage,
         sortType = sortBy,
         title = title?.ifEmpty { null },
         body = body?.ifEmpty { null },
-        authorId = authorId,
-        tagsIds = tagId,
+        tagIds = tagIds,
+        authorIds = authorIds,
         updatedAfter = updatedAfter
     )
 
-    override suspend fun fetchAnnouncementWithId(id: Int): AnnouncementResponseDto =
+    override suspend fun fetchAnnouncementWithId(id: Int): SingleResponseDto<AnnouncementDto> =
         aboardApiClient.getAnnouncement(id)
 
 }

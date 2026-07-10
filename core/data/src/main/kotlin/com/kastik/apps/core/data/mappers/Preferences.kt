@@ -1,60 +1,60 @@
 package com.kastik.apps.core.data.mappers
 
-import com.kastik.apps.core.datastore.proto.QueryScope
-import com.kastik.apps.core.datastore.proto.Sort
-import com.kastik.apps.core.datastore.proto.Theme
+import com.kastik.apps.core.datastore.proto.SearchScopeProto
+import com.kastik.apps.core.datastore.proto.SortTypeProto
+import com.kastik.apps.core.datastore.proto.ThemeProto
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
-import com.kastik.apps.core.model.user.UserTheme
+import com.kastik.apps.core.model.user.Theme
 
 
-fun Theme.toUserTheme(): UserTheme {
+fun ThemeProto.toTheme(): Theme {
     return when (this) {
-        Theme.System -> UserTheme.FOLLOW_SYSTEM
-        Theme.Light -> UserTheme.LIGHT
-        Theme.Dark -> UserTheme.DARK
-        Theme.UNRECOGNIZED -> UserTheme.FOLLOW_SYSTEM
+        ThemeProto.System -> Theme.FOLLOW_SYSTEM
+        ThemeProto.Light -> Theme.LIGHT
+        ThemeProto.Dark -> Theme.DARK
+        ThemeProto.UNRECOGNIZED -> Theme.FOLLOW_SYSTEM
     }
 }
 
-fun UserTheme.toTheme(): Theme {
+fun Theme.toThemeProto(): ThemeProto {
     return when (this) {
-        UserTheme.FOLLOW_SYSTEM -> Theme.System
-        UserTheme.LIGHT -> Theme.Light
-        UserTheme.DARK -> Theme.Dark
+        Theme.FOLLOW_SYSTEM -> ThemeProto.System
+        Theme.LIGHT -> ThemeProto.Light
+        Theme.DARK -> ThemeProto.Dark
     }
 }
 
-fun Sort.toSortType(): SortType {
+fun SortTypeProto.toSortType(): SortType {
     return when (this) {
-        Sort.ASC -> SortType.ASC
-        Sort.DESC -> SortType.DESC
-        Sort.Priority -> SortType.Priority
+        SortTypeProto.ASC -> SortType.ASC
+        SortTypeProto.DESC -> SortType.DESC
+        SortTypeProto.Priority -> SortType.Priority
         else -> SortType.ASC
     }
 }
 
-fun SortType.toSort(): Sort {
+fun SortType.toSortTypeProto(): SortTypeProto {
     return when (this) {
-        SortType.ASC -> Sort.ASC
-        SortType.DESC -> Sort.DESC
-        SortType.Priority -> Sort.Priority
+        SortType.ASC -> SortTypeProto.ASC
+        SortType.DESC -> SortTypeProto.DESC
+        SortType.Priority -> SortTypeProto.Priority
     }
 }
 
-fun QueryScope.toSearchScope(): SearchScope {
+fun SearchScopeProto.toSearchScope(): SearchScope {
     return when (this) {
-        QueryScope.Title -> SearchScope.Title
-        QueryScope.Body -> SearchScope.Body
-        QueryScope.TITLE_AND_BODY -> SearchScope.TitleAndBody
-        QueryScope.UNRECOGNIZED -> SearchScope.Title
+        SearchScopeProto.Title -> SearchScope.Title
+        SearchScopeProto.Body -> SearchScope.Body
+        SearchScopeProto.TITLE_AND_BODY -> SearchScope.TitleAndBody
+        SearchScopeProto.UNRECOGNIZED -> SearchScope.Title
     }
 }
 
-fun SearchScope.toQueryScope(): QueryScope {
+fun SearchScope.toSearchScopeProto(): SearchScopeProto {
     return when (this) {
-        SearchScope.Title -> QueryScope.Title
-        SearchScope.Body -> QueryScope.Body
-        SearchScope.TitleAndBody -> QueryScope.TITLE_AND_BODY
+        SearchScope.Title -> SearchScopeProto.Title
+        SearchScope.Body -> SearchScopeProto.Body
+        SearchScope.TitleAndBody -> SearchScopeProto.TITLE_AND_BODY
     }
 }

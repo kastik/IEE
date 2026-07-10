@@ -1,6 +1,5 @@
 package com.kastik.apps.core.domain.usecases
 
-import com.kastik.apps.core.common.extensions.combine
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.NotificationRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
@@ -8,75 +7,51 @@ import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
-import com.kastik.apps.core.model.user.UserPreferences
-import com.kastik.apps.core.model.user.UserTheme
+import com.kastik.apps.core.model.user.Theme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class HasSkippedSignInUseCase @Inject constructor(
+class GetUserPreferencesUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
-    operator fun invoke(): Flow<Boolean> =
-        userPreferencesRepository.hasSkippedSignIn()
+    operator fun invoke() = userPreferencesRepository.userPreferences
 }
 
 class SetHasSkippedSignInUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(hasSkippedSignIn: Boolean) =
-        userPreferencesRepository.setHasSkippedSignIn(hasSkippedSignIn)
-}
-
-class GetThemeUseCase @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
-    operator fun invoke(): Flow<UserTheme> =
-        userPreferencesRepository.getTheme()
+        userPreferencesRepository.setSkippedSignIn(hasSkippedSignIn)
 }
 
 class SetThemeUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
-    suspend operator fun invoke(theme: UserTheme) =
+    suspend operator fun invoke(theme: Theme) =
         userPreferencesRepository.setTheme(theme)
-}
-
-
-class GetDynamicColorUseCase @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
-    operator fun invoke(): Flow<Boolean> =
-        userPreferencesRepository.isDynamicColorEnabled()
 }
 
 class SetDynamicColorUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(enabled: Boolean) =
-        userPreferencesRepository.setDynamicColorEnabled(enabled)
+        userPreferencesRepository.setDynamicColor(enabled)
 }
 
-class ShowSignInNoticeRationalUseCase @Inject constructor(
+class ShowSignInNoticeRationaleUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     operator fun invoke(): Flow<Boolean> {
         return combine(
-            authenticationRepository.getIsSignedIn(),
-            userPreferencesRepository.hasSkippedSignIn()
-        ) { isSignedIn, hasSkipped ->
-            !isSignedIn && !hasSkipped
+            authenticationRepository.isSignedIn,
+            userPreferencesRepository.userPreferences
+        ) { isSignedIn, userPreferences ->
+            !isSignedIn && !userPreferences.hasSkippedSignedIn
         }
     }
-}
-
-class GetSortTypeUseCase @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
-    operator fun invoke(): Flow<SortType> =
-        userPreferencesRepository.getSortType()
 }
 
 class SetSortTypeUseCase @Inject constructor(
@@ -84,14 +59,6 @@ class SetSortTypeUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(sortType: SortType) =
         userPreferencesRepository.setSortType(sortType)
-}
-
-
-class GetSearchScopeUseCase @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
-    operator fun invoke(): Flow<SearchScope> =
-        userPreferencesRepository.getSearchScope()
 }
 
 class SetSearchScopeUseCase @Inject constructor(
@@ -107,12 +74,13 @@ class IsForYouAvailableUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<Boolean> =
         combine(
-            tagsRepository.getSubscribedTags(),
-            authenticationRepository.getIsSignedIn(),
+            tagsRepository.subscribedTags,
+            authenticationRepository.isSignedIn,
         ) { subscriptions, isSignedIn ->
             isSignedIn && subscriptions.isNotEmpty()
         }
 }
+
 
 class IsForYouEnabledUseCase @Inject constructor(
     private val isForYouAvailableUseCase: IsForYouAvailableUseCase,
@@ -121,39 +89,25 @@ class IsForYouEnabledUseCase @Inject constructor(
     operator fun invoke(): Flow<Boolean> =
         combine(
             isForYouAvailableUseCase(),
-            userPreferencesRepository.isForYouEnabled()
-        ) { isForYouAvailable, isForYouEnabled ->
-            isForYouAvailable && isForYouEnabled
+            userPreferencesRepository.userPreferences
+        ) { isForYouAvailable, userPreferences ->
+            isForYouAvailable && userPreferences.isForYouEnabled
         }
 }
+
 
 class SetForYouEnabledUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(value: Boolean) =
-        userPreferencesRepository.setForYouEnabled(value)
-}
-
-class AreFabFiltersEnabledUseCase @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
-    operator fun invoke(): Flow<Boolean> =
-        userPreferencesRepository.areFabFiltersEnabled()
+        userPreferencesRepository.setForYou(value)
 }
 
 class SetFabFiltersEnabledUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     suspend operator fun invoke(value: Boolean) =
-        userPreferencesRepository.setFabFiltersEnabled(value)
-}
-
-
-class GetAnnouncementCheckIntervalMinutesUseCase @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
-    operator fun invoke(): Flow<Int> =
-        userPreferencesRepository.getAnnouncementCheckIntervalMinutes()
+        userPreferencesRepository.setFabFilters(value)
 }
 
 class SetAnnouncementCheckIntervalUseCase @Inject constructor(
@@ -162,7 +116,7 @@ class SetAnnouncementCheckIntervalUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(minutes: Int) {
         workManager.scheduleAnnouncementAlerts(minutes)
-        userPreferencesRepository.setAnnouncementCheckIntervalMinutes(minutes)
+        userPreferencesRepository.setCheckIntervalMinutes(minutes)
     }
 }
 
@@ -186,8 +140,8 @@ class ShouldShowReviewDialogUseCase @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     operator fun invoke(): Flow<Boolean> =
-        userPreferencesRepository.getImportantEventCount().map {
-            it > 20
+        userPreferencesRepository.userPreferences.map {
+            it.importantEventCount > 20
         }
 }
 
@@ -206,42 +160,11 @@ class IsAnnouncementCheckIntervalAvailableUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<Boolean> {
         return combine(
-            tagsRepository.getSubscribedTags(),
-            authenticationRepository.getIsSignedIn(),
+            tagsRepository.subscribedTags,
+            authenticationRepository.isSignedIn,
             notificationRepository.areNotificationsEnabled(),
         ) { tags, isSignedIn, areNotificationEnabled ->
             tags.isNotEmpty() && isSignedIn && areNotificationEnabled
         }
     }
-}
-
-class GetUserPreferencesUseCase @Inject constructor(
-    private val getThemeUseCase: GetThemeUseCase,
-    private val getDynamicColorUseCase: GetDynamicColorUseCase,
-    private val getSortTypeUseCase: GetSortTypeUseCase,
-    private val getSearchScopeUseCase: GetSearchScopeUseCase,
-    private val isForYouEnabledUseCase: IsForYouEnabledUseCase,
-    private val areFabFiltersEnabledUseCase: AreFabFiltersEnabledUseCase,
-    private val getAnnouncementCheckIntervalMinutesUseCase: GetAnnouncementCheckIntervalMinutesUseCase,
-) {
-    operator fun invoke() =
-        combine(
-            getThemeUseCase(),
-            getDynamicColorUseCase(),
-            getSortTypeUseCase(),
-            getSearchScopeUseCase(),
-            isForYouEnabledUseCase(),
-            areFabFiltersEnabledUseCase(),
-            getAnnouncementCheckIntervalMinutesUseCase(),
-        ) { theme, dynamicColor, sortType, searchScope, enableForYou, disableFabFilters, announcementCheckIntervalHours ->
-            UserPreferences(
-                theme,
-                dynamicColor,
-                sortType,
-                searchScope,
-                enableForYou,
-                disableFabFilters,
-                announcementCheckIntervalHours
-            )
-        }
 }

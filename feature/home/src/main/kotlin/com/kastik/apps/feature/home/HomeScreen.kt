@@ -2,15 +2,24 @@ package com.kastik.apps.feature.home
 
 import android.Manifest
 import android.os.Build
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -18,10 +27,12 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -36,7 +47,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.SecondaryTabRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -51,6 +61,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -58,6 +69,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -70,15 +82,21 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import com.kastik.apps.core.common.extensions.launchSignIn
 import com.kastik.apps.core.common.extensions.shareAnnouncement
-import com.kastik.apps.core.designsystem.component.IEEDialog
-import com.kastik.apps.core.designsystem.component.IEEFloatingToolBar
-import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
+import com.kastik.apps.core.designsystem.component.IeeDialog
+import com.kastik.apps.core.designsystem.component.IeeFloatingToolBar
+import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeStatusBanner
+import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
+import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.model.aboard.Announcement
-import com.kastik.apps.core.model.aboard.Attachment
-import com.kastik.apps.core.model.aboard.Tag
-import com.kastik.apps.core.ui.extensions.LocalAnalytics
-import com.kastik.apps.core.ui.extensions.TrackScreenViewEvent
 import com.kastik.apps.core.ui.extensions.isScrollingUp
+import com.kastik.apps.core.ui.extensions.logAnnouncementShared
+import com.kastik.apps.core.ui.extensions.logButtonClick
+import com.kastik.apps.core.ui.extensions.logFiltersApplied
+import com.kastik.apps.core.ui.extensions.logItemSelection
+import com.kastik.apps.core.ui.extensions.logNavigationAction
+import com.kastik.apps.core.ui.extensions.logSearch
+import com.kastik.apps.core.ui.extensions.logSheetOpened
 import com.kastik.apps.core.ui.paging.AnnouncementFeed
 import com.kastik.apps.core.ui.sheet.AuthorSheet
 import com.kastik.apps.core.ui.sheet.TagSheet
@@ -88,11 +106,11 @@ import com.kastik.apps.feature.home.navigation.HomeTab
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreenRoute(
     initialTab: HomeTab,
@@ -100,16 +118,19 @@ internal fun HomeScreenRoute(
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
     navigateToSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
-    viewModel: HomeScreenViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    TrackScreenViewEvent(
+        screenClass = "home_route",
+        screenName = "home_screen"
+    )
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val homeFeedAnnouncements = viewModel.homeFeedAnnouncements.collectAsLazyPagingItems()
     val forYouAnnouncements = viewModel.forYouFeedAnnouncements.collectAsLazyPagingItems()
     val textFieldState = viewModel.searchBarTextFieldState
 
-    TrackScreenViewEvent("home_screen")
-
-    HomeScreenContent(
+    HomeScreen(
         uiState = uiState,
         initialTab = initialTab,
         searchBarTextFieldState = textFieldState,
@@ -125,17 +146,17 @@ internal fun HomeScreenRoute(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-private fun HomeScreenContent(
-    uiState: UiState,
-    initialTab: HomeTab,
-    searchBarTextFieldState: TextFieldState,
+private fun HomeScreen(
+    uiState: HomeUiState = HomeUiState(),
+    initialTab: HomeTab = HomeTab.HOME,
+    searchBarTextFieldState: TextFieldState = rememberTextFieldState(),
     homeFeedAnnouncements: LazyPagingItems<Announcement>,
     forYouAnnouncements: LazyPagingItems<Announcement>,
-    navigateToAnnouncement: (Int) -> Unit,
-    navigateToSearch: (query: String, tagIds: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
-    navigateToProfile: () -> Unit,
-    navigateToSettings: () -> Unit,
-    onSignInNoticeDismissed: () -> Unit,
+    navigateToAnnouncement: (Int) -> Unit = {},
+    navigateToSearch: (query: String, tagIds: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit = { _, _, _ -> },
+    navigateToProfile: () -> Unit = {},
+    navigateToSettings: () -> Unit = {},
+    onSignInNoticeDismissed: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val vibrator = LocalHapticFeedback.current
@@ -157,6 +178,9 @@ private fun HomeScreenContent(
         ) else listOf(R.string.home_feed_label)
     }
 
+    val homeRefreshLoadState = homeFeedAnnouncements.loadState.refresh
+    val forYouRefreshLoadState = forYouAnnouncements.loadState.refresh
+
     LaunchedEffect(uiState.enableForYou) {
         val targetPage = when (initialTab) {
             HomeTab.HOME -> 0
@@ -171,10 +195,10 @@ private fun HomeScreenContent(
 
     AnimatedVisibility(uiState.showSignInNotice) {
         SignInDialog(onConfirm = {
-            analytics.logEvent("sign_in_clicked", mapOf("source" to "home_screen"))
+            analytics.logButtonClick("dialog_sign_in_confirm")
             context.launchSignIn()
         }, onDismiss = {
-            analytics.logEvent("sign_in_dismissed", mapOf("source" to "home_screen"))
+            analytics.logButtonClick("dialog_sign_in_dismiss")
             onSignInNoticeDismissed()
         })
     }
@@ -189,19 +213,10 @@ private fun HomeScreenContent(
         }
     }
 
-    LaunchedEffect(pagerState.currentPage) {
-        if (pagerState.currentPage == 0) {
-            analytics.logEvent(
-                "tab_switched", mapOf(
-                    "tab" to "home", "source" to "home_screen"
-                )
-            )
-        } else {
-            analytics.logEvent(
-                "tab_switched", mapOf(
-                    "tab" to "for_you", "source" to "home_screen"
-                )
-            )
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.drop(1).collect { page ->
+            val tabName = if (page == 0) "home" else "for_you"
+            analytics.logNavigationAction("tab_switch", tabName)
         }
     }
 
@@ -209,53 +224,37 @@ private fun HomeScreenContent(
         AnimatedVisibility(
             visible = pagerState.currentPage == 0, enter = scaleIn(), exit = scaleOut()
         ) {
-            IEEFloatingToolBar(
+            IeeFloatingToolBar(
                 expanded = (homeFeedLazyListState.isScrollingUp()),
                 expandedAction = {
-                    analytics.logEvent(
-                        "scroll_up_clicked", mapOf("source" to "home_screen")
-                    )
+                    analytics.logButtonClick("fab_scroll_up")
                     scope.launch {
                         searchScroll.scrollOffset = 0f
                         homeFeedLazyListState.animateScrollToItem(0)
                     }
                 },
                 collapsedAction = {
-                    analytics.logEvent(
-                        "search_clicked", mapOf("source" to "home_screen")
-                    )
-                    scope.launch {
-                        searchBarState.animateToExpanded()
-                    }
+                    analytics.logButtonClick("fab_search")
+                    scope.launch { searchBarState.animateToExpanded() }
                 },
                 expandedIcon = { Icon(Icons.Filled.ArrowUpward, "Scroll to top") },
                 collapsedIcon = { Icon(Icons.Filled.Search, "Go to search") },
                 collapsedSecondaryIcons = if (uiState.enableFabFilters) {
                     {
                         IconButton(onClick = {
+                            analytics.logButtonClick("toolbar_tags")
+                            analytics.logSheetOpened("tags_sheet")
                             showTagSheet.value = true
-                        }) {
-                            Icon(
-                                Icons.Filled.Tag,
-                                "Filter",
-                            )
-                        }
+                        }) { Icon(Icons.Filled.Tag, "Filter") }
+
                         IconButton(onClick = {
+                            analytics.logButtonClick("toolbar_authors")
+                            analytics.logSheetOpened("authors_sheet")
                             showAuthorSheet.value = true
-                        }) {
-                            Icon(
-                                Icons.Filled.Person,
-                                "Filter",
-                            )
-                        }
-
+                        }) { Icon(Icons.Filled.Person, "Filter") }
                     }
-                } else null
-
-            )
+                } else null)
         }
-
-
     }, topBar = {
         SearchBar(
             scrollBehavior = searchScroll,
@@ -264,39 +263,25 @@ private fun HomeScreenContent(
             searchHint = stringResource(R.string.search_bar_hint),
             textFieldState = searchBarTextFieldState,
             onSearch = { query ->
-                analytics.logEvent(
-                    "search", mapOf(
-                        "search_term" to query, "source" to "home_screen"
-                    )
-                )
+                analytics.logSearch(query = query)
                 searchBarTextFieldState.clearText()
                 navigateToSearch(query, persistentListOf(), persistentListOf())
             },
             onAnnouncementQuickResultClick = { announcementId ->
-                analytics.logEvent(
-                    "quick_result_click", mapOf(
-                        "result_type" to "announcement",
-                        "item_id" to announcementId,
-                        "source" to "home_screen"
-                    )
+                analytics.logItemSelection(
+                    announcementId.toString(), "announcement_quick_result"
                 )
                 navigateToAnnouncement(announcementId)
             },
             onTagQuickResultClick = { tag ->
-                analytics.logEvent(
-                    "quick_result_click", mapOf(
-                        "result_type" to "tag", "item_id" to tag, "source" to "home_screen"
-                    )
-                )
+                analytics.logItemSelection(tag.toString(), "tag_quick_result")
+                analytics.logSearch(tagIds = listOf(tag))
                 searchBarTextFieldState.clearText()
                 navigateToSearch("", persistentListOf(tag), persistentListOf())
             },
             onAuthorQuickResultClick = { author ->
-                analytics.logEvent(
-                    "quick_result_click", mapOf(
-                        "result_type" to "author", "item_id" to author, "source" to "home_screen"
-                    )
-                )
+                analytics.logItemSelection(author.toString(), "author_quick_result")
+                analytics.logSearch(authorIds = listOf(author))
                 searchBarTextFieldState.clearText()
                 navigateToSearch("", persistentListOf(), persistentListOf(author))
             },
@@ -306,30 +291,91 @@ private fun HomeScreenContent(
                     authorLabel = stringResource(R.string.search_bar_author_label),
                     selectedTagsCount = 0,
                     selectedAuthorsCount = 0,
-                    openTagSheet = { showTagSheet.value = true },
-                    openAuthorSheet = { showAuthorSheet.value = true })
+                    openTagSheet = {
+                        analytics.logSheetOpened("tags_sheet")
+                        showTagSheet.value = true
+                    },
+                    openAuthorSheet = {
+                        analytics.logSheetOpened("authors_sheet")
+                        showAuthorSheet.value = true
+                    })
             },
             collapsedSecondaryActions = {
-                AnimatedVisibility(
-                    visible = uiState.enableForYou,
-                    enter = slideInVertically(),
-                    exit = slideOutVertically()
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.animateContentSize(),
                 ) {
-                    SecondaryTabRow(
-                        selectedTabIndex = pagerState.currentPage,
+                    AnimatedVisibility(
+                        visible = uiState.enableForYou,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
                     ) {
-                        titles.forEachIndexed { index, title ->
-                            Tab(
-                                selected = pagerState.currentPage == index,
-                                selectedContentColor = MaterialTheme.colorScheme.primary,
-                                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
-                                text = {
-                                    Text(
-                                        text = stringResource(title),
-                                        style = MaterialTheme.typography.titleSmall
+                        SecondaryTabRow(
+                            selectedTabIndex = pagerState.currentPage,
+                        ) {
+                            titles.forEachIndexed { index, title ->
+                                Tab(
+                                    selected = pagerState.currentPage == index,
+                                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    onClick = { scope.launch { pagerState.animateScrollToPage(index) } },
+                                    text = {
+                                        Text(
+                                            text = stringResource(title),
+                                            style = MaterialTheme.typography.titleSmall
+                                        )
+                                    })
+                            }
+                        }
+                    }
+
+                    val showHomeError = pagerState.currentPage == 0 &&
+                            homeRefreshLoadState is LoadState.Error &&
+                            homeFeedAnnouncements.itemCount > 0
+
+                    val showForYouError = pagerState.currentPage == 1 &&
+                            forYouRefreshLoadState is LoadState.Error &&
+                            forYouAnnouncements.itemCount > 0
+
+                    AnimatedVisibility(
+                        visible = showHomeError || showForYouError,
+                        enter = expandVertically() + fadeIn(),
+                        exit = shrinkVertically() + fadeOut()
+                    ) {
+
+                        AnimatedContent(
+                            targetState = pagerState.currentPage,
+                            transitionSpec = {
+                                fadeIn() togetherWith fadeOut() using SizeTransform(clip = false)
+                            },
+                            label = "ErrorBannerTransition"
+                        ) { page ->
+                            when (page) {
+                                0 -> {
+                                    IeeStatusBanner(
+                                        text = "Home Feed Sync Failed.",
+                                        icon = Icons.Default.CloudOff,
+                                        actionLabel = "Retry",
+                                        onActionClick = homeFeedAnnouncements::retry,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
                                     )
-                                })
+                                }
+
+                                1 -> {
+                                    IeeStatusBanner(
+                                        text = "For You Feed Sync Failed.",
+                                        icon = Icons.Default.CloudOff,
+                                        actionLabel = "Retry",
+                                        onActionClick = forYouAnnouncements::retry,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -338,14 +384,10 @@ private fun HomeScreenContent(
                 IconButton(
                     onClick = {
                         if (uiState.isSignedIn) {
-                            analytics.logEvent(
-                                "profile_clicked", mapOf("source" to "home_screen")
-                            )
+                            analytics.logButtonClick("profile_icon")
                             navigateToProfile()
                         } else {
-                            analytics.logEvent(
-                                "sign_in_clicked", mapOf("source" to "home_screen")
-                            )
+                            analytics.logButtonClick("sign_in_icon")
                             context.launchSignIn()
                         }
                     }) {
@@ -358,9 +400,7 @@ private fun HomeScreenContent(
             },
             actions = {
                 IconButton(onClick = {
-                    analytics.logEvent(
-                        "settings_clicked", mapOf("source" to "home_screen")
-                    )
+                    analytics.logButtonClick("settings_icon")
                     navigateToSettings()
                 }) {
                     Icon(
@@ -377,17 +417,15 @@ private fun HomeScreenContent(
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding())
         ) {
-            HorizontalPager(
-                state = pagerState,
-            ) { page ->
+            HorizontalPager(state = pagerState) { page ->
                 when (page) {
                     0 -> {
-                        val refreshState = homeFeedAnnouncements.loadState.refresh
 
                         PullToRefreshBox(
-                            isRefreshing = refreshState is LoadState.Loading,
+                            isRefreshing = homeRefreshLoadState is LoadState.Loading,
                             state = homeFeedPullToRefreshState,
                             onRefresh = {
+                                analytics.logNavigationAction("refresh_gesture", "home")
                                 vibrator.performHapticFeedback(HapticFeedbackType.GestureEnd)
                                 homeFeedAnnouncements.refresh()
                             },
@@ -395,49 +433,42 @@ private fun HomeScreenContent(
                                 LoadingIndicator(
                                     modifier = Modifier.align(Alignment.TopCenter),
                                     state = homeFeedPullToRefreshState,
-                                    isRefreshing = refreshState is LoadState.Loading,
+                                    isRefreshing = homeRefreshLoadState is LoadState.Loading,
                                 )
                             }) {
                             AnnouncementFeed(
-                                loadingPlaceHolderText = stringResource(R.string.feed_placeholder),
-                                nextPagePlaceHolderText = stringResource(R.string.feed_footer_loading),
-                                emptyPlaceHolderText = stringResource(R.string.feed_empty),
-                                errorPlaceHolderText = stringResource(R.string.error_generic),
-                                errorPlaceHolderRetryText = stringResource(R.string.action_retry),
-                                errorNextPagePlaceHolderText = stringResource(R.string.feed_footer_failed),
+                                refreshEmptyText = stringResource(R.string.feed_empty),
+                                refreshLoadingText = stringResource(R.string.feed_placeholder),
+                                refreshErrorText = stringResource(R.string.error_generic),
+                                refreshRetryText = stringResource(R.string.action_retry),
+                                appendLoadingText = stringResource(R.string.feed_footer_loading),
+                                appendErrorText = stringResource(R.string.error_generic),
+                                appendErrorRetryText = stringResource(R.string.action_retry),
                                 endOfPaginationText = stringResource(R.string.feed_footer_finished),
                                 announcements = homeFeedAnnouncements,
                                 lazyListState = homeFeedLazyListState,
                                 scrollBehavior = searchScroll,
                                 onAnnouncementClick = { announcementId ->
-                                    analytics.logEvent(
-                                        "announcement_clicked", mapOf(
-                                            "item_id" to announcementId, "source" to "home_screen"
-                                        )
+                                    analytics.logItemSelection(
+                                        announcementId.toString(), "announcement"
                                     )
                                     navigateToAnnouncement(announcementId)
                                 },
                                 onAnnouncementLongClick = { announcementId ->
-                                    analytics.logEvent(
-                                        "announcement_shared", mapOf(
-                                            "item_id" to announcementId, "source" to "home_screen"
-                                        )
-                                    )
+                                    analytics.logAnnouncementShared(announcementId)
                                     context.shareAnnouncement(announcementId)
                                 },
                                 contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
                             )
                         }
-
                     }
 
                     1 -> {
-                        val refreshState = forYouAnnouncements.loadState.refresh
-
                         PullToRefreshBox(
-                            isRefreshing = refreshState is LoadState.Loading,
+                            isRefreshing = forYouRefreshLoadState is LoadState.Loading,
                             state = forYouFeedPullToRefreshState,
                             onRefresh = {
+                                analytics.logNavigationAction("refresh_gesture", "for_you")
                                 vibrator.performHapticFeedback(HapticFeedbackType.GestureEnd)
                                 forYouAnnouncements.refresh()
                             },
@@ -445,37 +476,30 @@ private fun HomeScreenContent(
                                 LoadingIndicator(
                                     modifier = Modifier.align(Alignment.TopCenter),
                                     state = forYouFeedPullToRefreshState,
-                                    isRefreshing = refreshState is LoadState.Loading,
+                                    isRefreshing = forYouRefreshLoadState is LoadState.Loading,
                                 )
                             },
                             content = {
                                 AnnouncementFeed(
-                                    loadingPlaceHolderText = stringResource(R.string.feed_placeholder),
-                                    nextPagePlaceHolderText = stringResource(R.string.feed_footer_loading),
-                                    emptyPlaceHolderText = stringResource(R.string.feed_for_you_empty),
-                                    errorPlaceHolderText = stringResource(R.string.error_generic),
-                                    errorPlaceHolderRetryText = stringResource(R.string.action_retry),
-                                    errorNextPagePlaceHolderText = stringResource(R.string.feed_footer_failed),
+                                    refreshEmptyText = stringResource(R.string.feed_empty),
+                                    refreshLoadingText = stringResource(R.string.feed_placeholder),
+                                    refreshErrorText = stringResource(R.string.error_generic),
+                                    refreshRetryText = stringResource(R.string.action_retry),
+                                    appendLoadingText = stringResource(R.string.feed_footer_loading),
+                                    appendErrorText = stringResource(R.string.error_generic),
+                                    appendErrorRetryText = stringResource(R.string.action_retry),
                                     endOfPaginationText = stringResource(R.string.feed_footer_finished),
                                     announcements = forYouAnnouncements,
                                     lazyListState = forYouLazyListState,
                                     scrollBehavior = searchScroll,
                                     onAnnouncementClick = { announcementId ->
-                                        analytics.logEvent(
-                                            "announcement_clicked", mapOf(
-                                                "item_id" to announcementId,
-                                                "source" to "for_you_screen"
-                                            )
+                                        analytics.logItemSelection(
+                                            announcementId.toString(), "announcement"
                                         )
                                         navigateToAnnouncement(announcementId)
                                     },
                                     onAnnouncementLongClick = { announcementId ->
-                                        analytics.logEvent(
-                                            "announcement_shared", mapOf(
-                                                "item_id" to announcementId,
-                                                "source" to "for_you_screen"
-                                            )
-                                        )
+                                        analytics.logAnnouncementShared(announcementId)
                                         context.shareAnnouncement(announcementId)
                                     },
                                     contentPadding = PaddingValues(bottom = paddingValues.calculateBottomPadding()),
@@ -488,43 +512,27 @@ private fun HomeScreenContent(
     }
 
     if (showTagSheet.value) {
-        TagSheet(
-            tags = uiState.availableFilters.tags,
-            onApply = { newTagIds ->
-                scope.launch {
-                    analytics.logEvent(
-                        "tags_applied", mapOf(
-                            "item_id" to newTagIds, "source" to "home_screen"
-                        )
-                    )
-                    showTagSheet.value = false
-                    searchBarState.animateToCollapsed()
-                    navigateToSearch("", newTagIds, persistentListOf())
-                }
-            },
-            onDismiss = {
+        TagSheet(tags = uiState.availableFilters.tags, onApply = { newTagIds ->
+            scope.launch {
+                analytics.logFiltersApplied("tags", newTagIds)
+                analytics.logSearch(tagIds = newTagIds)
                 showTagSheet.value = false
-            },
-        )
+                searchBarState.animateToCollapsed()
+                navigateToSearch("", newTagIds, persistentListOf())
+            }
+        }, onDismiss = { showTagSheet.value = false })
     }
+
     if (showAuthorSheet.value) {
-        AuthorSheet(
-            authors = uiState.availableFilters.authors,
-            onApply = { newAuthorIds ->
-                scope.launch {
-                    analytics.logEvent(
-                        "authors_applied",
-                        mapOf("item_id" to newAuthorIds, "source" to "home_screen")
-                    )
-                    showAuthorSheet.value = false
-                    searchBarState.animateToCollapsed()
-                    navigateToSearch("", persistentListOf(), newAuthorIds)
-                }
-            },
-            onDismiss = {
+        AuthorSheet(authors = uiState.availableFilters.authors, onApply = { newAuthorIds ->
+            scope.launch {
+                analytics.logFiltersApplied("authors", newAuthorIds)
+                analytics.logSearch(authorIds = newAuthorIds)
                 showAuthorSheet.value = false
-            },
-        )
+                searchBarState.animateToCollapsed()
+                navigateToSearch("", persistentListOf(), newAuthorIds)
+            }
+        }, onDismiss = { showAuthorSheet.value = false })
     }
 }
 
@@ -534,7 +542,7 @@ fun SignInDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    IEEDialog(
+    IeeDialog(
         icon = Icons.AutoMirrored.Default.Login,
         title = stringResource(R.string.login_dialog_title),
         text = stringResource(R.string.login_dialog_description),
@@ -558,7 +566,7 @@ private fun NotificationRationale() {
     notificationPermissionState?.let {
         if (!notificationPermissionState.status.isGranted && showRationale) {
             if (notificationPermissionState.status.shouldShowRationale) {
-                IEEDialog(
+                IeeDialog(
                     icon = Icons.Default.NotificationsActive,
                     title = stringResource(R.string.notification_dialog_title),
                     text = stringResource(R.string.notification_dialog_description),
@@ -577,53 +585,15 @@ private fun NotificationRationale() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showSystemUi = false, showBackground = true)
+@Preview
 @Composable
-fun PreviewHomeScreenContent() {
-    val pagedAnnouncements = flowOf(PagingData.from(FakeAnnouncements)).collectAsLazyPagingItems()
-    AppsAboardTheme {
-        Surface {
-            HomeScreenContent(
-                uiState = UiState(),
-                initialTab = HomeTab.HOME,
-                homeFeedAnnouncements = pagedAnnouncements,
-                forYouAnnouncements = pagedAnnouncements,
-                navigateToAnnouncement = {},
-                navigateToSettings = {},
-                navigateToProfile = {},
-                onSignInNoticeDismissed = {},
-                navigateToSearch = { _, _, _ -> },
-                searchBarTextFieldState = TextFieldState(),
-            )
-        }
+fun PreviewHomeScreen() {
+    val emptyFlow = flowOf(PagingData.empty<Announcement>())
+    val lazyItems = emptyFlow.collectAsLazyPagingItems()
+    IeePreview {
+        HomeScreen(
+            homeFeedAnnouncements = lazyItems,
+            forYouAnnouncements = lazyItems,
+        )
     }
 }
-
-val FakeTags = listOf(
-    Tag(id = 1, title = "Tag1"),
-    Tag(id = 2, title = "Tag2"),
-)
-
-val FakeAttachments = listOf(
-    Attachment(
-        id = 1,
-        filename = "image.jpg",
-        fileSize = 1000,
-        mimeType = "TODO()",
-    )
-)
-
-val FakeAnnouncements = listOf(
-    Announcement(
-        id = 1,
-        title = "Announcement Title",
-        preview = "The quick brow fox jumps over the lazy dog",
-        author = "Kostas",
-        tags = FakeTags,
-        attachments = FakeAttachments,
-        date = "10-12-2025 11:45",
-        pinned = false,
-        body = "",
-    )
-)

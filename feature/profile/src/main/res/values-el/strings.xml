@@ -26,4 +26,8 @@
     <string name="error_generic">Κάτι πήγε στραβά</string>
 
     <string name="toast_subscription_update_failed_message">Πρόβλημα σύνδεσης. Θα προσπαθήσουμε ξανά αυτόματα</string>
+
+    <string name="sync_status_enqueued">Ο συγχρονισμός βρίσκεται σε αναμονή……</string>
+    <string name="sync_status_blocked">Ο συγχρονισμός ανεστάλη λόγω περιορισμών του συστήματος.</string>
+    <string name="sync_status_error">Δεν ήταν δυνατή η αποθήκευση των συνδρομών σας.</string>
 </resources>

@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.kastik.apps.core.database.entities.RemoteKeys
+import com.kastik.apps.core.database.entities.RemoteKeysEntity
 import com.kastik.apps.core.model.aboard.SortType
 
 @Dao
@@ -27,10 +27,10 @@ interface RemoteKeysDao {
         bodyQuery: String,
         authorIds: List<Int>,
         tagIds: List<Int>
-    ): RemoteKeys?
+    ): RemoteKeysEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrReplaceKeys(keys: List<RemoteKeys>)
+    suspend fun insertOrReplaceKeys(keys: List<RemoteKeysEntity>)
 
     @Query(
         """

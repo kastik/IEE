@@ -3,7 +3,7 @@ package com.kastik.apps.core.database.dao
 import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.testing.db.MemoryDatabase
 import com.kastik.apps.core.testing.runner.RoboDatabaseTestRunner
-import com.kastik.apps.core.testing.testdata.announcementTagEntityTestData
+import com.kastik.apps.core.testing.testdata.baseTagEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -14,34 +14,56 @@ internal class TagsDaoTest : MemoryDatabase() {
 
     @Test
     fun upsertTagsAddsNewTag() = runTest {
-        val tagEntities = announcementTagEntityTestData
-        tagsDao.upsertTags(tagEntities)
+        val tags = listOf(baseTagEntity)
+        tagsDao.upsertTags(tags)
 
         val result = tagsDao.getTags().first()
-        assertThat(tagEntities).containsExactlyElementsIn(result)
+        assertThat(result).containsExactly(baseTagEntity)
     }
 
     @Test
-    fun upsertTagsUpdatesExisting() = runTest {
-        val tagEntities = announcementTagEntityTestData
-        tagsDao.upsertTags(tagEntities)
+    fun upsertTagsUpdatesExistingTags() = runTest {
+        tagsDao.upsertTags(listOf(baseTagEntity))
 
-        val modifiedTags = tagEntities.map { it.copy(title = "New Name") }
-        tagsDao.upsertTags(modifiedTags)
+        val updatedTag = baseTagEntity.copy(
+            title = "Updated Root Tag",
+            isPublic = false
+        )
 
-        val result = tagsDao.getTags().first()
-        assertThat(result).isNotEmpty()
-        assertThat(result).containsExactlyElementsIn(modifiedTags)
+        tagsDao.upsertTags(listOf(updatedTag))
+
+        val retrievedTags = tagsDao.getTags().first()
+        assertThat(retrievedTags).hasSize(1)
+
+        val resultingTag = retrievedTags.first()
+        assertThat(resultingTag.title).isEqualTo("Updated Root Tag")
+        assertThat(resultingTag.isPublic).isFalse()
+    }
+
+
+    @Test
+    fun getTagsReturnInsertedTags() = runTest {
+        val tag2 = baseTagEntity.copy(id = 2, title = "Child Tag 1")
+        val tag3 = baseTagEntity.copy(id = 3, title = "Child Tag 2")
+        val tagsToInsert = listOf(baseTagEntity, tag2, tag3)
+
+        tagsDao.upsertTags(tagsToInsert)
+
+        val retrievedTags = tagsDao.getTags().first()
+
+        assertThat(retrievedTags).containsExactlyElementsIn(tagsToInsert)
     }
 
     @Test
-    fun clearTagsClearsTagTable() = runTest {
-        val tagEntities = announcementTagEntityTestData
-        tagsDao.upsertTags(tagEntities)
+    fun clearTagsClearsTags() = runTest {
+        val tag2 = baseTagEntity.copy(id = 2, title = "Another Tag")
+        tagsDao.upsertTags(listOf(baseTagEntity, tag2))
+
+        assertThat(tagsDao.getTags().first()).hasSize(2)
 
         tagsDao.clearTags()
-        val result = tagsDao.getTags().first()
 
-        assertThat(result).isEmpty()
+        val retrievedTags = tagsDao.getTags().first()
+        assertThat(retrievedTags).isEmpty()
     }
 }

@@ -11,7 +11,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navOptions
 import androidx.navigation.toRoute
-import com.kastik.apps.feature.search.SearchScreen
+import com.kastik.apps.feature.search.SearchRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -56,7 +56,7 @@ fun NavGraphBuilder.searchScreen(
         }
     ) { backStackEntry ->
         backStackEntry.toRoute<SearchRoute>()
-        SearchScreen(
+        SearchRoute(
             navigateBack = navigateBack,
             navigateToAnnouncement = navigateToAnnouncement,
         )

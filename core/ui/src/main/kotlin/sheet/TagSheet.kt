@@ -18,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kastik.apps.core.designsystem.component.IEESelectableItem
-import com.kastik.apps.core.designsystem.component.IEESheet
-import com.kastik.apps.core.designsystem.theme.AppsAboardTheme
+import com.kastik.apps.core.designsystem.component.IeePreview
+import com.kastik.apps.core.designsystem.component.IeeSelectableItem
+import com.kastik.apps.core.designsystem.component.IeeSheet
 import com.kastik.apps.core.designsystem.theme.ieeListSpring
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.ui.R
@@ -60,7 +60,7 @@ fun TagSheet(
         childrenProvider = { it.children },
     )
 
-    IEESheet(
+    IeeSheet(
         sheetState = tagSheetState,
         onDismiss = onDismiss,
         searchQuery = query,
@@ -87,7 +87,7 @@ fun TagSheet(
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
             items(items = state.flatList, key = { it.item.data.id }) { flatNode ->
-                IEESelectableItem(
+                IeeSelectableItem(
                     modifier = Modifier
                         .padding(start = (flatNode.depth * 16).dp)
                         .animateItem(
@@ -113,7 +113,7 @@ private fun TagSheetPreview() {
         Tag(id = 2, title = "Tag 2"),
         Tag(id = 3, title = "Tag 3"),
     )
-    AppsAboardTheme {
+    IeePreview {
         TagSheet(
             tags = sampleTags,
             selectedTagIds = persistentListOf(1)

@@ -1,0 +1,115 @@
+package com.kastik.apps.feature.settings
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.kastik.apps.core.domain.usecases.AreNotificationsAllowedUseCase
+import com.kastik.apps.core.domain.usecases.GetUserPreferencesUseCase
+import com.kastik.apps.core.domain.usecases.IncreaseImportantEventCountUseCase
+import com.kastik.apps.core.domain.usecases.IsAnnouncementCheckIntervalAvailableUseCase
+import com.kastik.apps.core.domain.usecases.IsForYouAvailableUseCase
+import com.kastik.apps.core.domain.usecases.SetAnnouncementCheckIntervalUseCase
+import com.kastik.apps.core.domain.usecases.SetDynamicColorUseCase
+import com.kastik.apps.core.domain.usecases.SetFabFiltersEnabledUseCase
+import com.kastik.apps.core.domain.usecases.SetForYouEnabledUseCase
+import com.kastik.apps.core.domain.usecases.SetSearchScopeUseCase
+import com.kastik.apps.core.domain.usecases.SetSortTypeUseCase
+import com.kastik.apps.core.domain.usecases.SetThemeUseCase
+import com.kastik.apps.core.model.aboard.SortType
+import com.kastik.apps.core.model.user.SearchScope
+import com.kastik.apps.core.model.user.Theme
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+internal class SettingsViewModel @Inject constructor(
+    isForYouAvailableUseCase: IsForYouAvailableUseCase,
+    getUserPreferencesUseCase: GetUserPreferencesUseCase,
+    areNotificationsAllowedUseCase: AreNotificationsAllowedUseCase,
+    isAnnouncementCheckIntervalAvailableUseCase: IsAnnouncementCheckIntervalAvailableUseCase,
+    private val setSearchScopeUseCase: SetSearchScopeUseCase,
+    private val setDynamicColorUseCase: SetDynamicColorUseCase,
+    private val setThemeUseCase: SetThemeUseCase,
+    private val setSortTypeUseCase: SetSortTypeUseCase,
+    private val setForYouEnabledUseCase: SetForYouEnabledUseCase,
+    private val setFabFiltersEnabledUseCase: SetFabFiltersEnabledUseCase,
+    private val increaseImportantEventCountUseCase: IncreaseImportantEventCountUseCase,
+    private val setAnnouncementCheckIntervalUseCase: SetAnnouncementCheckIntervalUseCase,
+) : ViewModel() {
+
+    val uiState = combine(
+        getUserPreferencesUseCase(),
+        isForYouAvailableUseCase(),
+        areNotificationsAllowedUseCase(),
+        isAnnouncementCheckIntervalAvailableUseCase(),
+    ) { preferences, isForYouAvailable, areNotificationsAllowed, isAnnouncementCheckIntervalAvailable ->
+        SettingsUiState.Success(
+            theme = preferences.theme,
+            sortType = preferences.sortType,
+            isDynamicColorEnabled = preferences.isDynamicColorEnabled,
+            searchScope = preferences.searchScope,
+            isForYouEnabled = preferences.isForYouEnabled,
+            isForYouAvailable = isForYouAvailable,
+            areFabFiltersEnabled = preferences.areFabFiltersEnabled,
+            isAnnouncementCheckIntervalAvailable = isAnnouncementCheckIntervalAvailable,
+            announcementCheckIntervalMinutes = preferences.checkIntervalMinutes,
+            areNotificationsAllowed = areNotificationsAllowed,
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+        initialValue = SettingsUiState.Loading
+    )
+
+    fun setDynamicColor(value: Boolean) {
+        viewModelScope.launch {
+            increaseImportantEventCountUseCase()
+            setDynamicColorUseCase(value)
+        }
+    }
+
+    fun setTheme(theme: Theme) {
+        viewModelScope.launch {
+            increaseImportantEventCountUseCase()
+            setThemeUseCase(theme)
+        }
+    }
+
+    fun setSortType(sortType: SortType) {
+        viewModelScope.launch {
+            increaseImportantEventCountUseCase()
+            setSortTypeUseCase(sortType)
+        }
+    }
+
+    fun setSearchScope(searchScope: SearchScope) {
+        viewModelScope.launch {
+            increaseImportantEventCountUseCase()
+            setSearchScopeUseCase(searchScope)
+        }
+    }
+
+    fun setEnableForYou(value: Boolean) {
+        viewModelScope.launch {
+            increaseImportantEventCountUseCase()
+            setForYouEnabledUseCase(value)
+        }
+    }
+
+    fun setFabFilters(value: Boolean) {
+        viewModelScope.launch {
+            increaseImportantEventCountUseCase()
+            setFabFiltersEnabledUseCase(value)
+        }
+    }
+
+    fun setAnnouncementCheckIntervalMinutes(minutes: Int) {
+        viewModelScope.launch {
+            increaseImportantEventCountUseCase()
+            setAnnouncementCheckIntervalUseCase(minutes)
+        }
+    }
+}

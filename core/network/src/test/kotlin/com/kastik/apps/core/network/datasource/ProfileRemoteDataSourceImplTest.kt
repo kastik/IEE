@@ -18,7 +18,7 @@ class ProfileRemoteDataSourceImplTest {
 
     @Test
     fun getProfileReturnsDataFromApi() = runTest {
-        val remote = aboardClient.getUserInfo()
+        val remote = aboardClient.getCurrentUser()
         val repository = profileRemoteDataSource.getProfile()
         assertEquals(remote, repository)
     }

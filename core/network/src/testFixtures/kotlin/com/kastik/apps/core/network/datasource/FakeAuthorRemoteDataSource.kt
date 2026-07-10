@@ -1,12 +1,11 @@
 package com.kastik.apps.core.network.datasource
 
-import com.kastik.apps.core.network.model.aboard.author.AuthorResponseDto
+import com.kastik.apps.core.network.api.FakeAboardApiClient
+import com.kastik.apps.core.network.model.response.AuthorDto
 
 class FakeAuthorRemoteDataSource : AuthorRemoteDataSource {
 
-    var authorsToReturn: List<AuthorResponseDto> = emptyList()
+    private val fakeAboardApiClient = FakeAboardApiClient()
+    override suspend fun fetchAuthors(): List<AuthorDto> = fakeAboardApiClient.getAuthors()
 
-    override suspend fun fetchAuthors(): List<AuthorResponseDto> {
-        return authorsToReturn
-    }
 }

@@ -1,0 +1,40 @@
+syntax = "proto3";
+option java_package = "com.kastik.apps.core.datastore.proto";
+option java_multiple_files = true;
+package com.kastik.apps.core.datastore.proto;
+
+import "google/protobuf/timestamp.proto";
+
+message UserPreferencesProto{
+  ThemeProto theme = 1;
+  bool is_for_you_enabled = 2;
+  bool are_fab_filters_enabled = 3;
+  bool is_dynamic_color_enabled = 4;
+
+  SortTypeProto sort_type = 5;
+  SearchScopeProto search_scope = 6;
+
+  bool has_skipped_sign_in = 7;
+
+  google.protobuf.Timestamp last_check_time = 8;
+  int32 check_interval_minutes = 9;
+  int32 important_event_count = 10;
+}
+
+enum ThemeProto {
+  System = 0;
+  Light = 1;
+  Dark = 2;
+}
+
+enum SortTypeProto {
+  Priority = 0;
+  ASC = 1;
+  DESC = 2;
+}
+
+enum SearchScopeProto {
+  Title = 0;
+  Body = 1;
+  TITLE_AND_BODY = 2;
+}

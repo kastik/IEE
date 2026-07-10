@@ -26,6 +26,8 @@ class AnnouncementRemoteMediatorIntegrationTest : MemoryDatabase(
     private val fakeAnnouncementRemoteDataSource = FakeAnnouncementRemoteDataSource()
     private val fakeBase64ImageExtractor = FakeBase64ImageExtractor()
 
+    private val fakeCrashlytics = FakeCrashlytics()
+
     private val announcementRemoteMediator =
         AnnouncementRemoteMediator(
             titleQuery = "",
@@ -33,7 +35,7 @@ class AnnouncementRemoteMediatorIntegrationTest : MemoryDatabase(
             tagIds = emptyList(),
             authorIds = emptyList(),
             sortType = SortType.DESC,
-            crashlytics = FakeCrashlytics(),
+            crashlytics = fakeCrashlytics,
             database = db,
             announcementRemoteDataSource = fakeAnnouncementRemoteDataSource,
             base64ImageExtractor = fakeBase64ImageExtractor

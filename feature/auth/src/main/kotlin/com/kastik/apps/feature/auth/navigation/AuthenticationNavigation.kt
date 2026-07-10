@@ -8,7 +8,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
 import com.kastik.apps.feature.auth.AuthenticationRoute
 import kotlinx.serialization.Serializable
 
@@ -37,7 +36,6 @@ fun NavGraphBuilder.authenticationScreen(
         enterTransition = { scaleIn() },
         exitTransition = { fadeOut() },
         popEnterTransition = { fadeIn() }) { backStackEntry ->
-        val _ = backStackEntry.toRoute<AuthRoute>()
         AuthenticationRoute(
             navigateBack = navigateBack,
         )

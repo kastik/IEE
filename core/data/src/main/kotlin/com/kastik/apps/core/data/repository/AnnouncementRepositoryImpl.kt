@@ -13,12 +13,12 @@ import com.kastik.apps.core.data.mappers.toAnnouncementEntity
 import com.kastik.apps.core.data.mappers.toAttachmentEntity
 import com.kastik.apps.core.data.mappers.toAuthorEntity
 import com.kastik.apps.core.data.mappers.toBodyEntity
-import com.kastik.apps.core.data.mappers.toLocalError
 import com.kastik.apps.core.data.mappers.toNetworkError
 import com.kastik.apps.core.data.mappers.toTagCrossRefs
 import com.kastik.apps.core.data.mappers.toTagEntity
 import com.kastik.apps.core.data.paging.AnnouncementRemoteMediator
 import com.kastik.apps.core.data.utils.Base64ImageExtractor
+import com.kastik.apps.core.data.utils.safeCall
 import com.kastik.apps.core.database.db.AppDatabase
 import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.model.aboard.Announcement
@@ -54,9 +54,9 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         sortType: SortType,
         titleQuery: String,
         bodyQuery: String,
+        tagIds: List<Int>,
         authorIds: List<Int>,
-        tagIds: List<Int>
-    ) = Pager(
+        ) = Pager(
         config = PagingConfig(
             pageSize = 20,
             initialLoadSize = 60,
@@ -105,8 +105,8 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
                 sortBy = sortType,
                 title = titleQuery,
                 body = bodyQuery,
-                tagId = tagIds,
-                authorId = authorIds,
+                tagIds = tagIds,
+                authorIds = authorIds,
                 updatedAfter = greekLocalTime
             ).data.map { it.toAnnouncement() }
         )
@@ -129,8 +129,11 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun refreshAnnouncementWithId(id: Int) = withContext(ioDispatcher) {
-        try {
+    override suspend fun syncAnnouncementWithId(id: Int) = withContext(ioDispatcher) {
+        safeCall(
+            mapException = Exception::toNetworkError,
+            recordException = crashlytics::recordException,
+        ) {
             val remote = announcementRemoteDataSource.fetchAnnouncementWithId(id).data
 
             database.withTransaction {
@@ -145,12 +148,7 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
                 )
                 announcementLocalDataSource.upsertAttachments(remote.attachments.map { it.toAttachmentEntity() })
             }
-            Result.Success(Unit)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            crashlytics.recordException(e)
-            Result.Error(e.toNetworkError())
+
         }
     }
 
@@ -164,17 +162,9 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearAnnouncementCache() = withContext(ioDispatcher) {
-        try {
-            announcementLocalDataSource.clearAllAnnouncements()
-            announcementLocalDataSource.clearBodies()
-            announcementLocalDataSource.clearAttachments()
-            announcementLocalDataSource.clearTagCrossRefs()
-            Result.Success(Unit)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            crashlytics.recordException(e)
-            Result.Error(e.toLocalError())
-        }
+        announcementLocalDataSource.clearAllAnnouncements()
+        announcementLocalDataSource.clearBodies()
+        announcementLocalDataSource.clearAttachments()
+        announcementLocalDataSource.clearTagCrossRefs()
     }
 }

@@ -25,14 +25,14 @@ class TagsRemoteDataSourceImplTest {
 
     @Test
     fun fetchSubscribableTagsReturnsDataFromApi() = runTest {
-        val remote = aboardClient.getUserSubscribableTags()
+        val remote = aboardClient.getAvailableTags()
         val result = tagsRemoteDataSource.fetchSubscribableTags()
         assertThat(result).containsExactlyElementsIn(remote)
     }
 
     @Test
     fun getSubscribedTagsReturnsDataFromApi() = runTest {
-        val remote = aboardClient.getUserSubscriptions()
+        val remote = aboardClient.getSubscribedTags()
         val result = tagsRemoteDataSource.fetchSubscriptions()
         assertThat(result).containsExactlyElementsIn(remote)
     }

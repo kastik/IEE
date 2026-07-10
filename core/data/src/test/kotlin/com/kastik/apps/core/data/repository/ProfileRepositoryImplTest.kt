@@ -4,11 +4,13 @@ import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.crashlytics.FakeCrashlytics
 import com.kastik.apps.core.data.mappers.toProfile
 import com.kastik.apps.core.data.mappers.toProfileProto
+import com.kastik.apps.core.datastore.datasource.FakeAuthenticationLocalDataSource
 import com.kastik.apps.core.datastore.datasource.FakeProfileLocalDataSource
 import com.kastik.apps.core.datastore.proto.ProfileProto
-import com.kastik.apps.core.datastore.testdata.userProfileProtoTestData
+import com.kastik.apps.core.datastore.testdata.baseProfileProto
+import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.FakeProfileRemoteDataSource
-import com.kastik.apps.core.network.testdata.userProfileDtoTestData
+import com.kastik.apps.core.network.testdata.baseProfileDto
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -16,63 +18,55 @@ import org.junit.Test
 
 class ProfileRepositoryImplTest {
     private val testDispatcher = StandardTestDispatcher()
+    private val fakeCrashlytics = FakeCrashlytics()
     private val profileLocalDataSource = FakeProfileLocalDataSource()
     private val profileRemoteDataSource = FakeProfileRemoteDataSource()
+    private val fakeAuthenticationLocalDataSource = FakeAuthenticationLocalDataSource()
 
     private val profileRepository = ProfileRepositoryImpl(
-        crashlytics = FakeCrashlytics(),
+        crashlytics = fakeCrashlytics,
         profileLocalDataSource = profileLocalDataSource,
         profileRemoteDataSource = profileRemoteDataSource,
         ioDispatcher = testDispatcher,
+        authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
     )
 
-    //TODO Consider if we need to throw here instead
     @Test
     fun getProfileReturnsEmptyWhenNoProfileSaved() = runTest(testDispatcher) {
-        val result = profileRepository.getProfile().first()
+        val result = profileRepository.profile.first()
         val emptyProfile = ProfileProto.getDefaultInstance().toProfile()
+
         assertThat(result).isEqualTo(emptyProfile)
     }
 
     @Test
     fun getProfileReturnsProfileWhenProfileSaved() = runTest(testDispatcher) {
-        val profile = userProfileProtoTestData.first()
+        val profile = baseProfileProto
         profileLocalDataSource.setProfile(profile)
 
-        val result = profileRepository.getProfile().first()
+        val result = profileRepository.profile.first()
         assertThat(result).isEqualTo(profile.toProfile())
     }
 
     @Test
-    fun refreshProfileRefreshesProfile() = runTest(testDispatcher) {
-        val freshRemoteProfile = userProfileDtoTestData.last()
-        profileRemoteDataSource.profileToReturn = freshRemoteProfile
+    fun syncProfileSuccessRefreshesProfile() = runTest(testDispatcher) {
+        val result = profileRepository.syncProfile()
 
-        val staleLocalProfile = userProfileProtoTestData.first()
-        profileLocalDataSource.setProfile(staleLocalProfile)
+        assertThat(result).isInstanceOf(Result.Success::class.java)
 
-
-        profileRepository.refreshProfile()
-
-
-        val currentLocalProfile = profileLocalDataSource.getProfile().first()
-
-
-        assertThat(currentLocalProfile.toProfile()).isEqualTo(
-            freshRemoteProfile.toProfileProto().toProfile()
-        )
-        assertThat(currentLocalProfile.toProfile()).isNotEqualTo(staleLocalProfile.toProfile())
+        val savedLocalProfile = profileLocalDataSource.profile.first()
+        assertThat(savedLocalProfile).isEqualTo(baseProfileDto.toProfileProto())
     }
 
     @Test
-    fun clearLocalDataClearsProfileAndSubscriptions() = runTest(testDispatcher) {
-        profileLocalDataSource.setProfile(userProfileProtoTestData.first())
-        profileRepository.clearLocalData()
-        val profileResult = profileRepository.getProfile().first()
-        assertThat(profileResult.id).isEqualTo(0)
+    fun clearProfileClearsProfileAndSubscriptions() = runTest(testDispatcher) {
+        profileLocalDataSource.setProfile(baseProfileProto)
+        profileRepository.clearProfile()
+
+        val profileResult = profileRepository.profile.first()
+        assertThat(profileResult?.id).isEqualTo(0)
 
     }
-
 
 }
 

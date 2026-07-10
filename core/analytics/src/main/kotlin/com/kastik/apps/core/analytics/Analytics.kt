@@ -1,7 +1,9 @@
 package com.kastik.apps.core.analytics
 
 interface Analytics {
-    fun logEvent(name: String, params: Map<String, Any?> = emptyMap())
-    fun logScreenView(screenName: String, params: Map<String, Any?> = emptyMap())
-    fun setUserProperty(name: String, value: String?)
+    val types: AnalyticsEventTypes
+    val paramKeys: AnalyticsParamKeys
+    fun setUserId(userId: String?)
+    fun setUserProperty(propertyName: String, value: String?)
+    fun logEvent(event: AnalyticsEvent)
 }

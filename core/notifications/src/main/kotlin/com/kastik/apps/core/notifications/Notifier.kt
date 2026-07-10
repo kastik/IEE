@@ -19,8 +19,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.random.Random
 
+@Singleton
 class NotifierImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,

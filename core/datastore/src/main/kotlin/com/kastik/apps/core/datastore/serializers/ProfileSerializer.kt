@@ -8,8 +8,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 object ProfileSerializer : Serializer<ProfileProto> {
-    override val defaultValue: ProfileProto = ProfileProto.newBuilder()
-        .build()
+    override val defaultValue: ProfileProto = ProfileProto.getDefaultInstance()
 
     override suspend fun readFrom(input: InputStream): ProfileProto {
         try {

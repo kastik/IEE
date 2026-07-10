@@ -11,11 +11,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
 //TODO DownloadManager doesn't support authenticators and can result in race conditions,
 // convert this to a Retrofit api call at some point
 
+@Singleton
 internal class FileDownloaderImpl @Inject constructor(
     @ApplicationContext context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,

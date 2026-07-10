@@ -1,20 +1,15 @@
 package com.kastik.apps.core.model.aboard
 
+import kotlin.time.Instant
+
 data class Tag(
     val id: Int,
     val title: String,
     val parentId: Int? = null,
     val isPublic: Boolean = false,
-)
-
-data class SubscribableTag(
-    val id: Int,
-    val title: String,
-    val parentId: Int?,
-    val isPublic: Boolean,
-    val createdAt: String,
-    val updatedAt: String?,
-    val deletedAt: String?,
-    val mailListName: String,
-    val subTags: List<SubscribableTag>
+    val createdAt: Instant? = null,
+    val updatedAt: Instant? = null,
+    val deletedAt: Instant? = null,
+    val mailListName: String? = null,
+    val subTags: List<Tag> = emptyList(),
 )

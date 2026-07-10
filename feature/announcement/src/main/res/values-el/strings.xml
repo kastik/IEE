@@ -10,4 +10,8 @@
     <string name="error_server">Κάτι πήγε στραβά στον διακομιστή"</string>
     <string name="error_time_out">Λήξη χρονικού ορίου"</string>
     <string name="error_generic">Κάτι πήγε στραβά</string>
+
+    <string name="sync_status_enqueued">Ο συγχρονισμός βρίσκεται σε αναμονή……</string>
+    <string name="sync_status_blocked">Ο συγχρονισμός ανεστάλη λόγω περιορισμών του συστήματος.</string>
+    <string name="sync_status_error">Αποτυχία συγχρονισμού αυτής της ανακοίνωσης.</string>
 </resources>
