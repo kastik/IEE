@@ -17,7 +17,7 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 
 @Composable
 internal fun LicensesRoute(
-    viewModel: LicensesScreenViewModel = hiltViewModel()
+    viewModel: LicensesViewModel = hiltViewModel()
 ) {
 
     TrackScreenViewEvent(

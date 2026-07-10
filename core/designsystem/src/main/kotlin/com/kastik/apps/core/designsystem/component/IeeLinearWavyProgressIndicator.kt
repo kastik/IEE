@@ -11,8 +11,8 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun IeeLinearWavyProgressIndicator(
     modifier: Modifier = Modifier,
-    color: Color = WavyProgressIndicatorDefaults.indicatorColor, //MaterialTheme.colorScheme.primary
-    trackColor: Color = WavyProgressIndicatorDefaults.trackColor, //Color.Transparent,
+    color: Color = WavyProgressIndicatorDefaults.indicatorColor,
+    trackColor: Color = WavyProgressIndicatorDefaults.trackColor,
     stroke: Stroke = WavyProgressIndicatorDefaults.linearIndicatorStroke,
     trackStroke: Stroke = WavyProgressIndicatorDefaults.linearTrackStroke,
 ) {

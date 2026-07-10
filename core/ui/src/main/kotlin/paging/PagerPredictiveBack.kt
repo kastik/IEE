@@ -36,7 +36,6 @@ fun rememberPagerPredictiveBackState(
         with(density) { maxTranslationX.toPx() }
     }
 
-    // Only enable if we aren't on the very first page
     PredictiveBackHandler(enabled = pagerState.currentPage > 0) { progressFlow ->
         try {
             progressFlow.collect { backEvent ->

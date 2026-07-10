@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class AnalyticsParamKeysReleaseImpl @Inject constructor(
+internal class AnalyticsParamKeysReleaseImpl @Inject constructor(
 ) : AnalyticsParamKeys {
     override val SCREEN_NAME = FirebaseAnalytics.Param.SCREEN_NAME
     override val SCREEN_CLASS = FirebaseAnalytics.Param.SCREEN_CLASS

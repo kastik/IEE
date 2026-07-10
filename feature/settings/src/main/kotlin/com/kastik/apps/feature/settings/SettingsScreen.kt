@@ -84,7 +84,7 @@ import kotlin.math.roundToInt
 @Composable
 internal fun SettingsRoute(
     navigateToLicenses: () -> Unit,
-    viewModel: SettingsScreenViewModel = hiltViewModel(),
+    viewModel: SettingsViewModel = hiltViewModel(),
 ) {
 
     TrackScreenViewEvent(

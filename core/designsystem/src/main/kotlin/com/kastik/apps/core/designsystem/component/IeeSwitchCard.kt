@@ -37,7 +37,7 @@ fun IeeSwitchCard(
 
 @Preview
 @Composable
-fun IeeSwitchCardPreview() {
+private fun IeeSwitchCardPreview() {
     IeePreview {
         IeeSwitchCard(
             title = "The quick brown fox",

@@ -24,6 +24,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+//TODO Fix
+
 @Composable
 fun IeeChoiceCard(
     title: String,
@@ -54,11 +56,9 @@ fun IeeChoiceCard(
 
     OutlinedCard(
         modifier = modifier
-            // We use selectable instead of onClick for proper TalkBack grouping
             .selectable(
                 selected = isSelected, enabled = enabled, role = Role.RadioButton, onClick = onClick
             )
-            // defaultMinSize prevents layout breaking while allowing text scaling expansion
             .defaultMinSize(minHeight = 120.dp),
         colors = CardDefaults.outlinedCardColors(containerColor = containerColor),
         border = border
@@ -66,7 +66,7 @@ fun IeeChoiceCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp), // Padding inside the card
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -83,7 +83,7 @@ fun IeeChoiceCard(
 
 @Preview
 @Composable
-fun IeeChoiceCardSelectedPreview() {
+private fun IeeChoiceCardSelectedPreview() {
     IeePreview {
         IeeChoiceCard(
             title = "The quick brown",
@@ -98,7 +98,7 @@ fun IeeChoiceCardSelectedPreview() {
 
 @Preview
 @Composable
-fun IeeChoiceCardUnselectedPreview() {
+private fun IeeChoiceCardUnselectedPreview() {
     IeePreview {
         IeeChoiceCard(
             title = "The quick brown",

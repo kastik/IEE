@@ -23,7 +23,7 @@ fun IeeDotDivider() {
 
 @Preview
 @Composable
-fun IeeDotDividerPreview() {
+private fun IeeDotDividerPreview() {
     IeePreview {
         IeeDotDivider()
     }

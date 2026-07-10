@@ -4,13 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
-import android.content.res.Configuration
-import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import com.google.android.play.core.ktx.launchReview
 import com.google.android.play.core.ktx.requestReview
 import com.google.android.play.core.review.ReviewManagerFactory
-import java.util.Locale
 
 //TODO Move these into gradle at some point
 fun Context.launchSignIn() {
@@ -56,12 +53,4 @@ suspend fun Context.launchInAppReview(
     } catch (e: Exception) {
         return
     }
-}
-
-
-fun Context.getEnglishString(@StringRes id: Int): String {
-    val configuration = Configuration(resources.configuration)
-    configuration.setLocale(Locale.ENGLISH)
-    val englishContext = createConfigurationContext(configuration)
-    return englishContext.getString(id)
 }

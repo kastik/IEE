@@ -59,7 +59,7 @@ fun IeeFloatingToolBar(
 
 @Preview
 @Composable
-fun IeeFloatingToolBarExpandedPreview() {
+private fun IeeFloatingToolBarExpandedPreview() {
     IeePreview {
         IeeFloatingToolBar(
             expanded = false,
@@ -73,7 +73,7 @@ fun IeeFloatingToolBarExpandedPreview() {
 
 @Preview
 @Composable
-fun IeeFloatingToolBarCollapsedPreview() {
+private fun IeeFloatingToolBarCollapsedPreview() {
     IeePreview {
         IeeFloatingToolBar(
             expanded = true,

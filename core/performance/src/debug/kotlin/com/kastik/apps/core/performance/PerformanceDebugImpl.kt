@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class PerformanceDebugImpl @Inject constructor(
+internal class PerformanceDebugImpl @Inject constructor(
 
 ) : Performance {
     override fun <T> trace(name: String, attributes: Map<String, String>, block: () -> T): T {

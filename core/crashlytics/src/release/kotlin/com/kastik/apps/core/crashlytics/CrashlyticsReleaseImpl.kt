@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CrashlyticsReleaseImpl @Inject constructor(
+internal class CrashlyticsReleaseImpl @Inject constructor(
     private val crashlytics: FirebaseCrashlytics
 ) : Crashlytics {
 

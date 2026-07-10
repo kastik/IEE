@@ -81,7 +81,7 @@ fun IeeSelectableItem(
 
 @Preview
 @Composable
-fun IeeUnSelectableItemSelectedPreview() {
+private fun IeeSelectableItemUnSelectedPreview() {
     IeePreview {
         IeeSelectableItem(
             title = "Not Selected Item",
@@ -93,7 +93,7 @@ fun IeeUnSelectableItemSelectedPreview() {
 
 @Preview
 @Composable
-fun IeeSelectableItemSelectedPreview() {
+private fun IeeSelectableItemSelectedPreview() {
     IeePreview {
         IeeSelectableItem(
             title = "Selected Item",

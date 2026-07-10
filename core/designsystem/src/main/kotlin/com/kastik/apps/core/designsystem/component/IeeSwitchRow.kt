@@ -65,7 +65,7 @@ fun IeeSwitchRow(
 
 @Preview
 @Composable
-fun IeeSwitchRowPreview() {
+private fun IeeSwitchRowPreview() {
     IeePreview {
         IeePreview {
             IeeSwitchRow(

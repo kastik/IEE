@@ -5,6 +5,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-internal class LicensesScreenViewModel @Inject constructor(
+internal class LicensesViewModel @Inject constructor(
 
 ) : ViewModel()

@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class PerformanceDebugModule {
+internal abstract class PerformanceDebugModule {
 
     @Binds
     @Singleton

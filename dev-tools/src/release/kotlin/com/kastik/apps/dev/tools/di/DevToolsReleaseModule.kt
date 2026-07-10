@@ -10,11 +10,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class DevToolsReleaseModule {
+internal abstract class DevToolsReleaseModule {
 
     @Binds
     @Singleton
-    internal abstract fun bindDevTools(
+    abstract fun bindDevTools(
         devToolsReleaseImpl: DevToolsReleaseImpl
     ): DevTools
 

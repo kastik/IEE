@@ -81,7 +81,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 internal fun ProfileRoute(
     navigateBack: () -> Unit,
-    viewModel: ProfileScreenViewModel = hiltViewModel(),
+    viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     TrackScreenViewEvent(
         screenClass = "profile_route",

@@ -141,7 +141,7 @@ private fun String.collapseWhitespace(): String =
 
 @Preview
 @Composable
-fun PreviewAnnouncementCard() {
+private fun PreviewAnnouncementCard() {
     IeePreview {
         AnnouncementCard(
             onClick = {},
@@ -157,7 +157,7 @@ fun PreviewAnnouncementCard() {
 
 @Preview
 @Composable
-fun PreviewPinnedAnnouncementCard() {
+private fun PreviewPinnedAnnouncementCard() {
     IeePreview {
         AnnouncementCard(
             onClick = {},

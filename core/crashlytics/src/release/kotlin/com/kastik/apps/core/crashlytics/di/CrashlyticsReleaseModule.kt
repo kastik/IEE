@@ -12,11 +12,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class CrashlyticsReleaseModule {
+internal abstract class CrashlyticsReleaseModule {
 
     @Binds
     @Singleton
-    internal abstract fun bindCrashlytics(impl: CrashlyticsReleaseImpl): Crashlytics
+    abstract fun bindCrashlytics(impl: CrashlyticsReleaseImpl): Crashlytics
 
     companion object {
 

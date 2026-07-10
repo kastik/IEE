@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class CrashlyticsDebugImpl @Inject constructor() : Crashlytics {
+internal class CrashlyticsDebugImpl @Inject constructor() : Crashlytics {
     override fun log(message: String) {
         Log.e("Crashlytics", message)
     }
