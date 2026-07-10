@@ -69,7 +69,7 @@ import kotlinx.coroutines.launch
 internal fun SearchRoute(
     navigateBack: () -> Unit,
     navigateToAnnouncement: (Int) -> Unit,
-    viewModel: SearchScreenViewModel = hiltViewModel(),
+    viewModel: SearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val searchFeedAnnouncements = viewModel.searchFeedAnnouncements.collectAsLazyPagingItems()

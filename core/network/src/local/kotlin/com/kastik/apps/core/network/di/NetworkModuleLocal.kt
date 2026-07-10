@@ -1,4 +1,4 @@
-package com.kastik.apps.core.di
+package com.kastik.apps.core.network.di
 
 import com.kastik.apps.core.network.di.AuthenticatorAboardOkHttp
 import com.kastik.apps.core.network.di.AuthenticatorAboardRetrofit

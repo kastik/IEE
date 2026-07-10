@@ -33,13 +33,6 @@ internal class StartupSyncWorker @AssistedInject constructor(
 
     //TODO We should update the announcement db too
 
-//      TODO
-//    override suspend fun getForegroundInfo(): ForegroundInfo {
-//        // You can reuse your Notifier class to create a silent, low-priority notification
-//        val notification = notifier.createSyncingNotification()
-//        return ForegroundInfo(SYNC_NOTIFICATION_ID, notification)
-//    }
-
     override suspend fun doWork(): Result = coroutineScope {
         try {
 

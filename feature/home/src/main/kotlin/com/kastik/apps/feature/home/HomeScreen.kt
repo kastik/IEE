@@ -118,7 +118,7 @@ internal fun HomeScreenRoute(
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
     navigateToSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
-    viewModel: HomeScreenViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     TrackScreenViewEvent(
         screenClass = "home_route",

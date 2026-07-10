@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-internal class AuthenticationScreenViewModel @Inject constructor(
+internal class AuthenticationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val signInUseCase: SignInUseCase,
 ) : ViewModel() {

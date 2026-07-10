@@ -40,7 +40,7 @@ fun IeeTag(
 
 @Preview
 @Composable
-fun IeeTagPreview() {
+private fun IeeTagPreview() {
     IeePreview {
         IeeTag(text = "1st semester")
     }

@@ -26,16 +26,16 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-internal class SearchScreenViewModel @Inject constructor(
+internal class SearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
     private val getQuickResultsUseCase: GetQuickResultsUseCase,
     private val getFilteredAnnouncementsUseCase: GetFilteredAnnouncementsUseCase,
 ) : ViewModel() {
 
-    private val _args = savedStateHandle.toRoute<SearchRoute>()
+    private val args = savedStateHandle.toRoute<SearchRoute>()
     val searchBarTextFieldState = TextFieldState(
-        initialText = _args.query
+        initialText = args.query
     )
 
     private val _availableFilters = getFilterOptionsUseCase()
@@ -47,9 +47,9 @@ internal class SearchScreenViewModel @Inject constructor(
 
     private val _activeFeedFilters = MutableStateFlow(
         ActiveFilters(
-            committedQuery = _args.query,
-            selectedTagIds = _args.tags.toImmutableList(),
-            selectedAuthorIds = _args.authors.toImmutableList()
+            committedQuery = args.query,
+            selectedTagIds = args.tags.toImmutableList(),
+            selectedAuthorIds = args.authors.toImmutableList()
         )
     )
 

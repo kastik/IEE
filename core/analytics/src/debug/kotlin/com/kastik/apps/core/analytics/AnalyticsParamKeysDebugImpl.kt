@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class AnalyticsParamKeysDebugImpl @Inject constructor(
+internal class AnalyticsParamKeysDebugImpl @Inject constructor(
 ) : AnalyticsParamKeys {
     override val SCREEN_NAME = "screen_name"
     override val SCREEN_CLASS = "screen_class"

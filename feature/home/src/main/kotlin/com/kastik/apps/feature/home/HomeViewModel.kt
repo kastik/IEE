@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class HomeScreenViewModel @Inject constructor(
+internal class HomeViewModel @Inject constructor(
     getIsSignedInUseCase: GetIsSignedInUseCase,
     showSignInNoticeRationaleUseCase: ShowSignInNoticeRationaleUseCase,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,

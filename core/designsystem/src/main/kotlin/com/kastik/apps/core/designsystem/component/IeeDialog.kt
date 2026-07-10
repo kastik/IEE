@@ -63,7 +63,7 @@ fun IeeDialog(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewIeeDialog() {
+private fun PreviewIeeDialog() {
     IeePreview {
         IeeDialog(
             icon = Icons.Default.NotificationsActive,

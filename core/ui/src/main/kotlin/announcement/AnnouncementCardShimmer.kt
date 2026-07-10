@@ -139,7 +139,7 @@ private fun ShimmerBlock(
 
 @Preview
 @Composable
-fun PreviewAnnouncementCardShimmer() {
+private fun PreviewAnnouncementCardShimmer() {
     IeePreview {
         AnnouncementCardShimmer()
     }

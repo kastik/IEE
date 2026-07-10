@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class AnalyticsModule {
+internal abstract class AnalyticsModule {
 
     @Binds
     @Singleton
@@ -30,7 +30,7 @@ abstract class AnalyticsModule {
 
     @Binds
     @Singleton
-    internal abstract fun bindAnalytics(impl: AnalyticsReleaseImpl): Analytics
+    abstract fun bindAnalytics(impl: AnalyticsReleaseImpl): Analytics
 
 
     companion object {

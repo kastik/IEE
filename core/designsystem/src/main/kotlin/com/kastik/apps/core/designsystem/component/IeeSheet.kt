@@ -121,7 +121,7 @@ fun IeeSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-fun IeeSheetPreview() {
+private fun IeeSheetPreview() {
     IeePreview {
         IeeSheet(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),

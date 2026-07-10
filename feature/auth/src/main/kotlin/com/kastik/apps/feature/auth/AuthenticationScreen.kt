@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 internal fun AuthenticationRoute(
     navigateBack: () -> Unit,
-    viewModel: AuthenticationScreenViewModel = hiltViewModel()
+    viewModel: AuthenticationViewModel = hiltViewModel()
 ) {
     TrackScreenViewEvent(
         screenClass = "authentication_route",

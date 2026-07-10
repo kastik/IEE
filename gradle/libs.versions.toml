@@ -72,6 +72,9 @@ aboutLibraries = "15.0.3"
 junit = "4.13.2"
 
 
+spotless = "8.8.0"
+
+
 [libraries]
 
 #Android
@@ -191,7 +194,6 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltCompiler" }
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltCompiler" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 
 [plugins]
@@ -212,6 +214,7 @@ baselineprofile = { id = "androidx.baselineprofile", version.ref = "androidx-mac
 android-test = { id = "com.android.test", version.ref = "agp" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "composeStabilityAnalyzer" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 
 
 ####### Convention plugins #######

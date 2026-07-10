@@ -42,7 +42,6 @@ fun IeeRadioCard(
     OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
-            // We use selectable here instead of OutlinedCard(onClick) for perfect accessibility semantics
             .selectable(
                 selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick
             ),
@@ -82,7 +81,7 @@ fun IeeRadioCard(
 
 @Preview
 @Composable
-fun IeeRadioCardPreview() {
+private fun IeeRadioCardPreview() {
     IeePreview {
         IeeRadioCard(
             title = "The quick brown fox",

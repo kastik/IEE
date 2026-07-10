@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class AnalyticsEventTypesReleaseImpl @Inject constructor(
+internal class AnalyticsEventTypesReleaseImpl @Inject constructor(
 ) : AnalyticsEventTypes {
     override val LOGIN = FirebaseAnalytics.Event.LOGIN
     override val SHARE = FirebaseAnalytics.Event.SHARE

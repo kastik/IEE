@@ -40,7 +40,7 @@ fun IeeFilterChip(
 
 @Preview(name = "IeeFilterChip")
 @Composable
-fun PreviewIeeFilterChip() {
+private fun PreviewIeeFilterChip() {
     IeePreview {
         IeeFilterChip(
             label = "Authors",
@@ -52,7 +52,7 @@ fun PreviewIeeFilterChip() {
 
 @Preview(name = "IeeFilterChip with icon")
 @Composable
-fun PreviewIeeFilterChipWithIcon() {
+private fun PreviewIeeFilterChipWithIcon() {
     IeePreview {
         IeeFilterChip(
             icon = Icons.Default.Person,
@@ -65,7 +65,7 @@ fun PreviewIeeFilterChipWithIcon() {
 
 @Preview(name = "IeeFilterChip with selection")
 @Composable
-fun PreviewIeeFilterChipWithSelection() {
+private fun PreviewIeeFilterChipWithSelection() {
     IeePreview {
         IeeFilterChip(
             label = "Authors",
@@ -77,7 +77,7 @@ fun PreviewIeeFilterChipWithSelection() {
 
 @Preview(name = "IeeFilterChip with selection and icon")
 @Composable
-fun PreviewIeeFilterChipWithSelectionAndIcon() {
+private fun PreviewIeeFilterChipWithSelectionAndIcon() {
     IeePreview {
         IeeFilterChip(
             icon = Icons.Default.Person,

@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class SettingsScreenViewModel @Inject constructor(
+internal class SettingsViewModel @Inject constructor(
     isForYouAvailableUseCase: IsForYouAvailableUseCase,
     getUserPreferencesUseCase: GetUserPreferencesUseCase,
     areNotificationsAllowedUseCase: AreNotificationsAllowedUseCase,

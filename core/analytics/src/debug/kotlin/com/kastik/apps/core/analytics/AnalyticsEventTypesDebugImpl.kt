@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class AnalyticsEventTypesDebugImpl @Inject constructor(
+internal class AnalyticsEventTypesDebugImpl @Inject constructor(
 ) : AnalyticsEventTypes {
     override val LOGIN = "login"
     override val LOGOUT = "logout"

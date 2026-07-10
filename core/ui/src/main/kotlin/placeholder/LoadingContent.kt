@@ -52,7 +52,7 @@ fun LoadingContent(
 
 @Preview
 @Composable
-fun LoadingContentPreview() {
+private fun LoadingContentPreview() {
     IeePreview {
         LoadingContent(
             message = "Doing work...",
