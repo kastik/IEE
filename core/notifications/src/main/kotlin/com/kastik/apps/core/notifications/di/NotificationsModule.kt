@@ -1,7 +1,7 @@
 package com.kastik.apps.core.notifications.di
 
 import com.google.firebase.messaging.FirebaseMessaging
-import com.kastik.apps.core.domain.service.Notifier
+import com.kastik.apps.core.notifications.Notifier
 import com.kastik.apps.core.notifications.NotifierImpl
 import dagger.Binds
 import dagger.Module
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class NotificationsModule {
+internal abstract class NotificationsModule {
 
     companion object {
         @Provides
@@ -23,7 +23,7 @@ abstract class NotificationsModule {
 
     @Binds
     @Singleton
-    internal abstract fun bindNotifier(
+    abstract fun bindNotifier(
         notifierImpl: NotifierImpl
     ): Notifier
 

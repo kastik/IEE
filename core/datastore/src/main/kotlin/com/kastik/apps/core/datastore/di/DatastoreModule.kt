@@ -12,6 +12,8 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.datastore.datasource.AuthenticationLocalDataSource
 import com.kastik.apps.core.datastore.datasource.AuthenticationLocalDataSourceImpl
+import com.kastik.apps.core.datastore.datasource.OnboardLocalDatasource
+import com.kastik.apps.core.datastore.datasource.OnboardLocalDatasourceImpl
 import com.kastik.apps.core.datastore.datasource.PreferencesLocalDataSource
 import com.kastik.apps.core.datastore.datasource.PreferencesLocalDataSourceImpl
 import com.kastik.apps.core.datastore.datasource.ProfileLocalDataSource
@@ -21,10 +23,12 @@ import com.kastik.apps.core.datastore.datasource.TagsLocalDataSourceImpl
 import com.kastik.apps.core.datastore.migrations.MigrateInterval
 import com.kastik.apps.core.datastore.migrations.RemoveExpirationKey
 import com.kastik.apps.core.datastore.migrations.RemoveRefreshKey
+import com.kastik.apps.core.datastore.proto.OnboardStageProto
 import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.datastore.proto.SubscribableTagsProto
 import com.kastik.apps.core.datastore.proto.SubscriptionsProto
 import com.kastik.apps.core.datastore.proto.UserPreferencesProto
+import com.kastik.apps.core.datastore.serializers.OnboardSerializer
 import com.kastik.apps.core.datastore.serializers.ProfileSerializer
 import com.kastik.apps.core.datastore.serializers.SubscribableTagsSerializer
 import com.kastik.apps.core.datastore.serializers.SubscribedTagsSerializer

@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.kastik.apps.core.domain.service.Notifier
 import com.kastik.apps.core.domain.usecases.CheckNewAnnouncementsUseCase
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.fold
+import com.kastik.apps.core.notifications.Notifier
 import com.kastik.apps.core.work.R
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
