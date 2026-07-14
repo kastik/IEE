@@ -192,7 +192,7 @@ private fun HomeScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(uiState.userId) {
         analytics.setUserId(uiState.userId)
     }
 
