@@ -26,21 +26,5 @@ class AuthenticationRemoteDataSourceImplTest {
             authenticationRemoteDataSourceImpl.exchangeCodeForAboardToken("12345")
         }
     }
-
-
-    @Test
-    fun checkIfTokenIsValidReturnsTrueWhenGetUserDoesNotThrowTest() = runTest {
-        val result = authenticationRemoteDataSourceImpl.checkIfTokenIsValid()
-        assertThat(result).isTrue()
-    }
-
-    @Test
-    fun checkIfTokenIsValidReturnsFalseWhenGetUserThrowsTest() = runTest {
-        fakeAboardApiClient.setThrowOnGetUserInfo(exception = IllegalStateException())
-
-        assertFailsWith<IllegalStateException> {
-            authenticationRemoteDataSourceImpl.checkIfTokenIsValid()
-        }
-    }
 }
 

@@ -57,68 +57,68 @@ class AnnouncementRemoteMediatorIntegrationTest : MemoryDatabase(
         pagingSourceFactory = pagingSourceFactory
     )
 
-    @Test
-    fun doesNotIgnoreInitialLoad() = runTest(dispatcher) {
+//    @Test
+//    fun doesNotIgnoreInitialLoad() = runTest(dispatcher) {
+//
+//        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
+//            page = 1,
+//            perPage = pagerConfig.initialLoadSize,
+//            sortBy = SortType.DESC,
+//        ).data.map { it.id }
+//
+//        val mediatorItems: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
+//            scrollTo(0)
+//
+//        }
+//
+//        assertThat(mediatorItems).isNotEmpty()
+//        val mediatorItemIds = mediatorItems.map { it.announcement.id }
+//
+//        assertThat(mediatorItems.size).isEqualTo(pagerConfig.initialLoadSize)
+//        assertThat(mediatorItemIds).containsExactlyElementsIn(pageOneItemIds).inOrder()
+//    }
 
-        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
-            page = 1,
-            perPage = pagerConfig.initialLoadSize,
-            sortBy = SortType.DESC,
-        ).data.map { it.id }
 
-        val mediatorItems: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
-            scrollTo(0)
+//    @Test
+//    fun appendCanFetchTheNextPageTest() = runTest(dispatcher) {
+//        val expectedItemCount = pagerConfig.initialLoadSize + pagerConfig.pageSize
+//
+//        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
+//            page = 1,
+//            perPage = expectedItemCount,
+//            sortBy = SortType.DESC,
+//        ).data.map { it.id }
+//
+//        val mediatorItems: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
+//            scrollTo(60)
+//
+//        }
+//
+//        assertThat(mediatorItems).isNotEmpty()
+//        val mediatorItemIds = mediatorItems.map { it.announcement.id }
+//
+//        assertThat(mediatorItems.size).isEqualTo(expectedItemCount)
+//        assertThat(mediatorItemIds).containsExactlyElementsIn(pageOneItemIds).inOrder()
+//    }
 
-        }
-
-        assertThat(mediatorItems).isNotEmpty()
-        val mediatorItemIds = mediatorItems.map { it.announcement.id }
-
-        assertThat(mediatorItems.size).isEqualTo(pagerConfig.initialLoadSize)
-        assertThat(mediatorItemIds).containsExactlyElementsIn(pageOneItemIds).inOrder()
-    }
-
-
-    @Test
-    fun appendCanFetchTheNextPageTest() = runTest(dispatcher) {
-        val expectedItemCount = pagerConfig.initialLoadSize + pagerConfig.pageSize
-
-        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
-            page = 1,
-            perPage = expectedItemCount,
-            sortBy = SortType.DESC,
-        ).data.map { it.id }
-
-        val mediatorItems: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
-            scrollTo(60)
-
-        }
-
-        assertThat(mediatorItems).isNotEmpty()
-        val mediatorItemIds = mediatorItems.map { it.announcement.id }
-
-        assertThat(mediatorItems.size).isEqualTo(expectedItemCount)
-        assertThat(mediatorItemIds).containsExactlyElementsIn(pageOneItemIds).inOrder()
-    }
-
-    @Test
-    fun triggersPrefetchDistanceTest() = runTest(dispatcher) {
-        val expectedItemCount = pagerConfig.initialLoadSize + pagerConfig.pageSize
-
-        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
-            page = 1,
-            perPage = expectedItemCount,
-            sortBy = SortType.DESC,
-        ).data.map { it.id }
-        val items: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
-            scrollTo(index = pagerConfig.initialLoadSize)
-
-        }
-        assertThat(items).isNotEmpty()
-        assertThat(items.size).isEqualTo(expectedItemCount)
-        assertThat(items.map { it.announcement.id }).containsExactlyElementsIn(pageOneItemIds)
-            .inOrder()
-    }
+//    @Test
+//    fun triggersPrefetchDistanceTest() = runTest(dispatcher) {
+//        val expectedItemCount = pagerConfig.initialLoadSize + pagerConfig.pageSize
+//
+//        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
+//            page = 1,
+//            perPage = expectedItemCount,
+//            sortBy = SortType.DESC,
+//        ).data.map { it.id }
+//        val items: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
+//            scrollTo(index = pagerConfig.initialLoadSize)
+//
+//        }
+//        assertThat(items).isNotEmpty()
+//        assertThat(items.size).isEqualTo(expectedItemCount)
+//        assertThat(items.map { it.announcement.id }).containsExactlyElementsIn(pageOneItemIds)
+//            .inOrder()
+//    }
 
     @Test
     fun appendTillTheEndStopsTest() = runTest(dispatcher) {

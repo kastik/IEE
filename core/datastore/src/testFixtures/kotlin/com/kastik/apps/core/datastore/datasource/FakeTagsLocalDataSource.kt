@@ -1,8 +1,9 @@
 package com.kastik.apps.core.datastore.datasource
 
+import com.kastik.apps.core.datastore.proto.SubscribableTagProto
 import com.kastik.apps.core.datastore.proto.SubscribableTagsProto
+import com.kastik.apps.core.datastore.proto.SubscribedTagProto
 import com.kastik.apps.core.datastore.proto.SubscriptionsProto
-import com.kastik.apps.core.datastore.proto.TagProto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -20,14 +21,15 @@ class FakeTagsLocalDataSource(
 
     override val subscribableTags = _subscribableTags.asStateFlow()
 
-    override suspend fun setSubscribableTags(tags: List<TagProto>) {
+
+    override suspend fun setSubscribableTags(tags: List<SubscribableTagProto>) {
         _subscribableTags.update {
             it.toBuilder().clearTags().addAllTags(tags).build()
         }
     }
 
-    override suspend fun setSubscriptions(userSubscriptions: List<TagProto>) {
-        _subscribableTags.update {
+    override suspend fun setSubscriptions(userSubscriptions: List<SubscribedTagProto>) {
+        _subscriptions.update {
             it.toBuilder().clearTags().addAllTags(userSubscriptions).build()
         }
     }
