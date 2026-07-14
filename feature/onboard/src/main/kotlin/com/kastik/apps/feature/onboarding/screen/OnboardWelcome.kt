@@ -4,9 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.WavingHand
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kastik.apps.core.designsystem.component.IeeCircularIcon
 import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.feature.onboarding.R
 
@@ -41,8 +43,8 @@ internal fun OnboardWelcome(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CircularIcon(
-                imageVector = Icons.Rounded.WavingHand,
+            IeeCircularIcon(
+                imageVector = Icons.Rounded.AutoAwesome,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 tint = MaterialTheme.colorScheme.onTertiaryContainer
             )
@@ -68,7 +70,9 @@ internal fun OnboardWelcome(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onGetStartedClick()

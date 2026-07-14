@@ -4,9 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.RocketLaunch
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kastik.apps.core.designsystem.component.IeeCircularIcon
 import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.feature.onboarding.R
 
@@ -40,10 +42,10 @@ internal fun OnboardFinish(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CircularIcon(
-                imageVector = Icons.Rounded.Done,
-                containerColor = MaterialTheme.colorScheme.primary,
-                tint = MaterialTheme.colorScheme.primaryContainer
+            IeeCircularIcon(
+                imageVector = Icons.Rounded.RocketLaunch,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
                 text = stringResource(R.string.finish_title),
@@ -67,7 +69,9 @@ internal fun OnboardFinish(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onFinish()

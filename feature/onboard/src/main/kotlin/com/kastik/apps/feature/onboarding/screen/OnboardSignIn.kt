@@ -1,34 +1,29 @@
 package com.kastik.apps.feature.onboarding.screen
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CheckCircle
-import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Verified
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kastik.apps.core.designsystem.component.IeeCircularIcon
 import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.feature.onboarding.R
 
@@ -80,8 +75,8 @@ private fun OnboardSignInPending(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CircularIcon(
-                imageVector = Icons.Rounded.Lock,
+            IeeCircularIcon(
+                imageVector = Icons.Rounded.AccountCircle,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 tint = MaterialTheme.colorScheme.onTertiaryContainer
             )
@@ -106,8 +101,21 @@ private fun OnboardSignInPending(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            FilledTonalButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                onClick = {
+                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    onExploreAsGuestClick()
+                }
+            ) { Text(stringResource(R.string.signin_unauthenticated_secondary_action)) }
+
             Button(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onSignInClick()
@@ -115,14 +123,6 @@ private fun OnboardSignInPending(
             ) {
                 Text(stringResource(R.string.signin_unauthenticated_primary_action))
             }
-
-            TextButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    onExploreAsGuestClick()
-                }
-            ) { Text(stringResource(R.string.signin_unauthenticated_secondary_action)) }
         }
     }
 }
@@ -145,10 +145,10 @@ private fun OnboardSignInSignedIn(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CircularIcon(
-                imageVector = Icons.Rounded.CheckCircle,
-                containerColor = MaterialTheme.colorScheme.primary,
-                tint = MaterialTheme.colorScheme.primaryContainer
+            IeeCircularIcon(
+                imageVector = Icons.Rounded.Verified,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
                 text = stringResource(R.string.signin_authenticated_title),
@@ -172,7 +172,9 @@ private fun OnboardSignInSignedIn(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onContinueClick()
@@ -181,27 +183,6 @@ private fun OnboardSignInSignedIn(
                 Text(stringResource(R.string.signin_next_page))
             }
         }
-    }
-}
-
-@Composable
-fun CircularIcon(
-    imageVector: ImageVector,
-    containerColor: Color,
-    tint: Color,
-) {
-    Box(
-        modifier = Modifier
-            .size(120.dp)
-            .background(containerColor, CircleShape),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = imageVector,
-            contentDescription = null,
-            modifier = Modifier.size(64.dp),
-            tint = tint
-        )
     }
 }
 

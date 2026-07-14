@@ -5,13 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.NotificationsActive
+import androidx.compose.material.icons.rounded.NotificationsOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.kastik.apps.core.designsystem.component.IeeCircularIcon
 import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.feature.onboarding.R
 
@@ -69,10 +72,10 @@ private fun OnboardNotificationsGranted(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CircularIcon(
+            IeeCircularIcon(
                 imageVector = Icons.Rounded.NotificationsActive,
-                containerColor = MaterialTheme.colorScheme.primary,
-                tint = MaterialTheme.colorScheme.primaryContainer
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
                 text = stringResource(R.string.notifications_permission_accepted_title),
@@ -96,7 +99,9 @@ private fun OnboardNotificationsGranted(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onContinueClick()
@@ -126,10 +131,10 @@ private fun OnboardNotificationsNotGranted(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CircularIcon(
-                imageVector = Icons.Rounded.NotificationsActive,
-                containerColor = MaterialTheme.colorScheme.primary,
-                tint = MaterialTheme.colorScheme.primaryContainer
+            IeeCircularIcon(
+                imageVector = Icons.Rounded.NotificationsOff,
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                tint = MaterialTheme.colorScheme.onTertiaryContainer
             )
             Text(
                 text = stringResource(R.string.notifications_permission_rejected_title),
@@ -152,17 +157,11 @@ private fun OnboardNotificationsNotGranted(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    onAllowClick()
-                }
-            ) {
-                Text(stringResource(R.string.notification_rejected_primary_action))
-            }
-            TextButton(
-                modifier = Modifier.fillMaxWidth(),
+
+            FilledTonalButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onNotNowClick()
@@ -170,6 +169,19 @@ private fun OnboardNotificationsNotGranted(
             ) {
                 Text(stringResource(R.string.notification_rejected_secondary_action))
             }
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                onClick = {
+                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    onAllowClick()
+                }
+            ) {
+                Text(stringResource(R.string.notification_rejected_primary_action))
+            }
+
         }
     }
 
