@@ -69,7 +69,6 @@ material = "1.14.0"
 
 coilCompose = "3.5.0"
 aboutLibraries = "15.0.3"
-junit = "4.13.2"
 
 
 spotless = "8.8.0"
