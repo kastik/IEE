@@ -3,9 +3,20 @@ option java_package = "com.kastik.apps.core.datastore.proto";
 option java_multiple_files = true;
 package com.kastik.apps.core.datastore.proto;
 
-import "com/kastik/apps/core.datastore.proto/tags_common.proto";
 import "google/protobuf/timestamp.proto";
 
 message SubscribableTagsProto {
-  repeated TagProto tags = 1;
+  repeated SubscribableTagProto tags = 1;
+}
+
+message SubscribableTagProto {
+  int32 id = 1;
+  string title = 2;
+  optional int32 parent_id = 3;
+  bool is_public = 4;
+  string created_at = 5 [deprecated = true];
+  optional string updated_at = 6 [deprecated = true];
+  optional string deleted_at = 7 [deprecated = true];
+  string mail_list_name = 8 [deprecated = true];
+  repeated SubscribableTagProto sub_tags = 9;
 }

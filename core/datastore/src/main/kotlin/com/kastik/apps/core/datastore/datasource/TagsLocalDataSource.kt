@@ -4,9 +4,10 @@ package com.kastik.apps.core.datastore.datasource
 import androidx.datastore.core.DataStore
 import com.kastik.apps.core.datastore.di.UserSubscribableTagsDatastore
 import com.kastik.apps.core.datastore.di.UserSubscriptionsDatastore
+import com.kastik.apps.core.datastore.proto.SubscribableTagProto
 import com.kastik.apps.core.datastore.proto.SubscribableTagsProto
+import com.kastik.apps.core.datastore.proto.SubscribedTagProto
 import com.kastik.apps.core.datastore.proto.SubscriptionsProto
-import com.kastik.apps.core.datastore.proto.TagProto
 import com.kastik.apps.core.datastore.serializers.SubscribableTagsSerializer
 import com.kastik.apps.core.datastore.serializers.SubscribedTagsSerializer
 import kotlinx.coroutines.flow.Flow
@@ -16,9 +17,9 @@ import javax.inject.Singleton
 interface TagsLocalDataSource {
     val subscriptions: Flow<SubscriptionsProto>
     val subscribableTags: Flow<SubscribableTagsProto>
-    suspend fun setSubscribableTags(tags: List<TagProto>)
+    suspend fun setSubscribableTags(tags: List<SubscribableTagProto>)
     suspend fun clearSubscribableTags()
-    suspend fun setSubscriptions(userSubscriptions: List<TagProto>)
+    suspend fun setSubscriptions(userSubscriptions: List<SubscribedTagProto>)
     suspend fun clearSubscriptions()
 }
 
@@ -32,7 +33,7 @@ internal class TagsLocalDataSourceImpl @Inject constructor(
 
     override val subscribableTags = subscribableTagsDatastore.data
 
-    override suspend fun setSubscriptions(userSubscriptions: List<TagProto>) {
+    override suspend fun setSubscriptions(userSubscriptions: List<SubscribedTagProto>) {
         subscribedTagsDatastore.updateData { subscribedTags ->
             subscribedTags
                 .toBuilder()
@@ -42,7 +43,7 @@ internal class TagsLocalDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun setSubscribableTags(tags: List<TagProto>) {
+    override suspend fun setSubscribableTags(tags: List<SubscribableTagProto>) {
         subscribableTagsDatastore.updateData { subscribableTags ->
             subscribableTags.toBuilder()
                 .clearTags()
