@@ -1,8 +1,7 @@
 package com.kastik.benchmark.apps.baselineprofile
 
 import androidx.benchmark.macro.junit4.BaselineProfileRule
-import com.kastik.benchmark.apps.dismissSigningDialog
-import com.kastik.benchmark.apps.launchAppAndSkipOnboarding
+import com.kastik.benchmark.apps.launchAppAndDismissSigningDialog
 import com.kastik.benchmark.apps.settings.navigateToSettings
 import com.kastik.benchmark.apps.settings.toggleDynamicTheme
 import com.kastik.benchmark.apps.settings.toggleFabFilters
@@ -21,8 +20,7 @@ class SettingsBaselineProfile {
     fun generate() = baselineProfileRule.collect(
         "com.kastik.apps",
     ) {
-        launchAppAndSkipOnboarding()
-        dismissSigningDialog()
+        launchAppAndDismissSigningDialog()
         navigateToSettings()
         toggleSortingOptions()
         toggleFabFilters()

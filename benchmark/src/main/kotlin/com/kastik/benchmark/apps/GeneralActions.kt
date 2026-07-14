@@ -4,20 +4,9 @@ import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiAutomatorTestScope
 import androidx.test.uiautomator.textAsString
 
-fun UiAutomatorTestScope.launchAppAndSkipOnboarding() {
+fun UiAutomatorTestScope.launchAppAndDismissSigningDialog() {
     pressHome()
     startApp("com.kastik.apps")
-    onElementOrNull(timeoutMs = 2000) { textAsString() == "Let's Go" }?.click()
-    onElementOrNull(timeoutMs = 2000) { textAsString() == "Just Browsing (Guest)" }?.click()
-    onElementOrNull(timeoutMs = 2000) { textAsString() == "Maybe Later" }?.click()
-    onElementOrNull(timeoutMs = 2000) { textAsString() == "Keep Going" }?.click()
-    onElement { isScrollable }.scroll(Direction.DOWN, 1f)
-    onElementOrNull(timeoutMs = 2000) { textAsString() == "Almost Done" }?.click()
-    onElementOrNull(timeoutMs = 2000) { textAsString() == "Take Me to the App" }?.click()
-}
-
-
-fun UiAutomatorTestScope.dismissSigningDialog() {
     onElementOrNull(timeoutMs = 2000) { textAsString() == "Dismiss" }?.click()
 }
 
