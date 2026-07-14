@@ -2,4 +2,13 @@
 <resources>
     <string name="title_logged_out">Έχετε αποσυνδεθεί</string>
     <string name="body_logged_out">Συνδεθείτε ξανά για να συνεχίσετε να λαμβάνετε ειδοποιήσεις</string>
+
+    <string name="sync_startup_title">Συγχρονισμός σε εξέλιξη</string>
+    <string name="sync_startup_body">Ενημέρωση των δεδομένων σας…</string>
+
+    <string name="sync_subscribe_title">Συγχρονισμός σε εξέλιξη</string>
+    <string name="sync_subscribe_body">Ενημέρωση των συνδρομών σας…</string>
+
+    <string name="sync_announcement_title">Συγχρονισμός σε εξέλιξη</string>
+    <string name="sync_announcement_body">Παρακαλώ περιμένετε…</string>
 </resources>

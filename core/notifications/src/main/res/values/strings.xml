@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="channel_id_sync" translatable="false">sync</string>
     <string name="channel_id_general" translatable="false">general</string>
     <string name="channel_id_fcm_campaigns" translatable="false">campaigns</string>
     <string name="channel_id_announcements" translatable="false">announcement</string>
 
+    <string name="channel_name_sync">Sync</string>
     <string name="channel_name_general">General</string>
     <string name="channel_name_announcements">New announcements</string>
     <string name="channel_name_fcm_campaigns">Campaigns</string>
 
+    <string name="channel_desc_sync">Syncing updates</string>
     <string name="channel_desc_general">Updates about your account status</string>
     <string name="channel_desc_announcements">Latest announcements</string>
     <string name="channel_desc_fcm_campaigns">App news and feedback requests</string>
