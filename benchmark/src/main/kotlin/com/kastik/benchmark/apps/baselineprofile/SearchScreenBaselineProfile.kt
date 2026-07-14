@@ -1,7 +1,8 @@
 package com.kastik.benchmark.apps.baselineprofile
 
 import androidx.benchmark.macro.junit4.BaselineProfileRule
-import com.kastik.benchmark.apps.launchAppAndDismissSigningDialog
+import com.kastik.benchmark.apps.dismissSigningDialog
+import com.kastik.benchmark.apps.launchAppAndSkipOnboarding
 import com.kastik.benchmark.apps.scrollFeed
 import com.kastik.benchmark.apps.search.navigateToSearchViaQuery
 import org.junit.Rule
@@ -16,7 +17,8 @@ class SearchScreenBaselineProfile {
     fun generate() = baselineProfileRule.collect(
         "com.kastik.apps",
     ) {
-        launchAppAndDismissSigningDialog()
+        launchAppAndSkipOnboarding()
+        dismissSigningDialog()
         navigateToSearchViaQuery()
         scrollFeed()
     }
