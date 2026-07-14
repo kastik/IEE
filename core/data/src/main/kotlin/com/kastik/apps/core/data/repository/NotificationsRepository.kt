@@ -1,18 +1,18 @@
 package com.kastik.apps.core.data.repository
 
+import android.app.Activity
+import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
-import android.provider.Settings
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.ProcessLifecycleOwner
+import android.os.Build
+import android.os.Bundle
 import com.kastik.apps.core.domain.repository.NotificationRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,28 +22,34 @@ internal class NotificationsRepositoryImpl @Inject constructor(
 ) : NotificationRepository {
     override fun areNotificationsEnabled(): Flow<Boolean> {
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            return flowOf(true)
+        }
+
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val application = context.applicationContext as Application
 
         return callbackFlow {
             trySend(nm.areNotificationsEnabled())
 
-            val observer = LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_RESUME) {
+            val lifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
+                override fun onActivityResumed(activity: Activity) {
                     trySend(nm.areNotificationsEnabled())
                 }
+
+                override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+                override fun onActivityStarted(activity: Activity) {}
+                override fun onActivityPaused(activity: Activity) {}
+                override fun onActivityStopped(activity: Activity) {}
+                override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+                override fun onActivityDestroyed(activity: Activity) {}
             }
 
-            val lifecycle = ProcessLifecycleOwner.get().lifecycle
-            lifecycle.addObserver(observer)
+            application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
 
-            awaitClose { lifecycle.removeObserver(observer) }
+            awaitClose {
+                application.unregisterActivityLifecycleCallbacks(lifecycleCallbacks)
+            }
         }.distinctUntilChanged()
-    }
-
-    override suspend fun toggleNotifications() {
-        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-        }
-        context.startActivity(intent)
     }
 }
