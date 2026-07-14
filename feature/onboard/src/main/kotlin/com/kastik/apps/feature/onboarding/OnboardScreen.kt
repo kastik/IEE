@@ -1,44 +1,29 @@
 package com.kastik.apps.feature.onboarding
 
 import android.Manifest
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearWavyProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -64,16 +49,21 @@ internal fun OnboardRoute(
     viewModel: OnboardViewModel = hiltViewModel(),
     onFinish: () -> Unit = {},
 ) {
-    TrackScreenViewEvent(screenClass = "onboarding_route", screenName = "onboarding_screen")
+
+    TrackScreenViewEvent(
+        screenClass = "onboarding_route",
+        screenName = "onboarding_screen"
+    )
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AnimatedContent(
         targetState = uiState,
-        contentKey = { it::class }
+        contentKey = { state -> state::class }
     ) { state ->
 
         when (state) {
+
             OnboardUiState.Loading -> {
                 OnboardLoading()
             }
@@ -239,11 +229,7 @@ fun OnboardSuccess(
                             OnboardNotifications(
                                 areNotificationsAllowed = areNotificationsAllowed,
                                 onAllowClick = {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                    } else {
-                                        //viewModel.enableNotifications(quietDurationMinutes = 60)
-                                    }
+                                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                                 },
                                 onSkipClick = goNext,
                                 onContinueClick = goNext
@@ -279,90 +265,6 @@ fun OnboardSuccess(
                     }
                 }
             }
-        }
-    }
-}
-
-
-@Composable
-internal fun OnboardingHeroScreen(
-    icon: ImageVector,
-    iconTint: Color,
-    containerColor: Color,
-    title: String,
-    description: String,
-    primaryButtonText: String,
-    primaryButtonIcon: ImageVector? = null,
-    onPrimaryClick: () -> Unit,
-    secondaryButtonText: String? = null,
-    onSecondaryClick: (() -> Unit)? = null
-) {
-    val haptics = LocalHapticFeedback.current
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(32.dp))
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .background(containerColor, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(64.dp),
-                tint = iconTint
-            )
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                onPrimaryClick()
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-        ) {
-            if (primaryButtonIcon != null) {
-                Icon(
-                    imageVector = primaryButtonIcon,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = 8.dp)
-                )
-            }
-            Text(primaryButtonText)
-        }
-
-        if (secondaryButtonText != null && onSecondaryClick != null) {
-            Spacer(modifier = Modifier.height(16.dp))
-            TextButton(
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    onSecondaryClick()
-                }, modifier = Modifier.fillMaxWidth()
-            ) { Text(secondaryButtonText) }
-        } else {
-            Spacer(modifier = Modifier.height(16.dp)) // Maintain spacing if no secondary button
         }
     }
 }

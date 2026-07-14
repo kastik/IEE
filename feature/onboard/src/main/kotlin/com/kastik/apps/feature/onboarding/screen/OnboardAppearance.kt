@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,12 +22,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.component.IeeChoiceCard
 import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.apps.core.designsystem.component.IeeSwitchCard
 import com.kastik.apps.core.model.user.Theme
+import com.kastik.feature.onboarding.R
 
 @Composable
 internal fun OnboardAppearance(
@@ -39,72 +40,83 @@ internal fun OnboardAppearance(
     onContinueClick: () -> Unit = {},
 ) {
     val haptics = LocalHapticFeedback.current
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
             .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = "Choose your look",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-        )
-        Text(
-            text = "You can always change this later in settings.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.height(48.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            IeeChoiceCard(
-                modifier = Modifier.weight(1f),
-                title = "System",
-                icon = Icons.Rounded.SettingsBrightness,
-                isSelected = selectedTheme == Theme.FOLLOW_SYSTEM,
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    onThemeSelected(Theme.FOLLOW_SYSTEM)
-                })
-            IeeChoiceCard(
-                modifier = Modifier.weight(1f),
-                title = "Light",
-                icon = Icons.Rounded.LightMode,
-                isSelected = selectedTheme == Theme.LIGHT,
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    onThemeSelected(Theme.LIGHT)
-                })
-            IeeChoiceCard(
-                modifier = Modifier.weight(1f),
-                title = "Dark",
-                icon = Icons.Rounded.DarkMode,
-                isSelected = selectedTheme == Theme.DARK,
-                onClick = {
-                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    onThemeSelected(Theme.DARK)
-                })
+            Text(
+                text = stringResource(R.string.appearance_theme_title),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.appearance_theme_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                IeeChoiceCard(
+                    modifier = Modifier.weight(1f),
+                    title = stringResource(R.string.appearance_theme_system),
+                    icon = Icons.Rounded.SettingsBrightness,
+                    isSelected = selectedTheme == Theme.FOLLOW_SYSTEM,
+                    onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onThemeSelected(Theme.FOLLOW_SYSTEM)
+                    })
+                IeeChoiceCard(
+                    modifier = Modifier.weight(1f),
+                    title = stringResource(R.string.appearance_theme_light),
+                    icon = Icons.Rounded.LightMode,
+                    isSelected = selectedTheme == Theme.LIGHT,
+                    onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onThemeSelected(Theme.LIGHT)
+                    })
+                IeeChoiceCard(
+                    modifier = Modifier.weight(1f),
+                    title = stringResource(R.string.appearance_theme_dark),
+                    icon = Icons.Rounded.DarkMode,
+                    isSelected = selectedTheme == Theme.DARK,
+                    onClick = {
+                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                        onThemeSelected(Theme.DARK)
+                    })
+            }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            IeeSwitchCard(
-                title = "Dynamic Color",
-                subtitle = "Extracts accent colors from your system wallpaper for a personalized feel.",
-                checked = dynamicColorEnabled,
-                onCheckedChange = {
-                    onDynamicColorToggled(it)
-                })
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                IeeSwitchCard(
+                    title = stringResource(R.string.appearance_dynamic_color_title),
+                    subtitle = stringResource(R.string.appearance_dynamic_color_body),
+                    checked = dynamicColorEnabled,
+                    onCheckedChange = {
+                        onDynamicColorToggled(it)
+                    })
+            }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-        Spacer(modifier = Modifier.height(24.dp))
         Button(
             onClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
@@ -112,14 +124,14 @@ internal fun OnboardAppearance(
             }, modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-        ) { Text("Continue") }
+        ) { Text(stringResource(R.string.appearance_next_page)) }
     }
 }
 
 
 @Preview
 @Composable
-fun OnboardAppearancePreview() {
+private fun OnboardAppearancePreview() {
     IeePreview {
         OnboardAppearance()
     }

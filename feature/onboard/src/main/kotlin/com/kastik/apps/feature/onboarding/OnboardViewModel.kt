@@ -28,14 +28,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Note: which onboarding step is currently shown is now owned entirely by the
- * NavController in OnboardRoute (see OnboardDestinations), so this state no
- * longer tracks a `currentStep` / needs a SavedStateHandle for it — Navigation
- * Compose already restores the back stack across recreation on its own.
- */
-
-
 @HiltViewModel
 internal class OnboardViewModel @Inject constructor(
     private val setHasFinishedOnboardUseCase: SetHasFinishedOnboardUseCase,
