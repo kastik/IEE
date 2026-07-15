@@ -11,6 +11,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.mikepenz.aboutlibraries.Libs
+import com.mikepenz.aboutlibraries.entity.Library
+import com.mikepenz.aboutlibraries.entity.License
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 
@@ -47,8 +49,44 @@ private fun LicensesScreen(
 
 @Preview
 @Composable
-private fun LicensesScreenPreview() {
+internal fun LicensesScreenPreview() {
+
+    val fakeLibs = Libs(
+        libraries = listOf(
+            Library(
+                uniqueId = "com.example.fake:awesome-lib",
+                artifactVersion = "1.2.3",
+                name = "Awesome Fake Lib",
+                description = "This is a fantastic fake library used for previewing UI components.",
+                website = "https://example.com/awesome-lib",
+                developers = emptyList(), // Fixed: Expects List<Developer>
+                organization = null,
+                scm = null,
+                licenses = setOf(
+                    License(
+                        hash = "apache_2_0", // This links to the string above
+                        name = "Apache License 2.0",
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt",
+                        year = "2024",
+                        licenseContent = "Standard Apache 2.0 License content here..." // Fixed: Renamed from content
+                    )
+                ), // Fixed: Expects Set<String> (license hashes)
+                funding = emptySet(),
+                tag = null
+            )
+        ),
+        licenses = setOf(
+            License(
+                hash = "apache_2_0", // This links to the string above
+                name = "Apache License 2.0",
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt",
+                year = "2024",
+                licenseContent = "Standard Apache 2.0 License content here..." // Fixed: Renamed from content
+            )
+        )
+    )
+
     IeePreview {
-        LicensesScreen()
+        LicensesScreen(libraries = fakeLibs)
     }
 }

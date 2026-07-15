@@ -232,7 +232,7 @@ private fun OnboardPreferencesSearchBehaviour(
 
 @Preview
 @Composable
-private fun OnboardPreferencesPreview() {
+internal fun OnboardPreferencesPreview() {
     IeePreview {
         OnboardPreferences(
             isForYouAvailable = false,

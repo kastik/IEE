@@ -123,7 +123,7 @@ private fun AuthenticationSuccess(
 
 @Preview
 @Composable
-private fun AuthenticationLoadingPreview() {
+internal fun AuthenticationLoadingPreview() {
     IeePreview {
         AuthenticationLoading()
     }
@@ -131,7 +131,7 @@ private fun AuthenticationLoadingPreview() {
 
 @Preview
 @Composable
-private fun AuthenticationErrorPreview() {
+internal fun AuthenticationErrorPreview() {
     IeePreview {
         AuthenticationError()
     }
@@ -139,7 +139,7 @@ private fun AuthenticationErrorPreview() {
 
 @Preview
 @Composable
-private fun AuthenticationSuccessPreview() {
+internal fun AuthenticationSuccessPreview() {
     IeePreview {
         AuthenticationSuccess()
     }

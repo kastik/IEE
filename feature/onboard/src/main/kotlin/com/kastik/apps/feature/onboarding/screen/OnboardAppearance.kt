@@ -131,7 +131,7 @@ internal fun OnboardAppearance(
 
 @Preview
 @Composable
-private fun OnboardAppearancePreview() {
+internal fun OnboardAppearancePreview() {
     IeePreview {
         OnboardAppearance()
     }

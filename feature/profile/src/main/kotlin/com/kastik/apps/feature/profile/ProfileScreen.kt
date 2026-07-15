@@ -484,7 +484,7 @@ private fun ProfileSignOut(
 
 @Preview
 @Composable
-private fun ProfileLoadingPreview() {
+internal fun ProfileLoadingPreview() {
     IeePreview {
         ProfileLoading()
     }
@@ -492,7 +492,7 @@ private fun ProfileLoadingPreview() {
 
 @Preview
 @Composable
-private fun ProfileSignedOutPreview() {
+internal fun ProfileSignedOutPreview() {
     IeePreview {
         ProfileSignedOut()
     }
@@ -501,7 +501,7 @@ private fun ProfileSignedOutPreview() {
 
 @Preview
 @Composable
-private fun ProfileSuccessPreview() {
+internal fun ProfileSuccessPreview() {
     IeePreview {
         ProfileSuccess(
             name = "Kostas Papastathopoulos",

@@ -15,4 +15,5 @@ plugins {
     alias(libs.plugins.baselineprofile) apply false
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.stability.analyzer) apply false
+    alias(libs.plugins.screenshot) apply false
 }

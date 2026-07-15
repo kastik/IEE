@@ -191,7 +191,7 @@ private fun OnboardNotificationsNotGranted(
 
 @Preview
 @Composable
-private fun OnboardNotificationsNotGrantedPreview() {
+internal fun OnboardNotificationsNotGrantedPreview() {
     IeePreview {
         OnboardNotifications(false)
     }
@@ -199,7 +199,7 @@ private fun OnboardNotificationsNotGrantedPreview() {
 
 @Preview
 @Composable
-private fun OnboardNotificationsGrantedPreview() {
+internal fun OnboardNotificationsGrantedPreview() {
     IeePreview {
         OnboardNotifications(areNotificationsAllowed = true)
     }

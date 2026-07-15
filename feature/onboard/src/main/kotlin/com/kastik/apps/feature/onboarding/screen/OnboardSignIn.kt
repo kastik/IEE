@@ -189,7 +189,7 @@ private fun OnboardSignInSignedIn(
 
 @Preview
 @Composable
-private fun OnboardSignInSignedOutPreview() {
+internal fun OnboardSignInSignedOutPreview() {
     IeePreview {
         OnboardSignIn(isSignedIn = false)
     }
@@ -197,7 +197,7 @@ private fun OnboardSignInSignedOutPreview() {
 
 @Preview
 @Composable
-private fun OnboardSignInSignedInPreview() {
+internal fun OnboardSignInSignedInPreview() {
     IeePreview {
         OnboardSignIn(isSignedIn = true)
     }

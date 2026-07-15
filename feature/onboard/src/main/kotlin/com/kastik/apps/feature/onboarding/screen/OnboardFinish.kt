@@ -85,7 +85,7 @@ internal fun OnboardFinish(
 
 @Preview
 @Composable
-private fun OnboardFinishPreview() {
+internal fun OnboardFinishPreview() {
     IeePreview {
         OnboardFinish()
     }
