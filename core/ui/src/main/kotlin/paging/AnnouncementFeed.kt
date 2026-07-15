@@ -161,7 +161,7 @@ fun AnnouncementFeed(
                 }
 
             is LoadState.NotLoading -> {
-                if (isEmpty && refreshState.endOfPaginationReached) {
+                if (isEmpty) {
                     item(
                         key = "refresh_state_not_loading",
                         contentType = "refresh_indicators"
