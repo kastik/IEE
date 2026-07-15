@@ -108,12 +108,16 @@ fun AnnouncementFeed(
                         contentType = "refresh_indicators"
                     ) {
                         StatusContent(
-                            modifier = Modifier.fillParentMaxSize(),
+                            modifier = Modifier
+                                .fillParentMaxSize()
+                                .animateItem(
+                                    fadeInSpec = ieeListSpring(),
+                                    fadeOutSpec = ieeListSpring(),
+                                    placementSpec = ieeListSpring()
+                                ),
                             message = {
-                                Text(
-                                    text = refreshLoadingText,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                LoadingContent(
+                                    message = refreshLoadingText
                                 )
                             },
                         )
@@ -127,7 +131,13 @@ fun AnnouncementFeed(
                         contentType = "refresh_indicators"
                     ) {
                         StatusContent(
-                            modifier = Modifier.fillParentMaxSize(),
+                            modifier = Modifier
+                                .fillParentMaxSize()
+                                .animateItem(
+                                    fadeInSpec = ieeListSpring(),
+                                    fadeOutSpec = ieeListSpring(),
+                                    placementSpec = ieeListSpring()
+                                ),
                             message = {
                                 Text(
                                     text = refreshErrorText,
@@ -157,7 +167,13 @@ fun AnnouncementFeed(
                         contentType = "refresh_indicators"
                     ) {
                         StatusContent(
-                            modifier = Modifier.fillParentMaxSize(),
+                            modifier = Modifier
+                                .fillParentMaxSize()
+                                .animateItem(
+                                    fadeInSpec = ieeListSpring(),
+                                    fadeOutSpec = ieeListSpring(),
+                                    placementSpec = ieeListSpring()
+                                ),
                             message = {
                                 Text(
                                     text = refreshEmptyText,
@@ -213,47 +229,79 @@ fun AnnouncementFeed(
             )
         }
 
-        item(
-            key = "append_state",
-            contentType = "append_indicators"
-        ) {
-            when (appendState) {
-                is LoadState.Loading -> LoadingContent(
-                    message = appendLoadingText,
-                    progressIndicatorSize = 32.dp,
-                    modifier = Modifier.padding(top = 16.dp, bottom = 32.dp),
-                )
 
-                is LoadState.Error -> StatusContent(
-                    modifier = Modifier.padding(24.dp),
-                    message = {
-                        Text(
-                            text = appendErrorText,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
-                        )
-                    },
-                    action = {
-                        FilledTonalButton(
-                            onClick = announcements::retry
-                        ) {
+        when (appendState) {
+            is LoadState.Loading -> {
+                item(
+                    key = "append_state_loading",
+                    contentType = "append_indicators"
+                ) {
+                    LoadingContent(
+                        message = appendLoadingText,
+                        progressIndicatorSize = 32.dp,
+                        modifier = Modifier
+                            .padding(top = 16.dp, bottom = 32.dp)
+                            .animateItem(
+                                fadeInSpec = ieeListSpring(),
+                                fadeOutSpec = ieeListSpring(),
+                                placementSpec = ieeListSpring()
+                            ),
+                    )
+                }
+            }
+
+            is LoadState.Error ->
+                item(
+                    key = "append_state_error",
+                    contentType = "append_indicators"
+                ) {
+                    StatusContent(
+                        modifier = Modifier
+                            .padding(24.dp)
+                            .animateItem(
+                                fadeInSpec = ieeListSpring(),
+                                fadeOutSpec = ieeListSpring(),
+                                placementSpec = ieeListSpring()
+                            ),
+                        message = {
                             Text(
-                                text = appendErrorRetryText,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.primary,
+                                text = appendErrorText,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
-                        }
-                    },
-                )
+                        },
+                        action = {
+                            FilledTonalButton(
+                                onClick = announcements::retry
+                            ) {
+                                Text(
+                                    text = appendErrorRetryText,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                        },
+                    )
+                }
 
-                is LoadState.NotLoading -> {
-                    if (appendState.endOfPaginationReached && !isEmpty) {
+            is LoadState.NotLoading -> {
+                if (appendState.endOfPaginationReached && !isEmpty) {
+                    item(
+                        key = "append_state_end_of_pagination",
+                        contentType = "append_indicators"
+                    ) {
+
                         Row(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 16.dp, bottom = 32.dp)
+                                .animateItem(
+                                    fadeInSpec = ieeListSpring(),
+                                    fadeOutSpec = ieeListSpring(),
+                                    placementSpec = ieeListSpring()
+                                )
                         ) {
                             Text(
                                 text = endOfPaginationText,
@@ -265,14 +313,25 @@ fun AnnouncementFeed(
                                 contentDescription = null,
                             )
                         }
-                    } else if (!isEmpty) {
+                    }
+                } else if (!isEmpty) {
 
-                        val hasError = announcements.loadState.append as? LoadState.Error
-                            ?: announcements.loadState.refresh as? LoadState.Error
+                    val hasError = announcements.loadState.append as? LoadState.Error
+                        ?: announcements.loadState.refresh as? LoadState.Error
 
-                        if (hasError != null) {
+                    if (hasError != null) {
+                        item(
+                            key = "append_state_has_error",
+                            contentType = "append_indicators"
+                        ) {
                             StatusContent(
-                                modifier = Modifier.padding(24.dp),
+                                modifier = Modifier
+                                    .padding(24.dp)
+                                    .animateItem(
+                                        fadeInSpec = ieeListSpring(),
+                                        fadeOutSpec = ieeListSpring(),
+                                        placementSpec = ieeListSpring()
+                                    ),
                                 message = {
                                     Text(
                                         text = appendErrorText,
@@ -292,13 +351,27 @@ fun AnnouncementFeed(
                                     }
                                 },
                             )
-                        } else {
-                            Spacer(modifier = Modifier.height(116.dp))
+                        }
+                    } else {
+                        item(
+                            key = "append_state_spacer",
+                            contentType = "append_indicators"
+                        ) {
+                            Spacer(
+                                modifier = Modifier
+                                    .height(116.dp)
+                                    .animateItem(
+                                        fadeInSpec = ieeListSpring(),
+                                        fadeOutSpec = ieeListSpring(),
+                                        placementSpec = ieeListSpring()
+                                    )
+                            )
                         }
                     }
                 }
             }
         }
+
     }
 }
 
