@@ -5,6 +5,7 @@ import com.kastik.apps.core.data.repository.AnnouncementRepositoryImpl
 import com.kastik.apps.core.data.repository.AuthenticationRepositoryImpl
 import com.kastik.apps.core.data.repository.AuthorRepositoryImpl
 import com.kastik.apps.core.data.repository.NotificationsRepositoryImpl
+import com.kastik.apps.core.data.repository.OnboardRepositoryImpl
 import com.kastik.apps.core.data.repository.ProfileRepositoryImpl
 import com.kastik.apps.core.data.repository.TagsRepositoryImpl
 import com.kastik.apps.core.data.repository.UserPreferencesRepositoryImpl
@@ -14,6 +15,7 @@ import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.AuthorRepository
 import com.kastik.apps.core.domain.repository.NotificationRepository
+import com.kastik.apps.core.domain.repository.OnboardRepository
 import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
@@ -73,7 +75,13 @@ internal abstract class DataModule {
 
     @Binds
     @Singleton
-    internal abstract fun bindTokenProvider(
+    abstract fun bindOnboardRepository(
+        onboardRepositoryImpl: OnboardRepositoryImpl
+    ): OnboardRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTokenProvider(
         tokenProvider: AboardTokenManagerImpl
     ): TokenManager
 

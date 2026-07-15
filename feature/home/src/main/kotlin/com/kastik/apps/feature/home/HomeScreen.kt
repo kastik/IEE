@@ -192,6 +192,10 @@ private fun HomeScreen(
         }
     }
 
+    LaunchedEffect(uiState.userId) {
+        analytics.setUserId(uiState.userId)
+    }
+
 
     AnimatedVisibility(uiState.showSignInNotice) {
         SignInDialog(onConfirm = {

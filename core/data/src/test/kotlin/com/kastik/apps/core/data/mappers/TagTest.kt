@@ -33,7 +33,7 @@ class TagTest {
     @Test
     fun subscribedTagDtoMapsToSubscribedTagProto() {
         val dto = listOf(baseTagDto)
-        val result = dto.map { it.toTagProto() }
+        val result = dto.map { it.toSubscribedTagProto() }
 
         assertThat(result).isNotEmpty()
         assertThat(result.size).isEqualTo(dto.size)
@@ -62,7 +62,7 @@ class TagTest {
     @Test
     fun subscribableTagsDtoMapsToSubscribableTagProto() {
         val dto = baseTagDto
-        val proto = dto.toTagProto()
+        val proto = dto.toSubscribableTagProto()
 
         assertThat(proto.id).isEqualTo(dto.id)
         assertThat(proto.parentId).isEqualTo(dto.parentId ?: 0)

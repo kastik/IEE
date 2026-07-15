@@ -1,0 +1,11 @@
+package com.kastik.apps.core.notifications
+
+object NotificationIds {
+    const val STARTUP_SYNC_NOTIFICATION_ID = 1001
+    const val SUBSCRIBE_SYNC_NOTIFICATION_ID = 1002
+    const val ANNOUNCEMENT_SYNC_NOTIFICATION_ID = 1003
+    const val BASE_ANNOUNCEMENT_NOTIFICATION_ID = 1004
+    const val GENERAL_ANNOUNCEMENT_NOTIFICATION_ID = 1005
+    const val CAMPAIGN_ANNOUNCEMENT_NOTIFICATION_ID = 1006
+
+}

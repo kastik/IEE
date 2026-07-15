@@ -3,9 +3,10 @@ package com.kastik.apps.core.data.repository
 import com.kastik.apps.core.common.di.IoDispatcher
 import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.data.mappers.toNetworkError
+import com.kastik.apps.core.data.mappers.toSubscribableTagProto
+import com.kastik.apps.core.data.mappers.toSubscribedTagProto
 import com.kastik.apps.core.data.mappers.toTag
 import com.kastik.apps.core.data.mappers.toTagEntity
-import com.kastik.apps.core.data.mappers.toTagProto
 import com.kastik.apps.core.data.utils.safeCall
 import com.kastik.apps.core.database.dao.TagsDao
 import com.kastik.apps.core.datastore.datasource.AuthenticationLocalDataSource
@@ -62,7 +63,7 @@ internal class TagsRepositoryImpl @Inject constructor(
             recordException = crashlytics::recordException
         ) {
             val subscribableTags = tagsRemoteDataSource.fetchSubscribableTags()
-            subscribableTagsLocalDataSource.setSubscribableTags(subscribableTags.map { tag -> tag.toTagProto() })
+            subscribableTagsLocalDataSource.setSubscribableTags(subscribableTags.map { tag -> tag.toSubscribableTagProto() })
 
         }
     }
@@ -79,7 +80,7 @@ internal class TagsRepositoryImpl @Inject constructor(
             recordException = crashlytics::recordException
         ) {
             val subscribedTags = tagsRemoteDataSource.fetchSubscriptions()
-            subscribableTagsLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toTagProto() })
+            subscribableTagsLocalDataSource.setSubscriptions(subscribedTags.map { tag -> tag.toSubscribedTagProto() })
         }
     }
 

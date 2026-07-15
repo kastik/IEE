@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -57,9 +56,11 @@ fun IeeChoiceCard(
     OutlinedCard(
         modifier = modifier
             .selectable(
-                selected = isSelected, enabled = enabled, role = Role.RadioButton, onClick = onClick
-            )
-            .defaultMinSize(minHeight = 120.dp),
+                selected = isSelected,
+                enabled = enabled,
+                role = Role.RadioButton,
+                onClick = onClick
+            ),
         colors = CardDefaults.outlinedCardColors(containerColor = containerColor),
         border = border
     ) {

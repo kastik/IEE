@@ -69,7 +69,6 @@ material = "1.14.0"
 
 coilCompose = "3.5.0"
 aboutLibraries = "15.0.3"
-junit = "4.13.2"
 
 
 spotless = "8.8.0"
@@ -194,7 +193,6 @@ hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", ve
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltCompiler" }
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltCompiler" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 
 [plugins]

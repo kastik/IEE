@@ -18,6 +18,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
     implementation(project(":core:crashlytics"))
+    implementation(project(":core:notifications"))
 
     implementation(libs.androidx.work.runtime.ktx)
 }

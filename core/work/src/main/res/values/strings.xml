@@ -3,4 +3,13 @@
     <string name="title_logged_out">You have been logged out</string>
     <string name="body_logged_out">Please sign in again to continue receiving notifications</string>
     <string name="url_logged_out" translatable="false">https://login.iee.ihu.gr/authorization?client_id=690a9861468c9b767cabdc40&amp;response_type=code&amp;scope=announcements,profile&amp;redirect_uri=com.kastik.apps://auth</string>
+
+    <string name="sync_startup_title">Syncing in progress</string>
+    <string name="sync_startup_body">Updating your data…</string>
+
+    <string name="sync_subscribe_title">Syncing in progress</string>
+    <string name="sync_subscribe_body">Updating your subscriptions…</string>
+
+    <string name="sync_announcement_title">Syncing in progress</string>
+    <string name="sync_announcement_body">Please wait…</string>
 </resources>

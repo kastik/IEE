@@ -11,6 +11,7 @@ import com.kastik.apps.core.domain.usecases.GetForYouAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetHomeAnnouncementsUseCase
 import com.kastik.apps.core.domain.usecases.GetIsSignedInUseCase
 import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
+import com.kastik.apps.core.domain.usecases.GetUserIdUseCase
 import com.kastik.apps.core.domain.usecases.GetUserPreferencesUseCase
 import com.kastik.apps.core.domain.usecases.IsForYouEnabledUseCase
 import com.kastik.apps.core.domain.usecases.SetAnnouncementCheckTimeUseCase
@@ -27,6 +28,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
+    getUserIdUseCase: GetUserIdUseCase,
     getIsSignedInUseCase: GetIsSignedInUseCase,
     showSignInNoticeRationaleUseCase: ShowSignInNoticeRationaleUseCase,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
@@ -47,14 +49,16 @@ internal class HomeViewModel @Inject constructor(
             getQuickResultsUseCase(query)
         }
     val uiState = combine(
+        getUserIdUseCase(),
         getIsSignedInUseCase(),
         showSignInNoticeRationaleUseCase(),
         getFilterOptionsUseCase(),
         _quickSearchResultsState,
         getUserPreferencesUseCase(),
         isForYouEnabledUseCase(),
-    ) { isSignedIn, showSignInNotice, availableFilters, quickResults, userPreferences, isForYouEnabled ->
+    ) { userId, isSignedIn, showSignInNotice, availableFilters, quickResults, userPreferences, isForYouEnabled ->
         HomeUiState(
+            userId = userId,
             isSignedIn = isSignedIn,
             showSignInNotice = showSignInNotice,
             availableFilters = availableFilters,

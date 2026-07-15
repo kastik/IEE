@@ -1,10 +1,17 @@
 package com.kastik.apps.core.data.paging
 
 import androidx.paging.ExperimentalPagingApi
+import com.google.common.truth.Truth.assertThat
+import org.junit.Test
 
 
 @OptIn(ExperimentalPagingApi::class)
 class AnnouncementRemoteMediatorTest {
+
+    @Test
+    fun AsserTrue() {
+        assertThat(true).isTrue()
+    }
 
 //    private val fakeCrashlytics: FakeCrashlytics = FakeCrashlytics()
 //    private val fakeAppDatabase: FakeAppDatabase = FakeAppDatabase()

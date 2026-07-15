@@ -1,7 +1,8 @@
 package com.kastik.apps.core.data.mappers
 
 import com.kastik.apps.core.database.entities.TagEntity
-import com.kastik.apps.core.datastore.proto.TagProto
+import com.kastik.apps.core.datastore.proto.SubscribableTagProto
+import com.kastik.apps.core.datastore.proto.SubscribedTagProto
 import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.network.model.response.TagDto
 
@@ -20,32 +21,36 @@ fun TagEntity.toTag() = Tag(
     parentId = parentId,
 )
 
-fun TagDto.toTagProto(): TagProto = TagProto.newBuilder().apply {
-    id = this@toTagProto.id
-    title = this@toTagProto.title
-    isPublic = this@toTagProto.isPublic
-    mailListName = this@toTagProto.mailListName
-
-    this@toTagProto.subTags?.let { tags ->
-        addAllSubTags(tags.map { tag -> tag.toTagProto() })
-    }
-
-    this@toTagProto.parentId?.let { parentId = it }
-
-    this@toTagProto.createdAt?.toTimestamp()?.let { createdAt = it }
-    this@toTagProto.updatedAt?.toTimestamp()?.let { updatedAt = it }
-    this@toTagProto.deletedAt?.toTimestamp()?.let { deletedAt = it }
+fun TagDto.toSubscribedTagProto(): SubscribedTagProto = SubscribedTagProto.newBuilder().apply {
+    id = this@toSubscribedTagProto.id
+    title = this@toSubscribedTagProto.title
 }.build()
 
-fun TagProto.toTag(): Tag = Tag(
+fun SubscribedTagProto.toTag(): Tag = Tag(
     id = id,
     title = title,
-    parentId = if (hasParentId()) parentId else null,
-    isPublic = isPublic,
-    createdAt = if(hasCreatedAt()) createdAt.toInstant() else null,
-    updatedAt = if (hasUpdatedAt()) updatedAt.toInstant() else null,
-    deletedAt = if (hasDeletedAt()) deletedAt.toInstant() else null,
-    mailListName = mailListName,
-    subTags = subTagsList.map { it.toTag() } // Recursive mapping
 )
 
+
+fun TagDto.toSubscribableTagProto(): SubscribableTagProto =
+    SubscribableTagProto.newBuilder().apply {
+        id = this@toSubscribableTagProto.id
+        title = this@toSubscribableTagProto.title
+        isPublic = this@toSubscribableTagProto.isPublic
+
+        this@toSubscribableTagProto.parentId?.let {
+            parentId = it
+        }
+
+        this@toSubscribableTagProto.subTags?.let { tags ->
+            addAllSubTags(tags.map { it.toSubscribableTagProto() })
+        }
+    }.build()
+
+fun SubscribableTagProto.toTag(): Tag = Tag(
+    id = id,
+    title = title,
+    parentId = parentId,
+    isPublic = isPublic,
+    subTags = subTagsList.map { it.toTag() }
+)

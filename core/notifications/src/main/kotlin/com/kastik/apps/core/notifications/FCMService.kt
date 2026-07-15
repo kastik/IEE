@@ -2,7 +2,6 @@ package com.kastik.apps.core.notifications
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.kastik.apps.core.domain.service.Notifier
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

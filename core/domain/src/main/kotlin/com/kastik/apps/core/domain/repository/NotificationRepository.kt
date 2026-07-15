@@ -4,5 +4,4 @@ import kotlinx.coroutines.flow.Flow
 
 interface NotificationRepository {
     fun areNotificationsEnabled(): Flow<Boolean>
-    suspend fun toggleNotifications()
 }

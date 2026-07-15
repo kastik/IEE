@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Appearance Screen -->
+    <string name="appearance_theme_title">Let\'s pick a theme</string>
+    <string name="appearance_theme_body">Don\'t worry, you can easily change this later in your settings.</string>
+    <string name="appearance_theme_system">System</string>
+    <string name="appearance_theme_light">Light</string>
+    <string name="appearance_theme_dark">Dark</string>
+    <string name="appearance_dynamic_color_title">Match Wallpaper</string>
+    <string name="appearance_dynamic_color_body">We\'ll pick up the accent colors from your wallpaper to make the app truly yours.</string>
+    <string name="appearance_next_page">Keep Going</string>
+
+    <!-- Notifications Screen -->
+    <string name="notifications_permission_accepted_title">You\'re all set!</string>
+    <string name="notifications_permission_accepted_body">We\'ll send the important stuff—like urgent alerts and updates—right to your screen.</string>
+    <string name="notifications_permission_rejected_title">Don\'t miss a thing</string>
+    <string name="notifications_permission_rejected_body">We\'d love to send you a heads-up when you get new grades or when there\'s important department news.</string>
+    <string name="notification_rejected_primary_action">Turn on Notifications</string>
+    <string name="notification_rejected_secondary_action">Maybe Later</string>
+    <string name="notifications_next_page">Next</string>
+
+    <!-- Welcome Screen -->
+    <string name="welcome_title">Welcome!</string>
+    <string name="welcome_body">Your personal hub for all things updates and announcements is here. Let\'s get you set up!</string>
+    <string name="welcome_primary_action">Let\'s Go</string>
+
+    <!-- Sign In Screen -->
+    <string name="signin_authenticated_title">You\'re In!</string>
+    <string name="signin_authenticated_body">Your IEE account is securely linked. We\'re ready when you are.</string>
+    <string name="signin_unauthenticated_title">Let\'s get you logged in</string>
+    <string name="signin_unauthenticated_body">Sign in with your IEE account to unlock your personalized dashboard, grades, and private announcements.</string>
+    <string name="signin_unauthenticated_primary_action">Log In with IEE</string>
+    <string name="signin_unauthenticated_secondary_action">Just Browsing (Guest)</string>
+    <string name="signin_next_page">Next</string>
+
+    <!-- Preferences Screen -->
+    <string name="preferences_title">Make it yours</string>
+    <string name="preferences_body">Tell us how you\'d like to see your announcements.</string>
+    <string name="preferences_sorting_title">How should we sort things?</string>
+    <string name="preferences_sorting_priority_title">Important Stuff First</string>
+    <string name="preferences_sorting_priority_body">We\'ll pin urgent and top-priority announcements right at the top.</string>
+    <string name="preferences_sorting_oldest_title">Oldest to Newest</string>
+    <string name="preferences_sorting_oldest_body">Catch up from the beginning.</string>
+    <string name="preferences_sorting_newest_title">Newest to Oldest</string>
+    <string name="preferences_sorting_newest_body">See the freshest updates first.</string>
+    <string name="preferences_feed_title">Feed Goodies</string>
+    <string name="preferences_feed_foryou_title">Turn on the \'For You\' Tab</string>
+    <string name="preferences_feed_foryou_body_available">A custom feed built just for you, based on your courses and favorite tags.</string>
+    <string name="preferences_feed_foryou_body_unavailable">You\'ll need to log in to get a custom feed based on your interests.</string>
+    <string name="preferences_search_title">How should search work?</string>
+    <string name="preferences_search_titles_title">Quick Search (Titles Only)</string>
+    <string name="preferences_search_titles_body">Lightning fast. We\'ll only search the headlines.</string>
+    <string name="preferences_search_body_title">Deep Dive (Full Text)</string>
+    <string name="preferences_search_body_body">We\'ll scan through every word in the announcements.</string>
+    <string name="preferences_next_page">Almost Done</string>
+
+    <!-- Finish Screen -->
+    <string name="finish_title">All Done!</string>
+    <string name="finish_body">Everything is set up perfectly. You\'re ready to dive in.</string>
+    <string name="finish_primary_action">Take Me to the App</string>
+
+</resources>

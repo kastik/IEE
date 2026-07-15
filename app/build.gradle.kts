@@ -16,8 +16,8 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 49
-        versionName = "2.3.5"
+        versionCode = 51
+        versionName = "2.3.7"
     }
 
     val keystoreProperties = Properties().apply {
@@ -90,6 +90,7 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:licenses"))
     implementation(project(":feature:search"))
+    implementation(project(":feature:onboard"))
 
     baselineProfile(project(":benchmark"))
     implementation(libs.androidx.profileinstaller)

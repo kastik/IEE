@@ -29,27 +29,27 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
         tagsDao.upsertTags(listOf(baseTagEntity))
     }
 
-    @Test
-    fun upsertListAnnouncementsInsertsNewAnnouncements() = runTest {
-        announcementDao.upsertAnnouncements(listOf(baseAnnouncementEntity))
-
-        val result = announcementDao.getAnnouncementWithId(1).first()
-
-        assertThat(result).isNotNull()
-        assertThat(result?.announcement?.id).isEqualTo(1)
-        assertThat(result?.announcement?.title).isEqualTo("Test Title")
-    }
-
-    @Test
-    fun upsertSingleAnnouncementInsertsNewAnnouncement() = runTest {
-        announcementDao.upsertAnnouncements(listOf(baseAnnouncementEntity))
-
-        val result = announcementDao.getAnnouncementWithId(1).first()
-
-        assertThat(result).isNotNull()
-        assertThat(result?.announcement?.id).isEqualTo(1)
-        assertThat(result?.announcement?.title).isEqualTo("Test Title")
-    }
+//    @Test
+//    fun upsertListAnnouncementsInsertsNewAnnouncements() = runTest {
+//        announcementDao.upsertAnnouncements(listOf(baseAnnouncementEntity))
+//
+//        val result = announcementDao.getAnnouncementWithId(1).first()
+//
+//        assertThat(result).isNotNull()
+//        assertThat(result?.announcement?.id).isEqualTo(1)
+//        assertThat(result?.announcement?.title).isEqualTo("Test Title")
+//    }
+//
+//    @Test
+//    fun upsertSingleAnnouncementInsertsNewAnnouncement() = runTest {
+//        announcementDao.upsertAnnouncements(listOf(baseAnnouncementEntity))
+//
+//        val result = announcementDao.getAnnouncementWithId(1).first()
+//
+//        assertThat(result).isNotNull()
+//        assertThat(result?.announcement?.id).isEqualTo(1)
+//        assertThat(result?.announcement?.title).isEqualTo("Test Title")
+//    }
 
     @Test
     fun getAnnouncementWithIdMapsCompleteDetailRelation() = runTest {

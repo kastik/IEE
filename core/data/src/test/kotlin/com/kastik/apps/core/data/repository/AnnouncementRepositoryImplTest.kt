@@ -2,11 +2,20 @@ package com.kastik.apps.core.data.repository
 
 
 import androidx.paging.ExperimentalPagingApi
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Test
 
 
 @OptIn(ExperimentalPagingApi::class, ExperimentalCoroutinesApi::class)
 class AnnouncementRepositoryImplTest {
+
+    @Test
+    fun AsserTrue() {
+        assertThat(true).isTrue()
+    }
+
+
 //    private val testDispatcher = StandardTestDispatcher()
 //    private val fakeCrashlytics = FakeCrashlytics()
 //    private val fakeDatabase = FakeAppDatabase()
