@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: Tests
+  unit-tests:
+    name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -34,8 +34,33 @@ jobs:
       - name: Run Unit Tests
         run: ./gradlew :core:data:testProductionDebugUnitTest :core:database:testProductionDebugUnitTest :core:network:testProductionDebugUnitTest
 
+  screenshot-tests:
+    name: Screenshot Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'jetbrains'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Run Screenshot Tests
+        run: ./gradlew :feature:auth:validateProductionDebugScreenshotTest :feature:onboard:validateProductionDebugScreenshotTest :feature:licenses:validateProductionDebugScreenshotTest :feature:profile:validateProductionDebugScreenshotTest :feature:settings:validateProductionDebugScreenshotTest :feature:announcement:validateProductionDebugScreenshotTest :feature:home:validateProductionDebugScreenshotTest :feature:search:validateProductionDebugScreenshotTest
+
+
+
   build:
-    needs: tests
+    needs: [ unit-tests,screenshot-tests ]
     if: github.event_name == 'push'
     name: Build Release
     runs-on: ubuntu-latest

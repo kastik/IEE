@@ -406,7 +406,7 @@ private fun AnnouncementScreenError(
 
 @Preview
 @Composable
-private fun AnnouncementScreenLoadingPreview() {
+internal fun AnnouncementScreenLoadingPreview() {
     IeePreview {
         AnnouncementScreenLoading()
     }
@@ -414,7 +414,7 @@ private fun AnnouncementScreenLoadingPreview() {
 
 @Preview
 @Composable
-private fun AnnouncementScreenErrorPreview() {
+internal fun AnnouncementScreenErrorPreview() {
     IeePreview {
         AnnouncementScreenError(
             announcementId = 0,
@@ -424,7 +424,7 @@ private fun AnnouncementScreenErrorPreview() {
 
 @Preview
 @Composable
-private fun AnnouncementScreenSuccessPreview() {
+internal fun AnnouncementScreenSuccessPreview() {
     IeePreview {
         AnnouncementScreenSuccess(
             id = 0,

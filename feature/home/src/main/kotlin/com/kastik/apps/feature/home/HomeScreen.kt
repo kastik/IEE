@@ -542,7 +542,7 @@ private fun HomeScreen(
 
 
 @Composable
-fun SignInDialog(
+private fun SignInDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -591,7 +591,7 @@ private fun NotificationRationale() {
 
 @Preview
 @Composable
-fun PreviewHomeScreen() {
+internal fun HomeScreenInitialLoadPreview() {
     val emptyFlow = flowOf(PagingData.empty<Announcement>())
     val lazyItems = emptyFlow.collectAsLazyPagingItems()
     IeePreview {

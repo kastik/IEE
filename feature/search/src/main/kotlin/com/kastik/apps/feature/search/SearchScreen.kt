@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CloudOff
@@ -35,14 +36,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.kastik.apps.core.common.extensions.shareAnnouncement
 import com.kastik.apps.core.designsystem.component.IeeLinearWavyProgressIndicator
+import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.apps.core.designsystem.component.IeeStatusBanner
 import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
 import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
@@ -62,6 +66,7 @@ import com.kastik.apps.core.ui.topbar.SearchBar
 import com.kastik.apps.core.ui.topbar.SearchBarFilters
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,14 +100,14 @@ internal fun SearchRoute(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SearchScreen(
-    activeFilters: ActiveFilters,
-    availableFilters: FilterOptions,
-    quickResults: QuickResults,
-    searchBarTextFieldState: TextFieldState,
+    activeFilters: ActiveFilters = ActiveFilters(),
+    availableFilters: FilterOptions = FilterOptions(),
+    quickResults: QuickResults = QuickResults(),
+    searchBarTextFieldState: TextFieldState = rememberTextFieldState(),
     searchFeedAnnouncements: LazyPagingItems<Announcement>,
-    navigateBack: () -> Unit,
-    navigateToAnnouncement: (Int) -> Unit,
-    onSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
+    navigateBack: () -> Unit = {},
+    navigateToAnnouncement: (Int) -> Unit = {},
+    onSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit = { _, _, _ -> },
 ) {
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
@@ -304,5 +309,18 @@ private fun SearchScreen(
                 onDismiss = { showAuthorSheet.value = false },
             )
         }
+    }
+}
+
+
+@Preview
+@Composable
+internal fun SearchScreenInitialLoadPreview() {
+    val emptyFlow = flowOf(PagingData.empty<Announcement>())
+    val lazyItems = emptyFlow.collectAsLazyPagingItems()
+    IeePreview {
+        SearchScreen(
+            searchFeedAnnouncements = lazyItems,
+        )
     }
 }

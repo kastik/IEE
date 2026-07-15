@@ -51,6 +51,7 @@ mockk = "1.14.11"
 robolectric = "4.16.1"
 espressoCore = "3.7.0"
 
+screenshot = "0.0.1-alpha15"
 uiautomator = "2.4.0"
 profileinstaller = "1.4.1"
 androidx-macro-benchmark = "1.5.0-alpha07"
@@ -158,6 +159,7 @@ androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", 
 androidx-compose-ui-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 io-mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot" }
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 androidx-truth = { group = "androidx.test.ext", name = "truth", version.ref = "androidx-test-core" }
@@ -169,6 +171,7 @@ androidx-truth = { group = "androidx.test.ext", name = "truth", version.ref = "a
 compose-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+screenshot-gradlePlugin = { group = "com.android.compose.screenshot", name = "screenshot-test-gradle-plugin", version.ref = "screenshot" }
 
 #Compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -214,7 +217,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "composeStabilityAnalyzer" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
 
 ####### Convention plugins #######
 kastik-application = { id = "com.kastik.application" }

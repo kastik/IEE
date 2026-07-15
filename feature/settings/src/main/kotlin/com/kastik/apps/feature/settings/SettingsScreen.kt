@@ -591,7 +591,7 @@ private fun SettingsSliderRow(
 }
 
 @Composable
-private fun SettingNavigationRow(
+internal fun SettingNavigationRow(
     title: String, subtitle: String? = null, onClick: () -> Unit
 ) {
     Row(
@@ -621,7 +621,7 @@ private fun SettingNavigationRow(
 
 @Preview
 @Composable
-private fun SettingsScreenSuccessPreview() {
+internal fun SettingsScreenSuccessPreview() {
     IeePreview {
         SettingsScreenSuccess(
             theme = Theme.FOLLOW_SYSTEM,
@@ -649,7 +649,7 @@ private fun SettingsScreenSuccessPreview() {
 
 @Preview
 @Composable
-private fun SettingsScreenLoadingPreview() {
+internal fun SettingsScreenLoadingPreview() {
     IeePreview {
         SettingsScreenLoading()
     }

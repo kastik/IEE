@@ -86,7 +86,7 @@ internal fun OnboardWelcome(
 
 @Preview
 @Composable
-private fun OnboardWelcomePreview() {
+internal fun OnboardWelcomePreview() {
     IeePreview {
         OnboardWelcome()
     }
