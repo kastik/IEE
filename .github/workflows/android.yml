@@ -114,7 +114,7 @@ jobs:
   publish-playstore-beta:
     needs: [ unit-tests, screenshot-tests ]
     if: github.event_name == 'push'
-    name: Deploy to Play Store Open Testing (AAB)
+    name: Publish PlayStore Beta
     runs-on: ubuntu-latest
     timeout-minutes: 120
 
