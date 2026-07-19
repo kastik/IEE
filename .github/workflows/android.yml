@@ -159,6 +159,6 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
           packageName: com.kastik.apps
-          releaseFiles: app/build/outputs/bundle/production/release/*.aab
+          releaseFiles: app/build/outputs/bundle/productionRelease/*.aab
           track: beta
           status: completed
