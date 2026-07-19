@@ -59,10 +59,10 @@ jobs:
 
 
 
-  build:
+  publish-github-release:
     needs: [ unit-tests,screenshot-tests ]
     if: github.event_name == 'push'
-    name: Build Release
+    name: Publish GitHub Release
     runs-on: ubuntu-latest
     timeout-minutes: 120
 
@@ -110,3 +110,55 @@ jobs:
           gh release create "v$APP_VERSION" \
             app/build/outputs/apk/production/release/*.apk \
             --generate-notes
+
+  publish-playstore-beta:
+    needs: [ unit-tests, screenshot-tests ]
+    if: github.event_name == 'push'
+    name: Deploy to Play Store Open Testing (AAB)
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'jetbrains'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Decode Google Services
+        env:
+          GOOGLE_JSON: ${{ secrets.GOOGLE_SERVICES_FILE }}
+        run: echo "$GOOGLE_JSON" > app/google-services.json
+
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.RELEASE_KEYSTORE_FILE }}
+        run: echo $ENCODED_STRING | base64 -d > app/release.jks
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build Release AAB
+        env:
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: |
+          ./gradlew bundleProductionRelease
+
+      - name: Upload AAB
+        uses: r0adkll/upload-google-play@v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+          packageName: com.kastik.apps
+          releaseFiles: app/build/outputs/bundle/production/release/*.aab
+          track: beta
+          status: completed
