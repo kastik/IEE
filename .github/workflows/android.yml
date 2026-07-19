@@ -160,10 +160,5 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
           packageName: com.kastik.apps
           releaseFiles: app/build/outputs/bundle/productionRelease/*.aab
-          tracks: beta, internal
+          tracks: beta
           status: completed
-
-      - name: Publish Summary
-        run: |
-          echo "### 📱 Internal App Sharing" >> $GITHUB_STEP_SUMMARY
-          echo "[Install via Play Store]($INTERNAL_SHARING_DOWNLOAD_URL)" >> $GITHUB_STEP_SUMMARY
