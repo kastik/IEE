@@ -16,7 +16,7 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 55
+        versionCode = 56
         versionName = "2.4.1"
     }
 
