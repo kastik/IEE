@@ -160,7 +160,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
           packageName: com.kastik.apps
           releaseFiles: app/build/outputs/bundle/productionRelease/*.aab
-          tracks: beta, internalsharing
+          tracks: beta, internal
           status: completed
 
       - name: Publish Summary
