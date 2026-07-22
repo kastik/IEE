@@ -57,8 +57,53 @@ jobs:
       - name: Run Screenshot Tests
         run: ./gradlew :feature:auth:validateDebugScreenshotTest :feature:onboard:validateDebugScreenshotTest :feature:licenses:validateDebugScreenshotTest :feature:profile:validateDebugScreenshotTest :feature:settings:validateDebugScreenshotTest :feature:announcement:validateDebugScreenshotTest :feature:home:validateDebugScreenshotTest :feature:search:validateDebugScreenshotTest
 
-  generate-profiles:
+  bump:
     needs: [ unit-tests, screenshot-tests ]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    name: Bump Version Code & Name
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
+
+      - name: Set up Git User
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Calculate and Update Version
+        run: |
+          GRADLE_FILE="app/build.gradle.kts"
+          
+          CURRENT_CODE=$(grep -E 'versionCode\s*=\s*[0-9]+' "$GRADLE_FILE" | grep -oE '[0-9]+')
+          CURRENT_NAME=$(grep -E 'versionName\s*=\s*"[^"]+"' "$GRADLE_FILE" | grep -oE '"[^"]+"' | tr -d '"')
+          
+          echo "Current Version Code: $CURRENT_CODE"
+          echo "Current Version Name: $CURRENT_NAME"
+          
+          NEW_CODE=$((CURRENT_CODE + 1))
+          
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_NAME"
+          NEW_PATCH=$((PATCH + 1))
+          NEW_NAME="$MAJOR.$MINOR.$NEW_PATCH"
+          
+          echo "New Version Code: $NEW_CODE"
+          echo "New Version Name: $NEW_NAME"
+          
+          sed -i -E "s/(versionCode\s*=\s*)[0-9]+/\1$NEW_CODE/" "$GRADLE_FILE"
+          sed -i -E "s/(versionName\s*=\s*)[\"'][^\"']+[\"']/\1\"$NEW_NAME\"/" "$GRADLE_FILE"
+          
+          git add "$GRADLE_FILE"
+          git commit -m "CI: Bump version to $NEW_NAME ($NEW_CODE) [skip ci]"
+          git push origin master
+
+  generate-profiles:
+    needs: [ bump ]
     if: github.event_name == 'push'
     name: Generate Profile
     runs-on: ubuntu-latest
@@ -106,7 +151,9 @@ jobs:
             ~/.android/avd
             ~/.android/adb*
             /usr/local/lib/android/sdk/system-images
-          key: gmd-avd-${{ runner.os }}
+            /usr/local/lib/android/sdk/emulator
+            /usr/local/lib/android/sdk/cmdline-tools
+            key: gmd-avd-${{ runner.os }}-${{ hashFiles('**/build.gradle*', '**/gradle/libs.versions.toml') }}
 
       - name: Generate Baseline & Startup Profiles
         env:
