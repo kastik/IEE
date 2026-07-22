@@ -19,8 +19,21 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 56
-        versionName = "2.4.1"
+        versionCode = 57
+        versionName = "2.4.2"
+    }
+
+    flavorDimensions += BuildDimensions.ENVIRONMENT
+    productFlavors {
+        maybeCreate(BuildFlavors.PRODUCTION).apply {
+            dimension = BuildDimensions.ENVIRONMENT
+        }
+        maybeCreate(BuildFlavors.LOCAL).apply {
+            dimension = BuildDimensions.ENVIRONMENT
+            isDefault = true
+            applicationIdSuffix = ".local"
+            versionNameSuffix = "-local"
+        }
     }
 
     flavorDimensions += BuildDimensions.ENVIRONMENT
