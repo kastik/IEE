@@ -55,7 +55,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Screenshot Tests
-        run: ./gradlew :feature:auth:validateProductionDebugScreenshotTest :feature:onboard:validateProductionDebugScreenshotTest :feature:licenses:validateProductionDebugScreenshotTest :feature:profile:validateProductionDebugScreenshotTest :feature:settings:validateProductionDebugScreenshotTest :feature:announcement:validateProductionDebugScreenshotTest :feature:home:validateProductionDebugScreenshotTest :feature:search:validateProductionDebugScreenshotTest
+        run: ./gradlew :feature:auth:validateDebugScreenshotTest :feature:onboard:validateDebugScreenshotTest :feature:licenses:validateDebugScreenshotTest :feature:profile:validateDebugScreenshotTest :feature:settings:validateDebugScreenshotTest :feature:announcement:validateDebugScreenshotTest :feature:home:validateDebugScreenshotTest :feature:search:validateDebugScreenshotTest
 
   generate-profiles:
     name: Generate Baseline & Startup Profile
@@ -73,6 +73,16 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
+
+      - name: Decode Google Services
+        env:
+          GOOGLE_JSON: ${{ secrets.GOOGLE_SERVICES_FILE }}
+        run: echo "$GOOGLE_JSON" > app/google-services.json
+
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.RELEASE_KEYSTORE_FILE }}
+        run: echo $ENCODED_STRING | base64 -d > app/release.jks
 
       - name: Make gradlew executable
         run: chmod +x gradlew

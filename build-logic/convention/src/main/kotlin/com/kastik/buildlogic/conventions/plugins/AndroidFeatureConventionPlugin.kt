@@ -14,7 +14,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             apply(plugin = "com.kastik.library.compose")
             apply(plugin = "com.android.compose.screenshot")
             apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
-            apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
             val libs = project.libs
 
             dependencies {
