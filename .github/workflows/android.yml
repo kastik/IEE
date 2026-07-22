@@ -107,6 +107,10 @@ jobs:
           key: gmd-avd-${{ runner.os }}
 
       - name: Run Tests on Gradle Managed Devices
+        env:
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: ./gradlew :app:generateBaselineProfile
 
       - name: Upload Baseline Profiles
