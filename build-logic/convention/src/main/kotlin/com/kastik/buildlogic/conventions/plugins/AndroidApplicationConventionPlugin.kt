@@ -1,9 +1,9 @@
-package com.kastik.buildlogic.conventions.application
+package com.kastik.buildlogic.conventions.plugins
 
 import com.android.build.api.dsl.ApplicationExtension
-import com.kastik.buildlogic.conventions.config.AppConfig
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.kastik.buildlogic.conventions.AppConfig
 import com.kastik.buildlogic.conventions.extensions.configureAndroidCompose
-import com.kastik.buildlogic.conventions.extensions.configureFlavors
 import com.kastik.buildlogic.conventions.extensions.configureKotlinJvm
 import com.kastik.buildlogic.conventions.extensions.libs
 import org.gradle.api.Plugin
@@ -33,25 +33,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     targetCompatibility = AppConfig.targetCompatibility
                 }
 
-                testFixtures {
-                    enable = true
-                }
-
-                configureFlavors(this)
                 configureAndroidCompose(this)
 
-            }
-
-            afterEvaluate {
-                val androidExtension = extensions.getByType<ApplicationExtension>()
-                val projectName = target.rootProject.name.lowercase()
-                val moduleName = target.name.lowercase()
-                val appVersionName = androidExtension.defaultConfig.versionName ?: "unknown"
-                val appVersionCode = androidExtension.defaultConfig.versionCode ?: 0
-
-                extensions.configure<BasePluginExtension> {
-                    archivesName.set("$projectName-$moduleName-$appVersionName-($appVersionCode)")
-                }
             }
 
             extensions.configure<JavaPluginExtension> {
@@ -59,15 +42,26 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 targetCompatibility = AppConfig.targetCompatibility
             }
 
-            dependencies {
-                add("implementation", libs.findLibrary("androidx-splashscreen").get())
-                add("implementation", libs.findLibrary("androidx.activity").get())
-                add("implementation", libs.findLibrary("androidx-core-ktx").get())
-                add("implementation", libs.findLibrary("androidx-activity-compose").get())
-                add("implementation", libs.findLibrary("kotlinx-collections-immutable").get())
-                add("implementation", libs.findLibrary("androidx-hilt-navigation-compose").get())
-                add("implementation", libs.findLibrary("androidx-work-runtime-ktx").get())
+            val androidComponents = extensions.getByType<ApplicationAndroidComponentsExtension>()
+
+            androidComponents.onVariants { variant ->
+                val projectName = target.rootProject.name.lowercase()
+                val moduleName = target.name.lowercase()
+
+                val appVersionName = variant.outputs.first().versionName.getOrElse("unknown")
+                val appVersionCode = variant.outputs.first().versionCode.getOrElse(0)
+
+                extensions.configure<BasePluginExtension> {
+                    archivesName.set("$projectName-$moduleName-$appVersionName-($appVersionCode)")
+                }
             }
+
+            dependencies {
+                add("implementation", libs.findLibrary("androidx-core-ktx").get())
+                add("implementation", libs.findLibrary("androidx.activity").get())
+                add("implementation", libs.findLibrary("androidx-activity-compose").get())
+            }
+
             configureKotlinJvm()
         }
     }

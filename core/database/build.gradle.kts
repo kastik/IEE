@@ -12,6 +12,10 @@ plugins {
 
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.database"
+
+    testFixtures {
+        enable = true
+    }
 }
 
 room {

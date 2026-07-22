@@ -1,6 +1,8 @@
 @file:OptIn(ExperimentalKotlinGradlePluginApi::class)
 
 import com.android.build.api.dsl.LibraryExtension
+import com.kastik.buildlogic.conventions.BuildDimensions
+import com.kastik.buildlogic.conventions.BuildFlavors
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
@@ -12,6 +14,20 @@ plugins {
 
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.network"
+
+    flavorDimensions += BuildDimensions.ENVIRONMENT
+    productFlavors {
+        maybeCreate(BuildFlavors.PRODUCTION).apply {
+            dimension = BuildDimensions.ENVIRONMENT
+        }
+        maybeCreate(BuildFlavors.LOCAL).apply {
+            dimension = BuildDimensions.ENVIRONMENT
+        }
+    }
+
+    testFixtures {
+        enable = true
+    }
 }
 
 dependencies {

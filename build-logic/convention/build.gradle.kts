@@ -21,54 +21,49 @@ gradlePlugin {
         create("androidApplication") {
             id = "com.kastik.application"
             implementationClass =
-                "com.kastik.buildlogic.conventions.application.AndroidApplicationConventionPlugin"
+                "com.kastik.buildlogic.conventions.plugins.AndroidApplicationConventionPlugin"
         }
 
         create("androidLibrary") {
             id = "com.kastik.library"
             implementationClass =
-                "com.kastik.buildlogic.conventions.library.AndroidLibraryConventionPlugin"
+                "com.kastik.buildlogic.conventions.plugins.AndroidLibraryConventionPlugin"
         }
 
         create("androidLibraryCompose") {
             id = "com.kastik.library.compose"
             implementationClass =
-                "com.kastik.buildlogic.conventions.library.AndroidLibraryComposeConventionPlugin"
+                "com.kastik.buildlogic.conventions.plugins.AndroidLibraryComposeConventionPlugin"
         }
 
         create("jvmLibrary") {
             id = "com.kastik.jvm.library"
             implementationClass =
-                "com.kastik.buildlogic.conventions.library.JvmLibraryConventionPlugin"
+                "com.kastik.buildlogic.conventions.plugins.JvmLibraryConventionPlugin"
         }
 
         create("feature") {
             id = "com.kastik.library.feature"
             implementationClass =
-                "com.kastik.buildlogic.conventions.feature.FeatureConventionPlugin"
+                "com.kastik.buildlogic.conventions.plugins.AndroidFeatureConventionPlugin"
         }
 
         create("hilt") {
             id = "com.kastik.hilt"
             implementationClass =
-                "com.kastik.buildlogic.conventions.hilt.AndroidHiltConventionPlugin"
+                "com.kastik.buildlogic.conventions.plugins.AndroidHiltConventionPlugin"
         }
 
         create("testLibrary") {
             id = "com.kastik.library.testing"
             implementationClass =
-                "com.kastik.buildlogic.conventions.testing.AndroidLibraryTestingConventionPlugin"
-        }
-        create("testLibraryCompose") {
-            id = "com.kastik.library.testing.compose"
-            implementationClass =
-                "com.kastik.buildlogic.conventions.testing.AndroidLibraryComposeTestingConventionPlugin"
+                "com.kastik.buildlogic.conventions.plugins.AndroidLibraryTestingConventionPlugin"
         }
 
         create("benchmark") {
             id = "com.kastik.benchmark"
             implementationClass =
-                "com.kastik.buildlogic.conventions.benchmark.BenchmarkConventionPlugin"
+                "com.kastik.buildlogic.conventions.plugins.AndroidBenchmarkConventionPlugin"
         }
     }
 }

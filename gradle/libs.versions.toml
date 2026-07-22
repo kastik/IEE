@@ -176,6 +176,7 @@ screenshot-gradlePlugin = { group = "com.android.compose.screenshot", name = "sc
 #Compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -226,6 +227,5 @@ kastik-library-compose = { id = "com.kastik.library.compose" }
 kastik-hilt = { id = "com.kastik.hilt" }
 kastik-jvm-library = { id = "com.kastik.jvm.library" }
 kastik-library-testing = { id = "com.kastik.library.testing" }
-kastik-library-testing-compose = { id = "com.kastik.library.testing.compose" }
 kastik-benchmark = { id = "com.kastik.benchmark" }
 kastik-feature = { id = "com.kastik.library.feature" }

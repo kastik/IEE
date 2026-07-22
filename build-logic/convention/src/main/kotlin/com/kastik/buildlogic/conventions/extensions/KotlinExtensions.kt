@@ -1,6 +1,6 @@
 package com.kastik.buildlogic.conventions.extensions
 
-import com.kastik.buildlogic.conventions.config.AppConfig
+import com.kastik.buildlogic.conventions.AppConfig
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile

@@ -7,6 +7,17 @@ plugins {
 
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.downloader"
+
+    flavorDimensions += "environment"
+    productFlavors {
+        maybeCreate("local").apply {
+            dimension = "environment"
+        }
+        maybeCreate("production").apply {
+            dimension = "environment"
+            isDefault = true
+        }
+    }
 }
 
 dependencies {

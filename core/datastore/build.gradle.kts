@@ -7,6 +7,10 @@ plugins {
 
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.datastore"
+
+    testFixtures {
+        enable = true
+    }
 }
 
 dependencies {

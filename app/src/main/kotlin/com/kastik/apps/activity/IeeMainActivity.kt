@@ -39,6 +39,8 @@ class IeeMainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         workScheduler.scheduleStartupSync()
+        val skipOnboardingForBenchmark =
+            intent.getBooleanExtra("SKIP_ONBOARDING_FOR_BENCHMARK", false)
 
         splashScreen.setKeepOnScreenCondition {
             viewModel.mainActivityState.value is IeeMainActivityUiState.Loading
@@ -60,7 +62,7 @@ class IeeMainActivity : ComponentActivity() {
                             }
                         ) {
                             IeeNavHost(
-                                hasFinishedOnboarding = state.hasFinishedOnboarding
+                                hasFinishedOnboarding = state.hasFinishedOnboarding || skipOnboardingForBenchmark
                             )
                         }
                     }

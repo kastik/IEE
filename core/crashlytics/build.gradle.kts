@@ -17,6 +17,10 @@ configure<LibraryExtension> {
         }
     }
 
+    testFixtures {
+        enable = true
+    }
+
 }
 
 

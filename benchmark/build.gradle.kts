@@ -1,4 +1,7 @@
+import com.android.build.api.dsl.ManagedVirtualDevice
 import com.android.build.api.dsl.TestExtension
+import com.kastik.buildlogic.conventions.BuildDimensions
+import com.kastik.buildlogic.conventions.BuildFlavors
 
 plugins {
     alias(libs.plugins.kastik.benchmark)
@@ -11,15 +14,30 @@ configure<TestExtension> {
     defaultConfig {
         minSdk = 30
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        missingDimensionStrategy(BuildDimensions.ENVIRONMENT, BuildFlavors.PRODUCTION)
     }
 
     targetProjectPath = ":app"
     experimentalProperties["android.experimental.self-instrumenting"] = true
 
+    testOptions {
+        managedDevices {
+            localDevices {
+                maybeCreate("pixel8Api37").apply {
+                    device = "Pixel 8"
+                    apiLevel = 37
+                    systemImageSource = "google"
+                    testedAbi = "x86_64"
+                    pageAlignment = ManagedVirtualDevice.PageAlignment.FORCE_16KB_PAGES
+                }
+            }
+        }
+    }
 }
 
 baselineProfile {
-    useConnectedDevices = true
+    managedDevices += "pixel8Api37"
+    useConnectedDevices = false
     skipBenchmarksOnEmulator = true
 }
 
