@@ -19,8 +19,8 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.kastik.apps"
-        versionCode = 58
-        versionName = "2.4.3"
+        versionCode = 59
+        versionName = "2.4.4"
     }
 
     flavorDimensions += BuildDimensions.ENVIRONMENT
