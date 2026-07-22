@@ -26,6 +26,7 @@ fun MacrobenchmarkScope.launchAppAndDismissSigningDialog() {
 
 //TODO This broke in HomeScreen after we added Horizontal Pager,
 fun UiAutomatorTestScope.scrollFeed() {
+    waitForStableInActiveWindow(stableTimeoutMs = 10000, stableIntervalMs = 5000)
     val announcementList =
         onElement(timeoutMs = 10000) { viewIdResourceName == "announcement_feed" }
 
