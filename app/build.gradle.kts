@@ -36,19 +36,6 @@ configure<ApplicationExtension> {
         }
     }
 
-    flavorDimensions += BuildDimensions.ENVIRONMENT
-    productFlavors {
-        maybeCreate(BuildFlavors.PRODUCTION).apply {
-            dimension = BuildDimensions.ENVIRONMENT
-        }
-        maybeCreate(BuildFlavors.LOCAL).apply {
-            dimension = BuildDimensions.ENVIRONMENT
-            isDefault = true
-            applicationIdSuffix = ".local"
-            versionNameSuffix = "-local"
-        }
-    }
-
     val keystoreProperties = Properties().apply {
         val propsFile = rootProject.file("local.properties")
         if (propsFile.exists()) load(FileInputStream(propsFile))
