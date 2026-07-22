@@ -23,7 +23,7 @@ configure<TestExtension> {
     testOptions {
         managedDevices {
             localDevices {
-                maybeCreate("pixel8Api37").apply {
+                maybeCreate("pixel8api37").apply {
                     device = "Pixel 8"
                     apiLevel = 37
                     systemImageSource = "google"
@@ -36,7 +36,7 @@ configure<TestExtension> {
 }
 
 baselineProfile {
-    managedDevices += "pixel8Api37"
+    managedDevices += "pixel8api37"
     useConnectedDevices = false
     skipBenchmarksOnEmulator = true
 }

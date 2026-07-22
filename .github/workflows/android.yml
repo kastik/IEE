@@ -58,7 +58,9 @@ jobs:
         run: ./gradlew :feature:auth:validateDebugScreenshotTest :feature:onboard:validateDebugScreenshotTest :feature:licenses:validateDebugScreenshotTest :feature:profile:validateDebugScreenshotTest :feature:settings:validateDebugScreenshotTest :feature:announcement:validateDebugScreenshotTest :feature:home:validateDebugScreenshotTest :feature:search:validateDebugScreenshotTest
 
   generate-profiles:
-    name: Generate Baseline & Startup Profile
+    needs: [ unit-tests, screenshot-tests ]
+    if: github.event_name == 'push'
+    name: Generate Profile
     runs-on: ubuntu-latest
     timeout-minutes: 120
 
@@ -106,7 +108,7 @@ jobs:
             /usr/local/lib/android/sdk/system-images
           key: gmd-avd-${{ runner.os }}
 
-      - name: Run Tests on Gradle Managed Devices
+      - name: Generate Baseline & Startup Profiles
         env:
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
@@ -120,7 +122,7 @@ jobs:
           path: app/src/**/generated/baselineProfiles/**
 
   publish-github-release:
-    needs: [ unit-tests, screenshot-tests, generate-profiles ]
+    needs: [ generate-profiles ]
     if: github.event_name == 'push'
     name: Publish GitHub Release
     runs-on: ubuntu-latest
@@ -177,7 +179,7 @@ jobs:
             --generate-notes
 
   publish-playstore-beta:
-    needs: [ unit-tests, screenshot-tests, generate-profiles ]
+    needs: [ generate-profiles ]
     if: github.event_name == 'push'
     name: Publish PlayStore Beta
     runs-on: ubuntu-latest

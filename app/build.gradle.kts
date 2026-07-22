@@ -116,8 +116,4 @@ baselineProfile {
     mergeIntoMain = true
     dexLayoutOptimization = true
     automaticGenerationDuringBuild = false
-
-    warnings {
-        disabledVariants = false
-    }
 }
