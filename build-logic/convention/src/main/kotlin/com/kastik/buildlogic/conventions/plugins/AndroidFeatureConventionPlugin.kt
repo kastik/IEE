@@ -1,4 +1,4 @@
-package com.kastik.buildlogic.conventions.feature
+package com.kastik.buildlogic.conventions.plugins
 
 import com.android.build.api.dsl.LibraryExtension
 import com.kastik.buildlogic.conventions.extensions.libs
@@ -8,22 +8,15 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 
-class FeatureConventionPlugin : Plugin<Project> {
+class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
             apply(plugin = "com.kastik.library.compose")
             apply(plugin = "com.android.compose.screenshot")
-            apply(plugin = "com.kastik.hilt")
             apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
             val libs = project.libs
 
             dependencies {
-                add("implementation", project(":core:domain"))
-                add("implementation", project(":core:model"))
-                add("implementation", project(":core:analytics"))
-                add("implementation", project(":core:ui"))
-                add("implementation", project(":core:designsystem"))
-
                 add(
                     "implementation",
                     libs.findLibrary("androidx-compose-material3-adaptive-navigation-suite").get()

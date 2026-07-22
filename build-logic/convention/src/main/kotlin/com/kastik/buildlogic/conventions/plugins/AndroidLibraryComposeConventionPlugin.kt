@@ -1,4 +1,4 @@
-package com.kastik.buildlogic.conventions.library
+package com.kastik.buildlogic.conventions.plugins
 
 import com.android.build.api.dsl.LibraryExtension
 import com.kastik.buildlogic.conventions.extensions.configureAndroidCompose

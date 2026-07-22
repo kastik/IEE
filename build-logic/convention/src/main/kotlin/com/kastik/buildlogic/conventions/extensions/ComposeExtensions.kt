@@ -19,15 +19,12 @@ fun Project.configureAndroidCompose(
 
     extension.apply {
         buildFeatures.compose = true
-        composeOptions.kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     extensions.configure<ComposeCompilerGradlePluginExtension> {
         stabilityConfigurationFiles.addAll(
             rootProject.layout.projectDirectory.file("stability_config.conf")
         )
-        reportsDestination.set(layout.buildDirectory.dir("compose_compiler"))
-        metricsDestination.set(layout.buildDirectory.dir("compose_compiler"))
     }
 
     dependencies {
@@ -36,14 +33,15 @@ fun Project.configureAndroidCompose(
         add("testImplementation", platform(bom))
         add("androidTestImplementation", platform(bom))
 
+        add("implementation", libs.findLibrary("androidx-compose-foundation").get())
+
         add("implementation", libs.findLibrary("androidx-compose-ui").get())
         add("implementation", libs.findLibrary("androidx-compose-ui-graphics").get())
-
-        add("implementation", libs.findLibrary("androidx-compose-material3").get())
 
         add("implementation", libs.findLibrary("androidx-compose-ui-tooling-preview").get())
         add("debugImplementation", libs.findLibrary("androidx-compose-ui-tooling").get())
 
+        add("implementation", libs.findLibrary("androidx-compose-material3").get())
         add("implementation", libs.findLibrary("androidx-material-icons-extended").get())
     }
 }

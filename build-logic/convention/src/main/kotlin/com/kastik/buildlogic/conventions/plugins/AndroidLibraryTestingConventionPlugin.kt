@@ -1,4 +1,4 @@
-package com.kastik.buildlogic.conventions.testing
+package com.kastik.buildlogic.conventions.plugins
 
 import com.kastik.buildlogic.conventions.extensions.libs
 import org.gradle.api.Plugin

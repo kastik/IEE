@@ -1,4 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
+import com.kastik.buildlogic.conventions.BuildDimensions
+import com.kastik.buildlogic.conventions.BuildFlavors
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -14,10 +16,24 @@ plugins {
 configure<ApplicationExtension> {
     namespace = "com.kastik.apps"
 
+
     defaultConfig {
         applicationId = "com.kastik.apps"
         versionCode = 56
         versionName = "2.4.1"
+    }
+
+    flavorDimensions += BuildDimensions.ENVIRONMENT
+    productFlavors {
+        maybeCreate(BuildFlavors.PRODUCTION).apply {
+            dimension = BuildDimensions.ENVIRONMENT
+        }
+        maybeCreate(BuildFlavors.LOCAL).apply {
+            dimension = BuildDimensions.ENVIRONMENT
+            isDefault = true
+            applicationIdSuffix = ".local"
+            versionNameSuffix = "-local"
+        }
     }
 
     val keystoreProperties = Properties().apply {
@@ -53,13 +69,6 @@ configure<ApplicationExtension> {
             applicationIdSuffix = ".debug"
         }
     }
-
-    productFlavors {
-        named("local") {
-            applicationIdSuffix = ".local"
-            versionNameSuffix = "-local"
-        }
-    }
 }
 
 dependencies {
@@ -80,6 +89,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:work"))
     implementation(project(":core:downloader"))
+    implementation(project(":core:network"))
 
     implementation(project(":dev-tools"))
 
@@ -94,6 +104,11 @@ dependencies {
 
     baselineProfile(project(":benchmark"))
     implementation(libs.androidx.profileinstaller)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.splashscreen)
 }
 
 baselineProfile {
@@ -101,8 +116,4 @@ baselineProfile {
     mergeIntoMain = true
     dexLayoutOptimization = true
     automaticGenerationDuringBuild = false
-
-    warnings {
-        disabledVariants = false
-    }
 }

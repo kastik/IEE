@@ -5,35 +5,35 @@ import androidx.test.uiautomator.UiAutomatorTestScope
 import androidx.test.uiautomator.textAsString
 
 fun MacrobenchmarkScope.navigateToSettings() {
-    onElement { contentDescription == "Settings" }.click()
+    onElement(timeoutMs = 10000) { contentDescription == "Settings" }.click()
 }
 
 fun MacrobenchmarkScope.toggleSortingOptions() {
-    onElement { textAsString() == "Descending" }.click()
-    onElement { textAsString() == "Ascending" }.click()
-    onElement { textAsString() == "Priority" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "Descending" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "Ascending" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "Priority" }.click()
 }
 
 fun UiAutomatorTestScope.toggleFabFilters() {
-    onElement { textAsString() == "For You" }.click()
-    onElement { textAsString() == "For You" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "For You" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "For You" }.click()
 }
 
 
 fun UiAutomatorTestScope.toggleSearchFieldOptions() {
-    onElement { textAsString() == "Body" }.click()
-    onElement { textAsString() == "Both" }.click()
-    onElement { textAsString() == "Title" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "Body" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "Both" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "Title" }.click()
 }
 
 fun UiAutomatorTestScope.toggleThemeOptions() {
-    onElement { textAsString() == "Light" }.click()
-    onElement { textAsString() == "Dark" }.click()
-    onElement { textAsString() == "System" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "Light" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "Dark" }.click()
+    onElement(timeoutMs = 10000) { textAsString() == "System" }.click()
 }
 
 fun UiAutomatorTestScope.toggleDynamicTheme() {
     repeat(2) {
-        onElement { textAsString() == "Dynamic color" }.click()
+        onElement(timeoutMs = 10000) { textAsString() == "Dynamic color" }.click()
     }
 }

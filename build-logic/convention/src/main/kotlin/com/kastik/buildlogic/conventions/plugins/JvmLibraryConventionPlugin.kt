@@ -1,4 +1,4 @@
-package com.kastik.buildlogic.conventions.library
+package com.kastik.buildlogic.conventions.plugins
 
 import com.kastik.buildlogic.conventions.extensions.configureKotlinJvm
 import org.gradle.api.Plugin

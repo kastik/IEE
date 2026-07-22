@@ -1,8 +1,7 @@
-package com.kastik.buildlogic.conventions.library
+package com.kastik.buildlogic.conventions.plugins
 
 import com.android.build.api.dsl.LibraryExtension
-import com.kastik.buildlogic.conventions.config.AppConfig
-import com.kastik.buildlogic.conventions.extensions.configureFlavors
+import com.kastik.buildlogic.conventions.AppConfig
 import com.kastik.buildlogic.conventions.extensions.configureKotlinJvm
 import com.kastik.buildlogic.conventions.extensions.libs
 import org.gradle.api.Plugin
@@ -28,18 +27,12 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     sourceCompatibility = AppConfig.sourceCompatibility
                     targetCompatibility = AppConfig.targetCompatibility
                 }
-
-                testFixtures {
-                    enable = true
-                }
-
-                configureFlavors(this)
             }
 
             dependencies {
-                add("implementation", libs.findLibrary("androidx-core-ktx").get())
                 add("implementation", libs.findLibrary("kotlinx-collections-immutable").get())
             }
+
             configureKotlinJvm()
         }
     }

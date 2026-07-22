@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'jetbrains'
@@ -32,7 +32,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Unit Tests
-        run: ./gradlew :core:data:testProductionDebugUnitTest :core:database:testProductionDebugUnitTest :core:network:testProductionDebugUnitTest
+        run: ./gradlew :core:data:testProductionDebugUnitTest :core:database:testDebugUnitTest :core:network:testProductionDebugUnitTest
 
   screenshot-tests:
     name: Screenshot Tests
@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'jetbrains'
@@ -55,12 +55,74 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Screenshot Tests
-        run: ./gradlew :feature:auth:validateProductionDebugScreenshotTest :feature:onboard:validateProductionDebugScreenshotTest :feature:licenses:validateProductionDebugScreenshotTest :feature:profile:validateProductionDebugScreenshotTest :feature:settings:validateProductionDebugScreenshotTest :feature:announcement:validateProductionDebugScreenshotTest :feature:home:validateProductionDebugScreenshotTest :feature:search:validateProductionDebugScreenshotTest
+        run: ./gradlew :feature:auth:validateDebugScreenshotTest :feature:onboard:validateDebugScreenshotTest :feature:licenses:validateDebugScreenshotTest :feature:profile:validateDebugScreenshotTest :feature:settings:validateDebugScreenshotTest :feature:announcement:validateDebugScreenshotTest :feature:home:validateDebugScreenshotTest :feature:search:validateDebugScreenshotTest
 
+  generate-profiles:
+    needs: [ unit-tests, screenshot-tests ]
+    if: github.event_name == 'push'
+    name: Generate Profile
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
 
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'jetbrains'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Decode Google Services
+        env:
+          GOOGLE_JSON: ${{ secrets.GOOGLE_SERVICES_FILE }}
+        run: echo "$GOOGLE_JSON" > app/google-services.json
+
+      - name: Decode Keystore
+        env:
+          ENCODED_STRING: ${{ secrets.RELEASE_KEYSTORE_FILE }}
+        run: echo $ENCODED_STRING | base64 -d > app/release.jks
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Accept Android SDK licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+
+      - name: Cache AVD and System Images
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd
+            ~/.android/adb*
+            /usr/local/lib/android/sdk/system-images
+          key: gmd-avd-${{ runner.os }}
+
+      - name: Generate Baseline & Startup Profiles
+        env:
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: ./gradlew :app:generateBaselineProfile
+
+      - name: Upload Baseline Profiles
+        uses: actions/upload-artifact@v4
+        with:
+          name: profiles
+          path: app/src/**/generated/baselineProfiles/**
 
   publish-github-release:
-    needs: [ unit-tests,screenshot-tests ]
+    needs: [ generate-profiles ]
     if: github.event_name == 'push'
     name: Publish GitHub Release
     runs-on: ubuntu-latest
@@ -72,8 +134,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Download Baseline Profiles
+        uses: actions/download-artifact@v4
+        with:
+          name: profiles
+
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'jetbrains'
@@ -112,7 +179,7 @@ jobs:
             --generate-notes
 
   publish-playstore-beta:
-    needs: [ unit-tests, screenshot-tests ]
+    needs: [ generate-profiles ]
     if: github.event_name == 'push'
     name: Publish PlayStore Beta
     runs-on: ubuntu-latest
@@ -124,8 +191,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Download Baseline Profiles
+        uses: actions/download-artifact@v4
+        with:
+          name: profiles
+
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'jetbrains'

@@ -1,4 +1,4 @@
-package com.kastik.buildlogic.conventions.config
+package com.kastik.buildlogic.conventions
 
 import org.gradle.api.JavaVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
