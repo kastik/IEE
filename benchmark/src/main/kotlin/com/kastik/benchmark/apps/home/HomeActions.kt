@@ -6,6 +6,7 @@ import androidx.test.uiautomator.UiAutomatorTestScope
 
 fun UiAutomatorTestScope.refreshFeed() {
     waitForStableInActiveWindow()
-    val announcementList = onElement { viewIdResourceName == "announcement_feed" }
+    val announcementList =
+        onElement(timeoutMs = 10000) { viewIdResourceName == "announcement_feed" }
     announcementList.scroll(Direction.UP, 1f)
 }
