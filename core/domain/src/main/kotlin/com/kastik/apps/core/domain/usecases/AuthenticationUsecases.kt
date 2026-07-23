@@ -8,12 +8,12 @@ import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 class GetIsSignedInUseCase
 @Inject

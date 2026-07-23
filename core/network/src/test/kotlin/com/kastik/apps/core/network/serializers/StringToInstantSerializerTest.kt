@@ -1,9 +1,9 @@
 package com.kastik.apps.core.network.serializers
 
 import com.google.common.truth.Truth.assertThat
+import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 import org.junit.Test
-import kotlin.time.Instant
 
 class StringToInstantSerializerTest {
 

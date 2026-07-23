@@ -4,8 +4,8 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.Theme
 import com.kastik.apps.core.model.user.UserPreferences
-import kotlinx.coroutines.flow.Flow
 import kotlin.time.Instant
+import kotlinx.coroutines.flow.Flow
 
 interface UserPreferencesRepository {
     val userPreferences: Flow<UserPreferences>

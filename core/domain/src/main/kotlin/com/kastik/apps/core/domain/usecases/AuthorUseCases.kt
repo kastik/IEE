@@ -2,9 +2,9 @@ package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.common.extensions.removeAccents
 import com.kastik.apps.core.domain.repository.AuthorRepository
+import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 class GetAuthorsUseCase @Inject constructor(private val authorRepository: AuthorRepository) {
     operator fun invoke() = authorRepository.authors.map { it.toImmutableList() }

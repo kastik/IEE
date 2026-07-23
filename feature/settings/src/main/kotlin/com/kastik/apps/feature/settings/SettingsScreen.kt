@@ -76,9 +76,9 @@ import com.kastik.apps.core.ui.extensions.logSearchScopePreferenceChanged
 import com.kastik.apps.core.ui.extensions.logSortTypePreferenceChanged
 import com.kastik.apps.core.ui.extensions.logThemePreferenceChanged
 import com.kastik.apps.core.ui.placeholder.LoadingContent
+import kotlin.math.roundToInt
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

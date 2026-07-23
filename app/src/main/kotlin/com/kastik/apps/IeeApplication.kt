@@ -7,9 +7,9 @@ import com.kastik.apps.core.common.di.ApplicationScope
 import com.kastik.apps.core.dev.tools.DevTools
 import com.kastik.apps.core.domain.usecases.TriggerSignOutOnStatusChangeUseCase
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltAndroidApp
 class IeeApplication : Application(), Configuration.Provider {

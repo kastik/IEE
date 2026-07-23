@@ -7,11 +7,11 @@ import android.database.sqlite.SQLiteFullException
 import androidx.datastore.core.CorruptionException
 import com.kastik.apps.core.model.error.LocalError
 import com.kastik.apps.core.model.error.NetworkError
-import retrofit2.HttpException
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import retrofit2.HttpException
 
 fun Throwable.toLocalError(): LocalError {
     return when (this) {

@@ -13,13 +13,13 @@ import com.kastik.apps.core.domain.usecases.SignOutUseCase
 import com.kastik.apps.core.model.sync.SyncState
 import com.kastik.apps.core.model.sync.isActive
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class ProfileViewModel

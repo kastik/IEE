@@ -18,8 +18,8 @@ import com.kastik.apps.core.ui.extensions.logContentLoadState
 import com.kastik.apps.core.ui.extensions.logUserLogin
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
-import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun AuthenticationRoute(

@@ -1,10 +1,10 @@
 package com.kastik.apps.core.network.datasource
 
 import com.kastik.apps.core.network.api.FakeAboardApiClient
+import kotlin.test.assertEquals
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class ProfileRemoteDataSourceImplTest {
     lateinit var aboardClient: FakeAboardApiClient

@@ -2,9 +2,9 @@ package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.model.search.FilterOptions
 import com.kastik.apps.core.model.search.QuickResults
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
 class GetQuickResultsUseCase
 @Inject

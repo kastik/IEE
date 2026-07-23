@@ -16,13 +16,13 @@ import com.kastik.apps.core.model.aboard.Tag
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.TagsRemoteDataSource
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 internal class TagsRepositoryImpl

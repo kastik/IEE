@@ -2,10 +2,10 @@ package com.kastik.apps.dev.tools
 
 import android.os.StrictMode
 import com.kastik.apps.core.dev.tools.DevTools
-import leakcanary.AppWatcher
-import leakcanary.LeakCanary
 import javax.inject.Inject
 import javax.inject.Singleton
+import leakcanary.AppWatcher
+import leakcanary.LeakCanary
 
 @Singleton
 internal class DevToolsDebugImpl @Inject constructor() : DevTools {

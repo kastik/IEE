@@ -1,8 +1,8 @@
 package com.kastik.apps.core.database.converters
 
 import com.google.common.truth.Truth.assertThat
-import org.junit.Test
 import kotlin.time.Instant
+import org.junit.Test
 
 class InstantConverterTest {
 

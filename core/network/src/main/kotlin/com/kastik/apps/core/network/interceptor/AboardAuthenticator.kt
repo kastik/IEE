@@ -3,14 +3,14 @@ package com.kastik.apps.core.network.interceptor
 import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.di.BaseAboardClient
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import retrofit2.HttpException
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class AboardAuthenticator

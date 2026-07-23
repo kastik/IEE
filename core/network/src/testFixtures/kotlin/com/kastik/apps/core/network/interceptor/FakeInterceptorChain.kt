@@ -1,5 +1,12 @@
 package com.kastik.apps.core.network.interceptor
 
+import java.net.Proxy
+import java.net.ProxySelector
+import java.util.concurrent.TimeUnit
+import javax.net.SocketFactory
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.X509TrustManager
 import okhttp3.Authenticator
 import okhttp3.Cache
 import okhttp3.Call
@@ -13,13 +20,6 @@ import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
-import java.net.Proxy
-import java.net.ProxySelector
-import java.util.concurrent.TimeUnit
-import javax.net.SocketFactory
-import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.X509TrustManager
 
 class FakeInterceptorChain(private val request: Request) : Interceptor.Chain {
 

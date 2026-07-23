@@ -8,13 +8,13 @@ import android.os.Build
 import android.os.Bundle
 import com.kastik.apps.core.domain.repository.NotificationRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 internal class NotificationsRepositoryImpl

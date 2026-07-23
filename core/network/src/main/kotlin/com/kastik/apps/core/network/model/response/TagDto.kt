@@ -1,9 +1,9 @@
 package com.kastik.apps.core.network.model.response
 
 import com.kastik.apps.core.network.serializers.StringToInstantSerializer
+import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlin.time.Instant
 
 @Serializable
 data class TagDto(

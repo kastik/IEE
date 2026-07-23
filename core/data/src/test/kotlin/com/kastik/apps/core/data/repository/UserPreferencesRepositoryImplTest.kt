@@ -11,12 +11,12 @@ import com.kastik.apps.core.datastore.testdata.baseUserPreferencesProto
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.Theme
+import kotlin.time.Clock
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlin.time.Clock
 
 class UserPreferencesRepositoryImplTest {
     private val testDispatcher = StandardTestDispatcher()

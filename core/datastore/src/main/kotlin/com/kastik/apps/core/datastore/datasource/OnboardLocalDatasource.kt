@@ -4,9 +4,9 @@ import androidx.datastore.core.DataStore
 import com.kastik.apps.core.datastore.di.OnboardDatastore
 import com.kastik.apps.core.datastore.proto.OnboardStageProto
 import com.kastik.apps.core.datastore.proto.StageProto
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 interface OnboardLocalDatasource {
     val currentState: Flow<OnboardStageProto>

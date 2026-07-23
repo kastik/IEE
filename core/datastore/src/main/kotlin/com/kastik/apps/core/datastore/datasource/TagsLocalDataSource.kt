@@ -9,9 +9,9 @@ import com.kastik.apps.core.datastore.proto.SubscribedTagProto
 import com.kastik.apps.core.datastore.proto.SubscriptionsProto
 import com.kastik.apps.core.datastore.serializers.SubscribableTagsSerializer
 import com.kastik.apps.core.datastore.serializers.SubscribedTagsSerializer
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 interface TagsLocalDataSource {
     val subscriptions: Flow<SubscriptionsProto>

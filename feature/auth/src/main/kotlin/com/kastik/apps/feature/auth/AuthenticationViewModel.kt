@@ -9,11 +9,11 @@ import com.kastik.apps.core.model.result.onError
 import com.kastik.apps.core.model.result.onSuccess
 import com.kastik.apps.feature.auth.navigation.AuthRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
 
 @HiltViewModel
 internal class AuthenticationViewModel

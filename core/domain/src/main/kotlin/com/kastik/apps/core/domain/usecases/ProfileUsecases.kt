@@ -1,8 +1,8 @@
 package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.domain.repository.ProfileRepository
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlinx.coroutines.flow.map
 
 class GetUserProfileUseCase @Inject constructor(private val profileRepository: ProfileRepository) {
     operator fun invoke() = profileRepository.profile

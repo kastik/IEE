@@ -22,11 +22,11 @@ import com.kastik.apps.core.work.worker.StartupSyncWorker
 import com.kastik.apps.core.work.worker.SubscribeWorker
 import com.kastik.apps.core.work.worker.SubscribeWorker.Companion.KEY_TAG_IDS
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
 internal class WorkSchedulerImpl @Inject constructor(@ApplicationContext context: Context) :

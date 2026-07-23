@@ -10,13 +10,13 @@ import com.kastik.apps.core.network.datasource.AuthorRemoteDataSource
 import com.kastik.apps.core.network.datasource.FakeAuthorRemoteDataSource
 import com.kastik.apps.core.testing.dao.FakeAuthorsDao
 import com.kastik.apps.core.testing.testdata.baseAuthorEntity
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import kotlin.coroutines.cancellation.CancellationException
 
 class AuthorRepositoryImplTest {
     private val testDispatcher = StandardTestDispatcher()

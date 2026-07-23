@@ -4,9 +4,9 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.text.AnnotatedString
 import com.kastik.apps.core.model.aboard.Attachment
 import com.kastik.apps.core.model.aboard.Tag
+import kotlin.time.Instant
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlin.time.Instant
 
 internal sealed interface AnnouncementUiState {
     data object Loading : AnnouncementUiState

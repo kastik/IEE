@@ -7,9 +7,9 @@ import com.kastik.apps.core.datastore.proto.SearchScopeProto
 import com.kastik.apps.core.datastore.proto.SortTypeProto
 import com.kastik.apps.core.datastore.proto.ThemeProto
 import com.kastik.apps.core.datastore.proto.UserPreferencesProto
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
 
 interface PreferencesLocalDataSource {
     val userPreferences: Flow<UserPreferencesProto>

@@ -12,16 +12,16 @@ import com.kastik.apps.core.domain.usecases.SyncProfileUseCase
 import com.kastik.apps.core.domain.usecases.SyncSubscribableTagsUseCase
 import com.kastik.apps.core.domain.usecases.SyncSubscriptionsUseCase
 import com.kastik.apps.core.model.error.NetworkError
+import com.kastik.apps.core.model.result.Result as DomainResult
 import com.kastik.apps.core.notifications.NotificationIds.STARTUP_SYNC_NOTIFICATION_ID
 import com.kastik.apps.core.notifications.Notifier
 import com.kastik.apps.core.work.R
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlin.coroutines.cancellation.CancellationException
-import com.kastik.apps.core.model.result.Result as DomainResult
 
 @HiltWorker
 internal class StartupSyncWorker

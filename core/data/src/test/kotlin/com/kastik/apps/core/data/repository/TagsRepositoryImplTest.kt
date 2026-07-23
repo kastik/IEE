@@ -17,12 +17,12 @@ import com.kastik.apps.core.network.model.common.ListResponseDto
 import com.kastik.apps.core.network.model.response.TagDto
 import com.kastik.apps.core.network.testdata.baseTagDto
 import com.kastik.apps.core.testing.dao.FakeTagsDao
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlin.coroutines.cancellation.CancellationException
 
 class TagsRepositoryImplTest {
     private val testDispatcher = StandardTestDispatcher()

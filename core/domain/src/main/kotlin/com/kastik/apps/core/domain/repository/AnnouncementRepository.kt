@@ -5,8 +5,8 @@ import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
-import kotlinx.coroutines.flow.Flow
 import kotlin.time.Instant
+import kotlinx.coroutines.flow.Flow
 
 interface AnnouncementRepository {
     fun getPagedAnnouncements(

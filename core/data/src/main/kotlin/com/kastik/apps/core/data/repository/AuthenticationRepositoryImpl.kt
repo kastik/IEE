@@ -7,12 +7,12 @@ import com.kastik.apps.core.data.utils.safeCall
 import com.kastik.apps.core.datastore.datasource.AuthenticationLocalDataSource
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSource
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 internal class AuthenticationRepositoryImpl

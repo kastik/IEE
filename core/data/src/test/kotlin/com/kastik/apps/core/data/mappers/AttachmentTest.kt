@@ -2,8 +2,8 @@ package com.kastik.apps.core.data.mappers
 
 import com.kastik.apps.core.network.testdata.baseAttachmentDto
 import com.kastik.apps.core.testing.testdata.baseAttachmentEntity
-import org.junit.Test
 import kotlin.test.assertEquals
+import org.junit.Test
 
 class AttachmentTest {
 

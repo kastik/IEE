@@ -9,6 +9,8 @@ import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
+import javax.inject.Inject
+import kotlin.time.Clock
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -17,8 +19,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import kotlin.time.Clock
 
 class GetHomeAnnouncementsUseCase
 @Inject

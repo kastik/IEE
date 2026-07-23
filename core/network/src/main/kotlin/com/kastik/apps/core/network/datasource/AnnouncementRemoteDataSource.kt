@@ -6,9 +6,9 @@ import com.kastik.apps.core.network.di.AuthenticatorAboardClient
 import com.kastik.apps.core.network.model.common.PagedResponseDto
 import com.kastik.apps.core.network.model.common.SingleResponseDto
 import com.kastik.apps.core.network.model.response.AnnouncementDto
-import kotlinx.datetime.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.datetime.LocalDateTime
 
 interface AnnouncementRemoteDataSource {
     suspend fun fetchPagedAnnouncements(

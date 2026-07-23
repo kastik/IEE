@@ -4,10 +4,10 @@ import androidx.datastore.core.DataStore
 import com.kastik.apps.core.datastore.di.UserProfileDatastore
 import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.datastore.serializers.ProfileSerializer
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 interface ProfileLocalDataSource {
     val profile: Flow<ProfileProto?>

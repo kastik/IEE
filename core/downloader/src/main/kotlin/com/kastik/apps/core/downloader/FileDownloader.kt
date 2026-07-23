@@ -8,10 +8,10 @@ import com.kastik.apps.core.common.di.IoDispatcher
 import com.kastik.apps.core.domain.service.FileDownloader
 import com.kastik.apps.core.network.interceptor.TokenManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
 // TODO DownloadManager doesn't support authenticators and can result in race conditions,
 // convert this to a Retrofit api call at some point
