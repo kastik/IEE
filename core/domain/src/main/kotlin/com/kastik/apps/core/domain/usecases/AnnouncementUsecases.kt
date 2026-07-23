@@ -12,6 +12,7 @@ import com.kastik.apps.core.model.result.Result
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -32,6 +33,7 @@ constructor(
         val sortType: SortType,
     )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<PagingData<Announcement>> {
         return combine(
                 authenticationRepository.isSignedIn,
@@ -68,6 +70,7 @@ constructor(
         val isForYouAvailable: Boolean,
     )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<PagingData<Announcement>> =
         combine(
                 tagsRepository.subscribedTags,
@@ -109,6 +112,7 @@ constructor(
         val tagIds: List<Int>,
     )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
         query: String = "",
         authorIds: List<Int> = emptyList(),
@@ -142,6 +146,7 @@ constructor(
     private val announcementRepository: AnnouncementRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(query: String) =
         userPreferencesRepository.userPreferences
             .map { userPreferences ->

@@ -109,6 +109,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun HomeScreenRoute(
@@ -629,7 +630,7 @@ private fun NotificationRationale() {
                 )
             } else {
                 LaunchedEffect(Unit) {
-                    delay(2000)
+                    delay(2000.milliseconds)
                     notificationPermissionState.launchPermissionRequest()
                 }
             }

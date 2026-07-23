@@ -9,7 +9,7 @@ import org.junit.Test
 class TokenInterceptorTest {
     lateinit var tokenProvider: FakeTokenManager
     lateinit var interceptor: TokenInterceptor
-    val request = Request.Builder().url("http://site.com").build()
+    val request = Request.Builder().url("https://site.com").build()
     val chain = FakeInterceptorChain(request)
 
     @Before

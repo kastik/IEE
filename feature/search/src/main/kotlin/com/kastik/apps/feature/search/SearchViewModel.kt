@@ -17,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -40,6 +41,7 @@ constructor(
 
     private val _availableFilters = getFilterOptionsUseCase()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val _quickSearchResultsState =
         snapshotFlow { searchBarTextFieldState.text }
             .map { it.toString() }
@@ -56,6 +58,7 @@ constructor(
             )
         )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val searchFeedAnnouncements =
         _activeFeedFilters
             .flatMapLatest { activeFilters ->

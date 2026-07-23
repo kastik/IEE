@@ -1,5 +1,6 @@
 package com.kastik.apps.core.network.di
 
+import android.annotation.SuppressLint
 import com.kastik.apps.core.network.interceptor.AboardAuthenticator
 import com.kastik.apps.core.network.interceptor.TokenInterceptor
 import com.kastik.apps.core.network.serializers.SortTypeQueryConverterFactory
@@ -22,6 +23,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
+@SuppressLint("CustomX509TrustManager", "TrustAllX509TrustManager")
 class NetworkModuleLocal {
     @Provides
     @Singleton
@@ -69,17 +71,16 @@ class NetworkModuleLocal {
 
         val trustAllCerts =
             arrayOf<TrustManager>(
+
                 object : X509TrustManager {
                     override fun checkClientTrusted(
                         chain: Array<X509Certificate>,
                         authType: String,
                     ) {}
-
                     override fun checkServerTrusted(
                         chain: Array<X509Certificate>,
                         authType: String,
                     ) {}
-
                     override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
                 }
             )
