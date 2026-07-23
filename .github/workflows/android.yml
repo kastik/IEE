@@ -11,6 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  
   spotless:
     name: Spotless
     runs-on: ubuntu-latest
