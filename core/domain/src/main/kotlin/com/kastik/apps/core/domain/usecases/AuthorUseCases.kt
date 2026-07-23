@@ -6,26 +6,24 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class GetAuthorsUseCase @Inject constructor(
-    private val authorRepository: AuthorRepository
-) {
+class GetAuthorsUseCase @Inject constructor(private val authorRepository: AuthorRepository) {
     operator fun invoke() = authorRepository.authors.map { it.toImmutableList() }
 }
 
-class SyncAuthorsUseCase @Inject constructor(
-    private val authorRepository: AuthorRepository
-) {
+class SyncAuthorsUseCase @Inject constructor(private val authorRepository: AuthorRepository) {
     suspend operator fun invoke() = authorRepository.syncAuthors()
 }
 
-class GetAuthorQuickResultsUseCase @Inject constructor(
-    private val authorRepository: AuthorRepository
-) {
+class GetAuthorQuickResultsUseCase
+@Inject
+constructor(private val authorRepository: AuthorRepository) {
     operator fun invoke(query: String) =
         authorRepository.authors.map { authors ->
-            authors.filter {
-                it.name.removeAccents().contains(query.removeAccents(), ignoreCase = true)
-            }.take(5).toImmutableList()
-
+            authors
+                .filter {
+                    it.name.removeAccents().contains(query.removeAccents(), ignoreCase = true)
+                }
+                .take(5)
+                .toImmutableList()
         }
 }

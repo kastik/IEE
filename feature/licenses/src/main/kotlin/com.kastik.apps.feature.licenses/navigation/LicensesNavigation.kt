@@ -11,23 +11,20 @@ import androidx.navigation.navOptions
 import com.kastik.apps.feature.licenses.LicensesRoute
 import kotlinx.serialization.Serializable
 
-
-@Serializable
-object LicensesRoute
+@Serializable object LicensesRoute
 
 fun NavController.navigateToLicences(
     navOptions: NavOptions = navOptions {
         launchSingleTop = true
-    },
+    }
 ) = navigate(route = LicensesRoute, navOptions)
 
-
-fun NavGraphBuilder.licenseScreen(
-) {
+fun NavGraphBuilder.licenseScreen() {
     composable<LicensesRoute>(
         enterTransition = { scaleIn() },
         exitTransition = { fadeOut() },
-        popEnterTransition = { fadeIn() }) { backStackEntry ->
+        popEnterTransition = { fadeIn() },
+    ) { backStackEntry ->
         LicensesRoute()
     }
 }

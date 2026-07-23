@@ -25,16 +25,19 @@ interface AnnouncementRepository {
         bodyQuery: String = "",
         authorIds: List<Int> = emptyList(),
         tagIds: List<Int> = emptyList(),
-        updatedAfter: Instant? = null
+        updatedAfter: Instant? = null,
     ): Result<List<Announcement>, NetworkError>
 
     fun getAnnouncementsQuickResults(
         sortType: SortType,
-        query: String
+        query: String,
     ): Flow<List<Announcement>>
 
     fun getAnnouncementWithId(id: Int): Flow<Announcement?>
+
     suspend fun getAttachmentUrl(attachmentId: Int): String
+
     suspend fun syncAnnouncementWithId(id: Int): Result<Unit, NetworkError>
+
     suspend fun clearAnnouncementCache()
 }

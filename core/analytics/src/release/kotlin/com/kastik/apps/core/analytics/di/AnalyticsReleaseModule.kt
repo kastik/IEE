@@ -28,18 +28,13 @@ internal abstract class AnalyticsModule {
     @Singleton
     abstract fun bindParamKeys(impl: AnalyticsParamKeysReleaseImpl): AnalyticsParamKeys
 
-    @Binds
-    @Singleton
-    abstract fun bindAnalytics(impl: AnalyticsReleaseImpl): Analytics
-
+    @Binds @Singleton abstract fun bindAnalytics(impl: AnalyticsReleaseImpl): Analytics
 
     companion object {
 
         @Provides
         @Singleton
-        fun provideFirebaseAnalytics(
-            @ApplicationContext context: Context
-        ): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
-
+        fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics =
+            FirebaseAnalytics.getInstance(context)
     }
 }

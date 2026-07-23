@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PagedResponseDto<T>(
     val data: List<T>,
-    val meta: PagedMetaDto
+    val meta: PagedMetaDto,
 )

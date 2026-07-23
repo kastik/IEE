@@ -24,6 +24,5 @@ class AttachmentTest {
 
         assertEquals(entity.id, domain.id)
         assertEquals(entity.filename, domain.fileName)
-
     }
 }

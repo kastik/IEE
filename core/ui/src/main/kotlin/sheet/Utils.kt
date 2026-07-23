@@ -7,7 +7,7 @@ import com.kastik.apps.core.common.extensions.removeAccents
 
 internal data class FlatNode<T>(
     val item: T,
-    val depth: Int
+    val depth: Int,
 )
 
 internal data class TreeNode<T>(
@@ -24,10 +24,9 @@ internal fun <T> buildTreeFromFlat(
     val itemIds = items.map { idProvider(it) }.toSet()
     val childrenMap = items.groupBy { parentIdProvider(it) }
     fun buildNode(item: T): TreeNode<T> {
-        val children = childrenMap[idProvider(item)]
-            ?.sortedBy { titleProvider(it) }
-            ?.map { buildNode(it) }
-            ?: emptyList()
+        val children =
+            childrenMap[idProvider(item)]?.sortedBy { titleProvider(it) }?.map { buildNode(it) }
+                ?: emptyList()
         return TreeNode(item, children)
     }
     return items
@@ -62,8 +61,10 @@ internal fun <T> buildFlatList(
     fun traverse(nodes: List<T>, depth: Int): Boolean {
         var anyMatch = false
         for (node in nodes.sortedBy { titleProvider(it) }) {
-            val selfMatch = query.isBlank() ||
-                    titleProvider(node).removeAccents()
+            val selfMatch =
+                query.isBlank() ||
+                    titleProvider(node)
+                        .removeAccents()
                         .contains(query.removeAccents(), ignoreCase = true)
             val insertIndex = result.size
             val childrenMatch = traverse(childrenProvider(node), depth + 1)
@@ -146,18 +147,22 @@ internal fun <T> rememberHierarchicalSelection(
     titleProvider: (T) -> String,
     childrenProvider: (T) -> List<T>,
 ): HierarchicalSelectionState<T> {
-    val parentMap = remember(roots) {
-        buildParentMap(roots, idProvider, childrenProvider)
-    }
+    val parentMap =
+        remember(roots) {
+            buildParentMap(roots, idProvider, childrenProvider)
+        }
 
-    val selectedIds = remember(roots, initialSelectedIds) {
-        val initial = initializeSelection(roots, initialSelectedIds, idProvider, childrenProvider)
-        mutableStateListOf<Int>().apply { addAll(initial) }
-    }
+    val selectedIds =
+        remember(roots, initialSelectedIds) {
+            val initial =
+                initializeSelection(roots, initialSelectedIds, idProvider, childrenProvider)
+            mutableStateListOf<Int>().apply { addAll(initial) }
+        }
 
-    val flatList = remember(query, roots) {
-        buildFlatList(roots, query, titleProvider, childrenProvider)
-    }
+    val flatList =
+        remember(query, roots) {
+            buildFlatList(roots, query, titleProvider, childrenProvider)
+        }
 
     val onToggle: (T) -> Unit = { node ->
         val id = idProvider(node)

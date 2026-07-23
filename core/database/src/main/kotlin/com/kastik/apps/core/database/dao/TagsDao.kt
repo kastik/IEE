@@ -8,12 +8,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TagsDao {
-    @Upsert
-    suspend fun upsertTags(tags: List<TagEntity>)
+    @Upsert suspend fun upsertTags(tags: List<TagEntity>)
 
-    @Query("SELECT * FROM tagentity")
-    fun getTags(): Flow<List<TagEntity>>
+    @Query("SELECT * FROM tagentity") fun getTags(): Flow<List<TagEntity>>
 
-    @Query("DELETE FROM tagentity")
-    suspend fun clearTags()
+    @Query("DELETE FROM tagentity") suspend fun clearTags()
 }

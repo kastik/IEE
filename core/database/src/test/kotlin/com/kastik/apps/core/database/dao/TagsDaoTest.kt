@@ -25,10 +25,11 @@ internal class TagsDaoTest : MemoryDatabase() {
     fun upsertTagsUpdatesExistingTags() = runTest {
         tagsDao.upsertTags(listOf(baseTagEntity))
 
-        val updatedTag = baseTagEntity.copy(
-            title = "Updated Root Tag",
-            isPublic = false
-        )
+        val updatedTag =
+            baseTagEntity.copy(
+                title = "Updated Root Tag",
+                isPublic = false,
+            )
 
         tagsDao.upsertTags(listOf(updatedTag))
 
@@ -39,7 +40,6 @@ internal class TagsDaoTest : MemoryDatabase() {
         assertThat(resultingTag.title).isEqualTo("Updated Root Tag")
         assertThat(resultingTag.isPublic).isFalse()
     }
-
 
     @Test
     fun getTagsReturnInsertedTags() = runTest {

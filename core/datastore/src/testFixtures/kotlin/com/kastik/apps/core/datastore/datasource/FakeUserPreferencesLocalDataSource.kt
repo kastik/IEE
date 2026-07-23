@@ -28,7 +28,6 @@ class FakeUserPreferencesLocalDataSource() : PreferencesLocalDataSource {
         }
     }
 
-
     override suspend fun setDynamicColor(isEnabled: Boolean) {
         _userPreferences.update { userPreferences ->
             userPreferences.toBuilder().setIsDynamicColorEnabled(isEnabled).build()
@@ -59,13 +58,11 @@ class FakeUserPreferencesLocalDataSource() : PreferencesLocalDataSource {
         }
     }
 
-
     override suspend fun setLastCheckTime(time: Timestamp?) {
         _userPreferences.update { userPreferences ->
             userPreferences.toBuilder().setLastCheckTime(time).build()
         }
     }
-
 
     override suspend fun setCheckIntervalMinutes(minutes: Int) {
         _userPreferences.update { userPreferences ->
@@ -75,8 +72,10 @@ class FakeUserPreferencesLocalDataSource() : PreferencesLocalDataSource {
 
     override suspend fun increaseImportantEventCount() {
         _userPreferences.update { userPreferences ->
-            userPreferences.toBuilder()
-                .setImportantEventCount(userPreferences.importantEventCount + 1).build()
+            userPreferences
+                .toBuilder()
+                .setImportantEventCount(userPreferences.importantEventCount + 1)
+                .build()
         }
     }
 
@@ -85,5 +84,4 @@ class FakeUserPreferencesLocalDataSource() : PreferencesLocalDataSource {
             userPreferences.toBuilder().setImportantEventCount(0).build()
         }
     }
-
 }

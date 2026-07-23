@@ -9,10 +9,7 @@ object MigrateInterval : DataMigration<UserPreferencesProto> {
         currentData.checkIntervalMinutes == 0
 
     override suspend fun migrate(currentData: UserPreferencesProto) =
-        currentData.toBuilder()
-            .setCheckIntervalMinutes(120)
-            .build()
+        currentData.toBuilder().setCheckIntervalMinutes(120).build()
 
     override suspend fun cleanUp() {}
-
 }

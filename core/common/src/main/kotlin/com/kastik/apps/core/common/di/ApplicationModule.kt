@@ -12,7 +12,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 internal object ApplicationModule {
-
     @Provides
     @Singleton
     @ApplicationScope

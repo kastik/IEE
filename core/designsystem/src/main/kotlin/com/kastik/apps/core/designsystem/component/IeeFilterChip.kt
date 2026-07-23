@@ -31,10 +31,10 @@ fun IeeFilterChip(
             Text(
                 text = displayLabel,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         },
-        trailingIcon = { Icon(Icons.Default.ArrowDropDown, null) }
+        trailingIcon = { Icon(Icons.Default.ArrowDropDown, null) },
     )
 }
 
@@ -45,7 +45,7 @@ private fun PreviewIeeFilterChip() {
         IeeFilterChip(
             label = "Authors",
             selectedCount = 0,
-            onClick = {}
+            onClick = {},
         )
     }
 }
@@ -58,7 +58,7 @@ private fun PreviewIeeFilterChipWithIcon() {
             icon = Icons.Default.Person,
             label = "Authors",
             selectedCount = 0,
-            onClick = {}
+            onClick = {},
         )
     }
 }
@@ -70,7 +70,7 @@ private fun PreviewIeeFilterChipWithSelection() {
         IeeFilterChip(
             label = "Authors",
             selectedCount = 4,
-            onClick = {}
+            onClick = {},
         )
     }
 }
@@ -83,7 +83,7 @@ private fun PreviewIeeFilterChipWithSelectionAndIcon() {
             icon = Icons.Default.Person,
             label = "Authors",
             selectedCount = 4,
-            onClick = {}
+            onClick = {},
         )
     }
 }

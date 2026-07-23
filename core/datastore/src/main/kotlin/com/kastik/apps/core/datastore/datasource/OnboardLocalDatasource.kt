@@ -1,6 +1,5 @@
 package com.kastik.apps.core.datastore.datasource
 
-
 import androidx.datastore.core.DataStore
 import com.kastik.apps.core.datastore.di.OnboardDatastore
 import com.kastik.apps.core.datastore.proto.OnboardStageProto
@@ -11,35 +10,33 @@ import javax.inject.Singleton
 
 interface OnboardLocalDatasource {
     val currentState: Flow<OnboardStageProto>
-    suspend fun setOnboardStage(stage: StageProto)
-    suspend fun setHasOnboarded(hasOnboarded: Boolean)
 
+    suspend fun setOnboardStage(stage: StageProto)
+
+    suspend fun setHasOnboarded(hasOnboarded: Boolean)
 }
 
 @Singleton
-internal class OnboardLocalDatasourceImpl @Inject constructor(
-    @OnboardDatastore private val dataStore: DataStore<OnboardStageProto>
-) : OnboardLocalDatasource {
-
+internal class OnboardLocalDatasourceImpl
+@Inject
+constructor(@OnboardDatastore private val dataStore: DataStore<OnboardStageProto>) :
+    OnboardLocalDatasource {
 
     override val currentState: Flow<OnboardStageProto> = dataStore.data
 
     override suspend fun setOnboardStage(stage: StageProto) {
         dataStore.updateData { onboardProto ->
-            onboardProto.toBuilder()
-                .setCurrentStage(stage)
-                .build()
-
+            onboardProto.toBuilder().setCurrentStage(stage).build()
         }
     }
 
     override suspend fun setHasOnboarded(hasOnboarded: Boolean) {
         dataStore.updateData { userPreferences ->
-            userPreferences.toBuilder()
+            userPreferences
+                .toBuilder()
                 .setCurrentStage(StageProto.Welcome)
                 .setHasFinishedOnboard(hasOnboarded)
                 .build()
         }
     }
-
 }

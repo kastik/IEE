@@ -11,7 +11,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBarCollapsed(
@@ -23,10 +22,7 @@ fun SearchBarCollapsed(
     actions: @Composable RowScope.() -> Unit = {},
     collapsedSecondaryActions: @Composable () -> Unit = {},
 ) {
-    Surface(
-        modifier = modifier
-            .then(with(scrollBehavior) { Modifier.searchBarScrollBehavior() })
-    ) {
+    Surface(modifier = modifier.then(with(scrollBehavior) { Modifier.searchBarScrollBehavior() })) {
         Column {
             AppBarWithSearch(
                 modifier = modifier,

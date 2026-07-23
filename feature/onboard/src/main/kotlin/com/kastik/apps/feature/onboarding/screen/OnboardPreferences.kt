@@ -36,56 +36,46 @@ internal fun OnboardPreferences(
     onForYouChange: (Boolean) -> Unit,
     onSortTypeChange: (SortType) -> Unit,
     onSearchScopeChange: (SearchScope) -> Unit,
-    onFinishClick: () -> Unit
+    onFinishClick: () -> Unit,
 ) {
 
     val haptics = LocalHapticFeedback.current
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(24.dp),
+        modifier = Modifier.fillMaxSize().verticalScroll(scrollState).padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
-
         OnboardPreferencesTitle()
-
 
         OnboardPreferencesSorting(
             sortType = sortType,
-            onSortTypeChange = onSortTypeChange
+            onSortTypeChange = onSortTypeChange,
         )
 
         OnboardPreferencesFeedFeatures(
             isForYouAvailable = isForYouAvailable,
             isForYouEnabled = isForYouEnabled,
-            onForYouChange = onForYouChange
+            onForYouChange = onForYouChange,
         )
-
 
         OnboardPreferencesSearchBehaviour(
             searchScope = searchScope,
-            onSearchScopeChange = onSearchScopeChange
+            onSearchScopeChange = onSearchScopeChange,
         )
-
 
         Button(
             onClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 onFinishClick()
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
+            },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
         ) {
             Text(stringResource(R.string.preferences_next_page))
         }
     }
 }
-
 
 @Composable
 fun OnboardPreferencesTitle() {
@@ -94,16 +84,15 @@ fun OnboardPreferencesTitle() {
             text = stringResource(R.string.preferences_title),
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 16.dp),
         )
         Text(
             text = stringResource(R.string.preferences_body),
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
-
 
 @Composable
 private fun OnboardPreferencesSorting(
@@ -113,18 +102,16 @@ private fun OnboardPreferencesSorting(
 
     val haptics = LocalHapticFeedback.current
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
             stringResource(R.string.preferences_sorting_title),
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
         Column(
             modifier = Modifier.selectableGroup(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             IeeRadioCard(
                 title = stringResource(R.string.preferences_sorting_priority_title),
@@ -133,7 +120,8 @@ private fun OnboardPreferencesSorting(
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onSortTypeChange(SortType.Priority)
-                })
+                },
+            )
             IeeRadioCard(
                 title = stringResource(R.string.preferences_sorting_oldest_title),
                 description = stringResource(R.string.preferences_sorting_oldest_body),
@@ -141,7 +129,8 @@ private fun OnboardPreferencesSorting(
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onSortTypeChange(SortType.ASC)
-                })
+                },
+            )
             IeeRadioCard(
                 title = stringResource(R.string.preferences_sorting_newest_title),
                 description = stringResource(R.string.preferences_sorting_newest_body),
@@ -149,11 +138,11 @@ private fun OnboardPreferencesSorting(
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onSortTypeChange(SortType.DESC)
-                })
+                },
+            )
         }
     }
 }
-
 
 @Composable
 private fun OnboardPreferencesFeedFeatures(
@@ -164,29 +153,29 @@ private fun OnboardPreferencesFeedFeatures(
 
     val haptics = LocalHapticFeedback.current
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
             stringResource(R.string.preferences_feed_title),
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
 
         IeeSwitchCard(
             title = stringResource(R.string.preferences_feed_foryou_title),
-            subtitle = stringResource(if (isForYouAvailable) R.string.preferences_feed_foryou_body_available else R.string.preferences_feed_foryou_body_unavailable),
+            subtitle =
+                stringResource(
+                    if (isForYouAvailable) R.string.preferences_feed_foryou_body_available
+                    else R.string.preferences_feed_foryou_body_unavailable
+                ),
             checked = isForYouEnabled,
             enabled = isForYouAvailable,
             onCheckedChange = { isEnabled ->
                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 onForYouChange(isEnabled)
-            })
-
+            },
+        )
     }
 }
-
 
 @Composable
 private fun OnboardPreferencesSearchBehaviour(
@@ -196,18 +185,16 @@ private fun OnboardPreferencesSearchBehaviour(
 
     val haptics = LocalHapticFeedback.current
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
             stringResource(R.string.preferences_search_title),
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
         )
         Column(
             modifier = Modifier.selectableGroup(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             IeeRadioCard(
                 title = stringResource(R.string.preferences_search_titles_title),
@@ -216,7 +203,8 @@ private fun OnboardPreferencesSearchBehaviour(
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onSearchScopeChange(SearchScope.Title)
-                })
+                },
+            )
             IeeRadioCard(
                 title = stringResource(R.string.preferences_search_body_title),
                 description = stringResource(R.string.preferences_search_body_body),
@@ -224,11 +212,11 @@ private fun OnboardPreferencesSearchBehaviour(
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onSearchScopeChange(SearchScope.Body)
-                })
+                },
+            )
         }
     }
 }
-
 
 @Preview
 @Composable
@@ -239,10 +227,10 @@ internal fun OnboardPreferencesPreview() {
             isForYouEnabled = true,
             sortType = SortType.ASC,
             searchScope = SearchScope.Body,
-            onForYouChange = { },
-            onSortTypeChange = { },
-            onSearchScopeChange = { },
-            onFinishClick = { }
+            onForYouChange = {},
+            onSortTypeChange = {},
+            onSearchScopeChange = {},
+            onFinishClick = {},
         )
     }
 }

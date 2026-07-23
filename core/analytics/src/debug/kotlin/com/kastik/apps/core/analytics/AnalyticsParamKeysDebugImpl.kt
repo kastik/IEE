@@ -3,10 +3,8 @@ package com.kastik.apps.core.analytics
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
-internal class AnalyticsParamKeysDebugImpl @Inject constructor(
-) : AnalyticsParamKeys {
+internal class AnalyticsParamKeysDebugImpl @Inject constructor() : AnalyticsParamKeys {
     override val SCREEN_NAME = "screen_name"
     override val SCREEN_CLASS = "screen_class"
     override val ITEM_ID = "item_id"

@@ -38,12 +38,14 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Instant
 
 @Singleton
-internal class AnnouncementRepositoryImpl @Inject constructor(
+internal class AnnouncementRepositoryImpl
+@Inject
+constructor(
     private val crashlytics: Crashlytics,
     private val database: AppDatabase,
     private val announcementRemoteDataSource: AnnouncementRemoteDataSource,
     private val base64ImageExtractor: Base64ImageExtractor,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : AnnouncementRepository {
     private val announcementLocalDataSource = database.announcementDao()
     private val tagsLocalDataSource = database.tagsDao()
@@ -56,33 +58,41 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         bodyQuery: String,
         tagIds: List<Int>,
         authorIds: List<Int>,
-        ) = Pager(
-        config = PagingConfig(
-            pageSize = 20,
-            initialLoadSize = 60,
-            prefetchDistance = 10,
-            enablePlaceholders = true
-        ), remoteMediator = AnnouncementRemoteMediator(
-            sortType = sortType,
-            titleQuery = titleQuery,
-            bodyQuery = bodyQuery,
-            authorIds = authorIds,
-            tagIds = tagIds,
-            crashlytics = crashlytics,
-            database = database,
-            announcementRemoteDataSource = announcementRemoteDataSource,
-            base64ImageExtractor = base64ImageExtractor
-        ), pagingSourceFactory = {
-            announcementLocalDataSource.getPagedAnnouncements(
-                sortType = sortType,
-                titleQuery = titleQuery,
-                bodyQuery = bodyQuery,
-                tagIds = tagIds,
-                authorIds = authorIds,
+    ) =
+        Pager(
+                config =
+                    PagingConfig(
+                        pageSize = 20,
+                        initialLoadSize = 60,
+                        prefetchDistance = 10,
+                        enablePlaceholders = true,
+                    ),
+                remoteMediator =
+                    AnnouncementRemoteMediator(
+                        sortType = sortType,
+                        titleQuery = titleQuery,
+                        bodyQuery = bodyQuery,
+                        authorIds = authorIds,
+                        tagIds = tagIds,
+                        crashlytics = crashlytics,
+                        database = database,
+                        announcementRemoteDataSource = announcementRemoteDataSource,
+                        base64ImageExtractor = base64ImageExtractor,
+                    ),
+                pagingSourceFactory = {
+                    announcementLocalDataSource.getPagedAnnouncements(
+                        sortType = sortType,
+                        titleQuery = titleQuery,
+                        bodyQuery = bodyQuery,
+                        tagIds = tagIds,
+                        authorIds = authorIds,
+                    )
+                },
             )
-        }).flow.map { pagingData ->
-        pagingData.map { it.toAnnouncement() }
-    }
+            .flow
+            .map { pagingData ->
+                pagingData.map { it.toAnnouncement() }
+            }
 
     override suspend fun fetchAnnouncements(
         page: Int,
@@ -92,79 +102,87 @@ internal class AnnouncementRepositoryImpl @Inject constructor(
         bodyQuery: String,
         authorIds: List<Int>,
         tagIds: List<Int>,
-        updatedAfter: Instant?
-    ) = try {
+        updatedAfter: Instant?,
+    ) =
+        try {
 
-        val greekLocalTime: LocalDateTime? =
-            updatedAfter?.toLocalDateTime(TimeZone.of("Europe/Athens"))
+            val greekLocalTime: LocalDateTime? =
+                updatedAfter?.toLocalDateTime(TimeZone.of("Europe/Athens"))
 
-        Result.Success(
-            announcementRemoteDataSource.fetchPagedAnnouncements(
-                page = page,
-                perPage = perPage,
-                sortBy = sortType,
-                title = titleQuery,
-                body = bodyQuery,
-                tagIds = tagIds,
-                authorIds = authorIds,
-                updatedAfter = greekLocalTime
-            ).data.map { it.toAnnouncement() }
-        )
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: Exception) {
-        Result.Error(e.toNetworkError())
-    }
-
+            Result.Success(
+                announcementRemoteDataSource
+                    .fetchPagedAnnouncements(
+                        page = page,
+                        perPage = perPage,
+                        sortBy = sortType,
+                        title = titleQuery,
+                        body = bodyQuery,
+                        tagIds = tagIds,
+                        authorIds = authorIds,
+                        updatedAfter = greekLocalTime,
+                    )
+                    .data
+                    .map { it.toAnnouncement() }
+            )
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.Error(e.toNetworkError())
+        }
 
     override fun getAnnouncementsQuickResults(
         sortType: SortType,
-        query: String
+        query: String,
     ): Flow<List<Announcement>> {
-        return announcementLocalDataSource.getQuickSearchAnnouncements(
-            sortType = sortType,
-            query = query,
-        ).map { entities ->
-            entities.map { it.toAnnouncement() }
-        }
-    }
-
-    override suspend fun syncAnnouncementWithId(id: Int) = withContext(ioDispatcher) {
-        safeCall(
-            mapException = Exception::toNetworkError,
-            recordException = crashlytics::recordException,
-        ) {
-            val remote = announcementRemoteDataSource.fetchAnnouncementWithId(id).data
-
-            database.withTransaction {
-                authorLocalDataSource.upsertAuthors(remote.author.toAuthorEntity())
-                tagsLocalDataSource.upsertTags(remote.tags.map { it.toTagEntity() })
-
-                announcementLocalDataSource.upsertAnnouncements(remote.toAnnouncementEntity())
-
-                announcementLocalDataSource.upsertTagCrossRefs(remote.toTagCrossRefs())
-                announcementLocalDataSource.upsertBodies(
-                    remote.extractImages(base64ImageExtractor).toBodyEntity()
-                )
-                announcementLocalDataSource.upsertAttachments(remote.attachments.map { it.toAttachmentEntity() })
+        return announcementLocalDataSource
+            .getQuickSearchAnnouncements(
+                sortType = sortType,
+                query = query,
+            )
+            .map { entities ->
+                entities.map { it.toAnnouncement() }
             }
-
-        }
     }
+
+    override suspend fun syncAnnouncementWithId(id: Int) =
+        withContext(ioDispatcher) {
+            safeCall(
+                mapException = Exception::toNetworkError,
+                recordException = crashlytics::recordException,
+            ) {
+                val remote = announcementRemoteDataSource.fetchAnnouncementWithId(id).data
+
+                database.withTransaction {
+                    authorLocalDataSource.upsertAuthors(remote.author.toAuthorEntity())
+                    tagsLocalDataSource.upsertTags(remote.tags.map { it.toTagEntity() })
+
+                    announcementLocalDataSource.upsertAnnouncements(remote.toAnnouncementEntity())
+
+                    announcementLocalDataSource.upsertTagCrossRefs(remote.toTagCrossRefs())
+                    announcementLocalDataSource.upsertBodies(
+                        remote.extractImages(base64ImageExtractor).toBodyEntity()
+                    )
+                    announcementLocalDataSource.upsertAttachments(
+                        remote.attachments.map { it.toAttachmentEntity() }
+                    )
+                }
+            }
+        }
 
     override fun getAnnouncementWithId(id: Int): Flow<Announcement?> {
-        return announcementLocalDataSource.getAnnouncementWithId(id)
-            .map { it?.toAnnouncement() }
+        return announcementLocalDataSource.getAnnouncementWithId(id).map { it?.toAnnouncement() }
     }
 
-    override suspend fun getAttachmentUrl(attachmentId: Int): String = withContext(ioDispatcher) {
-        announcementLocalDataSource.getAttachmentWithId(attachmentId)
-    }
+    override suspend fun getAttachmentUrl(attachmentId: Int): String =
+        withContext(ioDispatcher) {
+            announcementLocalDataSource.getAttachmentWithId(attachmentId)
+        }
 
-    override suspend fun clearAnnouncementCache() = withContext(ioDispatcher) {
-        announcementLocalDataSource.clearAllAnnouncements()
-        announcementLocalDataSource.clearBodies()
-        announcementLocalDataSource.clearAttachments()
-        announcementLocalDataSource.clearTagCrossRefs()
-    }
+    override suspend fun clearAnnouncementCache() =
+        withContext(ioDispatcher) {
+            announcementLocalDataSource.clearAllAnnouncements()
+            announcementLocalDataSource.clearBodies()
+            announcementLocalDataSource.clearAttachments()
+            announcementLocalDataSource.clearTagCrossRefs()
+        }
 }

@@ -27,7 +27,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class HomeViewModel @Inject constructor(
+internal class HomeViewModel
+@Inject
+constructor(
     getUserIdUseCase: GetUserIdUseCase,
     getIsSignedInUseCase: GetIsSignedInUseCase,
     showSignInNoticeRationaleUseCase: ShowSignInNoticeRationaleUseCase,
@@ -43,38 +45,49 @@ internal class HomeViewModel @Inject constructor(
 
     val searchBarTextFieldState = TextFieldState()
 
-    private val _quickSearchResultsState = snapshotFlow { searchBarTextFieldState.text }
-        .map { it.toString() }
-        .flatMapLatest { query ->
-            getQuickResultsUseCase(query)
-        }
-    val uiState = combine(
-        getUserIdUseCase(),
-        getIsSignedInUseCase(),
-        showSignInNoticeRationaleUseCase(),
-        getFilterOptionsUseCase(),
-        _quickSearchResultsState,
-        getUserPreferencesUseCase(),
-        isForYouEnabledUseCase(),
-    ) { userId, isSignedIn, showSignInNotice, availableFilters, quickResults, userPreferences, isForYouEnabled ->
-        HomeUiState(
-            userId = userId,
-            isSignedIn = isSignedIn,
-            showSignInNotice = showSignInNotice,
-            availableFilters = availableFilters,
-            quickResults = quickResults,
-            enableForYou = isForYouEnabled,
-            enableFabFilters = userPreferences.areFabFiltersEnabled
-        )
-    }.onStart {
-        viewModelScope.launch {
-            setAnnouncementCheckTimeUseCase()
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = HomeUiState()
-    )
+    private val _quickSearchResultsState =
+        snapshotFlow { searchBarTextFieldState.text }
+            .map { it.toString() }
+            .flatMapLatest { query ->
+                getQuickResultsUseCase(query)
+            }
+    val uiState =
+        combine(
+                getUserIdUseCase(),
+                getIsSignedInUseCase(),
+                showSignInNoticeRationaleUseCase(),
+                getFilterOptionsUseCase(),
+                _quickSearchResultsState,
+                getUserPreferencesUseCase(),
+                isForYouEnabledUseCase(),
+            ) {
+                userId,
+                isSignedIn,
+                showSignInNotice,
+                availableFilters,
+                quickResults,
+                userPreferences,
+                isForYouEnabled ->
+                HomeUiState(
+                    userId = userId,
+                    isSignedIn = isSignedIn,
+                    showSignInNotice = showSignInNotice,
+                    availableFilters = availableFilters,
+                    quickResults = quickResults,
+                    enableForYou = isForYouEnabled,
+                    enableFabFilters = userPreferences.areFabFiltersEnabled,
+                )
+            }
+            .onStart {
+                viewModelScope.launch {
+                    setAnnouncementCheckTimeUseCase()
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = HomeUiState(),
+            )
 
     val homeFeedAnnouncements = getHomeAnnouncementsUseCase().cachedIn(viewModelScope)
 
@@ -85,5 +98,4 @@ internal class HomeViewModel @Inject constructor(
             setHasSkippedSignInUseCase(true)
         }
     }
-
 }

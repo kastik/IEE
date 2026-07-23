@@ -89,17 +89,16 @@ internal fun SettingsRoute(
 
     TrackScreenViewEvent(
         screenClass = "settings_route",
-        screenName = "settings_screen"
+        screenName = "settings_screen",
     )
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AnimatedContent(
         targetState = uiState,
-        contentKey = { state -> state::class }
+        contentKey = { state -> state::class },
     ) { state ->
         when (state) {
-
             is SettingsUiState.Loading -> {
                 SettingsScreenLoading()
             }
@@ -120,13 +119,14 @@ internal fun SettingsRoute(
                     fabFiltersDisabled = state.areFabFiltersEnabled,
                     onFabFiltersChange = viewModel::setFabFilters,
                     announcementCheckIntervalMinutes = state.announcementCheckIntervalMinutes,
-                    isAnnouncementCheckIntervalAvailable = state.isAnnouncementCheckIntervalAvailable,
-                    setAnnouncementCheckIntervalMinutes = viewModel::setAnnouncementCheckIntervalMinutes,
+                    isAnnouncementCheckIntervalAvailable =
+                        state.isAnnouncementCheckIntervalAvailable,
+                    setAnnouncementCheckIntervalMinutes =
+                        viewModel::setAnnouncementCheckIntervalMinutes,
                     areNotificationsAllowed = state.areNotificationsAllowed,
                     navigateToLicenses = navigateToLicenses,
                 )
             }
-
         }
     }
 }
@@ -171,19 +171,16 @@ private fun SettingsScreenSuccess(
         }
     }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets()
-    ) { paddingValues ->
-
+    Scaffold(contentWindowInsets = WindowInsets()) { paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
-                .testTag("settings:content"),
+            modifier =
+                Modifier.fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp)
+                    .verticalScroll(rememberScrollState())
+                    .testTag("settings:content"),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start,
         ) {
             Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
             Text(
@@ -194,18 +191,20 @@ private fun SettingsScreenSuccess(
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(size = 20.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+                colors =
+                    CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ),
             ) {
                 Column {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                        modifier =
+                            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.sort_by_label),
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Spacer(Modifier.height(8.dp))
                         SettingSegmentedButton(
@@ -213,28 +212,33 @@ private fun SettingsScreenSuccess(
                             options = SortType.entries.toImmutableList(),
                             label = {
                                 when (it) {
-                                    SortType.Priority -> stringResource(R.string.sort_by_priority_label)
-                                    SortType.DESC -> stringResource(R.string.sort_by_descending_label)
+                                    SortType.Priority ->
+                                        stringResource(R.string.sort_by_priority_label)
+                                    SortType.DESC ->
+                                        stringResource(R.string.sort_by_descending_label)
                                     SortType.ASC -> stringResource(R.string.sort_by_ascending_label)
                                 }
                             },
                             onSelected = { sortType ->
                                 onSortTypeChange(sortType)
                                 analytics.logSortTypePreferenceChanged(sortType.name)
-                            })
+                            },
+                        )
                     }
                     HorizontalDivider()
                     IeeSwitchRow(
                         title = stringResource(R.string.for_you_label),
-                        subtitle = if (isForYouAvailable) stringResource(R.string.for_you_available_description) else stringResource(
-                            R.string.for_you_unavailable_description
-                        ),
+                        subtitle =
+                            if (isForYouAvailable)
+                                stringResource(R.string.for_you_available_description)
+                            else stringResource(R.string.for_you_unavailable_description),
                         enabled = isForYouAvailable,
                         checked = forYouEnabled,
                         onCheckedChange = { enabled ->
                             onForYouChange(enabled)
                             analytics.logForYouPreferenceChanged(enabled)
-                        })
+                        },
+                    )
                     HorizontalDivider()
                     IeeSwitchRow(
                         title = stringResource(R.string.fab_filters_label),
@@ -243,7 +247,8 @@ private fun SettingsScreenSuccess(
                         onCheckedChange = { enabled ->
                             analytics.logFabFiltersPreferenceChanged(enabled)
                             onFabFiltersChange(enabled)
-                        })
+                        },
+                    )
                 }
             }
 
@@ -255,41 +260,46 @@ private fun SettingsScreenSuccess(
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(size = 20.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-
+                colors =
+                    CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ),
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 10.dp)
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
                             text = stringResource(R.string.search_in_label),
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
-                        IeeIconToolTip(tooltipTitle = {
-                            Text(
-                                text = stringResource(R.string.search_in_warning_title),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }, tooltipBody = {
-                            Text(
-                                text = stringResource(R.string.search_in_warning_body),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }, icon = {
-                            Icon(
-                                imageVector = Icons.Default.Info, contentDescription = null
-                            )
-                        })
+                        IeeIconToolTip(
+                            tooltipTitle = {
+                                Text(
+                                    text = stringResource(R.string.search_in_warning_title),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            },
+                            tooltipBody = {
+                                Text(
+                                    text = stringResource(R.string.search_in_warning_body),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            },
+                            icon = {
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = null,
+                                )
+                            },
+                        )
                     }
                     Spacer(Modifier.height(8.dp))
                     SettingSegmentedButton(
@@ -299,18 +309,17 @@ private fun SettingsScreenSuccess(
                             when (it) {
                                 SearchScope.Title -> stringResource(R.string.search_in_title_label)
                                 SearchScope.Body -> stringResource(R.string.search_in_body_label)
-                                SearchScope.TitleAndBody -> stringResource(R.string.search_in_both_label)
+                                SearchScope.TitleAndBody ->
+                                    stringResource(R.string.search_in_both_label)
                             }
                         },
                         onSelected = { searchScope ->
                             onSearchScopeChange(searchScope)
                             analytics.logSearchScopePreferenceChanged(searchScope.name)
-                        })
+                        },
+                    )
                 }
-
             }
-
-
 
             Text(
                 text = stringResource(R.string.title_appearance),
@@ -320,19 +329,20 @@ private fun SettingsScreenSuccess(
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(size = 20.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-
+                colors =
+                    CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ),
             ) {
                 Column {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 14.dp)
+                        modifier =
+                            Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.theme_label),
                             style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            color = MaterialTheme.colorScheme.onSurface,
                         )
                         Spacer(Modifier.height(8.dp))
                         SettingSegmentedButton(
@@ -340,7 +350,8 @@ private fun SettingsScreenSuccess(
                             options = Theme.entries.toImmutableList(),
                             label = {
                                 when (it) {
-                                    Theme.FOLLOW_SYSTEM -> stringResource(R.string.theme_system_label)
+                                    Theme.FOLLOW_SYSTEM ->
+                                        stringResource(R.string.theme_system_label)
                                     Theme.LIGHT -> stringResource(R.string.theme_light_label)
                                     Theme.DARK -> stringResource(R.string.theme_dark_label)
                                 }
@@ -348,7 +359,8 @@ private fun SettingsScreenSuccess(
                             onSelected = { theme ->
                                 onThemeChange(theme)
                                 analytics.logThemePreferenceChanged(theme.name)
-                            })
+                            },
+                        )
                     }
                     HorizontalDivider()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -359,7 +371,8 @@ private fun SettingsScreenSuccess(
                             onCheckedChange = { enabled ->
                                 analytics.logDynamicColorPreferenceChanged(enabled)
                                 onDynamicColorChange(enabled)
-                            })
+                            },
+                        )
                     }
                 }
             }
@@ -372,8 +385,10 @@ private fun SettingsScreenSuccess(
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-
+                colors =
+                    CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ),
             ) {
                 Column {
                     IeeSwitchRow(
@@ -382,11 +397,13 @@ private fun SettingsScreenSuccess(
                         checked = areNotificationsAllowed,
                         onCheckedChange = {
                             analytics.logButtonClick("push_notifications_system_settings")
-                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                            }
+                            val intent =
+                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                }
                             context.startActivity(intent)
-                        })
+                        },
+                    )
                     HorizontalDivider()
                     SettingsSliderRow(
                         title = stringResource(R.string.announcement_check_interval_label),
@@ -394,15 +411,23 @@ private fun SettingsScreenSuccess(
                         initialValue = announcementCheckIntervalMinutes.toFloat(),
                         valueRange = 15f..720f,
                         enabled = isAnnouncementCheckIntervalAvailable,
-                        description = if (!isAnnouncementCheckIntervalAvailable) stringResource(R.string.announcement_check_interval_unavailable_description) else null,
+                        description =
+                            if (!isAnnouncementCheckIntervalAvailable)
+                                stringResource(
+                                    R.string.announcement_check_interval_unavailable_description
+                                )
+                            else null,
                         tooltipEnabled = isAnnouncementCheckIntervalAvailable,
-                        tooltipTitle = stringResource(R.string.announcement_check_interval_warning_title),
-                        tooltipBody = stringResource(R.string.announcement_check_interval_warning_body),
+                        tooltipTitle =
+                            stringResource(R.string.announcement_check_interval_warning_title),
+                        tooltipBody =
+                            stringResource(R.string.announcement_check_interval_warning_body),
                         valueFormatter = { formatInterval(it) },
                         onValueChangeFinished = { minutes ->
                             setAnnouncementCheckIntervalMinutes(minutes)
                             analytics.logCheckIntervalMinutesPreferenceChanged(minutes)
-                        })
+                        },
+                    )
                 }
             }
 
@@ -414,8 +439,10 @@ private fun SettingsScreenSuccess(
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-
+                colors =
+                    CardDefaults.elevatedCardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ),
             ) {
                 Column {
                     SettingNavigationRow(
@@ -424,19 +451,26 @@ private fun SettingsScreenSuccess(
                         onClick = {
                             analytics.logButtonClick("about_app_github")
                             context.launchUrl("https://github.com/kastik/IEE")
-                        })
+                        },
+                    )
                     HorizontalDivider()
                     SettingNavigationRow(
-                        title = stringResource(R.string.open_source_label), onClick = {
+                        title = stringResource(R.string.open_source_label),
+                        onClick = {
                             analytics.logButtonClick("open_source_licenses")
                             navigateToLicenses()
-                        })
+                        },
+                    )
                     HorizontalDivider()
                     SettingNavigationRow(
-                        title = stringResource(R.string.discord_label), onClick = {
+                        title = stringResource(R.string.discord_label),
+                        onClick = {
                             analytics.logButtonClick("discord_channel")
-                            context.launchUrl("https://discord.com/channels/693584494862794822/1473065482058993765")
-                        })
+                            context.launchUrl(
+                                "https://discord.com/channels/693584494862794822/1473065482058993765"
+                            )
+                        },
+                    )
                 }
             }
             Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
@@ -451,13 +485,11 @@ private fun <T> SettingSegmentedButton(
     options: ImmutableList<T>,
     label: @Composable (T) -> String,
     onSelected: (T) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val vibrator = LocalHapticFeedback.current
 
-    SingleChoiceSegmentedButtonRow(
-        modifier = modifier.fillMaxWidth()
-    ) {
+    SingleChoiceSegmentedButtonRow(modifier = modifier.fillMaxWidth()) {
         options.forEachIndexed { index, option ->
             SegmentedButton(
                 selected = selected == option,
@@ -470,7 +502,9 @@ private fun <T> SettingSegmentedButton(
                 Text(
                     text = label(option),
                     style = MaterialTheme.typography.labelMedium,
-                    color = if (selected == option) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                    color =
+                        if (selected == option) MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -485,7 +519,6 @@ private fun formatInterval(minutes: Int): String {
     val minutesString = stringResource(R.string.announcement_check_interval_minutes)
     return "$hours $hoursString, $minutes $minutesString"
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -507,21 +540,13 @@ private fun SettingsSliderRow(
     var lastVibratedValue by remember { mutableIntStateOf(initialValue.roundToInt()) }
     val vibrator = LocalHapticFeedback.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 14.dp)
-    ) {
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 16.dp)
-            ) {
+            Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
@@ -538,28 +563,33 @@ private fun SettingsSliderRow(
                 }
             }
             if (tooltipEnabled) {
-                IeeIconToolTip(tooltipTitle = {
-                    Text(
-                        text = tooltipTitle,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }, tooltipBody = {
-                    Text(
-                        text = tooltipBody,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }, icon = {
-                    Icon(
-                        imageVector = Icons.Default.Info, contentDescription = null
-                    )
-                })
+                IeeIconToolTip(
+                    tooltipTitle = {
+                        Text(
+                            text = tooltipTitle,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    },
+                    tooltipBody = {
+                        Text(
+                            text = tooltipBody,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = null,
+                        )
+                    },
+                )
             }
         }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Slider(
                 enabled = enabled,
@@ -582,7 +612,7 @@ private fun SettingsSliderRow(
                     IeeSliderThumbToolTip(
                         enabled = enabled,
                         interactionSource = interactionSource,
-                        tooltipText = valueFormatter(sliderValue.roundToInt())
+                        tooltipText = valueFormatter(sliderValue.roundToInt()),
                     )
                 },
             )
@@ -592,26 +622,28 @@ private fun SettingsSliderRow(
 
 @Composable
 internal fun SettingNavigationRow(
-    title: String, subtitle: String? = null, onClick: () -> Unit
+    title: String,
+    subtitle: String? = null,
+    onClick: () -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .clickable(onClick = onClick)
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier.clickable(onClick = onClick)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             if (subtitle != null) {
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -644,7 +676,6 @@ internal fun SettingsScreenSuccessPreview() {
             navigateToLicenses = {},
         )
     }
-
 }
 
 @Preview

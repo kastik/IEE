@@ -7,7 +7,6 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.Theme
 
-
 fun ThemeProto.toTheme(): Theme {
     return when (this) {
         ThemeProto.System -> Theme.FOLLOW_SYSTEM

@@ -24,7 +24,7 @@ fun MacrobenchmarkScope.launchAppAndDismissSigningDialog() {
     onElementOrNull(timeoutMs = 10000) { textAsString() == "Dismiss" }?.click()
 }
 
-//TODO This broke in HomeScreen after we added Horizontal Pager,
+// TODO This broke in HomeScreen after we added Horizontal Pager,
 fun UiAutomatorTestScope.scrollFeed() {
     waitForStableInActiveWindow(stableTimeoutMs = 10000, stableIntervalMs = 5000)
     val announcementList =

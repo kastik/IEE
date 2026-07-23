@@ -4,10 +4,10 @@ plugins {
     alias(libs.plugins.kastik.library)
     alias(libs.plugins.kastik.hilt)
 }
+
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.config"
 }
-
 
 dependencies {
     releaseImplementation(project(":core:common"))
@@ -15,5 +15,4 @@ dependencies {
 
     releaseImplementation(platform(libs.firebase.bom))
     releaseImplementation(libs.firebase.config)
-
 }

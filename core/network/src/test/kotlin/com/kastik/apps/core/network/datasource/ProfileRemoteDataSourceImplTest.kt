@@ -22,5 +22,4 @@ class ProfileRemoteDataSourceImplTest {
         val repository = profileRemoteDataSource.getProfile()
         assertEquals(remote, repository)
     }
-
 }

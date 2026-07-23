@@ -43,39 +43,35 @@ internal fun OnboardAppearance(
     val scrollState = rememberScrollState()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(24.dp),
+        modifier = Modifier.fillMaxSize().verticalScroll(scrollState).padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
-
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             Text(
                 text = stringResource(R.string.appearance_theme_title),
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
             )
             Text(
                 text = stringResource(R.string.appearance_theme_body),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
 
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 IeeChoiceCard(
                     modifier = Modifier.weight(1f),
@@ -85,7 +81,8 @@ internal fun OnboardAppearance(
                     onClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onThemeSelected(Theme.FOLLOW_SYSTEM)
-                    })
+                    },
+                )
                 IeeChoiceCard(
                     modifier = Modifier.weight(1f),
                     title = stringResource(R.string.appearance_theme_light),
@@ -94,7 +91,8 @@ internal fun OnboardAppearance(
                     onClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onThemeSelected(Theme.LIGHT)
-                    })
+                    },
+                )
                 IeeChoiceCard(
                     modifier = Modifier.weight(1f),
                     title = stringResource(R.string.appearance_theme_dark),
@@ -103,7 +101,8 @@ internal fun OnboardAppearance(
                     onClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         onThemeSelected(Theme.DARK)
-                    })
+                    },
+                )
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -113,7 +112,8 @@ internal fun OnboardAppearance(
                     checked = dynamicColorEnabled,
                     onCheckedChange = {
                         onDynamicColorToggled(it)
-                    })
+                    },
+                )
             }
         }
 
@@ -121,13 +121,13 @@ internal fun OnboardAppearance(
             onClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 onContinueClick()
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-        ) { Text(stringResource(R.string.appearance_next_page)) }
+            },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+        ) {
+            Text(stringResource(R.string.appearance_next_page))
+        }
     }
 }
-
 
 @Preview
 @Composable

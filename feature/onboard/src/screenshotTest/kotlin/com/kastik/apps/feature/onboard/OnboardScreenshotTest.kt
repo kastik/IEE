@@ -69,5 +69,4 @@ class OnboardScreenshotTest {
     fun OnboardFinishTest() {
         OnboardFinishPreview()
     }
-
 }

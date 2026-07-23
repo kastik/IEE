@@ -21,10 +21,11 @@ class AuthenticationRemoteDataSourceImplTest {
 
     @Test
     fun exchangeCodeForAboardTokenDoesNotSwallowErrors() = runTest {
-        fakeAboardApiClient.setThrowOnGetUserInfo(exception = IllegalStateException("Token expired"))
+        fakeAboardApiClient.setThrowOnGetUserInfo(
+            exception = IllegalStateException("Token expired")
+        )
         assertFailsWith<IllegalStateException> {
             authenticationRemoteDataSourceImpl.exchangeCodeForAboardToken("12345")
         }
     }
 }
-

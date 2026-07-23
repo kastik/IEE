@@ -19,18 +19,17 @@ fun IeeSwitchCard(
     enabled: Boolean = true,
 ) {
     OutlinedCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .alpha(if (enabled) 1f else 0.5f),
-        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = CardDefaults.outlinedCardBorder()
+        modifier = modifier.fillMaxWidth().alpha(if (enabled) 1f else 0.5f),
+        colors =
+            CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = CardDefaults.outlinedCardBorder(),
     ) {
         IeeSwitchRow(
             title = title,
             subtitle = subtitle,
             checked = checked,
             enabled = enabled,
-            onCheckedChange = onCheckedChange
+            onCheckedChange = onCheckedChange,
         )
     }
 }
@@ -44,9 +43,7 @@ private fun IeeSwitchCardPreview() {
             checked = true,
             onCheckedChange = {},
             subtitle = "Description",
-            enabled = true
+            enabled = true,
         )
     }
-
 }
-

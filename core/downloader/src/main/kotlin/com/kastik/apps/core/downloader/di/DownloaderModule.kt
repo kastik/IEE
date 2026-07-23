@@ -14,7 +14,5 @@ internal abstract class DownloaderModule {
 
     @Binds
     @Singleton
-    abstract fun provideFileDownloader(
-        fileDownloaderImpl: FileDownloaderImpl
-    ): FileDownloader
+    abstract fun provideFileDownloader(fileDownloaderImpl: FileDownloaderImpl): FileDownloader
 }

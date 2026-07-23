@@ -13,42 +13,39 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4ClassRunner::class)
 class StartupBenchmark {
-    @get:Rule
-    val benchmarkRule = MacrobenchmarkRule()
+    @get:Rule val benchmarkRule = MacrobenchmarkRule()
+
+    @Test fun startupWithoutPreCompilation() = startup(CompilationMode.None())
 
     @Test
-    fun startupWithoutPreCompilation() = startup(CompilationMode.None())
-
-    @Test
-    fun startupWithPartialCompilationAndDisabledBaselineProfile() = startup(
-        CompilationMode.Partial(baselineProfileMode = Disable, warmupIterations = 1),
-    )
+    fun startupWithPartialCompilationAndDisabledBaselineProfile() =
+        startup(CompilationMode.Partial(baselineProfileMode = Disable, warmupIterations = 1))
 
     @Test
     fun startupPrecompiledWithBaselineProfile() =
         startup(CompilationMode.Partial(baselineProfileMode = Require))
 
-    @Test
-    fun startupFullyPrecompiled() = startup(CompilationMode.Full())
+    @Test fun startupFullyPrecompiled() = startup(CompilationMode.Full())
 
     @OptIn(ExperimentalMetricApi::class)
-    private fun startup(compilationMode: CompilationMode) = benchmarkRule.measureRepeated(
-        packageName = "com.kastik.apps",
-        metrics = listOf(
-            StartupTimingMetric(),
-            TraceSectionMetric("JIT Compiling %", label = "JIT compilation"),
-            TraceSectionMetric("L%/%;", label = "ClassInit")
-        ),
-        compilationMode = compilationMode,
-        iterations = 2,
-        startupMode = COLD,
-        setupBlock = {
-            pressHome()
-        },
-    ) {
-        startActivityAndWait()
-    }
+    private fun startup(compilationMode: CompilationMode) =
+        benchmarkRule.measureRepeated(
+            packageName = "com.kastik.apps",
+            metrics =
+                listOf(
+                    StartupTimingMetric(),
+                    TraceSectionMetric("JIT Compiling %", label = "JIT compilation"),
+                    TraceSectionMetric("L%/%;", label = "ClassInit"),
+                ),
+            compilationMode = compilationMode,
+            iterations = 2,
+            startupMode = COLD,
+            setupBlock = {
+                pressHome()
+            },
+        ) {
+            startActivityAndWait()
+        }
 }

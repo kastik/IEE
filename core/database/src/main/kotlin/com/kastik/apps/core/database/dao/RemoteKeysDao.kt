@@ -26,7 +26,7 @@ interface RemoteKeysDao {
         titleQuery: String,
         bodyQuery: String,
         authorIds: List<Int>,
-        tagIds: List<Int>
+        tagIds: List<Int>,
     ): RemoteKeysEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -47,6 +47,6 @@ interface RemoteKeysDao {
         titleQuery: String,
         bodyQuery: String,
         authorIds: List<Int>,
-        tagIds: List<Int>
+        tagIds: List<Int>,
     )
 }

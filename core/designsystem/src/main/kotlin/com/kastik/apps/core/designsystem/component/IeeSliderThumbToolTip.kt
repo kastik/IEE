@@ -25,9 +25,7 @@ fun IeeSliderThumbToolTip(
     interactionSource: MutableInteractionSource,
     tooltipText: String,
 ) {
-    val tooltipState = rememberTooltipState(
-        isPersistent = true
-    )
+    val tooltipState = rememberTooltipState(isPersistent = true)
 
     val isDragged by interactionSource.collectIsDraggedAsState()
     LaunchedEffect(isDragged) {
@@ -40,21 +38,20 @@ fun IeeSliderThumbToolTip(
 
     TooltipBox(
         modifier = modifier,
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            TooltipAnchorPosition.Above,
-            12.dp
-        ),
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(
+                TooltipAnchorPosition.Above,
+                12.dp,
+            ),
         tooltip = {
             RichTooltip {
                 Text(
                     text = tooltipText,
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontFeatureSettings = "tnum"
-                    ),
+                    style = MaterialTheme.typography.labelLarge.copy(fontFeatureSettings = "tnum"),
                 )
             }
         },
-        state = tooltipState
+        state = tooltipState,
     ) {
         SliderDefaults.Thumb(
             interactionSource = interactionSource,
@@ -71,7 +68,7 @@ private fun IeeSliderThumbToolTipPreview() {
         IeeSliderThumbToolTip(
             enabled = true,
             interactionSource = remember { MutableInteractionSource() },
-            tooltipText = "50"
+            tooltipText = "50",
         )
     }
 }

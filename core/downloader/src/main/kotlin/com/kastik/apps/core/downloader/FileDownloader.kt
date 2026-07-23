@@ -13,12 +13,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
-//TODO DownloadManager doesn't support authenticators and can result in race conditions,
+// TODO DownloadManager doesn't support authenticators and can result in race conditions,
 // convert this to a Retrofit api call at some point
 
 @Singleton
-internal class FileDownloaderImpl @Inject constructor(
+internal class FileDownloaderImpl
+@Inject
+constructor(
     @ApplicationContext context: Context,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     val tokenManager: TokenManager,
@@ -33,17 +34,19 @@ internal class FileDownloaderImpl @Inject constructor(
         withContext(ioDispatcher) {
             val token = tokenManager.getToken()
 
-            val request = DownloadManager.Request(url.toUri()).apply {
-                setTitle(fileName)
-                setMimeType(mimeType)
-                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-                if (token != null) {
-                    addRequestHeader("Authorization", "Bearer $token")
+            val request =
+                DownloadManager.Request(url.toUri()).apply {
+                    setTitle(fileName)
+                    setMimeType(mimeType)
+                    setNotificationVisibility(
+                        DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
+                    )
+                    setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+                    if (token != null) {
+                        addRequestHeader("Authorization", "Bearer $token")
+                    }
                 }
-            }
             downloadManger.enqueue(request)
         }
-
     }
 }

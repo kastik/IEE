@@ -13,12 +13,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AboardAuthenticator @Inject constructor(
+class AboardAuthenticator
+@Inject
+constructor(
     private val tokenManager: TokenManager,
     private val crashlytics: Crashlytics,
     @BaseAboardClient private val aboardRefreshApiClient: AboardApiClient,
 ) : Authenticator {
-
 
     override fun authenticate(route: Route?, response: Response): Request? {
 
@@ -32,7 +33,6 @@ class AboardAuthenticator @Inject constructor(
                 if (requestToken != currentToken && currentToken != null) {
                     return@runBlocking buildRequest(response.request, currentToken)
                 }
-
 
                 try {
                     val newToken = aboardRefreshApiClient.refreshToken()
@@ -51,8 +51,6 @@ class AboardAuthenticator @Inject constructor(
     }
 
     private fun buildRequest(request: Request, token: String): Request {
-        return request.newBuilder()
-            .header("Authorization", "Bearer $token")
-            .build()
+        return request.newBuilder().header("Authorization", "Bearer $token").build()
     }
 }

@@ -13,5 +13,5 @@ data class UserPreferences(
     val checkIntervalMinutes: Int,
     val hasSkippedSignedIn: Boolean,
     val importantEventCount: Int,
-    val lastNotificationCheckTime: Instant?
+    val lastNotificationCheckTime: Instant?,
 )

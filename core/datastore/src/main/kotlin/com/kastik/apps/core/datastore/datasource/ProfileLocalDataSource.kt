@@ -11,19 +11,22 @@ import javax.inject.Singleton
 
 interface ProfileLocalDataSource {
     val profile: Flow<ProfileProto?>
+
     suspend fun setProfile(profile: ProfileProto)
+
     suspend fun clearProfile()
 }
 
 @Singleton
-internal class ProfileLocalDataSourceImpl @Inject constructor(
-    @UserProfileDatastore private val profileDataStore: DataStore<ProfileProto>,
-) : ProfileLocalDataSource {
+internal class ProfileLocalDataSourceImpl
+@Inject
+constructor(@UserProfileDatastore private val profileDataStore: DataStore<ProfileProto>) :
+    ProfileLocalDataSource {
 
-    override val profile: Flow<ProfileProto?> = profileDataStore.data.map { profile ->
-        profile.takeUnless { it == ProfileSerializer.defaultValue }
-    }
-
+    override val profile: Flow<ProfileProto?> =
+        profileDataStore.data.map { profile ->
+            profile.takeUnless { it == ProfileSerializer.defaultValue }
+        }
 
     override suspend fun setProfile(profile: ProfileProto) {
         profileDataStore.updateData { currentProfile ->

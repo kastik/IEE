@@ -17,9 +17,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class NotificationsRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
-) : NotificationRepository {
+internal class NotificationsRepositoryImpl
+@Inject
+constructor(@ApplicationContext private val context: Context) : NotificationRepository {
     override fun areNotificationsEnabled(): Flow<Boolean> {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
@@ -30,26 +30,39 @@ internal class NotificationsRepositoryImpl @Inject constructor(
         val application = context.applicationContext as Application
 
         return callbackFlow {
-            trySend(nm.areNotificationsEnabled())
+                trySend(nm.areNotificationsEnabled())
 
-            val lifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
-                override fun onActivityResumed(activity: Activity) {
-                    trySend(nm.areNotificationsEnabled())
+                val lifecycleCallbacks =
+                    object : Application.ActivityLifecycleCallbacks {
+                        override fun onActivityResumed(activity: Activity) {
+                            trySend(nm.areNotificationsEnabled())
+                        }
+
+                        override fun onActivityCreated(
+                            activity: Activity,
+                            savedInstanceState: Bundle?,
+                        ) {}
+
+                        override fun onActivityStarted(activity: Activity) {}
+
+                        override fun onActivityPaused(activity: Activity) {}
+
+                        override fun onActivityStopped(activity: Activity) {}
+
+                        override fun onActivitySaveInstanceState(
+                            activity: Activity,
+                            outState: Bundle,
+                        ) {}
+
+                        override fun onActivityDestroyed(activity: Activity) {}
+                    }
+
+                application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
+
+                awaitClose {
+                    application.unregisterActivityLifecycleCallbacks(lifecycleCallbacks)
                 }
-
-                override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
-                override fun onActivityStarted(activity: Activity) {}
-                override fun onActivityPaused(activity: Activity) {}
-                override fun onActivityStopped(activity: Activity) {}
-                override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
-                override fun onActivityDestroyed(activity: Activity) {}
             }
-
-            application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
-
-            awaitClose {
-                application.unregisterActivityLifecycleCallbacks(lifecycleCallbacks)
-            }
-        }.distinctUntilChanged()
+            .distinctUntilChanged()
     }
 }

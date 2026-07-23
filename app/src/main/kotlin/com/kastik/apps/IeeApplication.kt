@@ -13,24 +13,16 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class IeeApplication : Application(), Configuration.Provider {
+    @Inject lateinit var workerFactory: HiltWorkerFactory
 
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    @Inject @ApplicationScope lateinit var applicationScope: CoroutineScope
 
-    @Inject
-    @ApplicationScope
-    lateinit var applicationScope: CoroutineScope
+    @Inject lateinit var devTools: DevTools
 
-    @Inject
-    lateinit var devTools: DevTools
-
-    @Inject
-    lateinit var triggerSignOutOnStatusChangeUseCase: TriggerSignOutOnStatusChangeUseCase
+    @Inject lateinit var triggerSignOutOnStatusChangeUseCase: TriggerSignOutOnStatusChangeUseCase
 
     override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
+        get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 
     override fun onCreate() {
         super.onCreate()
@@ -41,7 +33,5 @@ class IeeApplication : Application(), Configuration.Provider {
         applicationScope.launch {
             triggerSignOutOnStatusChangeUseCase()
         }
-
     }
-
 }

@@ -68,10 +68,9 @@ internal class AnnouncementTest {
 
         attachmentEntities.forEachIndexed { index, attachment ->
             assertThat(attachment.id).isEqualTo(announcementDto.attachments[index].id)
-            assertThat(attachment.announcementId).isEqualTo(announcementDto.attachments[index].announcementId)
+            assertThat(attachment.announcementId)
+                .isEqualTo(announcementDto.attachments[index].announcementId)
             assertThat(attachment.filename).isEqualTo(announcementDto.attachments[index].fileName)
         }
     }
 }
-
-

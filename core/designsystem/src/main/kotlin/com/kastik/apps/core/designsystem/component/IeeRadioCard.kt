@@ -28,34 +28,40 @@ fun IeeRadioCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     description: String? = null,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
 
     val containerColor =
-        if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface
-    val border = if (selected) {
-        BorderStroke(2.dp, MaterialTheme.colorScheme.secondary)
-    } else {
-        CardDefaults.outlinedCardBorder(enabled)
-    }
+        if (selected) MaterialTheme.colorScheme.secondaryContainer
+        else MaterialTheme.colorScheme.surface
+    val border =
+        if (selected) {
+            BorderStroke(2.dp, MaterialTheme.colorScheme.secondary)
+        } else {
+            CardDefaults.outlinedCardBorder(enabled)
+        }
 
     OutlinedCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .selectable(
-                selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .selectable(
+                    selected = selected,
+                    enabled = enabled,
+                    role = Role.RadioButton,
+                    onClick = onClick,
+                ),
         colors = CardDefaults.outlinedCardColors(containerColor = containerColor),
-        border = border
+        border = border,
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             RadioButton(
-                selected = selected, enabled = enabled, onClick = null
+                selected = selected,
+                enabled = enabled,
+                onClick = null,
             )
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -64,14 +70,14 @@ fun IeeRadioCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 if (description != null) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = description,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -88,8 +94,7 @@ private fun IeeRadioCardPreview() {
             selected = true,
             onClick = {},
             description = "Description",
-            enabled = true
+            enabled = true,
         )
     }
-
 }

@@ -17,14 +17,8 @@ internal abstract class NotificationsModule {
     companion object {
         @Provides
         @Singleton
-        fun provideFirebaseInstance(): FirebaseMessaging =
-            FirebaseMessaging.getInstance()
+        fun provideFirebaseInstance(): FirebaseMessaging = FirebaseMessaging.getInstance()
     }
 
-    @Binds
-    @Singleton
-    abstract fun bindNotifier(
-        notifierImpl: NotifierImpl
-    ): Notifier
-
+    @Binds @Singleton abstract fun bindNotifier(notifierImpl: NotifierImpl): Notifier
 }

@@ -14,17 +14,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 internal abstract class CrashlyticsReleaseModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindCrashlytics(impl: CrashlyticsReleaseImpl): Crashlytics
+    @Binds @Singleton abstract fun bindCrashlytics(impl: CrashlyticsReleaseImpl): Crashlytics
 
     companion object {
 
         @Provides
         @Singleton
-        fun provideFirebaseCrashlytics(
-        ): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
-
+        fun provideFirebaseCrashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
     }
-
 }

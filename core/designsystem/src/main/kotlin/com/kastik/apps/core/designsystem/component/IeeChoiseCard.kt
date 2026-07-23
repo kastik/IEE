@@ -23,7 +23,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-//TODO Fix
+// TODO Fix
 
 @Composable
 fun IeeChoiceCard(
@@ -33,50 +33,55 @@ fun IeeChoiceCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    iconContentDescription: String? = null
+    iconContentDescription: String? = null,
 ) {
-    val containerColor = if (isSelected) {
-        MaterialTheme.colorScheme.primaryContainer
-    } else {
-        MaterialTheme.colorScheme.surface
-    }
+    val containerColor =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surface
+        }
 
-    val contentColor = if (isSelected) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.onSurface
-    }
+    val contentColor =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        }
 
-    val border = if (isSelected) {
-        BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-    } else {
-        CardDefaults.outlinedCardBorder(enabled)
-    }
+    val border =
+        if (isSelected) {
+            BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        } else {
+            CardDefaults.outlinedCardBorder(enabled)
+        }
 
     OutlinedCard(
-        modifier = modifier
-            .selectable(
+        modifier =
+            modifier.selectable(
                 selected = isSelected,
                 enabled = enabled,
                 role = Role.RadioButton,
-                onClick = onClick
+                onClick = onClick,
             ),
         colors = CardDefaults.outlinedCardColors(containerColor = containerColor),
-        border = border
+        border = border,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Icon(
-                imageVector = icon, contentDescription = iconContentDescription, tint = contentColor
+                imageVector = icon,
+                contentDescription = iconContentDescription,
+                tint = contentColor,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = title, style = MaterialTheme.typography.labelLarge, color = contentColor
+                text = title,
+                style = MaterialTheme.typography.labelLarge,
+                color = contentColor,
             )
         }
     }
@@ -94,7 +99,6 @@ private fun IeeChoiceCardSelectedPreview() {
             enabled = true,
         )
     }
-
 }
 
 @Preview
@@ -109,5 +113,4 @@ private fun IeeChoiceCardUnselectedPreview() {
             enabled = true,
         )
     }
-
 }

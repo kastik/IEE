@@ -5,9 +5,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class PerformanceReleaseImpl @Inject constructor(
-    private val perf: FirebasePerformance
-) : Performance {
+internal class PerformanceReleaseImpl @Inject constructor(private val perf: FirebasePerformance) :
+    Performance {
     override fun <T> trace(name: String, attributes: Map<String, String>, block: () -> T): T {
         val trace = perf.newTrace(name)
 

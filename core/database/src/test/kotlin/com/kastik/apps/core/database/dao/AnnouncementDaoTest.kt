@@ -18,10 +18,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(RoboDatabaseTestRunner::class)
 internal class AnnouncementDaoTest : MemoryDatabase() {
-
 
     @Before
     fun setupForeignKeys() = runTest {
@@ -29,27 +27,27 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
         tagsDao.upsertTags(listOf(baseTagEntity))
     }
 
-//    @Test
-//    fun upsertListAnnouncementsInsertsNewAnnouncements() = runTest {
-//        announcementDao.upsertAnnouncements(listOf(baseAnnouncementEntity))
-//
-//        val result = announcementDao.getAnnouncementWithId(1).first()
-//
-//        assertThat(result).isNotNull()
-//        assertThat(result?.announcement?.id).isEqualTo(1)
-//        assertThat(result?.announcement?.title).isEqualTo("Test Title")
-//    }
-//
-//    @Test
-//    fun upsertSingleAnnouncementInsertsNewAnnouncement() = runTest {
-//        announcementDao.upsertAnnouncements(listOf(baseAnnouncementEntity))
-//
-//        val result = announcementDao.getAnnouncementWithId(1).first()
-//
-//        assertThat(result).isNotNull()
-//        assertThat(result?.announcement?.id).isEqualTo(1)
-//        assertThat(result?.announcement?.title).isEqualTo("Test Title")
-//    }
+    //    @Test
+    //    fun upsertListAnnouncementsInsertsNewAnnouncements() = runTest {
+    //        announcementDao.upsertAnnouncements(listOf(baseAnnouncementEntity))
+    //
+    //        val result = announcementDao.getAnnouncementWithId(1).first()
+    //
+    //        assertThat(result).isNotNull()
+    //        assertThat(result?.announcement?.id).isEqualTo(1)
+    //        assertThat(result?.announcement?.title).isEqualTo("Test Title")
+    //    }
+    //
+    //    @Test
+    //    fun upsertSingleAnnouncementInsertsNewAnnouncement() = runTest {
+    //        announcementDao.upsertAnnouncements(listOf(baseAnnouncementEntity))
+    //
+    //        val result = announcementDao.getAnnouncementWithId(1).first()
+    //
+    //        assertThat(result).isNotNull()
+    //        assertThat(result?.announcement?.id).isEqualTo(1)
+    //        assertThat(result?.announcement?.title).isEqualTo("Test Title")
+    //    }
 
     @Test
     fun getAnnouncementWithIdMapsCompleteDetailRelation() = runTest {
@@ -95,24 +93,36 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
         assertThat(results.first().announcement.id).isEqualTo(2)
     }
 
-
     @Test
     fun getPagedAnnouncementsReturnsMatchingRemoteKeyAnnouncements() = runTest {
         announcementDao.upsertAnnouncements(baseAnnouncementEntity)
-        val remoteKey = RemoteKeysEntity(
-            announcementId = 1, titleQuery = "Filter", bodyQuery = "",
-            authorIds = emptyList(), tagIds = emptyList(), sortType = SortType.DESC,
-            prevKey = null, nextKey = null
-        )
+        val remoteKey =
+            RemoteKeysEntity(
+                announcementId = 1,
+                titleQuery = "Filter",
+                bodyQuery = "",
+                authorIds = emptyList(),
+                tagIds = emptyList(),
+                sortType = SortType.DESC,
+                prevKey = null,
+                nextKey = null,
+            )
         remoteKeysDao.insertOrReplaceKeys(listOf(remoteKey))
 
-        val pagingSource = announcementDao.getPagedAnnouncements(
-            titleQuery = "Filter", sortType = SortType.DESC
-        )
+        val pagingSource =
+            announcementDao.getPagedAnnouncements(
+                titleQuery = "Filter",
+                sortType = SortType.DESC,
+            )
 
-        val loadResult = pagingSource.load(
-            PagingSource.LoadParams.Refresh(key = null, loadSize = 10, placeholdersEnabled = false)
-        )
+        val loadResult =
+            pagingSource.load(
+                PagingSource.LoadParams.Refresh(
+                    key = null,
+                    loadSize = 10,
+                    placeholdersEnabled = false,
+                )
+            )
 
         assertThat(loadResult).isInstanceOf(PagingSource.LoadResult.Page::class.java)
         val page = loadResult as PagingSource.LoadResult.Page
@@ -120,28 +130,39 @@ internal class AnnouncementDaoTest : MemoryDatabase() {
         assertThat(page.data.first().announcement.id).isEqualTo(1)
     }
 
-
     fun getPagedAnnouncementsWithoutMatchingRemoteKeyReturnsEmpty() = runTest {
         announcementDao.upsertAnnouncements(baseAnnouncementEntity)
-        val remoteKey = RemoteKeysEntity(
-            announcementId = 1, titleQuery = "Filter A", bodyQuery = "", // Cached for "Filter A"
-            authorIds = emptyList(), tagIds = emptyList(), sortType = SortType.DESC,
-            prevKey = null, nextKey = null
-        )
+        val remoteKey =
+            RemoteKeysEntity(
+                announcementId = 1,
+                titleQuery = "Filter A",
+                bodyQuery = "", // Cached for "Filter A"
+                authorIds = emptyList(),
+                tagIds = emptyList(),
+                sortType = SortType.DESC,
+                prevKey = null,
+                nextKey = null,
+            )
         remoteKeysDao.insertOrReplaceKeys(listOf(remoteKey))
 
-        val pagingSource = announcementDao.getPagedAnnouncements(
-            titleQuery = "Filter B", sortType = SortType.DESC
-        )
+        val pagingSource =
+            announcementDao.getPagedAnnouncements(
+                titleQuery = "Filter B",
+                sortType = SortType.DESC,
+            )
 
-        val loadResult = pagingSource.load(
-            PagingSource.LoadParams.Refresh(key = null, loadSize = 10, placeholdersEnabled = false)
-        )
+        val loadResult =
+            pagingSource.load(
+                PagingSource.LoadParams.Refresh(
+                    key = null,
+                    loadSize = 10,
+                    placeholdersEnabled = false,
+                )
+            )
 
         val page = loadResult as PagingSource.LoadResult.Page
         assertThat(page.data).isEmpty()
     }
-
 
     @Test
     fun getAttachmentWithIdReturnsExactUrlString() = runTest {

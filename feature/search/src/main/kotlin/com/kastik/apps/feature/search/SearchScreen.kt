@@ -93,7 +93,7 @@ internal fun SearchRoute(
         searchFeedAnnouncements = searchFeedAnnouncements,
         navigateBack = navigateBack,
         navigateToAnnouncement = navigateToAnnouncement,
-        onSearch = viewModel::onSearch
+        onSearch = viewModel::onSearch,
     )
 }
 
@@ -107,7 +107,9 @@ private fun SearchScreen(
     searchFeedAnnouncements: LazyPagingItems<Announcement>,
     navigateBack: () -> Unit = {},
     navigateToAnnouncement: (Int) -> Unit = {},
-    onSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit = { _, _, _ -> },
+    onSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit =
+        { _, _, _ ->
+        },
 ) {
     val context = LocalContext.current
     val analytics = LocalAnalytics.current
@@ -120,7 +122,8 @@ private fun SearchScreen(
     val searchRefreshLoadState = searchFeedAnnouncements.loadState.refresh
 
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing, topBar = {
+        contentWindowInsets = WindowInsets.safeDrawing,
+        topBar = {
             SearchBar(
                 scrollBehavior = searchScroll,
                 quickResults = quickResults,
@@ -140,13 +143,13 @@ private fun SearchScreen(
                         openAuthorSheet = {
                             analytics.logSheetOpened("search_authors_sheet")
                             showAuthorSheet.value = true
-                        }
+                        },
                     )
                 },
                 collapsedSecondaryActions = {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                        verticalArrangement = Arrangement.spacedBy(6.dp),
                     ) {
                         SearchBarFilters(
                             tagLabel = stringResource(R.string.tag_chip_label),
@@ -160,19 +163,21 @@ private fun SearchScreen(
                             openAuthorSheet = {
                                 analytics.logSheetOpened("search_authors_sheet")
                                 showAuthorSheet.value = true
-                            }
+                            },
                         )
                         AnimatedVisibility(
-                            visible = searchRefreshLoadState is LoadState.Error && searchFeedAnnouncements.itemCount > 0,
+                            visible =
+                                searchRefreshLoadState is LoadState.Error &&
+                                    searchFeedAnnouncements.itemCount > 0,
                             enter = expandVertically() + fadeIn(),
-                            exit = shrinkVertically() + fadeOut()
+                            exit = shrinkVertically() + fadeOut(),
                         ) {
                             IeeStatusBanner(
                                 text = "Sync failed.",
                                 icon = Icons.Default.CloudOff,
                                 actionLabel = "Retry",
                                 onActionClick = searchFeedAnnouncements::retry,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
                             )
                         }
                     }
@@ -192,7 +197,7 @@ private fun SearchScreen(
                 onAnnouncementQuickResultClick = { announcementId ->
                     analytics.logItemSelection(
                         announcementId.toString(),
-                        "announcement_quick_result"
+                        "announcement_quick_result",
                     )
                     navigateToAnnouncement(announcementId)
                 },
@@ -216,25 +221,20 @@ private fun SearchScreen(
                     IconButton(onClick = navigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     }
                 },
             )
-        }) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding())
-        ) {
+        },
+    ) { paddingValues ->
+        Box(modifier = Modifier.fillMaxSize().padding(top = paddingValues.calculateTopPadding())) {
             val refreshState = searchFeedAnnouncements.loadState.refresh
             val isEmpty = searchFeedAnnouncements.itemCount == 0
 
             Column(modifier = Modifier.fillMaxWidth()) {
                 AnimatedVisibility(refreshState is LoadState.Loading && !isEmpty) {
-                    IeeLinearWavyProgressIndicator(
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    IeeLinearWavyProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
                 AnnouncementFeed(
                     refreshEmptyText = stringResource(R.string.feed_empty),
@@ -312,15 +312,12 @@ private fun SearchScreen(
     }
 }
 
-
 @Preview
 @Composable
 internal fun SearchScreenInitialLoadPreview() {
     val emptyFlow = flowOf(PagingData.empty<Announcement>())
     val lazyItems = emptyFlow.collectAsLazyPagingItems()
     IeePreview {
-        SearchScreen(
-            searchFeedAnnouncements = lazyItems,
-        )
+        SearchScreen(searchFeedAnnouncements = lazyItems)
     }
 }

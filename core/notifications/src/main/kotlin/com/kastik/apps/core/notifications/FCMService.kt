@@ -8,8 +8,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 internal class FCMService : FirebaseMessagingService() {
 
-    @Inject
-    lateinit var notifier: Notifier
+    @Inject lateinit var notifier: Notifier
 
     override fun onNewToken(token: String) = Unit
 
@@ -18,14 +17,16 @@ internal class FCMService : FirebaseMessagingService() {
 
             val title = message.data["title"] ?: message.notification?.title
             val body = message.data["body"] ?: message.notification?.body
-            val uri = message.data["uri"] ?: message.data["link"]
-            ?: message.notification?.link?.toString()
+            val uri =
+                message.data["uri"]
+                    ?: message.data["link"]
+                    ?: message.notification?.link?.toString()
 
             if (title != null) {
                 notifier.sendCampaignNotification(
                     title = title,
                     body = body,
-                    uri = uri
+                    uri = uri,
                 )
             }
         }

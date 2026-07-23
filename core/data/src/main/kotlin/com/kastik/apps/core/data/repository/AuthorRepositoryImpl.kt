@@ -18,24 +18,26 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class AuthorRepositoryImpl @Inject constructor(
+internal class AuthorRepositoryImpl
+@Inject
+constructor(
     private val crashlytics: Crashlytics,
     private val authorLocalDataSource: AuthorsDao,
     private val authorRemoteDataSource: AuthorRemoteDataSource,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : AuthorRepository {
 
     override val authors: Flow<List<Author>> =
         authorLocalDataSource.getAuthors().map { it.map { it.toAuthor() } }
 
-
-    override suspend fun syncAuthors() = withContext(ioDispatcher) {
-        safeCall(
-            mapException = Exception::toNetworkError,
-            recordException = crashlytics::recordException,
-        ) {
-            val authors = authorRemoteDataSource.fetchAuthors()
-            authorLocalDataSource.upsertAuthors(authors.map { it.toAuthorEntity() })
+    override suspend fun syncAuthors() =
+        withContext(ioDispatcher) {
+            safeCall(
+                mapException = Exception::toNetworkError,
+                recordException = crashlytics::recordException,
+            ) {
+                val authors = authorRemoteDataSource.fetchAuthors()
+                authorLocalDataSource.upsertAuthors(authors.map { it.toAuthorEntity() })
+            }
         }
-    }
 }

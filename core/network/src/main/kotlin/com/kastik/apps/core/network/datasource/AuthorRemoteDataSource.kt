@@ -11,10 +11,10 @@ interface AuthorRemoteDataSource {
 }
 
 @Singleton
-internal class AuthorRemoteDataSourceImpl @Inject constructor(
-    @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient
-) : AuthorRemoteDataSource {
+internal class AuthorRemoteDataSourceImpl
+@Inject
+constructor(@AuthenticatorAboardClient private val aboardApiClient: AboardApiClient) :
+    AuthorRemoteDataSource {
 
-    override suspend fun fetchAuthors(): List<AuthorDto> =
-        aboardApiClient.getAuthors()
+    override suspend fun fetchAuthors(): List<AuthorDto> = aboardApiClient.getAuthors()
 }

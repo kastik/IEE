@@ -22,7 +22,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class ProfileViewModel @Inject constructor(
+internal class ProfileViewModel
+@Inject
+constructor(
     getUserProfileUseCase: GetUserProfileUseCase,
     getSubscriptionsUseCase: GetSubscriptionsUseCase,
     getIsSignedInUseCase: GetIsSignedInUseCase,
@@ -33,37 +35,43 @@ internal class ProfileViewModel @Inject constructor(
 
     private val _isSubscribeSheetVisible = MutableStateFlow(false)
 
-    val uiState = combine(
-        getIsSignedInUseCase(),
-        getUserProfileUseCase(),
-        getSubscriptionsUseCase(),
-        getSubscribableTagsUseCase(),
-        _isSubscribeSheetVisible,
-        workScheduler.subscribeToTagsSyncState,
-    ) { isSignedIn, profile, subscribedTags, subscribableTags, isSheetVisible, subscribeError ->
+    val uiState =
+        combine(
+                getIsSignedInUseCase(),
+                getUserProfileUseCase(),
+                getSubscriptionsUseCase(),
+                getSubscribableTagsUseCase(),
+                _isSubscribeSheetVisible,
+                workScheduler.subscribeToTagsSyncState,
+            ) {
+                isSignedIn,
+                profile,
+                subscribedTags,
+                subscribableTags,
+                isSheetVisible,
+                subscribeError ->
+                if (!isSignedIn) {
+                    return@combine ProfileUiState.SignedOut
+                }
 
-        if (!isSignedIn) {
-            return@combine ProfileUiState.SignedOut
-        }
+                if (profile == null) {
+                    return@combine ProfileUiState.Loading
+                }
 
-        if (profile == null) {
-            return@combine ProfileUiState.Loading
-        }
-
-        ProfileUiState.Success(
-            profile = profile,
-            subscribedTags = subscribedTags,
-            subscribableTags = subscribableTags,
-            isSubscribeSheetVisible = isSheetVisible,
-            isSyncingSubscriptions = subscribeError.isActive,
-            subscribeSyncErrorMessageResId = subscribeError.toSubscriptionSyncMessage()
-        )
-
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
-        initialValue = ProfileUiState.Loading
-    )
+                ProfileUiState.Success(
+                    profile = profile,
+                    subscribedTags = subscribedTags,
+                    subscribableTags = subscribableTags,
+                    isSubscribeSheetVisible = isSheetVisible,
+                    isSyncingSubscriptions = subscribeError.isActive,
+                    subscribeSyncErrorMessageResId = subscribeError.toSubscriptionSyncMessage(),
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000L),
+                initialValue = ProfileUiState.Loading,
+            )
 
     fun toggleTagsSheet(enabled: Boolean) {
         _isSubscribeSheetVisible.update {
@@ -82,16 +90,16 @@ internal class ProfileViewModel @Inject constructor(
             signOutUseCase()
         }
     }
-
 }
 
 @StringRes
-fun SyncState.toSubscriptionSyncMessage(): Int? = when (this) {
-    SyncState.Enqueued -> R.string.sync_status_enqueued
-    SyncState.Blocked -> R.string.sync_status_blocked
-    SyncState.Error -> R.string.sync_status_error
+fun SyncState.toSubscriptionSyncMessage(): Int? =
+    when (this) {
+        SyncState.Enqueued -> R.string.sync_status_enqueued
+        SyncState.Blocked -> R.string.sync_status_blocked
+        SyncState.Error -> R.string.sync_status_error
 
-    SyncState.Idle,
-    SyncState.Syncing,
-    SyncState.Success -> null
-}
+        SyncState.Idle,
+        SyncState.Syncing,
+        SyncState.Success -> null
+    }

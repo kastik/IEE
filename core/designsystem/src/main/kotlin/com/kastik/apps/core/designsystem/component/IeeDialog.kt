@@ -37,20 +37,18 @@ fun IeeDialog(
             Text(
                 text = title,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
             )
         },
         text = {
             Text(
                 text = text,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
         },
         confirmButton = {
-            Button(
-                onClick = onConfirm
-            ) {
+            Button(onClick = onConfirm) {
                 Text(confirmText)
             }
         },
@@ -58,7 +56,8 @@ fun IeeDialog(
             TextButton(onClick = onDismiss) {
                 Text(dismissText)
             }
-        })
+        },
+    )
 }
 
 @Preview(showBackground = true)
@@ -72,7 +71,7 @@ private fun PreviewIeeDialog() {
             confirmText = "Allow",
             onConfirm = {},
             dismissText = "Dismiss",
-            onDismiss = {}
+            onDismiss = {},
         )
     }
 }

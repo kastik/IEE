@@ -14,7 +14,6 @@ plugins {
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.data"
 
-
     flavorDimensions += BuildDimensions.ENVIRONMENT
     productFlavors {
         maybeCreate(BuildFlavors.PRODUCTION).apply {
@@ -29,7 +28,6 @@ configure<LibraryExtension> {
         enable = true
     }
 }
-
 
 dependencies {
     ksp(libs.room.compiler)
@@ -51,5 +49,4 @@ dependencies {
     testImplementation(libs.androidx.runner)
     testImplementation(libs.io.mockk)
     testImplementation(libs.robolectric)
-
 }

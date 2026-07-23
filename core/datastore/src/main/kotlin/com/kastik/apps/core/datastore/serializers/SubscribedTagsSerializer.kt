@@ -18,6 +18,5 @@ object SubscribedTagsSerializer : Serializer<SubscriptionsProto> {
         }
     }
 
-    override suspend fun writeTo(t: SubscriptionsProto, output: OutputStream) =
-        t.writeTo(output)
+    override suspend fun writeTo(t: SubscriptionsProto, output: OutputStream) = t.writeTo(output)
 }

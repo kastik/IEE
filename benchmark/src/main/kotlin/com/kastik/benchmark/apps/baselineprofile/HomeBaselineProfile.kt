@@ -6,17 +6,13 @@ import com.kastik.benchmark.apps.launchAppAndDismissSigningDialog
 import org.junit.Rule
 import org.junit.Test
 
-
 class HomeBaselineProfile {
-
-    @get:Rule
-    val baselineProfileRule = BaselineProfileRule()
+    @get:Rule val baselineProfileRule = BaselineProfileRule()
 
     @Test
-    fun generate() = baselineProfileRule.collect(
-        "com.kastik.apps",
-    ) {
-        launchAppAndDismissSigningDialog()
-        refreshFeed()
-    }
+    fun generate() =
+        baselineProfileRule.collect("com.kastik.apps") {
+            launchAppAndDismissSigningDialog()
+            refreshFeed()
+        }
 }

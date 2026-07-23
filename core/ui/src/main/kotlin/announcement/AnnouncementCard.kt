@@ -1,6 +1,5 @@
 package com.kastik.apps.core.ui.announcement
 
-
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -40,7 +39,6 @@ import com.kastik.apps.core.designsystem.component.IeeTag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AnnouncementCard(
@@ -52,52 +50,55 @@ fun AnnouncementCard(
     categories: ImmutableList<String>,
     date: String,
     content: String,
-    isPinned: Boolean
+    isPinned: Boolean,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.90f else 1f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
+    val scale by
+        animateFloatAsState(
+            targetValue = if (isPressed) 0.90f else 1f,
+            animationSpec =
+                spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow,
+                ),
         )
-    )
 
     ElevatedCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .scale(scale)
-            .combinedClickable(
-                interactionSource = interactionSource,
-                indication = LocalIndication.current,
-                onClick = onClick,
-                onLongClick = onLonClick
-            ),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .scale(scale)
+                .combinedClickable(
+                    interactionSource = interactionSource,
+                    indication = LocalIndication.current,
+                    onClick = onClick,
+                    onLongClick = onLonClick,
+                ),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isPinned) MaterialTheme.colorScheme.surfaceContainerHighest else MaterialTheme.colorScheme.surfaceContainer,
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    if (isPinned) MaterialTheme.colorScheme.surfaceContainerHighest
+                    else MaterialTheme.colorScheme.surfaceContainer
+            ),
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = publisher,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.secondary
+                    color = MaterialTheme.colorScheme.secondary,
                 )
                 Text(
                     text = date,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.tertiary
+                    color = MaterialTheme.colorScheme.tertiary,
                 )
             }
 
@@ -106,7 +107,7 @@ fun AnnouncementCard(
                 text = AnnotatedString.fromHtml(title.collapseWhitespace()),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -115,29 +116,23 @@ fun AnnouncementCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.height(4.dp))
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier
-                    .padding(vertical = 4.dp)
-                    .fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 2.dp)
+                modifier = Modifier.padding(vertical = 4.dp).fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 2.dp),
             ) {
                 items(categories) { category ->
-                    IeeTag(
-                        text = category,
-                    )
+                    IeeTag(text = category)
                 }
             }
         }
     }
 }
 
-private fun String.collapseWhitespace(): String =
-    replace(Regex("\\s+"), " ").trim()
-
+private fun String.collapseWhitespace(): String = replace(Regex("\\s+"), " ").trim()
 
 @Preview
 @Composable
@@ -150,7 +145,7 @@ private fun PreviewAnnouncementCard() {
             categories = persistentListOf("The", "Quick", "Brown", "Fox"),
             date = "25-1-2019 08:34",
             content = "The quick brown fox jumps over the lazy dog",
-            isPinned = false
+            isPinned = false,
         )
     }
 }
@@ -166,9 +161,7 @@ private fun PreviewPinnedAnnouncementCard() {
             categories = persistentListOf("The", "Quick", "Brown", "Fox"),
             date = "25-1-2019 08:34",
             content = "The quick brown fox jumps over the lazy dog",
-            isPinned = true
+            isPinned = true,
         )
     }
 }
-
-

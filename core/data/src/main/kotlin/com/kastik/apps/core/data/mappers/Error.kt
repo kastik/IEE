@@ -13,7 +13,6 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-
 fun Throwable.toLocalError(): LocalError {
     return when (this) {
         is SQLiteFullException -> LocalError.DiskFull
@@ -22,16 +21,17 @@ fun Throwable.toLocalError(): LocalError {
 
         is CorruptionException -> LocalError.DataStoreCorrupt
 
-        is SQLiteDiskIOException, is IOException -> LocalError.IOError
+        is SQLiteDiskIOException,
+        is IOException -> LocalError.IOError
 
         else -> LocalError.Unknown
     }
 }
 
-
 fun Throwable.toNetworkError(): NetworkError {
     return when (this) {
-        is UnknownHostException, is ConnectException -> NetworkError.Connection
+        is UnknownHostException,
+        is ConnectException -> NetworkError.Connection
         is SocketTimeoutException -> NetworkError.Timeout
         is IOException -> NetworkError.Connection
 

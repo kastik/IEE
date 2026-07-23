@@ -5,7 +5,6 @@ import com.kastik.apps.core.network.testdata.baseAuthorDto
 import com.kastik.apps.core.testing.testdata.baseAuthorEntity
 import org.junit.Test
 
-
 class AuthorTest {
 
     @Test

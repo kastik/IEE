@@ -7,9 +7,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AboardTokenManagerImpl @Inject constructor(
-    val authenticationLocalDataSource: AuthenticationLocalDataSource,
-) : TokenManager {
+class AboardTokenManagerImpl
+@Inject
+constructor(val authenticationLocalDataSource: AuthenticationLocalDataSource) : TokenManager {
 
     override suspend fun getToken(): String? =
         authenticationLocalDataSource.aboardAccessToken.first()
@@ -20,5 +20,4 @@ class AboardTokenManagerImpl @Inject constructor(
     override suspend fun tokenExpired() {
         authenticationLocalDataSource.clearAuthenticationData()
     }
-
 }

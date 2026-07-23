@@ -12,20 +12,17 @@ import org.junit.Rule
 import org.junit.Test
 
 class SettingsBaselineProfile {
-
-    @get:Rule
-    val baselineProfileRule = BaselineProfileRule()
+    @get:Rule val baselineProfileRule = BaselineProfileRule()
 
     @Test
-    fun generate() = baselineProfileRule.collect(
-        "com.kastik.apps",
-    ) {
-        launchAppAndDismissSigningDialog()
-        navigateToSettings()
-        toggleSortingOptions()
-        toggleFabFilters()
-        toggleSearchFieldOptions()
-        toggleThemeOptions()
-        toggleDynamicTheme()
-    }
+    fun generate() =
+        baselineProfileRule.collect("com.kastik.apps") {
+            launchAppAndDismissSigningDialog()
+            navigateToSettings()
+            toggleSortingOptions()
+            toggleFabFilters()
+            toggleSearchFieldOptions()
+            toggleThemeOptions()
+            toggleDynamicTheme()
+        }
 }

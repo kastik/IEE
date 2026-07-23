@@ -21,12 +21,15 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideAppDatabase(
-        @ApplicationContext context: Context
-    ): AppDatabase = Room.databaseBuilder(
-        context, AppDatabase::class.java, "announcement_cache.db"
-    ).fallbackToDestructiveMigration(true)
-        .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING).build()
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(
+                context,
+                AppDatabase::class.java,
+                "announcement_cache.db",
+            )
+            .fallbackToDestructiveMigration(true)
+            .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
+            .build()
 
     @Provides
     @Singleton
@@ -51,5 +54,4 @@ object DatabaseModule {
     fun provideRemoteKeysDao(appDatabase: AppDatabase): RemoteKeysDao {
         return appDatabase.remoteKeysDao()
     }
-
 }

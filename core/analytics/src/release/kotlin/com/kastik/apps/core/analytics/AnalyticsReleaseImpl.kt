@@ -5,16 +5,16 @@ import com.google.firebase.analytics.logEvent
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
-internal class AnalyticsReleaseImpl @Inject constructor(
+internal class AnalyticsReleaseImpl
+@Inject
+constructor(
     private val analytics: FirebaseAnalytics,
     override val types: AnalyticsEventTypes,
-    override val paramKeys: AnalyticsParamKeys
+    override val paramKeys: AnalyticsParamKeys,
 ) : Analytics {
 
-    override fun setUserId(userId: String?) =
-        analytics.setUserId(userId)
+    override fun setUserId(userId: String?) = analytics.setUserId(userId)
 
     override fun setUserProperty(propertyName: String, value: String?) =
         analytics.setUserProperty(propertyName, value)
@@ -35,5 +35,4 @@ internal class AnalyticsReleaseImpl @Inject constructor(
             }
         }
     }
-
 }

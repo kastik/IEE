@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.model.aboard.SortType
 import org.junit.Test
 
-
 class SortTypeConverterTest {
 
     private val converter = SortTypeConverter()
@@ -17,7 +16,6 @@ class SortTypeConverterTest {
         }
     }
 
-
     @Test
     fun mapsNameToSortType() {
         SortType.entries.forEach { type ->
@@ -26,4 +24,3 @@ class SortTypeConverterTest {
         }
     }
 }
-

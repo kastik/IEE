@@ -1,6 +1,5 @@
 package com.kastik.apps.core.network.serializers
 
-
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
@@ -22,7 +21,6 @@ object StringToInstantSerializer : KSerializer<Instant> {
 
     override fun deserialize(decoder: Decoder): Instant {
         val string = decoder.decodeString()
-
 
         val isoString = string.replace(" ", "T")
 

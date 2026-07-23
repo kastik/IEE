@@ -8,49 +8,51 @@ import org.junit.Rule
 import org.junit.Test
 
 class StartupProfile {
-
-    @get:Rule
-    val baselineProfileRule = BaselineProfileRule()
+    @get:Rule val baselineProfileRule = BaselineProfileRule()
 
     @Test
-    fun generateLauncherStartupProfile() = baselineProfileRule.collect(
-        "com.kastik.apps",
-        includeInStartupProfile = true,
-    ) {
-        uiAutomator {
-            startActivityAndWait()
+    fun generateLauncherStartupProfile() =
+        baselineProfileRule.collect(
+            "com.kastik.apps",
+            includeInStartupProfile = true,
+        ) {
+            uiAutomator {
+                startActivityAndWait()
+            }
         }
-    }
 
     @Test
-    fun generateAuthenticationStartupProfile() = baselineProfileRule.collect(
-        packageName = "com.kastik.apps",
-        includeInStartupProfile = true,
-    ) {
-        val intent = Intent(Intent.ACTION_VIEW, "com.kastik.apps://auth".toUri())
-        intent.setPackage("com.kastik.apps")
-        startActivityAndWait(intent)
-    }
+    fun generateAuthenticationStartupProfile() =
+        baselineProfileRule.collect(
+            packageName = "com.kastik.apps",
+            includeInStartupProfile = true,
+        ) {
+            val intent = Intent(Intent.ACTION_VIEW, "com.kastik.apps://auth".toUri())
+            intent.setPackage("com.kastik.apps")
+            startActivityAndWait(intent)
+        }
 
     @Test
-    fun generateAnnouncementStartupProfile() = baselineProfileRule.collect(
-        packageName = "com.kastik.apps",
-        includeInStartupProfile = true,
-    ) {
-        val intent =
-            Intent(Intent.ACTION_VIEW, "https://aboard.iee.ihu.gr/announcements/65163".toUri())
-        intent.setPackage("com.kastik.apps")
-        startActivityAndWait(intent)
-    }
+    fun generateAnnouncementStartupProfile() =
+        baselineProfileRule.collect(
+            packageName = "com.kastik.apps",
+            includeInStartupProfile = true,
+        ) {
+            val intent =
+                Intent(Intent.ACTION_VIEW, "https://aboard.iee.ihu.gr/announcements/65163".toUri())
+            intent.setPackage("com.kastik.apps")
+            startActivityAndWait(intent)
+        }
 
     @Test
-    fun generateForYouStartupProfile() = baselineProfileRule.collect(
-        packageName = "com.kastik.apps",
-        includeInStartupProfile = true,
-    ) {
-        val intent =
-            Intent(Intent.ACTION_VIEW, "com.kastik.apps://home?initialTab=FOR_YOU".toUri())
-        intent.setPackage("com.kastik.apps")
-        startActivityAndWait(intent)
-    }
+    fun generateForYouStartupProfile() =
+        baselineProfileRule.collect(
+            packageName = "com.kastik.apps",
+            includeInStartupProfile = true,
+        ) {
+            val intent =
+                Intent(Intent.ACTION_VIEW, "com.kastik.apps://home?initialTab=FOR_YOU".toUri())
+            intent.setPackage("com.kastik.apps")
+            startActivityAndWait(intent)
+        }
 }

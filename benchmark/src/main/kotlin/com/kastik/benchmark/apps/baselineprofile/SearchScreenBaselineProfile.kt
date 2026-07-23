@@ -8,16 +8,13 @@ import org.junit.Rule
 import org.junit.Test
 
 class SearchScreenBaselineProfile {
-
-    @get:Rule
-    val baselineProfileRule = BaselineProfileRule()
+    @get:Rule val baselineProfileRule = BaselineProfileRule()
 
     @Test
-    fun generate() = baselineProfileRule.collect(
-        "com.kastik.apps",
-    ) {
-        launchAppAndDismissSigningDialog()
-        navigateToSearchViaQuery()
-        scrollFeed()
-    }
+    fun generate() =
+        baselineProfileRule.collect("com.kastik.apps") {
+            launchAppAndDismissSigningDialog()
+            navigateToSearchViaQuery()
+            scrollFeed()
+        }
 }

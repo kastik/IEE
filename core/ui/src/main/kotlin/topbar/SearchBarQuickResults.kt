@@ -40,58 +40,58 @@ fun <T> LazyListScope.searchBarQuickResults(
     modifier: Modifier = Modifier,
 ) {
 
-
     if (items.isNotEmpty()) {
         item(key = titleKey) {
             QuickResultsTitle(
                 title = title(),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .animateItem(
-                        fadeInSpec = ieeListSpring(),
-                        fadeOutSpec = ieeListSpring(),
-                        placementSpec = ieeListSpring()
-                    )
+                modifier =
+                    Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        .animateItem(
+                            fadeInSpec = ieeListSpring(),
+                            fadeOutSpec = ieeListSpring(),
+                            placementSpec = ieeListSpring(),
+                        ),
             )
         }
     }
 
     itemsIndexed(
-        items = items, key = { _, item -> keyProvider(item) }) { index, item ->
-
-        val shape = when {
-            items.size <= 1 -> roundShape
-            index == 0 -> roundTopShape
-            index == items.size - 1 -> roundBottomShape
-            else -> RectangleShape
-        }
+        items = items,
+        key = { _, item -> keyProvider(item) },
+    ) { index, item ->
+        val shape =
+            when {
+                items.size <= 1 -> roundShape
+                index == 0 -> roundTopShape
+                index == items.size - 1 -> roundBottomShape
+                else -> RectangleShape
+            }
 
         Surface(
-            modifier = modifier
-                .padding(vertical = 2.dp)
-                .animateItem(
-                    fadeInSpec = ieeListSpring(),
-                    fadeOutSpec = ieeListSpring(),
-                    placementSpec = ieeListSpring()
-                ),
+            modifier =
+                modifier
+                    .padding(vertical = 2.dp)
+                    .animateItem(
+                        fadeInSpec = ieeListSpring(),
+                        fadeOutSpec = ieeListSpring(),
+                        placementSpec = ieeListSpring(),
+                    ),
             shape = shape,
             color = MaterialTheme.colorScheme.surfaceContainer,
             shadowElevation = 2.dp,
             contentColor = MaterialTheme.colorScheme.onSurface,
-
-            ) {
+        ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onItemClick(item) }
-                    .padding(all = 16.dp),
+                modifier =
+                    Modifier.fillMaxWidth().clickable { onItemClick(item) }.padding(all = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 Icon(icon, contentDescription = null)
                 Text(
                     text = labelProvider(item),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
@@ -111,50 +111,53 @@ fun LazyListScope.searchBarQuickResults(
         item(key = titleKey) {
             QuickResultsTitle(
                 title = title(),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                    .animateItem(
-                        fadeInSpec = ieeListSpring(),
-                        fadeOutSpec = ieeListSpring(),
-                        placementSpec = ieeListSpring()
-                    )
+                modifier =
+                    Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        .animateItem(
+                            fadeInSpec = ieeListSpring(),
+                            fadeOutSpec = ieeListSpring(),
+                            placementSpec = ieeListSpring(),
+                        ),
             )
         }
     }
 
     items(
-        items = items, key = { keyProvider(it) }) { item ->
+        items = items,
+        key = { keyProvider(it) },
+    ) { item ->
         AnnouncementCard(
-            modifier = modifier
-                .padding(vertical = 2.dp)
-                .animateItem(
-                    fadeInSpec = ieeListSpring(),
-                    fadeOutSpec = ieeListSpring(),
-                    placementSpec = ieeListSpring()
-                ),
+            modifier =
+                modifier
+                    .padding(vertical = 2.dp)
+                    .animateItem(
+                        fadeInSpec = ieeListSpring(),
+                        fadeOutSpec = ieeListSpring(),
+                        placementSpec = ieeListSpring(),
+                    ),
             onClick = { onItemClick(item) },
             publisher = item.author,
             title = item.title,
-            categories = remember(item.tags) {
-                item.tags.map { it.title }.toImmutableList()
-            },
+            categories =
+                remember(item.tags) {
+                    item.tags.map { it.title }.toImmutableList()
+                },
             date = item.date.toFormattedString(),
             content = remember(item.preview) { item.preview },
-            isPinned = item.isPinned
+            isPinned = item.isPinned,
         )
     }
 }
 
-
 @Composable
 private fun QuickResultsTitle(
     title: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Text(
         text = title,
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.primary,
-        modifier = modifier
+        modifier = modifier,
     )
 }

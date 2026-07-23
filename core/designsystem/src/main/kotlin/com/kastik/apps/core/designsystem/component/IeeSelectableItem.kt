@@ -30,49 +30,53 @@ fun IeeSelectableItem(
     modifier: Modifier = Modifier,
     title: String,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val shape = RoundedCornerShape(20)
-    val containerColor by animateColorAsState(
-        if (isSelected) MaterialTheme.colorScheme.primaryContainer
-        else MaterialTheme.colorScheme.surfaceContainer
-    )
-    val contentColor by animateColorAsState(
-        if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
-        else MaterialTheme.colorScheme.onSurface
-    )
+    val containerColor by
+        animateColorAsState(
+            if (isSelected) MaterialTheme.colorScheme.primaryContainer
+            else MaterialTheme.colorScheme.surfaceContainer
+        )
+    val contentColor by
+        animateColorAsState(
+            if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer
+            else MaterialTheme.colorScheme.onSurface
+        )
 
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 6.dp)
-            .clip(shape)
-            .clickable(onClick = onClick),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp, vertical = 6.dp)
+                .clip(shape)
+                .clickable(onClick = onClick),
         color = containerColor,
         tonalElevation = if (isSelected) 3.dp else 0.dp,
-        shadowElevation = 0.dp
+        shadowElevation = 0.dp,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelLarge,
                 color = contentColor,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
 
             AnimatedVisibility(
-                visible = isSelected, enter = scaleIn(), exit = scaleOut()
+                visible = isSelected,
+                enter = scaleIn(),
+                exit = scaleOut(),
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Check,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier.size(22.dp),
                 )
             }
         }
@@ -86,7 +90,7 @@ private fun IeeSelectableItemUnSelectedPreview() {
         IeeSelectableItem(
             title = "Not Selected Item",
             isSelected = false,
-            onClick = {}
+            onClick = {},
         )
     }
 }
@@ -98,7 +102,7 @@ private fun IeeSelectableItemSelectedPreview() {
         IeeSelectableItem(
             title = "Selected Item",
             isSelected = true,
-            onClick = {}
+            onClick = {},
         )
     }
 }

@@ -29,7 +29,6 @@ class TagTest {
         assertThat(result.title).isEqualTo(entity.title)
     }
 
-
     @Test
     fun subscribedTagDtoMapsToSubscribedTagProto() {
         val dto = listOf(baseTagDto)
@@ -37,7 +36,6 @@ class TagTest {
 
         assertThat(result).isNotEmpty()
         assertThat(result.size).isEqualTo(dto.size)
-
 
         result.zip(result).forEach { (dto, proto) ->
             assertThat(proto.id).isEqualTo(dto.id)

@@ -11,20 +11,22 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 interface AuthenticationLocalDataSource {
     val isSignedIn: Flow<Boolean>
     val aboardAccessToken: Flow<String?>
-    suspend fun setIsSignedIn(isSignedIn: Boolean)
-    suspend fun setAboardAccessToken(accessToken: String)
-    suspend fun clearAuthenticationData()
 
+    suspend fun setIsSignedIn(isSignedIn: Boolean)
+
+    suspend fun setAboardAccessToken(accessToken: String)
+
+    suspend fun clearAuthenticationData()
 }
 
 @Singleton
-internal class AuthenticationLocalDataSourceImpl @Inject constructor(
-    @AuthDatastore private val dataStore: DataStore<Preferences>
-) : AuthenticationLocalDataSource {
+internal class AuthenticationLocalDataSourceImpl
+@Inject
+constructor(@AuthDatastore private val dataStore: DataStore<Preferences>) :
+    AuthenticationLocalDataSource {
 
     companion object {
         val IS_SIGNED_IN_KEY = booleanPreferencesKey("is_signed_in")
@@ -34,7 +36,6 @@ internal class AuthenticationLocalDataSourceImpl @Inject constructor(
     override val isSignedIn: Flow<Boolean> = dataStore.data.map { it[IS_SIGNED_IN_KEY] ?: false }
 
     override val aboardAccessToken = dataStore.data.map { it[ABOARD_ACCESS_TOKEN_KEY] }
-
 
     override suspend fun setIsSignedIn(isSignedIn: Boolean) {
         dataStore.edit {
@@ -54,5 +55,4 @@ internal class AuthenticationLocalDataSourceImpl @Inject constructor(
             preferences.remove(ABOARD_ACCESS_TOKEN_KEY)
         }
     }
-
 }

@@ -14,8 +14,5 @@ internal abstract class WorkModule {
 
     @Binds
     @Singleton
-    abstract fun bindTokenRefreshScheduler(
-        workSchedulerImpl: WorkSchedulerImpl
-    ): WorkScheduler
-
+    abstract fun bindTokenRefreshScheduler(workSchedulerImpl: WorkSchedulerImpl): WorkScheduler
 }

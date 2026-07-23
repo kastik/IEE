@@ -8,19 +8,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class FakeTagsLocalDataSource(
-) : TagsLocalDataSource {
+class FakeTagsLocalDataSource() : TagsLocalDataSource {
 
     private val _subscribableTags =
         MutableStateFlow<SubscribableTagsProto>(SubscribableTagsProto.getDefaultInstance())
     private var _subscriptions =
         MutableStateFlow<SubscriptionsProto>(SubscriptionsProto.getDefaultInstance())
 
-
     override val subscriptions = _subscriptions.asStateFlow()
 
     override val subscribableTags = _subscribableTags.asStateFlow()
-
 
     override suspend fun setSubscribableTags(tags: List<SubscribableTagProto>) {
         _subscribableTags.update {

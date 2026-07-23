@@ -33,8 +33,6 @@ abstract class NetworkModule {
             isLenient = true
         }
 
-
-
         @Provides
         @Singleton
         @AuthenticatorAboardClient
@@ -77,6 +75,4 @@ abstract class NetworkModule {
     internal abstract fun bindAnnouncementRemoteDataSource(
         announcementRemoteDataSourceImpl: AnnouncementRemoteDataSourceImpl
     ): AnnouncementRemoteDataSource
-
-
 }

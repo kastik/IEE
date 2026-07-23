@@ -4,9 +4,10 @@ import android.util.Log
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
-internal class AnalyticsDebugImpl @Inject constructor(
+internal class AnalyticsDebugImpl
+@Inject
+constructor(
     override val types: AnalyticsEventTypes,
     override val paramKeys: AnalyticsParamKeys,
 ) : Analytics {
@@ -22,5 +23,4 @@ internal class AnalyticsDebugImpl @Inject constructor(
     override fun logEvent(event: AnalyticsEvent) {
         Log.d("Analytics", "logging event $event")
     }
-
 }

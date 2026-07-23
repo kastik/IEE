@@ -36,14 +36,16 @@ internal fun SearchBarInputField(
         leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
         trailingIcon = {
             AnimatedVisibility(
-                visible = textFieldState.text.isNotEmpty() && searchBarState.currentValue == SearchBarValue.Expanded,
+                visible =
+                    textFieldState.text.isNotEmpty() &&
+                        searchBarState.currentValue == SearchBarValue.Expanded,
                 enter = scaleIn(),
-                exit = scaleOut()
+                exit = scaleOut(),
             ) {
                 IconButton(onClick = textFieldState::clearText) {
                     Icon(Icons.Filled.Close, contentDescription = null)
                 }
             }
-        }
+        },
     )
 }

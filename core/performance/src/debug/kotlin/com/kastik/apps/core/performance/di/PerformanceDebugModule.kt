@@ -15,6 +15,4 @@ internal abstract class PerformanceDebugModule {
     @Binds
     @Singleton
     abstract fun bindPerformanceDebugImpl(performanceDebugImpl: PerformanceDebugImpl): Performance
-
-
 }

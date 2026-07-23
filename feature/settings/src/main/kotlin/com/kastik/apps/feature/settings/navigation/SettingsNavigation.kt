@@ -10,8 +10,7 @@ import androidx.navigation.navOptions
 import com.kastik.apps.feature.settings.SettingsRoute
 import kotlinx.serialization.Serializable
 
-@Serializable
-object SettingsRoute
+@Serializable object SettingsRoute
 
 fun NavController.navigateToSettings(
     navOptions: NavOptions = navOptions {
@@ -19,20 +18,15 @@ fun NavController.navigateToSettings(
     }
 ) = navigate(route = SettingsRoute, navOptions)
 
-fun NavGraphBuilder.settingsScreen(
-    navigateToLicenses: () -> Unit,
-) {
-    composable<SettingsRoute>(enterTransition = {
-        slideInVertically(
-            initialOffsetY = { it },
-        )
-    }, exitTransition = {
-        slideOutVertically(
-            targetOffsetY = { it },
-        )
-    }) {
-        SettingsRoute(
-            navigateToLicenses = navigateToLicenses,
-        )
+fun NavGraphBuilder.settingsScreen(navigateToLicenses: () -> Unit) {
+    composable<SettingsRoute>(
+        enterTransition = {
+            slideInVertically(initialOffsetY = { it })
+        },
+        exitTransition = {
+            slideOutVertically(targetOffsetY = { it })
+        },
+    ) {
+        SettingsRoute(navigateToLicenses = navigateToLicenses)
     }
 }

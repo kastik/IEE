@@ -41,82 +41,89 @@ class AnnouncementRemoteMediator(
     private val tagsLocalDataSource = database.tagsDao()
 
     override suspend fun initialize(): InitializeAction {
-        //TODO We should schedule sync manager and SKIP_INITIAL_REFRESH if recent sync
+        // TODO We should schedule sync manager and SKIP_INITIAL_REFRESH if recent sync
         return InitializeAction.LAUNCH_INITIAL_REFRESH
     }
 
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, AnnouncementPreviewRelation>
-    ): MediatorResult = try {
+        state: PagingState<Int, AnnouncementPreviewRelation>,
+    ): MediatorResult =
+        try {
 
-        val page = when (loadType) {
+            val page =
+                when (loadType) {
+                    LoadType.REFRESH -> 1
 
-            LoadType.REFRESH -> 1
+                    LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
 
-            LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
+                    LoadType.APPEND -> {
+                        val remoteKeys = getRemoteKeyForLastItem(state)
+                        val nextKey =
+                            remoteKeys?.nextKey
+                                ?: return MediatorResult.Success(
+                                    // Note, here we check "remoteKeys", cause if it's null it means
+                                    // no pages are
+                                    // loaded yet
+                                    // Should switch it to true once we find the issue in
+                                    // :feature:search
+                                    endOfPaginationReached = remoteKeys != null
+                                )
+                        nextKey
+                    }
+                }
 
-            LoadType.APPEND -> {
-                val remoteKeys = getRemoteKeyForLastItem(state)
-                val nextKey = remoteKeys?.nextKey ?: return MediatorResult.Success(
-                    //Note, here we check "remoteKeys", cause if it's null it means no pages are loaded yet
-                    //Should switch it to true once we find the issue in :feature:search
-                    endOfPaginationReached = remoteKeys != null
-                )
-                nextKey
-            }
-        }
-
-        val response = announcementRemoteDataSource.fetchPagedAnnouncements(
-            page = page,
-            title = titleQuery,
-            body = bodyQuery,
-            tagIds = tagIds,
-            authorIds = authorIds,
-            perPage = state.config.pageSize,
-            sortBy = sortType
-        )
-
-        val endOfPaginationReached = response.data.isEmpty() || page >= response.meta.lastPage
-
-        database.withTransaction {
-            if (loadType == LoadType.REFRESH) {
-                remoteKeysDao.clearKeys(
-                    sortType = sortType,
-                    titleQuery = titleQuery,
-                    bodyQuery = bodyQuery,
-                    authorIds = authorIds,
+            val response =
+                announcementRemoteDataSource.fetchPagedAnnouncements(
+                    page = page,
+                    title = titleQuery,
+                    body = bodyQuery,
                     tagIds = tagIds,
-                )
-            }
-
-            val prevKey = if (page == 1) null else page - 1
-            val nextKey = if (endOfPaginationReached) null else page + 1
-
-            val keys = response.data.map { dto ->
-                RemoteKeysEntity(
-                    announcementId = dto.id,
-                    titleQuery = titleQuery,
-                    bodyQuery = bodyQuery,
                     authorIds = authorIds,
-                    tagIds = tagIds,
-                    sortType = sortType,
-                    prevKey = prevKey,
-                    nextKey = nextKey
+                    perPage = state.config.pageSize,
+                    sortBy = sortType,
                 )
+
+            val endOfPaginationReached = response.data.isEmpty() || page >= response.meta.lastPage
+
+            database.withTransaction {
+                if (loadType == LoadType.REFRESH) {
+                    remoteKeysDao.clearKeys(
+                        sortType = sortType,
+                        titleQuery = titleQuery,
+                        bodyQuery = bodyQuery,
+                        authorIds = authorIds,
+                        tagIds = tagIds,
+                    )
+                }
+
+                val prevKey = if (page == 1) null else page - 1
+                val nextKey = if (endOfPaginationReached) null else page + 1
+
+                val keys =
+                    response.data.map { dto ->
+                        RemoteKeysEntity(
+                            announcementId = dto.id,
+                            titleQuery = titleQuery,
+                            bodyQuery = bodyQuery,
+                            authorIds = authorIds,
+                            tagIds = tagIds,
+                            sortType = sortType,
+                            prevKey = prevKey,
+                            nextKey = nextKey,
+                        )
+                    }
+
+                remoteKeysDao.insertOrReplaceKeys(keys)
+                insertAnnouncement(response)
             }
-
-            remoteKeysDao.insertOrReplaceKeys(keys)
-            insertAnnouncement(response)
+            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            crashlytics.recordException(e)
+            return MediatorResult.Error(e)
         }
-        return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
-
-    } catch (e: CancellationException) {
-        throw e
-    } catch (e: Exception) {
-        crashlytics.recordException(e)
-        return MediatorResult.Error(e)
-    }
 
     private suspend fun insertAnnouncement(dto: PagedResponseDto<AnnouncementDto>) {
 
@@ -137,15 +144,21 @@ class AnnouncementRemoteMediator(
 
         val mappedTagCrossRefs = dto.data.flatMap { it.toTagCrossRefs() }
         announcementLocalDataSource.upsertTagCrossRefs(mappedTagCrossRefs)
-
     }
 
-    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, AnnouncementPreviewRelation>): RemoteKeysEntity? {
-        val lastItem = state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()
-            ?: return null
+    private suspend fun getRemoteKeyForLastItem(
+        state: PagingState<Int, AnnouncementPreviewRelation>
+    ): RemoteKeysEntity? {
+        val lastItem =
+            state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull() ?: return null
 
         return remoteKeysDao.getKeyByAnnouncementId(
-            lastItem.announcement.id, sortType, titleQuery, bodyQuery, authorIds, tagIds
+            lastItem.announcement.id,
+            sortType,
+            titleQuery,
+            bodyQuery,
+            authorIds,
+            tagIds,
         )
     }
 }

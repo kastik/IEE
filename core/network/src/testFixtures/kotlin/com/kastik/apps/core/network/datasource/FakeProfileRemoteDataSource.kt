@@ -9,8 +9,8 @@ class FakeProfileRemoteDataSource : ProfileRemoteDataSource {
     var exceptionToThrow: Exception? = null
     private val fakeAboardApiClient = FakeAboardApiClient()
 
-    override suspend fun getProfile() = exceptionToThrow?.let { exception ->
-        throw exception
-    } ?: profileOverride ?: fakeAboardApiClient.getCurrentUser()
-
+    override suspend fun getProfile() =
+        exceptionToThrow?.let { exception ->
+            throw exception
+        } ?: profileOverride ?: fakeAboardApiClient.getCurrentUser()
 }

@@ -12,7 +12,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class AnalyticsDebugModule {
@@ -25,8 +24,5 @@ internal abstract class AnalyticsDebugModule {
     @Singleton
     abstract fun bindParamKeys(impl: AnalyticsParamKeysDebugImpl): AnalyticsParamKeys
 
-    @Binds
-    @Singleton
-    abstract fun bindAnalytics(impl: AnalyticsDebugImpl): Analytics
-
+    @Binds @Singleton abstract fun bindAnalytics(impl: AnalyticsDebugImpl): Analytics
 }

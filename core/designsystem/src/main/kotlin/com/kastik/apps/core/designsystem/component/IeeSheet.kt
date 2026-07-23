@@ -50,7 +50,7 @@ fun IeeSheet(
     applyLabel: String,
     onApply: () -> Unit,
     onDismiss: () -> Unit,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
         modifier = modifier,
@@ -59,11 +59,9 @@ fun IeeSheet(
         containerColor = MaterialTheme.colorScheme.surface,
     ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             OutlinedTextField(
                 value = searchQuery,
@@ -75,25 +73,29 @@ fun IeeSheet(
                 singleLine = true,
                 trailingIcon = {
                     AnimatedVisibility(
-                        visible = searchQuery.isNotEmpty(), enter = scaleIn(), exit = scaleOut()
+                        visible = searchQuery.isNotEmpty(),
+                        enter = scaleIn(),
+                        exit = scaleOut(),
                     ) {
                         IconButton(onClick = { onSearchQueryChange("") }) {
                             Icon(
-                                imageVector = Icons.Default.Clear, contentDescription = "Clear text"
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = "Clear text",
                             )
                         }
                     }
-                })
+                },
+            )
 
             AnimatedVisibility(
                 visible = hasSelection,
                 enter = scaleIn() + fadeIn() + expandHorizontally(),
-                exit = scaleOut() + fadeOut() + shrinkHorizontally()
+                exit = scaleOut() + fadeOut() + shrinkHorizontally(),
             ) {
                 Button(
                     onClick = onClearSelection,
                     modifier = Modifier.wrapContentWidth(),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.medium,
                 ) {
                     Text(clearLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
@@ -109,9 +111,7 @@ fun IeeSheet(
                 onApply()
                 onDismiss()
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
         ) {
             Text(applyLabel)
         }
@@ -135,9 +135,7 @@ private fun IeeSheetPreview() {
             onApply = {},
             onDismiss = {},
         ) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .weight(1f))
+            Box(modifier = Modifier.fillMaxSize().weight(1f))
         }
     }
 }

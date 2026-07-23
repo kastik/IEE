@@ -4,7 +4,6 @@ import android.util.Log
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 internal class CrashlyticsDebugImpl @Inject constructor() : Crashlytics {
     override fun log(message: String) {

@@ -12,25 +12,26 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class IeeMainActivityViewModel @Inject constructor(
+class IeeMainActivityViewModel
+@Inject
+constructor(
     getUserPreferencesUseCase: GetUserPreferencesUseCase,
     getHasFinishedOnboardUseCase: GetHasFinishedOnboardUseCase,
 ) : ViewModel() {
-
-    val mainActivityState: StateFlow<IeeMainActivityUiState> = combine(
-        getUserPreferencesUseCase(),
-        getHasFinishedOnboardUseCase(),
-    ) { userPreferences, hasFinishedOnboarding ->
-        IeeMainActivityUiState.Loaded(
-            theme = userPreferences.theme,
-            dynamicColor = userPreferences.isDynamicColorEnabled,
-            hasFinishedOnboarding = hasFinishedOnboarding
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = IeeMainActivityUiState.Loading
-    )
-
+    val mainActivityState: StateFlow<IeeMainActivityUiState> =
+        combine(
+                getUserPreferencesUseCase(),
+                getHasFinishedOnboardUseCase(),
+            ) { userPreferences, hasFinishedOnboarding ->
+                IeeMainActivityUiState.Loaded(
+                    theme = userPreferences.theme,
+                    dynamicColor = userPreferences.isDynamicColorEnabled,
+                    hasFinishedOnboarding = hasFinishedOnboarding,
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = IeeMainActivityUiState.Loading,
+            )
 }
-

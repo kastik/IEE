@@ -17,16 +17,17 @@ fun IeeAttachment(
     onClick: () -> Unit = {},
 ) {
     AssistChip(
-        contentPadding = PaddingValues(
-            horizontal = 16.dp,
-            vertical = 8.dp
-        ),
+        contentPadding =
+            PaddingValues(
+                horizontal = 16.dp,
+                vertical = 8.dp,
+            ),
         onClick = onClick,
         label = {
             Text(
                 text = fileName,
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         },
         leadingIcon = {
@@ -34,17 +35,14 @@ fun IeeAttachment(
                 imageVector = Icons.Outlined.AttachFile,
                 contentDescription = fileName,
             )
-        }
+        },
     )
 }
-
 
 @Preview
 @Composable
 private fun IeeAttachmentPreview() {
     IeePreview {
-        IeeAttachment(
-            "Grades.pdf"
-        )
+        IeeAttachment("Grades.pdf")
     }
 }

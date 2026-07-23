@@ -1,6 +1,5 @@
 package com.kastik.apps.core.testing.db
 
-
 import androidx.room.InvalidationTracker
 import com.kastik.apps.core.database.dao.AnnouncementDao
 import com.kastik.apps.core.database.dao.AuthorsDao
@@ -18,12 +17,13 @@ class FakeAppDatabase : AppDatabase() {
     val fakeAuthorDao = FakeAuthorsDao()
     val fakeTagsDao = FakeTagsDao()
 
-
     override fun announcementDao(): AnnouncementDao = fakeAnnouncementDao
-    override fun authorDao(): AuthorsDao = fakeAuthorDao
-    override fun tagsDao(): TagsDao = fakeTagsDao
-    override fun remoteKeysDao(): RemoteKeysDao = fakeRemoteKeysDao
 
+    override fun authorDao(): AuthorsDao = fakeAuthorDao
+
+    override fun tagsDao(): TagsDao = fakeTagsDao
+
+    override fun remoteKeysDao(): RemoteKeysDao = fakeRemoteKeysDao
 
     override fun createInvalidationTracker(): InvalidationTracker {
         throw Exception("Not implemented")

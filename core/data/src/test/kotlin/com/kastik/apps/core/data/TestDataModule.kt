@@ -17,7 +17,6 @@ import com.kastik.apps.core.data.repository.UserPreferencesRepositoryImplTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
-
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
     AnnouncementTest::class,
@@ -33,6 +32,6 @@ import org.junit.runners.Suite
     AuthorRepositoryImplTest::class,
     ProfileRepositoryImplTest::class,
     TagsRepositoryImplTest::class,
-    UserPreferencesRepositoryImplTest::class
+    UserPreferencesRepositoryImplTest::class,
 )
 class TestDataModule

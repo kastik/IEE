@@ -21,10 +21,9 @@ fun IeeLinearWavyProgressIndicator(
         color = color,
         trackColor = trackColor,
         stroke = stroke,
-        trackStroke = trackStroke
+        trackStroke = trackStroke,
     )
 }
-
 
 @Preview
 @Composable
@@ -33,6 +32,3 @@ private fun IeeLinearWavyProgressIndicatorPreview() {
         IeeLinearWavyProgressIndicator()
     }
 }
-
-
-

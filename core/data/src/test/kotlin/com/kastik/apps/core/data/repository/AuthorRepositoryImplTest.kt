@@ -23,111 +23,121 @@ class AuthorRepositoryImplTest {
     private val fakeCrashlytics = FakeCrashlytics()
     private val fakeAuthorLocalDataSource = FakeAuthorsDao()
     private val fakeAuthorRemoteDataSource = FakeAuthorRemoteDataSource()
-    private val repository = AuthorRepositoryImpl(
-        crashlytics = fakeCrashlytics,
-        authorLocalDataSource = fakeAuthorLocalDataSource,
-        authorRemoteDataSource = fakeAuthorRemoteDataSource,
-        ioDispatcher = testDispatcher,
-    )
+    private val repository =
+        AuthorRepositoryImpl(
+            crashlytics = fakeCrashlytics,
+            authorLocalDataSource = fakeAuthorLocalDataSource,
+            authorRemoteDataSource = fakeAuthorRemoteDataSource,
+            ioDispatcher = testDispatcher,
+        )
 
     @Test
-    fun authorsReturnsEmptyWhenNoAuthorsSaved() = runTest(testDispatcher) {
-        val result = repository.authors.first()
-        assertThat(result).isEmpty()
-    }
+    fun authorsReturnsEmptyWhenNoAuthorsSaved() =
+        runTest(testDispatcher) {
+            val result = repository.authors.first()
+            assertThat(result).isEmpty()
+        }
 
     @Test
-    fun authorsReturnsMappedAuthorsWhenSaved() = runTest(testDispatcher) {
-        val authors = listOf(baseAuthorEntity)
-        fakeAuthorLocalDataSource.upsertAuthors(authors)
+    fun authorsReturnsMappedAuthorsWhenSaved() =
+        runTest(testDispatcher) {
+            val authors = listOf(baseAuthorEntity)
+            fakeAuthorLocalDataSource.upsertAuthors(authors)
 
-        val result = repository.authors.first()
+            val result = repository.authors.first()
 
-        assertThat(result).isNotEmpty()
-        // Ensure we compare domain mapped models against the result
-        assertThat(result).containsExactlyElementsIn(authors.map { it.toAuthor() })
-    }
-
-    @Test
-    fun syncAuthorsFetchesFromRemoteAndSavesToLocal() = runTest(testDispatcher) {
-        // Fetch the data straight from the fake API client representation
-        val remoteAuthors = fakeAuthorRemoteDataSource.fetchAuthors()
-
-        val result = repository.syncAuthors()
-
-        assertThat(result).isInstanceOf(Result.Success::class.java)
-
-        val localSavedAuthors = repository.authors.first()
-        val expectedDomainAuthors = remoteAuthors.map { it.toAuthorEntity().toAuthor() }
-
-        assertThat(localSavedAuthors).isNotEmpty()
-        assertThat(localSavedAuthors).containsExactlyElementsIn(expectedDomainAuthors)
-    }
+            assertThat(result).isNotEmpty()
+            // Ensure we compare domain mapped models against the result
+            assertThat(result).containsExactlyElementsIn(authors.map { it.toAuthor() })
+        }
 
     @Test
-    fun authorsFlowEmitsUpdatesWhenDataChanges() = runTest(testDispatcher) {
-        val emissions = mutableListOf<List<Author>>()
+    fun syncAuthorsFetchesFromRemoteAndSavesToLocal() =
+        runTest(testDispatcher) {
+            // Fetch the data straight from the fake API client representation
+            val remoteAuthors = fakeAuthorRemoteDataSource.fetchAuthors()
 
-        // UnconfinedTestDispatcher is perfect for eagerly collecting StateFlow updates in tests
-        val job = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            repository.authors.collect { authors ->
-                emissions.add(authors)
+            val result = repository.syncAuthors()
+
+            assertThat(result).isInstanceOf(Result.Success::class.java)
+
+            val localSavedAuthors = repository.authors.first()
+            val expectedDomainAuthors = remoteAuthors.map { it.toAuthorEntity().toAuthor() }
+
+            assertThat(localSavedAuthors).isNotEmpty()
+            assertThat(localSavedAuthors).containsExactlyElementsIn(expectedDomainAuthors)
+        }
+
+    @Test
+    fun authorsFlowEmitsUpdatesWhenDataChanges() =
+        runTest(testDispatcher) {
+            val emissions = mutableListOf<List<Author>>()
+
+            // UnconfinedTestDispatcher is perfect for eagerly collecting StateFlow updates in tests
+            val job =
+                backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                    repository.authors.collect { authors ->
+                        emissions.add(authors)
+                    }
+                }
+
+            assertThat(emissions).hasSize(1)
+            assertThat(emissions.last()).isEmpty()
+
+            repository.syncAuthors()
+
+            assertThat(emissions).hasSize(2)
+
+            val expectedDomain =
+                fakeAuthorRemoteDataSource.fetchAuthors().map { it.toAuthorEntity().toAuthor() }
+
+            assertThat(emissions.last()).containsExactlyElementsIn(expectedDomain)
+
+            job.cancel()
+        }
+
+    @Test
+    fun syncAuthorsReturnsErrorOnException() =
+        runTest(testDispatcher) {
+            // Use delegation to force an error purely for this test without modifying the base Fake
+            val errorRepo =
+                AuthorRepositoryImpl(
+                    crashlytics = fakeCrashlytics,
+                    authorLocalDataSource = fakeAuthorLocalDataSource,
+                    authorRemoteDataSource =
+                        object : AuthorRemoteDataSource by fakeAuthorRemoteDataSource {
+                            override suspend fun fetchAuthors() =
+                                throw RuntimeException("Network Error")
+                        },
+                    ioDispatcher = testDispatcher,
+                )
+
+            val result = errorRepo.syncAuthors()
+
+            assertThat(result).isInstanceOf(Result.Error::class.java)
+        }
+
+    @Test
+    fun syncAuthorsRethrowsCancellationException() =
+        runTest(testDispatcher) {
+            val errorRepo =
+                AuthorRepositoryImpl(
+                    crashlytics = fakeCrashlytics,
+                    authorLocalDataSource = fakeAuthorLocalDataSource,
+                    authorRemoteDataSource =
+                        object : AuthorRemoteDataSource by fakeAuthorRemoteDataSource {
+                            override suspend fun fetchAuthors() = throw CancellationException()
+                        },
+                    ioDispatcher = testDispatcher,
+                )
+
+            var caughtCancellation = false
+            try {
+                errorRepo.syncAuthors()
+            } catch (e: CancellationException) {
+                caughtCancellation = true
             }
+
+            assertThat(caughtCancellation).isTrue()
         }
-
-        assertThat(emissions).hasSize(1)
-        assertThat(emissions.last()).isEmpty()
-
-        repository.syncAuthors()
-
-        assertThat(emissions).hasSize(2)
-
-        val expectedDomain = fakeAuthorRemoteDataSource.fetchAuthors()
-            .map { it.toAuthorEntity().toAuthor() }
-
-        assertThat(emissions.last()).containsExactlyElementsIn(expectedDomain)
-
-        job.cancel()
-    }
-
-    @Test
-    fun syncAuthorsReturnsErrorOnException() = runTest(testDispatcher) {
-        // Use delegation to force an error purely for this test without modifying the base Fake
-        val errorRepo = AuthorRepositoryImpl(
-            crashlytics = fakeCrashlytics,
-            authorLocalDataSource = fakeAuthorLocalDataSource,
-            authorRemoteDataSource = object : AuthorRemoteDataSource by fakeAuthorRemoteDataSource {
-                override suspend fun fetchAuthors() = throw RuntimeException("Network Error")
-            },
-            ioDispatcher = testDispatcher
-        )
-
-        val result = errorRepo.syncAuthors()
-
-        assertThat(result).isInstanceOf(Result.Error::class.java)
-    }
-
-    @Test
-    fun syncAuthorsRethrowsCancellationException() = runTest(testDispatcher) {
-        val errorRepo = AuthorRepositoryImpl(
-            crashlytics = fakeCrashlytics,
-            authorLocalDataSource = fakeAuthorLocalDataSource,
-            authorRemoteDataSource = object : AuthorRemoteDataSource by fakeAuthorRemoteDataSource {
-                override suspend fun fetchAuthors() = throw CancellationException()
-            },
-            ioDispatcher = testDispatcher
-        )
-
-        var caughtCancellation = false
-        try {
-            errorRepo.syncAuthors()
-        } catch (e: CancellationException) {
-            caughtCancellation = true
-        }
-
-        assertThat(caughtCancellation).isTrue()
-    }
-
 }
-
-

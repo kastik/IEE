@@ -5,13 +5,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class DevToolsReleaseImpl @Inject constructor(
-) : DevTools {
-
+internal class DevToolsReleaseImpl @Inject constructor() : DevTools {
     override fun setupStrictMode() = Unit
 
     override fun setupLeakCanary() = Unit
 
-    override fun observeLeak(obj: Any, description: String) = Unit
-
+    override fun observeLeak(
+        obj: Any,
+        description: String,
+    ) = Unit
 }

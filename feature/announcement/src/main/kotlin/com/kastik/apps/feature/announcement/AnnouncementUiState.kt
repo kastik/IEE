@@ -10,6 +10,7 @@ import kotlin.time.Instant
 
 internal sealed interface AnnouncementUiState {
     data object Loading : AnnouncementUiState
+
     data class Success(
         val announcement: AnnouncementData,
         val shouldShowReviewDialog: Boolean,
@@ -18,7 +19,6 @@ internal sealed interface AnnouncementUiState {
     ) : AnnouncementUiState
 
     data object Error : AnnouncementUiState
-
 }
 
 data class AnnouncementData(
@@ -27,10 +27,11 @@ data class AnnouncementData(
     val author: String,
     val tags: ImmutableList<Tag> = persistentListOf(),
     val attachments: ImmutableList<Attachment> = persistentListOf(),
-    val processedBodies: ImmutableList<ProcessedBody>
+    val processedBodies: ImmutableList<ProcessedBody>,
 )
 
 sealed class ProcessedBody {
     data class Text(val text: AnnotatedString) : ProcessedBody()
+
     data class Image(val url: String) : ProcessedBody()
 }

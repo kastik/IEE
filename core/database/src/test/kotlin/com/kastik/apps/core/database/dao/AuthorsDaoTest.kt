@@ -9,10 +9,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(RoboDatabaseTestRunner::class)
 internal class AuthorsDaoTest : MemoryDatabase() {
-
 
     @Test
     fun insertOrIgnoreAuthorsInsertsNewAuthors() = runTest {
@@ -28,10 +26,11 @@ internal class AuthorsDaoTest : MemoryDatabase() {
     fun insertOrIgnoreAuthorIgnoresExistingAuthors() = runTest {
         authorsDao.insertOrIgnoreAuthors(listOf(baseAuthorEntity))
 
-        val conflictingAuthor = baseAuthorEntity.copy(
-            name = "John Doe",
-            announcementCount = 5
-        )
+        val conflictingAuthor =
+            baseAuthorEntity.copy(
+                name = "John Doe",
+                announcementCount = 5,
+            )
 
         authorsDao.insertOrIgnoreAuthors(listOf(conflictingAuthor))
 
@@ -67,10 +66,11 @@ internal class AuthorsDaoTest : MemoryDatabase() {
     fun upsertListAuthorsUpdatesExisting() = runTest {
         authorsDao.upsertAuthors(listOf(baseAuthorEntity))
 
-        val updatedAuthor = baseAuthorEntity.copy(
-            name = "John Updated",
-            announcementCount = 10
-        )
+        val updatedAuthor =
+            baseAuthorEntity.copy(
+                name = "John Updated",
+                announcementCount = 10,
+            )
 
         authorsDao.upsertAuthors(listOf(updatedAuthor))
 
@@ -84,10 +84,11 @@ internal class AuthorsDaoTest : MemoryDatabase() {
     fun upsertSingleAuthorsUpdatesExisting() = runTest {
         authorsDao.upsertAuthors(listOf(baseAuthorEntity))
 
-        val updatedAuthor = baseAuthorEntity.copy(
-            name = "Johnny",
-            announcementCount = 3
-        )
+        val updatedAuthor =
+            baseAuthorEntity.copy(
+                name = "Johnny",
+                announcementCount = 3,
+            )
 
         authorsDao.upsertAuthors(updatedAuthor)
 

@@ -19,49 +19,52 @@ class AuthenticationRepositoryImplTest {
 
     @Before
     fun setup() {
-        authenticationRepositoryImpl = AuthenticationRepositoryImpl(
-            crashlytics = fakeCrashlytics,
-            authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
-            authenticationRemoteDataSource = fakeAuthenticationRemoteDataSource,
-            ioDispatcher = testDispatcher,
-        )
+        authenticationRepositoryImpl =
+            AuthenticationRepositoryImpl(
+                crashlytics = fakeCrashlytics,
+                authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
+                authenticationRemoteDataSource = fakeAuthenticationRemoteDataSource,
+                ioDispatcher = testDispatcher,
+            )
     }
 
     @Test
-    fun exchangeCodeForAboardTokenSavesResponseLocallyTest() = runTest(testDispatcher) {
-        val response = baseTokenDto
-        fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
+    fun exchangeCodeForAboardTokenSavesResponseLocallyTest() =
+        runTest(testDispatcher) {
+            val response = baseTokenDto
+            fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
 
-        authenticationRepositoryImpl.signIn("code")
+            authenticationRepositoryImpl.signIn("code")
 
-        val result = fakeAuthenticationLocalDataSource.aboardAccessToken.value
-        assertThat(result).isEqualTo(response.accessToken)
-    }
-
-    @Test
-    fun exchangeCodeForAboardUpdatesIsSignInTest() = runTest(testDispatcher) {
-        val response = baseTokenDto
-        fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
-
-        authenticationRepositoryImpl.signIn("code")
-
-        val result = fakeAuthenticationLocalDataSource.isSignedIn.value
-        assertThat(result).isTrue()
-    }
-
+            val result = fakeAuthenticationLocalDataSource.aboardAccessToken.value
+            assertThat(result).isEqualTo(response.accessToken)
+        }
 
     @Test
-    fun clearTokensClearsLocalDataFromDataSourceTest() = runTest(testDispatcher) {
-        val response = baseTokenDto
-        fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
+    fun exchangeCodeForAboardUpdatesIsSignInTest() =
+        runTest(testDispatcher) {
+            val response = baseTokenDto
+            fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
 
-        authenticationRepositoryImpl.signIn("code")
-        authenticationRepositoryImpl.signOut()
+            authenticationRepositoryImpl.signIn("code")
 
-        val tokenResult = fakeAuthenticationLocalDataSource.aboardAccessToken.value
-        val isSignedInResult = fakeAuthenticationLocalDataSource.isSignedIn.value
+            val result = fakeAuthenticationLocalDataSource.isSignedIn.value
+            assertThat(result).isTrue()
+        }
 
-        assertThat(tokenResult).isNull()
-        assertThat(isSignedInResult).isFalse()
-    }
+    @Test
+    fun clearTokensClearsLocalDataFromDataSourceTest() =
+        runTest(testDispatcher) {
+            val response = baseTokenDto
+            fakeAuthenticationRemoteDataSource.aboardAccessTokenResponse = response
+
+            authenticationRepositoryImpl.signIn("code")
+            authenticationRepositoryImpl.signOut()
+
+            val tokenResult = fakeAuthenticationLocalDataSource.aboardAccessToken.value
+            val isSignedInResult = fakeAuthenticationLocalDataSource.isSignedIn.value
+
+            assertThat(tokenResult).isNull()
+            assertThat(isSignedInResult).isFalse()
+        }
 }

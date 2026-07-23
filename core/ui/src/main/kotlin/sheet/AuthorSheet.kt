@@ -35,10 +35,11 @@ import kotlinx.collections.immutable.toImmutableList
 @Composable
 fun AuthorSheet(
     modifier: Modifier = Modifier,
-    authorSheetState: SheetState = rememberBottomSheetState(
-        initialValue = SheetValue.Hidden,
-        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
-    ),
+    authorSheetState: SheetState =
+        rememberBottomSheetState(
+            initialValue = SheetValue.Hidden,
+            enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded),
+        ),
     authors: ImmutableList<Author> = persistentListOf(),
     preSelectedAuthorIds: ImmutableList<Int> = persistentListOf(),
     onApply: (ImmutableList<Int>) -> Unit = {},
@@ -46,24 +47,31 @@ fun AuthorSheet(
 ) {
     var query by remember { mutableStateOf("") }
 
-    val currentSelection = remember(preSelectedAuthorIds) {
-        mutableStateListOf<Int>().apply { addAll(preSelectedAuthorIds) }
-    }
-
-    val filteredItems = remember(query, authors) {
-        if (query.isBlank()) authors
-        else authors.filter {
-            val normalizedQuery = query.removeAccents()
-            val label = it.announcementCount?.let { count -> "${it.name} [$count]" } ?: it.name
-            label.removeAccents().contains(normalizedQuery, ignoreCase = true)
+    val currentSelection =
+        remember(preSelectedAuthorIds) {
+            mutableStateListOf<Int>().apply { addAll(preSelectedAuthorIds) }
         }
-    }
 
-    val groupedItems = remember(filteredItems) {
-        filteredItems
-            .sortedBy { it.announcementCount?.let { count -> "${it.name} [$count]" } ?: it.name }
-            .groupBy { it.name.first().uppercaseChar() }
-    }
+    val filteredItems =
+        remember(query, authors) {
+            if (query.isBlank()) authors
+            else
+                authors.filter {
+                    val normalizedQuery = query.removeAccents()
+                    val label =
+                        it.announcementCount?.let { count -> "${it.name} [$count]" } ?: it.name
+                    label.removeAccents().contains(normalizedQuery, ignoreCase = true)
+                }
+        }
+
+    val groupedItems =
+        remember(filteredItems) {
+            filteredItems
+                .sortedBy {
+                    it.announcementCount?.let { count -> "${it.name} [$count]" } ?: it.name
+                }
+                .groupBy { it.name.first().uppercaseChar() }
+        }
 
     IeeSheet(
         modifier = modifier,
@@ -78,25 +86,21 @@ fun AuthorSheet(
         onApply = { onApply(currentSelection.toImmutableList()) },
         onDismiss = onDismiss,
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
+        LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
             groupedItems.keys.sorted().forEach { header ->
                 stickyHeader { AlphabetHeader(header, Modifier.animateItem()) }
                 items(groupedItems[header] ?: emptyList()) { author ->
                     val id = author.id
                     val isSelected = id in currentSelection
-                    val label = author.announcementCount?.let { count -> "${author.name} [$count]" }
-                        ?: author.name
+                    val label =
+                        author.announcementCount?.let { count -> "${author.name} [$count]" }
+                            ?: author.name
                     IeeSelectableItem(
                         title = label,
                         isSelected = isSelected,
                         onClick = {
-                            if (isSelected) currentSelection.remove(id) else currentSelection.add(
-                                id
-                            )
+                            if (isSelected) currentSelection.remove(id)
+                            else currentSelection.add(id)
                         },
                         modifier = Modifier.animateItem(),
                     )
@@ -109,22 +113,21 @@ fun AuthorSheet(
 @Composable
 private fun AlphabetHeader(
     char: Char,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         color = MaterialTheme.colorScheme.surface,
         shadowElevation = 4.dp,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
     ) {
         Text(
             text = char.toString(),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         )
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -132,12 +135,14 @@ private fun AlphabetHeader(
 private fun AuthorSheetPreview() {
     IeePreview {
         AuthorSheet(
-            authors = persistentListOf(
-                Author(id = 1, name = "Alice", announcementCount = 3),
-                Author(id = 2, name = "Bob", announcementCount = 5),
-                Author(id = 3, name = "Charlie", announcementCount = null),
-                Author(id = 4, name = "David", announcementCount = 1),
-            ), preSelectedAuthorIds = persistentListOf(1, 3)
+            authors =
+                persistentListOf(
+                    Author(id = 1, name = "Alice", announcementCount = 3),
+                    Author(id = 2, name = "Bob", announcementCount = 5),
+                    Author(id = 3, name = "Charlie", announcementCount = null),
+                    Author(id = 4, name = "David", announcementCount = 1),
+                ),
+            preSelectedAuthorIds = persistentListOf(1, 3),
         )
     }
 }

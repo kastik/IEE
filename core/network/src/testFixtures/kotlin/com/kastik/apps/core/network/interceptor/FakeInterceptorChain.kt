@@ -21,43 +21,57 @@ import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLSocketFactory
 import javax.net.ssl.X509TrustManager
 
-class FakeInterceptorChain(
-    private val request: Request
-) : Interceptor.Chain {
+class FakeInterceptorChain(private val request: Request) : Interceptor.Chain {
 
     var proceededRequest: Request? = null
     override val followSslRedirects: Boolean
         get() = TODO("Not yet implemented")
+
     override val followRedirects: Boolean
         get() = TODO("Not yet implemented")
+
     override val dns: Dns
         get() = TODO("Not yet implemented")
+
     override val socketFactory: SocketFactory
         get() = TODO("Not yet implemented")
+
     override val retryOnConnectionFailure: Boolean
         get() = TODO("Not yet implemented")
+
     override val authenticator: Authenticator
         get() = TODO("Not yet implemented")
+
     override val cookieJar: CookieJar
         get() = TODO("Not yet implemented")
+
     override val cache: Cache?
         get() = TODO("Not yet implemented")
+
     override val proxy: Proxy?
         get() = TODO("Not yet implemented")
+
     override val proxySelector: ProxySelector
         get() = TODO("Not yet implemented")
+
     override val proxyAuthenticator: Authenticator
         get() = TODO("Not yet implemented")
+
     override val sslSocketFactoryOrNull: SSLSocketFactory?
         get() = TODO("Not yet implemented")
+
     override val x509TrustManagerOrNull: X509TrustManager?
         get() = TODO("Not yet implemented")
+
     override val hostnameVerifier: HostnameVerifier
         get() = TODO("Not yet implemented")
+
     override val certificatePinner: CertificatePinner
         get() = TODO("Not yet implemented")
+
     override val connectionPool: ConnectionPool
         get() = TODO("Not yet implemented")
+
     override val eventListener: EventListener
         get() = TODO("Not yet implemented")
 
@@ -65,18 +79,30 @@ class FakeInterceptorChain(
 
     override fun proceed(request: Request): Response {
         proceededRequest = request
-        return Response.Builder().code(200).message("OK").protocol(Protocol.HTTP_1_1)
-            .request(request).build()
+        return Response.Builder()
+            .code(200)
+            .message("OK")
+            .protocol(Protocol.HTTP_1_1)
+            .request(request)
+            .build()
     }
 
     override fun connection(): Connection? = null
+
     override fun call(): Call = throw NotImplementedError()
+
     override fun connectTimeoutMillis(): Int = 0
+
     override fun withConnectTimeout(timeout: Int, unit: TimeUnit) = this
+
     override fun readTimeoutMillis(): Int = 0
+
     override fun withReadTimeout(timeout: Int, unit: TimeUnit) = this
+
     override fun writeTimeoutMillis(): Int = 0
+
     override fun withWriteTimeout(timeout: Int, unit: TimeUnit) = this
+
     override fun withDns(dns: Dns): Interceptor.Chain {
         TODO("Not yet implemented")
     }
@@ -85,7 +111,9 @@ class FakeInterceptorChain(
         TODO("Not yet implemented")
     }
 
-    override fun withRetryOnConnectionFailure(retryOnConnectionFailure: Boolean): Interceptor.Chain {
+    override fun withRetryOnConnectionFailure(
+        retryOnConnectionFailure: Boolean
+    ): Interceptor.Chain {
         TODO("Not yet implemented")
     }
 
@@ -115,7 +143,7 @@ class FakeInterceptorChain(
 
     override fun withSslSocketFactory(
         sslSocketFactory: SSLSocketFactory?,
-        x509TrustManager: X509TrustManager?
+        x509TrustManager: X509TrustManager?,
     ): Interceptor.Chain {
         TODO("Not yet implemented")
     }

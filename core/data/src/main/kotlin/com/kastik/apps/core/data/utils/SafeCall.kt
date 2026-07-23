@@ -17,4 +17,3 @@ inline fun <T, E> safeCall(
         Result.Error(mapException(e))
     }
 }
-

@@ -7,19 +7,19 @@ interface Notifier {
     fun sendGeneralNotification(
         @StringRes titleResId: Int,
         @StringRes bodyResId: Int? = null,
-        uri: Int? = null
+        uri: Int? = null,
     )
 
     fun sendCampaignNotification(
         title: String,
         body: String? = null,
-        uri: String? = null
+        uri: String? = null,
     )
 
     fun sendAnnouncementNotification(
         announcementId: Int,
         title: String,
-        body: String
+        body: String,
     )
 
     fun createSyncNotification(

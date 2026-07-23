@@ -8,11 +8,9 @@ class FakeAuthenticationLocalDataSource() : AuthenticationLocalDataSource {
     private val _isSignedIn = MutableStateFlow(false)
     private val _aboardToken = MutableStateFlow<String?>(null)
 
-
     override val isSignedIn = _isSignedIn.asStateFlow()
 
     override val aboardAccessToken = _aboardToken.asStateFlow()
-
 
     override suspend fun setIsSignedIn(isSignedIn: Boolean) {
         _isSignedIn.value = isSignedIn
@@ -26,5 +24,4 @@ class FakeAuthenticationLocalDataSource() : AuthenticationLocalDataSource {
         _aboardToken.value = null
         _isSignedIn.value = false
     }
-
 }

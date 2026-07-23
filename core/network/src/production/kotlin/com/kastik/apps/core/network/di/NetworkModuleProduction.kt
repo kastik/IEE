@@ -1,9 +1,5 @@
 package com.kastik.apps.core.network.di
 
-import com.kastik.apps.core.network.di.AuthenticatorAboardOkHttp
-import com.kastik.apps.core.network.di.AuthenticatorAboardRetrofit
-import com.kastik.apps.core.network.di.BaseAboardOkHttp
-import com.kastik.apps.core.network.di.BaseAboardRetrofit
 import com.kastik.apps.core.network.interceptor.AboardAuthenticator
 import com.kastik.apps.core.network.interceptor.TokenInterceptor
 import com.kastik.apps.core.network.serializers.SortTypeQueryConverterFactory
@@ -28,7 +24,7 @@ class NetworkModuleProduction {
     @AuthenticatorAboardRetrofit
     fun provideAuthenticatorAboardRetrofit(
         @AuthenticatorAboardOkHttp client: OkHttpClient,
-        json: Json
+        json: Json,
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
@@ -44,7 +40,7 @@ class NetworkModuleProduction {
     @BaseAboardRetrofit
     fun provideBaseAboardRetrofit(
         @BaseAboardOkHttp client: OkHttpClient,
-        json: Json
+        json: Json,
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
@@ -72,14 +68,11 @@ class NetworkModuleProduction {
     @Provides
     @Singleton
     @BaseAboardOkHttp
-    fun provideBaseAboardOkHttp(
-        tokenInterceptor: TokenInterceptor,
-    ): OkHttpClient {
+    fun provideBaseAboardOkHttp(tokenInterceptor: TokenInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(tokenInterceptor)
             .build()
     }
-
 }

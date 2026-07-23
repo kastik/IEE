@@ -7,9 +7,7 @@ import com.kastik.apps.core.network.model.common.SingleResponseDto
 import com.kastik.apps.core.network.model.response.AnnouncementDto
 import kotlinx.datetime.LocalDateTime
 
-class FakeAnnouncementRemoteDataSource(
-
-) : AnnouncementRemoteDataSource {
+class FakeAnnouncementRemoteDataSource() : AnnouncementRemoteDataSource {
 
     var throwOnApiRequest: Throwable? = null
     val fakeAboardApiClient = FakeAboardApiClient()
@@ -22,7 +20,7 @@ class FakeAnnouncementRemoteDataSource(
         body: String?,
         tagIds: List<Int>?,
         authorIds: List<Int>?,
-        updatedAfter: LocalDateTime?
+        updatedAfter: LocalDateTime?,
     ): PagedResponseDto<AnnouncementDto> {
 
         throwOnApiRequest?.let { throw it }
@@ -35,9 +33,8 @@ class FakeAnnouncementRemoteDataSource(
             tagIds = tagIds,
             title = title,
             body = body,
-            updatedAfter = updatedAfter
+            updatedAfter = updatedAfter,
         )
-
     }
 
     override suspend fun fetchAnnouncementWithId(id: Int): SingleResponseDto<AnnouncementDto> {
@@ -46,6 +43,3 @@ class FakeAnnouncementRemoteDataSource(
         return fakeAboardApiClient.getAnnouncement(id)
     }
 }
-
-
-

@@ -13,10 +13,7 @@ import androidx.navigation.toRoute
 import com.kastik.apps.feature.announcement.AnnouncementRoute
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class AnnouncementRoute(
-    val id: Int
-)
+@Serializable data class AnnouncementRoute(val id: Int)
 
 fun NavController.navigateToAnnouncement(
     announcementId: Int,
@@ -25,21 +22,19 @@ fun NavController.navigateToAnnouncement(
     },
 ) = navigate(route = AnnouncementRoute(announcementId), navOptions)
 
-fun NavGraphBuilder.announcementScreen(
-    navigateBack: () -> Unit
-) {
+fun NavGraphBuilder.announcementScreen(navigateBack: () -> Unit) {
     composable<AnnouncementRoute>(
-        deepLinks = listOf(
-            navDeepLink<AnnouncementRoute>(
-                basePath = "com.kastik.apps://announcement"
+        deepLinks =
+            listOf(
+                navDeepLink<AnnouncementRoute>(basePath = "com.kastik.apps://announcement"),
+                navDeepLink<AnnouncementRoute>(
+                    basePath = "https://aboard.iee.ihu.gr/announcements"
+                ),
             ),
-            navDeepLink<AnnouncementRoute>(
-                basePath = "https://aboard.iee.ihu.gr/announcements"
-            )
-        ),
         enterTransition = { scaleIn() },
         exitTransition = { fadeOut() },
-        popEnterTransition = { fadeIn() }) { backStackEntry ->
+        popEnterTransition = { fadeIn() },
+    ) { backStackEntry ->
         val args = backStackEntry.toRoute<AnnouncementRoute>()
         AnnouncementRoute(
             navigateBack = navigateBack,
@@ -47,7 +42,3 @@ fun NavGraphBuilder.announcementScreen(
         )
     }
 }
-
-
-
-

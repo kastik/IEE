@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.model.search.QuickResults
 import com.kastik.apps.core.ui.R
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBarExpanded(
@@ -42,17 +41,15 @@ fun SearchBarExpanded(
     ExpandedFullScreenSearchBar(
         state = searchBarState,
         inputField = inputField,
-        modifier = modifier
+        modifier = modifier,
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Column {
                 expandedSecondaryActions()
                 LazyColumn(
                     state = quickResultLazyListState,
                     contentPadding = PaddingValues(horizontal = 12.dp),
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     searchBarQuickResults(
                         titleKey = "tags",
@@ -76,8 +73,6 @@ fun SearchBarExpanded(
                         keyProvider = { "authorId:${it.id}" },
                     )
 
-
-
                     searchBarQuickResults(
                         titleKey = "announcements",
                         title = { stringResource(R.string.quick_result_title_announcements) },
@@ -87,7 +82,6 @@ fun SearchBarExpanded(
                         },
                         keyProvider = { "announcementId:${it.id}" },
                     )
-
                 }
             }
         }

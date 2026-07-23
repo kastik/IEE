@@ -19,50 +19,51 @@ class ProfileRepositoryImplTest {
     private val profileRemoteDataSource = FakeProfileRemoteDataSource()
     private val fakeAuthenticationLocalDataSource = FakeAuthenticationLocalDataSource()
 
-    private val profileRepository = ProfileRepositoryImpl(
-        crashlytics = fakeCrashlytics,
-        profileLocalDataSource = profileLocalDataSource,
-        profileRemoteDataSource = profileRemoteDataSource,
-        ioDispatcher = testDispatcher,
-        authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
-    )
+    private val profileRepository =
+        ProfileRepositoryImpl(
+            crashlytics = fakeCrashlytics,
+            profileLocalDataSource = profileLocalDataSource,
+            profileRemoteDataSource = profileRemoteDataSource,
+            ioDispatcher = testDispatcher,
+            authenticationLocalDataSource = fakeAuthenticationLocalDataSource,
+        )
 
-//    @Test
-//    fun getProfileReturnsEmptyWhenNoProfileSaved() = runTest(testDispatcher) {
-//        val result = profileRepository.profile.first()
-//        val emptyProfile = ProfileProto.getDefaultInstance().toProfile()
-//
-//        assertThat(result).isEqualTo(emptyProfile)
-//    }
+    //    @Test
+    //    fun getProfileReturnsEmptyWhenNoProfileSaved() = runTest(testDispatcher) {
+    //        val result = profileRepository.profile.first()
+    //        val emptyProfile = ProfileProto.getDefaultInstance().toProfile()
+    //
+    //        assertThat(result).isEqualTo(emptyProfile)
+    //    }
 
     @Test
-    fun getProfileReturnsProfileWhenProfileSaved() = runTest(testDispatcher) {
-        val profile = baseProfileProto
-        profileLocalDataSource.setProfile(profile)
+    fun getProfileReturnsProfileWhenProfileSaved() =
+        runTest(testDispatcher) {
+            val profile = baseProfileProto
+            profileLocalDataSource.setProfile(profile)
 
-        val result = profileRepository.profile.first()
-        assertThat(result).isEqualTo(profile.toProfile())
-    }
+            val result = profileRepository.profile.first()
+            assertThat(result).isEqualTo(profile.toProfile())
+        }
 
-//    @Test
-//    fun syncProfileSuccessRefreshesProfile() = runTest(testDispatcher) {
-//        val result = profileRepository.syncProfile()
-//
-//        assertThat(result).isInstanceOf(Result.Success::class.java)
-//
-//        val savedLocalProfile = profileLocalDataSource.profile.first()
-//        assertThat(savedLocalProfile).isEqualTo(baseProfileDto.toProfileProto())
-//    }
-//
-//    @Test
-//    fun clearProfileClearsProfileAndSubscriptions() = runTest(testDispatcher) {
-//        profileLocalDataSource.setProfile(baseProfileProto)
-//        profileRepository.clearProfile()
-//
-//        val profileResult = profileRepository.profile.first()
-//        assertThat(profileResult?.id).isEqualTo(0)
-//
-//    }
+    //    @Test
+    //    fun syncProfileSuccessRefreshesProfile() = runTest(testDispatcher) {
+    //        val result = profileRepository.syncProfile()
+    //
+    //        assertThat(result).isInstanceOf(Result.Success::class.java)
+    //
+    //        val savedLocalProfile = profileLocalDataSource.profile.first()
+    //        assertThat(savedLocalProfile).isEqualTo(baseProfileDto.toProfileProto())
+    //    }
+    //
+    //    @Test
+    //    fun clearProfileClearsProfileAndSubscriptions() = runTest(testDispatcher) {
+    //        profileLocalDataSource.setProfile(baseProfileProto)
+    //        profileRepository.clearProfile()
+    //
+    //        val profileResult = profileRepository.profile.first()
+    //        assertThat(profileResult?.id).isEqualTo(0)
+    //
+    //    }
 
 }
-

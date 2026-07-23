@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
-
 class FakeAnnouncementDao : AnnouncementDao {
 
     private val announcementsFlow = MutableStateFlow<List<AnnouncementEntity>>(emptyList())
@@ -45,7 +44,9 @@ class FakeAnnouncementDao : AnnouncementDao {
     override suspend fun upsertTagCrossRefs(crossRefs: List<TagsCrossRefEntity>) {
         val current = tagCrossRefsFlow.value.toMutableList()
         crossRefs.forEach { entity ->
-            current.removeIf { it.announcementId == entity.announcementId && it.tagId == entity.tagId }
+            current.removeIf {
+                it.announcementId == entity.announcementId && it.tagId == entity.tagId
+            }
             current.add(entity)
         }
         tagCrossRefsFlow.value = current
@@ -75,15 +76,16 @@ class FakeAnnouncementDao : AnnouncementDao {
 
     override fun getQuickSearchAnnouncements(
         query: String,
-        sortType: SortType
+        sortType: SortType,
     ): Flow<List<AnnouncementPreviewRelation>> {
         return announcementsFlow.map { announcements ->
             announcements
                 .filter {
-                    it.title.contains(query, ignoreCase = true) || it.preview.contains(
-                        query,
-                        ignoreCase = true
-                    )
+                    it.title.contains(query, ignoreCase = true) ||
+                        it.preview.contains(
+                            query,
+                            ignoreCase = true,
+                        )
                 }
                 .let { sortAnnouncements(it, sortType) }
                 .map { mapToPreviewRelation(it) }
@@ -96,15 +98,18 @@ class FakeAnnouncementDao : AnnouncementDao {
         bodyQuery: String,
         tagIds: List<Int>,
         authorIds: List<Int>,
-        sortType: SortType
+        sortType: SortType,
     ): PagingSource<Int, AnnouncementPreviewRelation> {
-        val validAnnouncementIds = fakeRemoteKeys.filter {
-            it.titleQuery == titleQuery &&
-                    it.bodyQuery == bodyQuery &&
-                    it.sortType == sortType &&
-                    (authorIds.isEmpty() || it.authorIds == authorIds) &&
-                    (tagIds.isEmpty() || it.tagIds == tagIds)
-        }.map { it.announcementId }
+        val validAnnouncementIds =
+            fakeRemoteKeys
+                .filter {
+                    it.titleQuery == titleQuery &&
+                        it.bodyQuery == bodyQuery &&
+                        it.sortType == sortType &&
+                        (authorIds.isEmpty() || it.authorIds == authorIds) &&
+                        (tagIds.isEmpty() || it.tagIds == tagIds)
+                }
+                .map { it.announcementId }
 
         val filteredAnnouncements = announcementsFlow.value.filter { it.id in validAnnouncementIds }
         val sortedAnnouncements = sortAnnouncements(filteredAnnouncements, sortType)
@@ -143,29 +148,33 @@ class FakeAnnouncementDao : AnnouncementDao {
         tagCrossRefsFlow.value = emptyList()
     }
 
-
     private fun sortAnnouncements(
         list: List<AnnouncementEntity>,
-        sortType: SortType
+        sortType: SortType,
     ): List<AnnouncementEntity> {
         return when (sortType) {
-            SortType.Priority -> list.sortedWith(
-                compareByDescending<AnnouncementEntity> { it.isPinned }
-                    .thenByDescending { it.updatedAt }
-            )
+            SortType.Priority ->
+                list.sortedWith(
+                    compareByDescending<AnnouncementEntity> { it.isPinned }
+                        .thenByDescending { it.updatedAt }
+                )
 
             SortType.DESC -> list.sortedByDescending { it.updatedAt }
             SortType.ASC -> list.sortedBy { it.updatedAt }
         }
     }
 
-    private fun mapToPreviewRelation(announcement: AnnouncementEntity): AnnouncementPreviewRelation {
-        val author = fakeAuthors.find { it.id == announcement.authorId }
-            ?: AuthorEntity(announcement.authorId, "Unknown Fake Author")
+    private fun mapToPreviewRelation(
+        announcement: AnnouncementEntity
+    ): AnnouncementPreviewRelation {
+        val author =
+            fakeAuthors.find { it.id == announcement.authorId }
+                ?: AuthorEntity(announcement.authorId, "Unknown Fake Author")
 
-        val tags = tagCrossRefsFlow.value
-            .filter { it.announcementId == announcement.id }
-            .mapNotNull { crossRef -> fakeTags.find { it.id == crossRef.tagId } }
+        val tags =
+            tagCrossRefsFlow.value
+                .filter { it.announcementId == announcement.id }
+                .mapNotNull { crossRef -> fakeTags.find { it.id == crossRef.tagId } }
 
         val attachments = attachmentsFlow.value.filter { it.announcementId == announcement.id }
 
@@ -173,15 +182,18 @@ class FakeAnnouncementDao : AnnouncementDao {
     }
 
     private fun mapToDetailRelation(announcement: AnnouncementEntity): AnnouncementDetailRelation {
-        val author = fakeAuthors.find { it.id == announcement.authorId }
-            ?: AuthorEntity(announcement.authorId, "Unknown Fake Author")
+        val author =
+            fakeAuthors.find { it.id == announcement.authorId }
+                ?: AuthorEntity(announcement.authorId, "Unknown Fake Author")
 
-        val body = bodiesFlow.value.find { it.announcementId == announcement.id }
-            ?: BodyEntity(announcement.id, "")
+        val body =
+            bodiesFlow.value.find { it.announcementId == announcement.id }
+                ?: BodyEntity(announcement.id, "")
 
-        val tags = tagCrossRefsFlow.value
-            .filter { it.announcementId == announcement.id }
-            .mapNotNull { crossRef -> fakeTags.find { it.id == crossRef.tagId } }
+        val tags =
+            tagCrossRefsFlow.value
+                .filter { it.announcementId == announcement.id }
+                .mapNotNull { crossRef -> fakeTags.find { it.id == crossRef.tagId } }
 
         val attachments = attachmentsFlow.value.filter { it.announcementId == announcement.id }
 
@@ -194,7 +206,7 @@ private class FakePagingSource<T : Any>(private val data: List<T>) : PagingSourc
         return LoadResult.Page(
             data = data,
             prevKey = null,
-            nextKey = null
+            nextKey = null,
         )
     }
 

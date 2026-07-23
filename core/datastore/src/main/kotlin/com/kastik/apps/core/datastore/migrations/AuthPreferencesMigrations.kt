@@ -22,8 +22,7 @@ object RemoveExpirationKey : DataMigration<Preferences> {
 }
 
 object RemoveRefreshKey : DataMigration<Preferences> {
-    private val REFRESH_TIME_KEY =
-        longPreferencesKey("aboard_access_token_last_refresh_time")
+    private val REFRESH_TIME_KEY = longPreferencesKey("aboard_access_token_last_refresh_time")
 
     override suspend fun shouldMigrate(currentData: Preferences): Boolean {
         return currentData.contains(REFRESH_TIME_KEY)

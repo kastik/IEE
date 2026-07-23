@@ -12,5 +12,4 @@ class SearchScreenshotTest {
     fun SearchScreenInitialLoadTest() {
         SearchScreenInitialLoadPreview()
     }
-
 }

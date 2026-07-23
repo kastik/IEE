@@ -18,8 +18,6 @@ sealed interface OnboardUiState {
         val isForYouEnabled: Boolean = false,
         val sortType: SortType = SortType.DESC,
         val searchScope: SearchScope = SearchScope.Body,
-        val onboardStage: OnboardStage = OnboardStage.Welcome
+        val onboardStage: OnboardStage = OnboardStage.Welcome,
     ) : OnboardUiState
-
 }
-

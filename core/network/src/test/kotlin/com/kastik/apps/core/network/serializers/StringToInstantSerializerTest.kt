@@ -16,5 +16,4 @@ class StringToInstantSerializerTest {
 
         assertThat(result).isEqualTo(Instant.parse("2026-08-21T00:00:00Z"))
     }
-
 }

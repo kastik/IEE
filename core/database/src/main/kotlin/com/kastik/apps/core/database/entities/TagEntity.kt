@@ -9,5 +9,5 @@ data class TagEntity(
     val title: String,
     val parentId: Int?,
     val isPublic: Boolean,
-    val mailListName: String?
+    val mailListName: String?,
 )

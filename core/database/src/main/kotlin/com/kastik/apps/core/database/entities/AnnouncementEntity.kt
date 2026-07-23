@@ -7,22 +7,22 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlin.time.Instant
 
-
 @Entity(
-    foreignKeys = [
-        ForeignKey(
-            entity = AuthorEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["authorId"],
-            onDelete = CASCADE
-        )
-    ],
-    indices = [
-        Index("id"),
-        Index("authorId"),
-    ]
+    foreignKeys =
+        [
+            ForeignKey(
+                entity = AuthorEntity::class,
+                parentColumns = ["id"],
+                childColumns = ["authorId"],
+                onDelete = CASCADE,
+            )
+        ],
+    indices =
+        [
+            Index("id"),
+            Index("authorId"),
+        ],
 )
-
 data class AnnouncementEntity(
     @PrimaryKey val id: Int,
     val authorId: Int,

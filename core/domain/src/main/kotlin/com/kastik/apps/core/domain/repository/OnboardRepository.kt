@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 interface OnboardRepository {
     val hasFinishedOnboarding: Flow<Boolean>
     val currentOnboardingOnboardStage: Flow<OnboardStage>
+
     suspend fun setHasFinishedOnboarding(hasFinished: Boolean)
+
     suspend fun setCurrentOnboardingStage(onboardStage: OnboardStage)
 }

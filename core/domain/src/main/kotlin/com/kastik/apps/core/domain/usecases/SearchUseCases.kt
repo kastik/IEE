@@ -6,27 +6,31 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-class GetQuickResultsUseCase @Inject constructor(
+class GetQuickResultsUseCase
+@Inject
+constructor(
     private val getAuthorQuickResults: GetAuthorQuickResultsUseCase,
     private val getTagsQuickResultsUseCase: GetTagsQuickResultsUseCase,
-    private val getAnnouncementsQuickResults: GetAnnouncementQuickResultsUseCase
+    private val getAnnouncementsQuickResults: GetAnnouncementQuickResultsUseCase,
 ) {
     operator fun invoke(query: String): Flow<QuickResults> {
         return combine(
             getTagsQuickResultsUseCase(query),
             getAuthorQuickResults(query),
-            getAnnouncementsQuickResults(query)
+            getAnnouncementsQuickResults(query),
         ) { tags, authors, announcements ->
             QuickResults(
                 tags = tags,
                 authors = authors,
-                announcements = announcements
+                announcements = announcements,
             )
         }
     }
 }
 
-class GetFilterOptionsUseCase @Inject constructor(
+class GetFilterOptionsUseCase
+@Inject
+constructor(
     private val getAuthorsUseCase: GetAuthorsUseCase,
     private val getAnnouncementTagsUseCase: GetAnnouncementTagsUseCase,
 ) {

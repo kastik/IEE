@@ -30,7 +30,6 @@ fun NavController.navigateToSearch(
     },
 ) = navigate(route = SearchRoute(query = query, tags = tags, authors = authors), navOptions)
 
-
 fun NavGraphBuilder.searchScreen(
     navigateBack: () -> Unit,
     navigateToAnnouncement: (Int) -> Unit,
@@ -39,13 +38,13 @@ fun NavGraphBuilder.searchScreen(
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(350)
+                animationSpec = tween(350),
             )
         },
         popExitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(350)
+                animationSpec = tween(350),
             )
         },
         popEnterTransition = {
@@ -53,7 +52,7 @@ fun NavGraphBuilder.searchScreen(
         },
         exitTransition = {
             fadeOut()
-        }
+        },
     ) { backStackEntry ->
         backStackEntry.toRoute<SearchRoute>()
         SearchRoute(

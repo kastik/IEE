@@ -16,7 +16,6 @@ plugins {
 configure<ApplicationExtension> {
     namespace = "com.kastik.apps"
 
-
     defaultConfig {
         applicationId = "com.kastik.apps"
         versionCode = 59
@@ -36,10 +35,11 @@ configure<ApplicationExtension> {
         }
     }
 
-    val keystoreProperties = Properties().apply {
-        val propsFile = rootProject.file("local.properties")
-        if (propsFile.exists()) load(FileInputStream(propsFile))
-    }
+    val keystoreProperties =
+        Properties().apply {
+            val propsFile = rootProject.file("local.properties")
+            if (propsFile.exists()) load(FileInputStream(propsFile))
+        }
 
     signingConfigs {
         create("release") {
@@ -62,7 +62,7 @@ configure<ApplicationExtension> {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         debug {

@@ -1,6 +1,5 @@
 package com.kastik.apps.core.data.repository
 
-
 import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.data.mappers.toSearchScopeProto
 import com.kastik.apps.core.data.mappers.toSortTypeProto
@@ -27,129 +26,139 @@ class UserPreferencesRepositoryImplTest {
     @Before
     fun setup() {
         fakeUserPreferencesLocalDataSource = FakeUserPreferencesLocalDataSource()
-        preferencesRepositoryImpl = UserPreferencesRepositoryImpl(
-            preferencesLocalDataSource = fakeUserPreferencesLocalDataSource,
-            ioDispatcher = testDispatcher
-        )
+        preferencesRepositoryImpl =
+            UserPreferencesRepositoryImpl(
+                preferencesLocalDataSource = fakeUserPreferencesLocalDataSource,
+                ioDispatcher = testDispatcher,
+            )
     }
 
     @Test
-    fun userPreferencesFlowEmitsMappedDomainPreferences() = runTest(testDispatcher) {
-        val result = preferencesRepositoryImpl.userPreferences.first()
+    fun userPreferencesFlowEmitsMappedDomainPreferences() =
+        runTest(testDispatcher) {
+            val result = preferencesRepositoryImpl.userPreferences.first()
 
-        assertThat(result).isEqualTo(baseUserPreferencesProto.toUserPreferences())
-    }
-
-    @Test
-    fun setSkippedSignInUpdatesLocalDataSource() = runTest(testDispatcher) {
-        preferencesRepositoryImpl.setSkippedSignIn(true)
-
-        val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
-        val result = userPreferences.hasSkippedSignIn
-        assertThat(result).isTrue()
-    }
+            assertThat(result).isEqualTo(baseUserPreferencesProto.toUserPreferences())
+        }
 
     @Test
-    fun setThemeUpdatesLocalDataSource() = runTest(testDispatcher) {
-        val theme = Theme.DARK
+    fun setSkippedSignInUpdatesLocalDataSource() =
+        runTest(testDispatcher) {
+            preferencesRepositoryImpl.setSkippedSignIn(true)
 
-        preferencesRepositoryImpl.setTheme(theme)
-
-        val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
-        assertThat(userPreferences.theme).isEqualTo(theme.toThemeProto())
-    }
-
-
-    @Test
-    fun setDynamicColorUpdatesLocalDataSource() = runTest(testDispatcher) {
-        preferencesRepositoryImpl.setDynamicColor(true)
-
-        val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
-        assertThat(userPreferences.isDynamicColorEnabled).isTrue()
-    }
+            val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
+            val result = userPreferences.hasSkippedSignIn
+            assertThat(result).isTrue()
+        }
 
     @Test
-    fun setSortTypeUpdatesLocalDataSource() = runTest(testDispatcher) {
-        val sortType = SortType.Priority
+    fun setThemeUpdatesLocalDataSource() =
+        runTest(testDispatcher) {
+            val theme = Theme.DARK
 
-        preferencesRepositoryImpl.setSortType(sortType)
+            preferencesRepositoryImpl.setTheme(theme)
 
-        val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
-        assertThat(userPreferences.sortType).isEqualTo(sortType.toSortTypeProto())
-    }
-
-    @Test
-    fun setSearchScopeUpdatesLocalDataSource() = runTest(testDispatcher) {
-        val searchScope = SearchScope.TitleAndBody
-
-        preferencesRepositoryImpl.setSearchScope(searchScope)
-
-        val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
-        assertThat(userPreferences.searchScope).isEqualTo(searchScope.toSearchScopeProto())
-    }
+            val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
+            assertThat(userPreferences.theme).isEqualTo(theme.toThemeProto())
+        }
 
     @Test
-    fun setForYouUpdatesLocalDataSource() = runTest(testDispatcher) {
-        preferencesRepositoryImpl.setForYou(true)
+    fun setDynamicColorUpdatesLocalDataSource() =
+        runTest(testDispatcher) {
+            preferencesRepositoryImpl.setDynamicColor(true)
 
-        val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
-        assertThat(userPreferences.isForYouEnabled).isTrue()
-    }
-
-    @Test
-    fun setFabFiltersUpdatesLocalDataSource() = runTest(testDispatcher) {
-        preferencesRepositoryImpl.setFabFilters(true)
-
-        val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
-        assertThat(userPreferences.areFabFiltersEnabled).isTrue()
-    }
+            val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
+            assertThat(userPreferences.isDynamicColorEnabled).isTrue()
+        }
 
     @Test
-    fun setLastCheckTimeWithValidInstantUpdatesLocalDataSource() = runTest(testDispatcher) {
-        val now = Clock.System.now()
+    fun setSortTypeUpdatesLocalDataSource() =
+        runTest(testDispatcher) {
+            val sortType = SortType.Priority
 
-        preferencesRepositoryImpl.setLastCheckTime(now)
+            preferencesRepositoryImpl.setSortType(sortType)
 
-        val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
-        assertThat(userPreferences.lastCheckTime).isEqualTo(now.toTimestamp())
-    }
-
-    @Test
-    fun setCheckIntervalMinutesUpdatesLocalDataSource() = runTest(testDispatcher) {
-        val minutes = 15
-
-        preferencesRepositoryImpl.setCheckIntervalMinutes(minutes)
-
-        val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
-        assertThat(userPreferences.checkIntervalMinutes).isEqualTo(minutes)
-    }
+            val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
+            assertThat(userPreferences.sortType).isEqualTo(sortType.toSortTypeProto())
+        }
 
     @Test
-    fun increaseImportantEventCountIncrementsLocalDataSourceCounter() = runTest(testDispatcher) {
-        val initialCount =
-            fakeUserPreferencesLocalDataSource.userPreferences.value.importantEventCount
-        assertThat(initialCount).isEqualTo(0)
+    fun setSearchScopeUpdatesLocalDataSource() =
+        runTest(testDispatcher) {
+            val searchScope = SearchScope.TitleAndBody
 
-        preferencesRepositoryImpl.increaseImportantEventCount()
-        preferencesRepositoryImpl.increaseImportantEventCount()
+            preferencesRepositoryImpl.setSearchScope(searchScope)
 
-        val updatedCount =
-            fakeUserPreferencesLocalDataSource.userPreferences.value.importantEventCount
-        assertThat(updatedCount).isEqualTo(2)
-    }
+            val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
+            assertThat(userPreferences.searchScope).isEqualTo(searchScope.toSearchScopeProto())
+        }
 
     @Test
-    fun resetImportantEventCountResetsLocalDataSourceCounter() = runTest(testDispatcher) {
-        preferencesRepositoryImpl.increaseImportantEventCount()
-        assertThat(fakeUserPreferencesLocalDataSource.userPreferences.value.importantEventCount).isEqualTo(
-            1
-        )
+    fun setForYouUpdatesLocalDataSource() =
+        runTest(testDispatcher) {
+            preferencesRepositoryImpl.setForYou(true)
 
-        preferencesRepositoryImpl.resetImportantEventCount()
+            val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
+            assertThat(userPreferences.isForYouEnabled).isTrue()
+        }
 
-        val updatedCount =
-            fakeUserPreferencesLocalDataSource.userPreferences.value.importantEventCount
-        assertThat(updatedCount).isEqualTo(0)
-    }
+    @Test
+    fun setFabFiltersUpdatesLocalDataSource() =
+        runTest(testDispatcher) {
+            preferencesRepositoryImpl.setFabFilters(true)
 
+            val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
+            assertThat(userPreferences.areFabFiltersEnabled).isTrue()
+        }
+
+    @Test
+    fun setLastCheckTimeWithValidInstantUpdatesLocalDataSource() =
+        runTest(testDispatcher) {
+            val now = Clock.System.now()
+
+            preferencesRepositoryImpl.setLastCheckTime(now)
+
+            val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
+            assertThat(userPreferences.lastCheckTime).isEqualTo(now.toTimestamp())
+        }
+
+    @Test
+    fun setCheckIntervalMinutesUpdatesLocalDataSource() =
+        runTest(testDispatcher) {
+            val minutes = 15
+
+            preferencesRepositoryImpl.setCheckIntervalMinutes(minutes)
+
+            val userPreferences = fakeUserPreferencesLocalDataSource.userPreferences.value
+            assertThat(userPreferences.checkIntervalMinutes).isEqualTo(minutes)
+        }
+
+    @Test
+    fun increaseImportantEventCountIncrementsLocalDataSourceCounter() =
+        runTest(testDispatcher) {
+            val initialCount =
+                fakeUserPreferencesLocalDataSource.userPreferences.value.importantEventCount
+            assertThat(initialCount).isEqualTo(0)
+
+            preferencesRepositoryImpl.increaseImportantEventCount()
+            preferencesRepositoryImpl.increaseImportantEventCount()
+
+            val updatedCount =
+                fakeUserPreferencesLocalDataSource.userPreferences.value.importantEventCount
+            assertThat(updatedCount).isEqualTo(2)
+        }
+
+    @Test
+    fun resetImportantEventCountResetsLocalDataSourceCounter() =
+        runTest(testDispatcher) {
+            preferencesRepositoryImpl.increaseImportantEventCount()
+            assertThat(fakeUserPreferencesLocalDataSource.userPreferences.value.importantEventCount)
+                .isEqualTo(1)
+
+            preferencesRepositoryImpl.resetImportantEventCount()
+
+            val updatedCount =
+                fakeUserPreferencesLocalDataSource.userPreferences.value.importantEventCount
+            assertThat(updatedCount).isEqualTo(0)
+        }
 }
