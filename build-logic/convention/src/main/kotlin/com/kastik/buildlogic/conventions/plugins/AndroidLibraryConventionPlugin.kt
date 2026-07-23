@@ -15,6 +15,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(project) {
             with(pluginManager) {
                 apply("com.android.library")
+                apply("com.kastik.spotless")
             }
 
             extensions.configure<LibraryExtension> {
@@ -26,6 +27,11 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 compileOptions {
                     sourceCompatibility = AppConfig.sourceCompatibility
                     targetCompatibility = AppConfig.targetCompatibility
+                }
+                lint {
+                    showAll = true
+                    abortOnError = true
+                    warningsAsErrors = true
                 }
             }
 

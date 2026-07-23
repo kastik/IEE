@@ -15,6 +15,7 @@ class AndroidBenchmarkConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.test")
+                apply("com.kastik.spotless")
             }
 
             extensions.configure<TestExtension> {
@@ -27,6 +28,11 @@ class AndroidBenchmarkConventionPlugin : Plugin<Project> {
                 compileOptions {
                     sourceCompatibility = AppConfig.sourceCompatibility
                     targetCompatibility = AppConfig.targetCompatibility
+                }
+                lint {
+                    showAll = true
+                    abortOnError = true
+                    warningsAsErrors = true
                 }
             }
 

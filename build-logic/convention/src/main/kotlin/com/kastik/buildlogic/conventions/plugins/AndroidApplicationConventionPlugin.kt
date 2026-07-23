@@ -19,6 +19,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.application")
+                apply("com.kastik.spotless")
             }
 
             extensions.configure<ApplicationExtension> {
@@ -31,6 +32,11 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 compileOptions {
                     sourceCompatibility = AppConfig.sourceCompatibility
                     targetCompatibility = AppConfig.targetCompatibility
+                }
+                lint {
+                    showAll = true
+                    abortOnError = true
+                    warningsAsErrors = true
                 }
 
                 configureAndroidCompose(this)

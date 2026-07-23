@@ -14,6 +14,7 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.screenshot.gradlePlugin)
+    compileOnly(libs.spotless.gradlePlugin)
 }
 
 gradlePlugin {
@@ -65,5 +66,12 @@ gradlePlugin {
             implementationClass =
                 "com.kastik.buildlogic.conventions.plugins.AndroidBenchmarkConventionPlugin"
         }
+
+        create("spotless") {
+            id = "com.kastik.spotless"
+            implementationClass =
+                "com.kastik.buildlogic.conventions.plugins.SpotlessConventionPlugin"
+        }
+
     }
 }
