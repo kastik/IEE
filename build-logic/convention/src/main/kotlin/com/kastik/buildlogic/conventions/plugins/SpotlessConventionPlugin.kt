@@ -21,17 +21,17 @@ class SpotlessConventionPlugin : Plugin<Project> {
                 kotlin {
                     target("**/*.kt")
                     targetExclude("**/build/**/*.kt")
-                    ktfmt().googleStyle()
+                    ktfmt().kotlinlangStyle()
                 }
 
                 kotlinGradle {
                     target("*.gradle.kts")
                     targetExclude("**/build/**/*.gradle.kts")
-                    ktfmt().googleStyle()
+                    ktfmt().kotlinlangStyle()
                 }
 
                 protobuf {
-                    buf()
+                    buf("*")
                 }
             }
         }
