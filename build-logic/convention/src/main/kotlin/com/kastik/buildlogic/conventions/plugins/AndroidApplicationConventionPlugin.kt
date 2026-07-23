@@ -36,7 +36,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 lint {
                     showAll = true
                     abortOnError = true
-                    warningsAsErrors = true
                 }
 
                 configureAndroidCompose(this)

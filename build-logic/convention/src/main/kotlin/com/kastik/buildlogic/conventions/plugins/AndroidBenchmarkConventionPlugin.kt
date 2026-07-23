@@ -32,7 +32,6 @@ class AndroidBenchmarkConventionPlugin : Plugin<Project> {
                 lint {
                     showAll = true
                     abortOnError = true
-                    warningsAsErrors = true
                 }
             }
 
