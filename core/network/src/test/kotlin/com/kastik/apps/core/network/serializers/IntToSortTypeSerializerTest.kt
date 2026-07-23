@@ -15,11 +15,12 @@ class IntToSortTypeSerializerTest {
     @Test
     fun priorityConvertsToZeroTest() {
         // Explicitly cast to Converter<SortType, String>
-        val converter = factory.stringConverter(
-            SortType::class.java,
-            emptyAnnotations,
-            dummyRetrofit
-        ) as Converter<SortType, String>?
+        val converter =
+            factory.stringConverter(
+                SortType::class.java,
+                emptyAnnotations,
+                dummyRetrofit,
+            ) as Converter<SortType, String>?
 
         val result = converter?.convert(SortType.Priority)
 
@@ -28,11 +29,12 @@ class IntToSortTypeSerializerTest {
 
     @Test
     fun descConvertsToOneTest() {
-        val converter = factory.stringConverter(
-            SortType::class.java,
-            emptyAnnotations,
-            dummyRetrofit
-        ) as Converter<SortType, String>?
+        val converter =
+            factory.stringConverter(
+                SortType::class.java,
+                emptyAnnotations,
+                dummyRetrofit,
+            ) as Converter<SortType, String>?
 
         val result = converter?.convert(SortType.DESC)
 
@@ -41,11 +43,12 @@ class IntToSortTypeSerializerTest {
 
     @Test
     fun ascConvertsToTwoTest() {
-        val converter = factory.stringConverter(
-            SortType::class.java,
-            emptyAnnotations,
-            dummyRetrofit
-        ) as Converter<SortType, String>?
+        val converter =
+            factory.stringConverter(
+                SortType::class.java,
+                emptyAnnotations,
+                dummyRetrofit,
+            ) as Converter<SortType, String>?
 
         val result = converter?.convert(SortType.ASC)
 
@@ -54,11 +57,12 @@ class IntToSortTypeSerializerTest {
 
     @Test
     fun unsupportedTypeReturnsNullTest() {
-        val converter = factory.stringConverter(
-            String::class.java,
-            emptyAnnotations,
-            dummyRetrofit
-        ) as Converter<SortType, String>?
+        val converter =
+            factory.stringConverter(
+                String::class.java,
+                emptyAnnotations,
+                dummyRetrofit,
+            ) as Converter<SortType, String>?
 
         assertThat(converter).isNull()
     }

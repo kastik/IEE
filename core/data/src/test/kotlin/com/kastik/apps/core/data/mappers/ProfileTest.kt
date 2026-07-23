@@ -29,5 +29,4 @@ class ProfileTest {
         assertThat(result.name).isEqualTo(profileProto.name)
         assertThat(result.email).isEqualTo(profileProto.email)
     }
-
 }

@@ -8,20 +8,22 @@ import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
-class GetIsSignedInUseCase @Inject constructor(
-    private val authenticationRepository: AuthenticationRepository
-) {
+class GetIsSignedInUseCase
+@Inject
+constructor(private val authenticationRepository: AuthenticationRepository) {
     operator fun invoke() = authenticationRepository.isSignedIn
 }
 
-class SignInUseCase @Inject constructor(
+class SignInUseCase
+@Inject
+constructor(
     private val workScheduler: WorkScheduler,
     private val tagsRepository: TagsRepository,
     private val profileRepository: ProfileRepository,
@@ -49,7 +51,9 @@ class SignInUseCase @Inject constructor(
     }
 }
 
-class SignOutUseCase @Inject constructor(
+class SignOutUseCase
+@Inject
+constructor(
     private val workScheduler: WorkScheduler,
     private val profileRepository: ProfileRepository,
     private val announcementRepository: AnnouncementRepository,
@@ -66,19 +70,19 @@ class SignOutUseCase @Inject constructor(
     }
 }
 
-class TriggerSignOutOnStatusChangeUseCase @Inject constructor(
+class TriggerSignOutOnStatusChangeUseCase
+@Inject
+constructor(
     private val signOutUseCase: SignOutUseCase,
     private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke() {
         var wasSignedIn = false
-        authenticationRepository.isSignedIn
-            .distinctUntilChanged()
-            .collect { isSignedIn ->
-                if (wasSignedIn && !isSignedIn) {
-                    signOutUseCase()
-                }
-                wasSignedIn = isSignedIn
+        authenticationRepository.isSignedIn.distinctUntilChanged().collect { isSignedIn ->
+            if (wasSignedIn && !isSignedIn) {
+                signOutUseCase()
             }
+            wasSignedIn = isSignedIn
+        }
     }
 }

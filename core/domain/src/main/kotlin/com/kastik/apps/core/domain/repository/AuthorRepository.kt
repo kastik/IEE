@@ -7,5 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthorRepository {
     val authors: Flow<List<Author>>
+
     suspend fun syncAuthors(): Result<Unit, NetworkError>
 }

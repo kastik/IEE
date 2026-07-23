@@ -18,24 +18,24 @@ import com.kastik.apps.core.ui.extensions.logContentLoadState
 import com.kastik.apps.core.ui.extensions.logUserLogin
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
-import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun AuthenticationRoute(
     navigateBack: () -> Unit,
-    viewModel: AuthenticationViewModel = hiltViewModel()
+    viewModel: AuthenticationViewModel = hiltViewModel(),
 ) {
     TrackScreenViewEvent(
         screenClass = "authentication_route",
-        screenName = "authentication_screen"
+        screenName = "authentication_screen",
     )
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
     AnimatedContent(
         targetState = uiState.value,
-        contentKey = { state -> state::class }
+        contentKey = { state -> state::class },
     ) { state ->
         when (state) {
             is AuthenticationUiState.Loading -> {
@@ -43,24 +43,18 @@ internal fun AuthenticationRoute(
             }
 
             is AuthenticationUiState.Error -> {
-                AuthenticationError(
-                    navigateBack = navigateBack
-                )
+                AuthenticationError(navigateBack = navigateBack)
             }
 
             is AuthenticationUiState.Success -> {
-                AuthenticationSuccess(
-                    navigateBack = navigateBack
-                )
+                AuthenticationSuccess(navigateBack = navigateBack)
             }
         }
     }
 }
 
 @Composable
-private fun AuthenticationLoading(
-
-) {
+private fun AuthenticationLoading() {
     val analytics = LocalAnalytics.current
 
     LaunchedEffect(Unit) {
@@ -74,9 +68,7 @@ private fun AuthenticationLoading(
 }
 
 @Composable
-private fun AuthenticationError(
-    navigateBack: () -> Unit = {},
-) {
+private fun AuthenticationError(navigateBack: () -> Unit = {}) {
     val analytics = LocalAnalytics.current
 
     LaunchedEffect(Unit) {
@@ -90,16 +82,14 @@ private fun AuthenticationError(
             Text(
                 text = stringResource(R.string.error_generic),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     )
 }
 
 @Composable
-private fun AuthenticationSuccess(
-    navigateBack: () -> Unit = {},
-) {
+private fun AuthenticationSuccess(navigateBack: () -> Unit = {}) {
     val analytics = LocalAnalytics.current
 
     LaunchedEffect(Unit) {
@@ -114,12 +104,11 @@ private fun AuthenticationSuccess(
             Text(
                 text = stringResource(R.string.sign_in_success),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     )
 }
-
 
 @Preview
 @Composable

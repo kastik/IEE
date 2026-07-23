@@ -22,14 +22,17 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
             context?.getSystemService(Context.DOWNLOAD_SERVICE) as? DownloadManager ?: return
         val uri = manager.getUriForDownloadedFile(downloadId)
         val mimeType =
-            manager.getMimeTypeForDownloadedFile(downloadId) // Helper function you might need to write
+            manager.getMimeTypeForDownloadedFile(
+                downloadId
+            ) // Helper function you might need to write
 
         if (uri != null) {
-            val openIntent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(uri, mimeType)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
+            val openIntent =
+                Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(uri, mimeType)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
             try {
                 context.startActivity(openIntent)
             } catch (e: ActivityNotFoundException) {

@@ -18,7 +18,7 @@ class PagerPredictiveBackState(
     val scale: Float,
     val translationX: Float,
     val alpha: Float,
-    val isProcessing: Boolean
+    val isProcessing: Boolean,
 )
 
 @Composable
@@ -28,13 +28,14 @@ fun rememberPagerPredictiveBackState(
     maxTranslationX: Dp = 48.dp,
     maxAlphaReduction: Float = 0.3f,
     animationDurationMs: Int = 300,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ): PagerPredictiveBackState {
     var backEventProgress by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
-    val maxTranslationPx = remember(maxTranslationX, density) {
-        with(density) { maxTranslationX.toPx() }
-    }
+    val maxTranslationPx =
+        remember(maxTranslationX, density) {
+            with(density) { maxTranslationX.toPx() }
+        }
 
     PredictiveBackHandler(enabled = pagerState.currentPage > 0) { progressFlow ->
         try {
@@ -51,28 +52,31 @@ fun rememberPagerPredictiveBackState(
     val isSwiping = backEventProgress > 0f
     val animSpec = tween<Float>(if (isSwiping) 0 else animationDurationMs)
 
-    val scale by animateFloatAsState(
-        targetValue = 1f - (backEventProgress * maxShrink),
-        animationSpec = animSpec,
-        label = "PredictiveBackScale"
-    )
-    val translationX by animateFloatAsState(
-        targetValue = backEventProgress * maxTranslationPx,
-        animationSpec = animSpec,
-        label = "PredictiveBackTranslation"
-    )
-    val alpha by animateFloatAsState(
-        targetValue = 1f - (backEventProgress * maxAlphaReduction),
-        animationSpec = animSpec,
-        label = "PredictiveBackAlpha"
-    )
+    val scale by
+        animateFloatAsState(
+            targetValue = 1f - (backEventProgress * maxShrink),
+            animationSpec = animSpec,
+            label = "PredictiveBackScale",
+        )
+    val translationX by
+        animateFloatAsState(
+            targetValue = backEventProgress * maxTranslationPx,
+            animationSpec = animSpec,
+            label = "PredictiveBackTranslation",
+        )
+    val alpha by
+        animateFloatAsState(
+            targetValue = 1f - (backEventProgress * maxAlphaReduction),
+            animationSpec = animSpec,
+            label = "PredictiveBackAlpha",
+        )
 
     return remember(scale, translationX, alpha, isSwiping) {
         PagerPredictiveBackState(
             scale = scale,
             translationX = translationX,
             alpha = alpha,
-            isProcessing = isSwiping
+            isProcessing = isSwiping,
         )
     }
 }

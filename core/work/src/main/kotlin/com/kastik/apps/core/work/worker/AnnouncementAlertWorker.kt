@@ -12,9 +12,10 @@ import com.kastik.apps.core.work.R
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-
 @HiltWorker
-internal class AnnouncementAlertWorker @AssistedInject constructor(
+internal class AnnouncementAlertWorker
+@AssistedInject
+constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val notifier: Notifier,
@@ -29,7 +30,7 @@ internal class AnnouncementAlertWorker @AssistedInject constructor(
                     notifier.sendAnnouncementNotification(
                         announcementId = announcement.id,
                         title = announcement.title,
-                        body = announcement.preview
+                        body = announcement.preview,
                     )
                 }
                 Result.success()
@@ -39,11 +40,11 @@ internal class AnnouncementAlertWorker @AssistedInject constructor(
                     notifier.sendGeneralNotification(
                         titleResId = R.string.title_logged_out,
                         bodyResId = R.string.body_logged_out,
-                        uri = R.string.url_logged_out
+                        uri = R.string.url_logged_out,
                     )
                     Result.failure()
                 } else Result.retry()
-            }
+            },
         )
     }
 }

@@ -16,4 +16,5 @@ plugins {
     alias(libs.plugins.kotlinSerialization) apply false
     alias(libs.plugins.stability.analyzer) apply false
     alias(libs.plugins.screenshot) apply false
+    alias(libs.plugins.spotless) apply false
 }

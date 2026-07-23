@@ -38,16 +38,11 @@ internal abstract class DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindTagsRepository(
-        tagsRepositoryImpl: TagsRepositoryImpl
-    ): TagsRepository
+    abstract fun bindTagsRepository(tagsRepositoryImpl: TagsRepositoryImpl): TagsRepository
 
     @Binds
     @Singleton
-    abstract fun bindAuthorRepository(
-        authorRepositoryImpl: AuthorRepositoryImpl
-    ): AuthorRepository
-
+    abstract fun bindAuthorRepository(authorRepositoryImpl: AuthorRepositoryImpl): AuthorRepository
 
     @Binds
     @Singleton
@@ -81,14 +76,11 @@ internal abstract class DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindTokenProvider(
-        tokenProvider: AboardTokenManagerImpl
-    ): TokenManager
+    abstract fun bindTokenProvider(tokenProvider: AboardTokenManagerImpl): TokenManager
 
     @Binds
     @Singleton
     abstract fun bindBase64ImageExtractor(
         imageExtractorImpl: Base64ImageExtractorImpl
     ): Base64ImageExtractor
-
 }

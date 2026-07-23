@@ -11,26 +11,20 @@ import androidx.navigation.navOptions
 import com.kastik.apps.feature.onboarding.OnboardRoute
 import kotlinx.serialization.Serializable
 
-
-@Serializable
-data object OnboardRoute
+@Serializable data object OnboardRoute
 
 fun NavController.navigateToOnboard(
     navOptions: NavOptions = navOptions {
         launchSingleTop = true
-    },
+    }
 ) = navigate(route = OnboardRoute, navOptions)
 
-
-fun NavGraphBuilder.onboardScreen(
-    onFinish: () -> Unit
-) {
+fun NavGraphBuilder.onboardScreen(onFinish: () -> Unit) {
     composable<OnboardRoute>(
         enterTransition = { scaleIn() },
         exitTransition = { fadeOut() },
-        popEnterTransition = { fadeIn() }) { backStackEntry ->
-        OnboardRoute(
-            onFinish = onFinish
-        )
+        popEnterTransition = { fadeIn() },
+    ) { backStackEntry ->
+        OnboardRoute(onFinish = onFinish)
     }
 }

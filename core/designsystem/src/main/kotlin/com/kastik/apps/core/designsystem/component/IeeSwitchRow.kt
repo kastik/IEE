@@ -30,32 +30,35 @@ fun IeeSwitchRow(
     val vibrator = LocalHapticFeedback.current
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .toggleable(
-                value = checked,
-                enabled = enabled,
-                role = Role.Switch,
-                onValueChange = { nextState ->
-                    vibrator.performHapticFeedback(
-                        if (nextState) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff
-                    )
-                    onCheckedChange(nextState)
-                })
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .toggleable(
+                    value = checked,
+                    enabled = enabled,
+                    role = Role.Switch,
+                    onValueChange = { nextState ->
+                        vibrator.performHapticFeedback(
+                            if (nextState) HapticFeedbackType.ToggleOn
+                            else HapticFeedbackType.ToggleOff
+                        )
+                        onCheckedChange(nextState)
+                    },
+                )
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             if (subtitle != null) {
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -73,9 +76,8 @@ private fun IeeSwitchRowPreview() {
                 checked = true,
                 onCheckedChange = {},
                 subtitle = "Description",
-                enabled = true
+                enabled = true,
             )
         }
     }
-
 }

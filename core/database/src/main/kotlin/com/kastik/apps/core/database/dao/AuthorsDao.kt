@@ -8,22 +8,17 @@ import androidx.room.Upsert
 import com.kastik.apps.core.database.entities.AuthorEntity
 import kotlinx.coroutines.flow.Flow
 
-
 @Dao
 interface AuthorsDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertOrIgnoreAuthors(authors: List<AuthorEntity>)
-    @Upsert
-    suspend fun upsertAuthors(authors: List<AuthorEntity>)
 
-    @Upsert
-    suspend fun upsertAuthors(author: AuthorEntity)
+    @Upsert suspend fun upsertAuthors(authors: List<AuthorEntity>)
 
-    @Query("SELECT * FROM authorentity")
-    fun getAuthors(): Flow<List<AuthorEntity>>
+    @Upsert suspend fun upsertAuthors(author: AuthorEntity)
 
-    @Query("DELETE FROM authorentity")
-    suspend fun clearAuthors()
+    @Query("SELECT * FROM authorentity") fun getAuthors(): Flow<List<AuthorEntity>>
 
+    @Query("DELETE FROM authorentity") suspend fun clearAuthors()
 }

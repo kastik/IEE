@@ -10,26 +10,26 @@ import javax.inject.Singleton
 
 interface TagsRemoteDataSource {
     suspend fun fetchAnnouncementTags(): ListResponseDto<TagDto>
+
     suspend fun fetchSubscribableTags(): List<TagDto>
+
     suspend fun fetchSubscriptions(): List<TagDto>
+
     suspend fun subscribeToTags(tagIds: List<Int>)
 }
 
 @Singleton
-internal class TagsRemoteDataSourceImpl @Inject constructor(
-    @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient
-) : TagsRemoteDataSource {
+internal class TagsRemoteDataSourceImpl
+@Inject
+constructor(@AuthenticatorAboardClient private val aboardApiClient: AboardApiClient) :
+    TagsRemoteDataSource {
 
-    override suspend fun fetchAnnouncementTags() =
-        aboardApiClient.getTags()
+    override suspend fun fetchAnnouncementTags() = aboardApiClient.getTags()
 
-    override suspend fun fetchSubscribableTags() =
-        aboardApiClient.getAvailableTags()
+    override suspend fun fetchSubscribableTags() = aboardApiClient.getAvailableTags()
 
-    override suspend fun fetchSubscriptions() =
-        aboardApiClient.getSubscribedTags()
+    override suspend fun fetchSubscriptions() = aboardApiClient.getSubscribedTags()
 
     override suspend fun subscribeToTags(tagIds: List<Int>) =
         aboardApiClient.subscribeToTags(SubscribeDto(tagIds))
-
 }

@@ -19,23 +19,26 @@ import com.kastik.apps.core.database.entities.TagEntity
 import com.kastik.apps.core.database.entities.TagsCrossRefEntity
 
 @Database(
-    entities = [
-        RemoteKeysEntity::class,
-        TagEntity::class,
-        BodyEntity::class,
-        AuthorEntity::class,
-        AttachmentEntity::class,
-        AnnouncementEntity::class,
-        TagsCrossRefEntity::class,
-    ],
+    entities =
+        [
+            RemoteKeysEntity::class,
+            TagEntity::class,
+            BodyEntity::class,
+            AuthorEntity::class,
+            AttachmentEntity::class,
+            AnnouncementEntity::class,
+            TagsCrossRefEntity::class,
+        ],
     version = 10,
-    exportSchema = true
+    exportSchema = true,
 )
 @TypeConverters(IntListConverter::class, SortTypeConverter::class, InstantConverter::class)
-
 abstract class AppDatabase : RoomDatabase() {
     abstract fun announcementDao(): AnnouncementDao
+
     abstract fun authorDao(): AuthorsDao
+
     abstract fun tagsDao(): TagsDao
+
     abstract fun remoteKeysDao(): RemoteKeysDao
 }

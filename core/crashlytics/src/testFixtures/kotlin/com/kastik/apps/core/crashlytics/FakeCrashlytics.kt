@@ -7,5 +7,4 @@ class FakeCrashlytics : Crashlytics {
     override fun recordException(throwable: Throwable) = Unit
 
     override fun setCustomKey(key: String, value: String) = Unit
-
 }

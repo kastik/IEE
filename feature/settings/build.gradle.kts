@@ -9,6 +9,7 @@ plugins {
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.feature.settings"
 }
+
 dependencies {
     implementation(project(":core:analytics"))
     implementation(project(":core:common"))

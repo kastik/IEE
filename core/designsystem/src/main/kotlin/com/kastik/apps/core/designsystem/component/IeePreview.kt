@@ -8,12 +8,8 @@ import com.kastik.apps.core.designsystem.extensions.LocalAnalytics
 import com.kastik.apps.core.designsystem.theme.IeeTheme
 
 @Composable
-fun IeePreview(
-    content: @Composable () -> Unit
-) {
-    CompositionLocalProvider(
-        LocalAnalytics provides NoOpAnalytics
-    ) {
+fun IeePreview(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalAnalytics provides NoOpAnalytics) {
         IeeTheme {
             Surface {
                 content()

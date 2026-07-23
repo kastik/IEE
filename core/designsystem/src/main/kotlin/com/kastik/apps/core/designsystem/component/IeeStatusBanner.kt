@@ -30,25 +30,21 @@ fun IeeStatusBanner(
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     actionTextColor: Color = MaterialTheme.colorScheme.primary,
 ) {
-    ElevatedCard(
-        modifier = modifier
-    ) {
+    ElevatedCard(modifier = modifier) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp)
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 if (icon != null) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = contentColor
+                        tint = contentColor,
                     )
                 }
                 Text(
@@ -56,18 +52,16 @@ fun IeeStatusBanner(
                     style = MaterialTheme.typography.bodyMedium,
                     color = contentColor,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
 
             if (!actionLabel.isNullOrEmpty() && onActionClick != null) {
-                FilledTonalButton(
-                    onClick = onActionClick
-                ) {
+                FilledTonalButton(onClick = onActionClick) {
                     Text(
                         text = actionLabel,
                         color = actionTextColor,
-                        style = MaterialTheme.typography.labelLarge
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
             }
@@ -81,12 +75,10 @@ private fun IeeStatusBannerWithoutActionAndIconPreview() {
     IeePreview {
         IeeStatusBanner(
             text = "You are offline",
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
-
 }
-
 
 @Preview
 @Composable
@@ -95,7 +87,7 @@ private fun IeeStatusBannerWithoutActionPreview() {
         IeeStatusBanner(
             text = "You are offline",
             icon = Icons.Default.CloudOff,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -109,8 +101,7 @@ private fun IeeStatusBannerWithActionPreview() {
             icon = Icons.Default.CloudOff,
             actionLabel = "Retry",
             onActionClick = {},
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
     }
-
 }

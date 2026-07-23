@@ -19,7 +19,6 @@ fun UiAutomatorTestScope.toggleFabFilters() {
     onElement(timeoutMs = 10000) { textAsString() == "For You" }.click()
 }
 
-
 fun UiAutomatorTestScope.toggleSearchFieldOptions() {
     onElement(timeoutMs = 10000) { textAsString() == "Body" }.click()
     onElement(timeoutMs = 10000) { textAsString() == "Both" }.click()

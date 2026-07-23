@@ -13,11 +13,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun IeeDotDivider() {
     Box(
-        modifier = Modifier
-            .size(4.dp)
-            .background(
-                MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f), shape = CircleShape
-            )
+        modifier =
+            Modifier.size(4.dp)
+                .background(
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.9f),
+                    shape = CircleShape,
+                )
     )
 }
 

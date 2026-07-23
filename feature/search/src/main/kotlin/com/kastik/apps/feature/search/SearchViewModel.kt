@@ -14,8 +14,10 @@ import com.kastik.apps.core.domain.usecases.GetQuickResultsUseCase
 import com.kastik.apps.core.ui.topbar.ActiveFilters
 import com.kastik.apps.feature.search.navigation.SearchRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -23,10 +25,11 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
 
 @HiltViewModel
-internal class SearchViewModel @Inject constructor(
+internal class SearchViewModel
+@Inject
+constructor(
     savedStateHandle: SavedStateHandle,
     getFilterOptionsUseCase: GetFilterOptionsUseCase,
     private val getQuickResultsUseCase: GetQuickResultsUseCase,
@@ -34,51 +37,61 @@ internal class SearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val args = savedStateHandle.toRoute<SearchRoute>()
-    val searchBarTextFieldState = TextFieldState(
-        initialText = args.query
-    )
+    val searchBarTextFieldState = TextFieldState(initialText = args.query)
 
     private val _availableFilters = getFilterOptionsUseCase()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val _quickSearchResultsState =
-        snapshotFlow { searchBarTextFieldState.text }.map { it.toString() }.flatMapLatest { query ->
-            getQuickResultsUseCase(query)
-        }
+        snapshotFlow { searchBarTextFieldState.text }
+            .map { it.toString() }
+            .flatMapLatest { query ->
+                getQuickResultsUseCase(query)
+            }
 
-    private val _activeFeedFilters = MutableStateFlow(
-        ActiveFilters(
-            committedQuery = args.query,
-            selectedTagIds = args.tags.toImmutableList(),
-            selectedAuthorIds = args.authors.toImmutableList()
+    private val _activeFeedFilters =
+        MutableStateFlow(
+            ActiveFilters(
+                committedQuery = args.query,
+                selectedTagIds = args.tags.toImmutableList(),
+                selectedAuthorIds = args.authors.toImmutableList(),
+            )
         )
-    )
 
-    val searchFeedAnnouncements = _activeFeedFilters.flatMapLatest { activeFilters ->
-        getFilteredAnnouncementsUseCase(
-            activeFilters.committedQuery,
-            activeFilters.selectedAuthorIds,
-            activeFilters.selectedTagIds
-        )
-    }.cachedIn(
-        viewModelScope
-    )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val searchFeedAnnouncements =
+        _activeFeedFilters
+            .flatMapLatest { activeFilters ->
+                getFilteredAnnouncementsUseCase(
+                    activeFilters.committedQuery,
+                    activeFilters.selectedAuthorIds,
+                    activeFilters.selectedTagIds,
+                )
+            }
+            .cachedIn(viewModelScope)
 
-    val uiState = combine(
-        _availableFilters, _activeFeedFilters, _quickSearchResultsState
-    ) { availableFilters, activeFilters, quickResults ->
-        SearchUiState(
-            availableFilters = availableFilters,
-            activeFilters = activeFilters,
-            quickResults = quickResults
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = SearchUiState()
-    )
+    val uiState =
+        combine(
+                _availableFilters,
+                _activeFeedFilters,
+                _quickSearchResultsState,
+            ) { availableFilters, activeFilters, quickResults ->
+                SearchUiState(
+                    availableFilters = availableFilters,
+                    activeFilters = activeFilters,
+                    quickResults = quickResults,
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = SearchUiState(),
+            )
 
     fun onSearch(
-        query: String, tagIds: ImmutableList<Int>, authorIds: ImmutableList<Int>
+        query: String,
+        tagIds: ImmutableList<Int>,
+        authorIds: ImmutableList<Int>,
     ) {
         searchBarTextFieldState.edit {
             delete(0, length)
@@ -88,7 +101,7 @@ internal class SearchViewModel @Inject constructor(
             filters.copy(
                 committedQuery = query,
                 selectedTagIds = tagIds.distinct().toImmutableList(),
-                selectedAuthorIds = authorIds.distinct().toImmutableList()
+                selectedAuthorIds = authorIds.distinct().toImmutableList(),
             )
         }
     }

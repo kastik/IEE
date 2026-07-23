@@ -11,11 +11,11 @@ interface AuthenticationRemoteDataSource {
 }
 
 @Singleton
-internal class AuthenticationRemoteDataSourceImpl @Inject constructor(
-    @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient,
-) : AuthenticationRemoteDataSource {
+internal class AuthenticationRemoteDataSourceImpl
+@Inject
+constructor(@AuthenticatorAboardClient private val aboardApiClient: AboardApiClient) :
+    AuthenticationRemoteDataSource {
 
     override suspend fun exchangeCodeForAboardToken(code: String): TokenDto =
         aboardApiClient.exchangeAuthCode(code = code)
-
 }

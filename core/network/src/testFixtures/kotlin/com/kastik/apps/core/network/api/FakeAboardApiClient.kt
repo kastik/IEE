@@ -1,6 +1,5 @@
 package com.kastik.apps.core.network.api
 
-
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.network.model.common.ListResponseDto
 import com.kastik.apps.core.network.model.common.SingleResponseDto
@@ -16,13 +15,13 @@ import com.kastik.apps.core.network.testdata.baseTagDto
 import com.kastik.apps.core.network.testdata.baseTokenDto
 import kotlinx.datetime.LocalDateTime
 
-
 class FakeAboardApiClient : AboardApiClient {
 
     private var throwOnApiCall: Exception? = null
     private val _subscribedIds = mutableListOf<Int>()
 
     fun getSubscribedIds(): List<Int> = _subscribedIds
+
     fun setThrowOnGetUserInfo(exception: Exception) {
         throwOnApiCall = exception
     }
@@ -35,9 +34,8 @@ class FakeAboardApiClient : AboardApiClient {
         tagIds: List<Int>?,
         title: String?,
         body: String?,
-        updatedAfter: LocalDateTime?
+        updatedAfter: LocalDateTime?,
     ) = basePagedAnnouncementDto
-
 
     override suspend fun getAnnouncement(id: Int): SingleResponseDto<AnnouncementDto> {
         throwOnApiCall?.let { exception ->
@@ -67,9 +65,7 @@ class FakeAboardApiClient : AboardApiClient {
 
     override suspend fun getSubscribedTags() = listOf(baseTagDto)
 
-
     override suspend fun getAvailableTags() = listOf(baseTagDto)
-
 
     override suspend fun subscribeToTags(tags: SubscribeDto) {
         _subscribedIds.clear()
@@ -78,8 +74,5 @@ class FakeAboardApiClient : AboardApiClient {
 
     override suspend fun getTags() = ListResponseDto(listOf(baseTagDto))
 
-
     override suspend fun getAuthors() = listOf(baseAuthorDto)
-
-
 }

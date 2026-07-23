@@ -5,9 +5,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class CrashlyticsReleaseImpl @Inject constructor(
-    private val crashlytics: FirebaseCrashlytics
-) : Crashlytics {
+internal class CrashlyticsReleaseImpl
+@Inject
+constructor(private val crashlytics: FirebaseCrashlytics) : Crashlytics {
 
     override fun log(message: String) {
         crashlytics.log(message)

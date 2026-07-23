@@ -19,11 +19,15 @@ class FakeRemoteKeysDao : RemoteKeysDao {
         titleQuery: String,
         bodyQuery: String,
         authorIds: List<Int>,
-        tagIds: List<Int>
+        tagIds: List<Int>,
     ): RemoteKeysEntity? {
         return _remoteKeysEntity.value.find {
-            it.announcementId == id && it.sortType == sortType && it.titleQuery == titleQuery && it.bodyQuery == bodyQuery && it.authorIds == authorIds && it.tagIds == tagIds
-
+            it.announcementId == id &&
+                it.sortType == sortType &&
+                it.titleQuery == titleQuery &&
+                it.bodyQuery == bodyQuery &&
+                it.authorIds == authorIds &&
+                it.tagIds == tagIds
         }
     }
 
@@ -32,12 +36,12 @@ class FakeRemoteKeysDao : RemoteKeysDao {
             val filteredCurrent = current.filter { existing ->
                 keys.none { new ->
                     new.tagIds == existing.tagIds &&
-                            new.authorIds == existing.authorIds &&
-                            new.titleQuery == existing.titleQuery &&
-                            new.bodyQuery == existing.bodyQuery &&
-                            new.announcementId == existing.announcementId &&
-                            new.prevKey == existing.prevKey &&
-                            new.nextKey == existing.nextKey
+                        new.authorIds == existing.authorIds &&
+                        new.titleQuery == existing.titleQuery &&
+                        new.bodyQuery == existing.bodyQuery &&
+                        new.announcementId == existing.announcementId &&
+                        new.prevKey == existing.prevKey &&
+                        new.nextKey == existing.nextKey
                 }
             }
             filteredCurrent + keys
@@ -49,11 +53,17 @@ class FakeRemoteKeysDao : RemoteKeysDao {
         titleQuery: String,
         bodyQuery: String,
         authorIds: List<Int>,
-        tagIds: List<Int>
+        tagIds: List<Int>,
     ) {
         clearKeysCalled = true
         _remoteKeysEntity.update { current ->
-            current.filterNot { it.sortType == sortType && it.titleQuery == titleQuery && it.bodyQuery == bodyQuery && it.authorIds == authorIds && it.tagIds == tagIds }
+            current.filterNot {
+                it.sortType == sortType &&
+                    it.titleQuery == titleQuery &&
+                    it.bodyQuery == bodyQuery &&
+                    it.authorIds == authorIds &&
+                    it.tagIds == tagIds
+            }
         }
     }
 }

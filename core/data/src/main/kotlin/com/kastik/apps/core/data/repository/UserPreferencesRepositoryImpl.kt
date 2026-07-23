@@ -11,17 +11,19 @@ import com.kastik.apps.core.domain.repository.UserPreferencesRepository
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.Theme
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Instant
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 @Singleton
-internal class UserPreferencesRepositoryImpl @Inject constructor(
+internal class UserPreferencesRepositoryImpl
+@Inject
+constructor(
     private val preferencesLocalDataSource: PreferencesLocalDataSource,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : UserPreferencesRepository {
 
     override val userPreferences =
@@ -32,29 +34,35 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
             preferencesLocalDataSource.setSkippedSignIn(isSkipped)
         }
 
-    override suspend fun setTheme(theme: Theme) = withContext(ioDispatcher) {
-        preferencesLocalDataSource.setTheme(theme.toThemeProto())
-    }
+    override suspend fun setTheme(theme: Theme) =
+        withContext(ioDispatcher) {
+            preferencesLocalDataSource.setTheme(theme.toThemeProto())
+        }
 
-    override suspend fun setDynamicColor(isEnabled: Boolean) = withContext(ioDispatcher) {
-        preferencesLocalDataSource.setDynamicColor(isEnabled)
-    }
+    override suspend fun setDynamicColor(isEnabled: Boolean) =
+        withContext(ioDispatcher) {
+            preferencesLocalDataSource.setDynamicColor(isEnabled)
+        }
 
-    override suspend fun setSortType(sortType: SortType) = withContext(ioDispatcher) {
-        preferencesLocalDataSource.setSortType(sortType.toSortTypeProto())
-    }
+    override suspend fun setSortType(sortType: SortType) =
+        withContext(ioDispatcher) {
+            preferencesLocalDataSource.setSortType(sortType.toSortTypeProto())
+        }
 
-    override suspend fun setSearchScope(searchScope: SearchScope) = withContext(ioDispatcher) {
-        preferencesLocalDataSource.setSearchScope(searchScope.toSearchScopeProto())
-    }
+    override suspend fun setSearchScope(searchScope: SearchScope) =
+        withContext(ioDispatcher) {
+            preferencesLocalDataSource.setSearchScope(searchScope.toSearchScopeProto())
+        }
 
-    override suspend fun setForYou(isEnabled: Boolean) = withContext(ioDispatcher) {
-        preferencesLocalDataSource.setForYou(isEnabled)
-    }
+    override suspend fun setForYou(isEnabled: Boolean) =
+        withContext(ioDispatcher) {
+            preferencesLocalDataSource.setForYou(isEnabled)
+        }
 
-    override suspend fun setFabFilters(areEnabled: Boolean) = withContext(ioDispatcher) {
-        preferencesLocalDataSource.setFabFilters(areEnabled)
-    }
+    override suspend fun setFabFilters(areEnabled: Boolean) =
+        withContext(ioDispatcher) {
+            preferencesLocalDataSource.setFabFilters(areEnabled)
+        }
 
     override suspend fun setLastCheckTime(time: Instant?) {
         preferencesLocalDataSource.setLastCheckTime(time?.toTimestamp())
@@ -71,5 +79,4 @@ internal class UserPreferencesRepositoryImpl @Inject constructor(
     override suspend fun resetImportantEventCount() {
         preferencesLocalDataSource.resetImportantEventCount()
     }
-
 }

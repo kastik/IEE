@@ -12,5 +12,4 @@ class HomeScreenScreenshotTest {
     fun HomeScreenInitialLoadTest() {
         HomeScreenInitialLoadPreview()
     }
-
 }

@@ -2,7 +2,6 @@ package com.kastik.apps.core.database.converters
 
 import androidx.room.TypeConverter
 
-
 class IntListConverter {
     @TypeConverter
     fun fromList(list: List<Int>?): String {
@@ -15,5 +14,4 @@ class IntListConverter {
         if (value.isNullOrEmpty()) return emptyList()
         return value.split(",").map { it.toInt() }
     }
-
 }

@@ -1,7 +1,7 @@
 package com.kastik.apps.core.performance.di
 
-import com.kastik.apps.core.performance.PerformanceReleaseImpl
 import com.kastik.apps.core.performance.Performance
+import com.kastik.apps.core.performance.PerformanceReleaseImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ internal abstract class PerformanceReleaseModule {
 
     @Binds
     @Singleton
-    abstract fun bindPerformanceReleaseImpl(performanceReleaseImpl: PerformanceReleaseImpl): Performance
-
-
+    abstract fun bindPerformanceReleaseImpl(
+        performanceReleaseImpl: PerformanceReleaseImpl
+    ): Performance
 }

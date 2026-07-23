@@ -2,9 +2,9 @@ package com.kastik.apps.core.network.datasource
 
 import com.google.common.truth.Truth.assertThat
 import com.kastik.apps.core.network.api.FakeAboardApiClient
+import kotlin.test.assertFailsWith
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import kotlin.test.assertFailsWith
 
 class AuthenticationRemoteDataSourceImplTest {
 
@@ -21,10 +21,11 @@ class AuthenticationRemoteDataSourceImplTest {
 
     @Test
     fun exchangeCodeForAboardTokenDoesNotSwallowErrors() = runTest {
-        fakeAboardApiClient.setThrowOnGetUserInfo(exception = IllegalStateException("Token expired"))
+        fakeAboardApiClient.setThrowOnGetUserInfo(
+            exception = IllegalStateException("Token expired")
+        )
         assertFailsWith<IllegalStateException> {
             authenticationRemoteDataSourceImpl.exchangeCodeForAboardToken("12345")
         }
     }
 }
-

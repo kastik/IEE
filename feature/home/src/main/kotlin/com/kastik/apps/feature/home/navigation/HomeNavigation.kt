@@ -19,13 +19,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 enum class HomeTab {
     HOME,
-    FOR_YOU
+    FOR_YOU,
 }
 
-@Serializable
-data class HomeRoute(
-    val initialTab: HomeTab? = null
-)
+@Serializable data class HomeRoute(val initialTab: HomeTab? = null)
 
 fun NavController.navigateToHome(
     navOptions: NavOptions = navOptions {
@@ -35,25 +32,22 @@ fun NavController.navigateToHome(
         }
         restoreState = true
         launchSingleTop = true
-    },
+    }
 ) = navigate(route = HomeRoute(), navOptions)
-
 
 fun NavGraphBuilder.homeScreen(
     navigateToAnnouncement: (Int) -> Unit,
     navigateToSettings: () -> Unit,
     navigateToProfile: () -> Unit,
-    navigateToSearch: (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
+    navigateToSearch:
+        (query: String, tagsId: ImmutableList<Int>, authorIds: ImmutableList<Int>) -> Unit,
 ) {
     composable<HomeRoute>(
-        deepLinks = listOf(
-            navDeepLink<HomeRoute>(
-                basePath = "com.kastik.apps://home"
-            )
-        ),
+        deepLinks = listOf(navDeepLink<HomeRoute>(basePath = "com.kastik.apps://home")),
         enterTransition = { scaleIn() },
         exitTransition = { fadeOut() },
-        popEnterTransition = { fadeIn() }) { backStackEntry ->
+        popEnterTransition = { fadeIn() },
+    ) { backStackEntry ->
         val route: HomeRoute = backStackEntry.toRoute()
         HomeScreenRoute(
             initialTab = route.initialTab ?: HomeTab.HOME,

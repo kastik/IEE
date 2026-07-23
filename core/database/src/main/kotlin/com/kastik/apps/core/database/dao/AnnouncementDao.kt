@@ -17,25 +17,19 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AnnouncementDao {
 
-    @Upsert
-    suspend fun upsertAnnouncements(announcements: List<AnnouncementEntity>)
+    @Upsert suspend fun upsertAnnouncements(announcements: List<AnnouncementEntity>)
 
-    @Upsert
-    suspend fun upsertAnnouncements(announcement: AnnouncementEntity)
+    @Upsert suspend fun upsertAnnouncements(announcement: AnnouncementEntity)
 
-    @Upsert
-    suspend fun upsertTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
+    @Upsert suspend fun upsertTagCrossRefs(crossRefs: List<TagsCrossRefEntity>)
 
-    @Upsert
-    suspend fun upsertBodies(bodies: List<BodyEntity>)
+    @Upsert suspend fun upsertBodies(bodies: List<BodyEntity>)
 
-    @Upsert
-    suspend fun upsertBodies(body: BodyEntity)
+    @Upsert suspend fun upsertBodies(body: BodyEntity)
 
-    @Upsert
-    suspend fun upsertAttachments(attachments: List<AttachmentEntity>)
+    @Upsert suspend fun upsertAttachments(attachments: List<AttachmentEntity>)
 
-    //TODO Add support for tags, authors
+    // TODO Add support for tags, authors
     @Transaction
     @Query(
         """
@@ -54,7 +48,7 @@ interface AnnouncementDao {
     )
     fun getQuickSearchAnnouncements(
         query: String,
-        sortType: SortType
+        sortType: SortType,
     ): Flow<List<AnnouncementPreviewRelation>>
 
     @Transaction
@@ -81,7 +75,7 @@ interface AnnouncementDao {
         bodyQuery: String = "",
         tagIds: List<Int> = emptyList(),
         authorIds: List<Int> = emptyList(),
-        sortType: SortType = SortType.DESC
+        sortType: SortType = SortType.DESC,
     ): PagingSource<Int, AnnouncementPreviewRelation>
 
     @Transaction
@@ -92,15 +86,11 @@ interface AnnouncementDao {
     @Query("SELECT attachmentUrl FROM attachmententity WHERE id = :id")
     suspend fun getAttachmentWithId(id: Int): String
 
-    @Query("DELETE FROM announcemententity")
-    suspend fun clearAllAnnouncements()
+    @Query("DELETE FROM announcemententity") suspend fun clearAllAnnouncements()
 
-    @Query("DELETE FROM bodyentity")
-    suspend fun clearBodies()
+    @Query("DELETE FROM bodyentity") suspend fun clearBodies()
 
-    @Query("DELETE FROM attachmententity")
-    suspend fun clearAttachments()
+    @Query("DELETE FROM attachmententity") suspend fun clearAttachments()
 
-    @Query("DELETE FROM tagscrossrefentity")
-    suspend fun clearTagCrossRefs()
+    @Query("DELETE FROM tagscrossrefentity") suspend fun clearTagCrossRefs()
 }

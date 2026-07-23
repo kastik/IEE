@@ -18,7 +18,7 @@ fun TrackScreenViewEvent(
         analytics.logScreenView(
             screenClass = screenClass,
             screenName = screenName,
-            params = params
+            params = params,
         )
     }
 }
@@ -26,19 +26,21 @@ fun TrackScreenViewEvent(
 fun Analytics.logScreenView(
     screenClass: String,
     screenName: String,
-    params: List<Param> = emptyList()
+    params: List<Param> = emptyList(),
 ) {
     logEvent(
         AnalyticsEvent(
             type = types.SCREEN_VIEW,
-            extras = listOf(
-                Param(paramKeys.SCREEN_CLASS, screenClass),
-                Param(paramKeys.SCREEN_NAME, screenName),
-            ) + params,
-        ),
+            extras =
+                listOf(
+                    Param(paramKeys.SCREEN_CLASS, screenClass),
+                    Param(paramKeys.SCREEN_NAME, screenName),
+                ) + params,
+        )
     )
 }
 
-val LocalAnalytics = staticCompositionLocalOf<Analytics> {
-    error("Analytics instance not provided")
-}
+val LocalAnalytics =
+    staticCompositionLocalOf<Analytics> {
+        error("Analytics instance not provided")
+    }

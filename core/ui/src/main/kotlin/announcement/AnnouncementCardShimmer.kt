@@ -32,26 +32,22 @@ import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.component.IeePreview
 
 @Composable
-fun AnnouncementCardShimmer(
-    modifier: Modifier = Modifier
-) {
+fun AnnouncementCardShimmer(modifier: Modifier = Modifier) {
     val shimmer = rememberShimmer()
 
     ElevatedCard(
-        modifier = modifier
-            .fillMaxWidth()
-            .shimmer(shimmer),
+        modifier = modifier.fillMaxWidth().shimmer(shimmer),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+            ),
     ) {
         Column(Modifier.padding(16.dp)) {
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 ShimmerBlock(width = 90.dp, height = 16.dp)
                 ShimmerBlock(width = 60.dp, height = 14.dp)
@@ -70,7 +66,7 @@ fun AnnouncementCardShimmer(
                     ShimmerBlock(
                         width = (60 + (it * 10)).dp,
                         height = 26.dp,
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp)
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp),
                     )
                 }
             }
@@ -88,54 +84,54 @@ fun AnnouncementCardShimmer(
 private fun rememberShimmer(): Brush {
     val transition = rememberInfiniteTransition(label = "shimmer")
 
-    val shift = transition.animateFloat(
-        initialValue = -300f,
-        targetValue = 300f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1200, easing = LinearEasing)
-        ),
-        label = "shimmer_shift"
-    )
+    val shift =
+        transition.animateFloat(
+            initialValue = -300f,
+            targetValue = 300f,
+            animationSpec =
+                infiniteRepeatable(animation = tween(durationMillis = 1200, easing = LinearEasing)),
+            label = "shimmer_shift",
+        )
 
     return Brush.linearGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f)
-        ),
+        colors =
+            listOf(
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
+            ),
         start = Offset(shift.value, 0f),
-        end = Offset(shift.value + 300f, 0f)
+        end = Offset(shift.value + 300f, 0f),
     )
 }
 
-
-private fun Modifier.shimmer(brush: Brush): Modifier = this.drawWithContent {
-    drawContent()
-    drawRect(brush)
-}
+private fun Modifier.shimmer(brush: Brush): Modifier =
+    this.drawWithContent {
+        drawContent()
+        drawRect(brush)
+    }
 
 @Composable
 private fun ShimmerBlock(
     width: Any = Modifier.fillMaxWidth(),
     height: Dp,
-    shape: Shape = RoundedCornerShape(6.dp)
+    shape: Shape = RoundedCornerShape(6.dp),
 ) {
-    val modifier = when (width) {
-        is Dp -> Modifier.width(width)
-        is Modifier -> width
-        else -> Modifier.fillMaxWidth()
-    }
+    val modifier =
+        when (width) {
+            is Dp -> Modifier.width(width)
+            is Modifier -> width
+            else -> Modifier.fillMaxWidth()
+        }
 
     Box(
-        modifier = modifier
-            .height(height)
-            .clip(shape)
-            .background(
-                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-            )
+        modifier =
+            modifier
+                .height(height)
+                .clip(shape)
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
     )
 }
-
 
 @Preview
 @Composable

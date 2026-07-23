@@ -44,7 +44,6 @@ fun SearchBar(
         }
     }
 
-
     val searchBarInputField = remember {
         movableContentOf {
             SearchBarInputField(
@@ -97,7 +96,6 @@ fun SearchBar(
                     onAnnouncementQuickResultClick(it)
                 }
             },
-
-            )
+        )
     }
 }

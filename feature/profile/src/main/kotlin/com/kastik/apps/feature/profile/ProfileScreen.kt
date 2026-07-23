@@ -71,12 +71,11 @@ import com.kastik.apps.core.ui.extensions.toFormattedString
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
 import com.kastik.apps.core.ui.sheet.SubscribableTagSheet
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.delay
-import kotlin.time.Duration.Companion.seconds
-
 
 @Composable
 internal fun ProfileRoute(
@@ -92,18 +91,15 @@ internal fun ProfileRoute(
 
     AnimatedContent(
         targetState = uiState,
-        contentKey = { state -> state::class }
+        contentKey = { state -> state::class },
     ) { state ->
         when (state) {
-
             is ProfileUiState.Loading -> {
                 ProfileLoading()
             }
 
             is ProfileUiState.SignedOut -> {
-                ProfileSignedOut(
-                    navigateBack = navigateBack
-                )
+                ProfileSignedOut(navigateBack = navigateBack)
             }
 
             is ProfileUiState.Success -> {
@@ -115,11 +111,10 @@ internal fun ProfileRoute(
                     lastLoginAt = state.profile.lastLoginAt.toFormattedString(),
                     createdAt = state.profile.createdAt.toFormattedString(),
                     isSyncingSubscriptions = state.isSyncingSubscriptions,
-                    subscriptionSyncError = state.subscribeSyncErrorMessageResId?.let {
-                        stringResource(
-                            it
-                        )
-                    },
+                    subscriptionSyncError =
+                        state.subscribeSyncErrorMessageResId?.let {
+                            stringResource(it)
+                        },
                     subscribableTags = state.subscribableTags,
                     subscribedTags = state.subscribedTags,
                     applySelectedTags = viewModel::updateSelectedTagIds,
@@ -133,19 +128,15 @@ internal fun ProfileRoute(
 }
 
 @Composable
-private fun ProfileLoading(
-) {
+private fun ProfileLoading() {
     LoadingContent(
         modifier = Modifier.fillMaxSize(),
         message = stringResource(R.string.fetching_profile_message),
     )
 }
 
-
 @Composable
-private fun ProfileSignedOut(
-    navigateBack: () -> Unit = {},
-) {
+private fun ProfileSignedOut(navigateBack: () -> Unit = {}) {
     val analytics = LocalAnalytics.current
 
     LaunchedEffect(Unit) {
@@ -160,12 +151,11 @@ private fun ProfileSignedOut(
             Text(
                 text = stringResource(R.string.logged_out_message),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
-        }
+        },
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -187,10 +177,7 @@ private fun ProfileSuccess(
 ) {
     val analytics = LocalAnalytics.current
 
-    Scaffold(
-        contentWindowInsets = WindowInsets()
-    ) { innerPadding ->
-
+    Scaffold(contentWindowInsets = WindowInsets()) { innerPadding ->
         if (isSubscribeSheetVisible) {
             SubscribableTagSheet(
                 tags = subscribableTags,
@@ -199,41 +186,37 @@ private fun ProfileSuccess(
                     analytics.logFiltersApplied("subscribed_tags", newTagIds)
                     applySelectedTags(newTagIds)
                 },
-                onDismiss = { toggleSubscribeSheet(false) }
+                onDismiss = { toggleSubscribeSheet(false) },
             )
         }
 
         Column(
-            Modifier
-                .fillMaxSize()
+            Modifier.fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(28.dp)
+            verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
             Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
-
 
             AnimatedVisibility(
                 visible = isSyncingSubscriptions && subscriptionSyncError == null,
                 enter = expandVertically(),
-                exit = shrinkVertically()
+                exit = shrinkVertically(),
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    IeeLinearWavyProgressIndicator(
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    IeeLinearWavyProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
             }
 
             AnimatedVisibility(
                 visible = subscriptionSyncError != null,
                 enter = expandVertically(),
-                exit = shrinkVertically()
+                exit = shrinkVertically(),
             ) {
                 subscriptionSyncError?.let { error ->
                     IeeStatusBanner(
@@ -251,14 +234,14 @@ private fun ProfileSuccess(
                 showTagSheet = { value ->
                     if (value) analytics.logSheetOpened("subscribed_tags_sheet")
                     toggleSubscribeSheet(value)
-                }
+                },
             )
 
             ProfileMeta(
                 isAdmin = isAdmin,
                 isAuthor = isAuthor,
                 lastLogin = lastLoginAt,
-                createdAt = createdAt
+                createdAt = createdAt,
             )
 
             ProfileSignOut(
@@ -272,7 +255,6 @@ private fun ProfileSuccess(
     }
 }
 
-
 @Composable
 private fun ProfileMeta(
     modifier: Modifier = Modifier,
@@ -284,25 +266,28 @@ private fun ProfileMeta(
     ElevatedCard(
         shape = RoundedCornerShape(22.dp),
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-
+        colors =
+            CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
     ) {
         Column(
-            Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)
+            Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Outlined.ManageAccounts, null)
                 Spacer(Modifier.width(8.dp))
                 Text(
                     stringResource(R.string.account_info_label),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 )
             }
             Column {
                 Text(
                     text = stringResource(R.string.role_label),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     when {
@@ -311,31 +296,31 @@ private fun ProfileMeta(
                         else -> stringResource(R.string.role_student_label)
                     },
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
             Column {
                 Text(
                     text = stringResource(R.string.account_info_last_log_in),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     text = lastLogin,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
             Column {
                 Text(
                     text = stringResource(R.string.account_info_joined),
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
                     createdAt,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
@@ -351,11 +336,14 @@ private fun ProfileName(
     ElevatedCard(
         shape = MaterialTheme.shapes.extraLarge,
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-
+        colors =
+            CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
     ) {
         Column(
-            Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)
+            Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(name, style = MaterialTheme.typography.titleLarge)
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -368,22 +356,20 @@ private fun ProfileName(
 }
 
 @Composable
-private fun ProfilePicture(
-    name: String
-) {
+private fun ProfilePicture(name: String) {
     Box(
-        modifier = Modifier
-            .padding(horizontal = 6.dp)
-            .size(110.dp)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier.padding(horizontal = 6.dp)
+                .size(110.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = name.take(1).uppercase(),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
     }
 }
@@ -397,51 +383,48 @@ private fun ProfileSubscribedTags(
     ElevatedCard(
         shape = MaterialTheme.shapes.extraLarge,
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-
+        colors =
+            CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
     ) {
         Column(
-            Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)
+            Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Outlined.NotificationsActive, null)
                     Spacer(Modifier.width(8.dp))
                     Text(
                         stringResource(R.string.subscribed_tags_label),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
-                IconButton(
-                    onClick = { showTagSheet(true) }) {
+                IconButton(onClick = { showTagSheet(true) }) {
                     Icon(Icons.Outlined.Settings, null)
                 }
             }
 
-            AnimatedContent(
-                targetState = subscribedTagTitles,
-            ) { tags ->
+            AnimatedContent(targetState = subscribedTagTitles) { tags ->
                 if (tags.isEmpty()) {
                     Text(
                         text = stringResource(R.string.warning_empty_subscriptions),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 } else {
                     FlowRow(
                         modifier = Modifier.animateContentSize(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         tags.forEach { tag ->
-                            IeeTag(
-                                text = tag
-                            )
+                            IeeTag(text = tag)
                         }
                     }
                 }
@@ -450,37 +433,31 @@ private fun ProfileSubscribedTags(
     }
 }
 
-
 @Composable
-private fun ProfileSignOut(
-    onClick: () -> Unit = {},
-) {
+private fun ProfileSignOut(onClick: () -> Unit = {}) {
     Button(
         onClick = onClick,
-        modifier = Modifier
-            .padding(12.dp)
-            .fillMaxWidth()
-            .height(46.dp),
+        modifier = Modifier.padding(12.dp).fillMaxWidth().height(46.dp),
         shape = MaterialTheme.shapes.medium,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onErrorContainer
-        ),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+            ),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp),
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.Logout,
             contentDescription = null,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(20.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = stringResource(R.string.action_sign_out),
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
         )
     }
 }
-
 
 @Preview
 @Composable
@@ -498,7 +475,6 @@ internal fun ProfileSignedOutPreview() {
     }
 }
 
-
 @Preview
 @Composable
 internal fun ProfileSuccessPreview() {
@@ -507,7 +483,7 @@ internal fun ProfileSuccessPreview() {
             name = "Kostas Papastathopoulos",
             email = "example@gmail.com",
             subscribableTags = persistentListOf(),
-            subscribedTags = persistentListOf()
+            subscribedTags = persistentListOf(),
         )
     }
 }

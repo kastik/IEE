@@ -25,58 +25,49 @@ import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.feature.onboarding.R
 
 @Composable
-internal fun OnboardWelcome(
-    onGetStartedClick: () -> Unit = {}
-) {
+internal fun OnboardWelcome(onGetStartedClick: () -> Unit = {}) {
 
     val haptics = LocalHapticFeedback.current
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
+        modifier = Modifier.fillMaxSize().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
-
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             IeeCircularIcon(
                 imageVector = Icons.Rounded.AutoAwesome,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                tint = MaterialTheme.colorScheme.onTertiaryContainer
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
             )
             Text(
                 text = stringResource(R.string.welcome_title),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             Text(
                 text = stringResource(R.string.welcome_body),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
-
-
 
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onGetStartedClick()
-                }
+                },
             ) {
                 Text(stringResource(R.string.welcome_primary_action))
             }

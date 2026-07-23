@@ -13,7 +13,6 @@ configure<LibraryExtension> {
     namespace = "com.kastik.apps.core.work"
 }
 
-
 dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))

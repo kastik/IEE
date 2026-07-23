@@ -1,14 +1,15 @@
 syntax = "proto3";
-option java_package = "com.kastik.apps.core.datastore.proto";
-option java_multiple_files = true;
 package com.kastik.apps.core.datastore.proto;
 
-message OnboardStageProto{
+option java_multiple_files = true;
+option java_package = "com.kastik.apps.core.datastore.proto";
+
+message OnboardStageProto {
   bool has_finished_onboard = 1;
   StageProto currentStage = 2;
 }
 
-enum StageProto{
+enum StageProto {
   Welcome = 0;
   SignIn = 1;
   Notifications = 2;

@@ -3,22 +3,23 @@ package com.kastik.apps.core.network.interceptor
 import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.di.BaseAboardClient
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import retrofit2.HttpException
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-class AboardAuthenticator @Inject constructor(
+class AboardAuthenticator
+@Inject
+constructor(
     private val tokenManager: TokenManager,
     private val crashlytics: Crashlytics,
     @BaseAboardClient private val aboardRefreshApiClient: AboardApiClient,
 ) : Authenticator {
-
 
     override fun authenticate(route: Route?, response: Response): Request? {
 
@@ -32,7 +33,6 @@ class AboardAuthenticator @Inject constructor(
                 if (requestToken != currentToken && currentToken != null) {
                     return@runBlocking buildRequest(response.request, currentToken)
                 }
-
 
                 try {
                     val newToken = aboardRefreshApiClient.refreshToken()
@@ -51,8 +51,6 @@ class AboardAuthenticator @Inject constructor(
     }
 
     private fun buildRequest(request: Request, token: String): Request {
-        return request.newBuilder()
-            .header("Authorization", "Bearer $token")
-            .build()
+        return request.newBuilder().header("Authorization", "Bearer $token").build()
     }
 }

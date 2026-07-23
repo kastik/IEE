@@ -10,6 +10,7 @@ plugins {
 configure<LibraryExtension> {
     namespace = "com.kastik.apps.feature.licenses"
 }
+
 dependencies {
     implementation(project(":core:analytics"))
     implementation(project(":core:ui"))

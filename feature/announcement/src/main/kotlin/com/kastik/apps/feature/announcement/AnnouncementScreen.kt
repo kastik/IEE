@@ -86,28 +86,24 @@ internal fun AnnouncementRoute(
     TrackScreenViewEvent(
         screenClass = "announcement_route",
         screenName = "announcement_screen",
-        params = listOf(
-            AnalyticsEvent.Param(analytics.paramKeys.ITEM_ID, announcementId.toString()),
-            AnalyticsEvent.Param(analytics.paramKeys.ITEM_CATEGORY, "announcement")
-        )
+        params =
+            listOf(
+                AnalyticsEvent.Param(analytics.paramKeys.ITEM_ID, announcementId.toString()),
+                AnalyticsEvent.Param(analytics.paramKeys.ITEM_CATEGORY, "announcement"),
+            ),
     )
 
     AnimatedContent(
         targetState = uiState.value,
-        contentKey = { state -> state::class }
+        contentKey = { state -> state::class },
     ) { state ->
         when (state) {
-
             is AnnouncementUiState.Loading -> {
-                AnnouncementScreenLoading(
-                    announcementId = announcementId
-                )
+                AnnouncementScreenLoading(announcementId = announcementId)
             }
 
             is AnnouncementUiState.Error -> {
-                AnnouncementScreenError(
-                    announcementId = announcementId,
-                )
+                AnnouncementScreenError(announcementId = announcementId)
             }
 
             is AnnouncementUiState.Success -> {
@@ -123,7 +119,7 @@ internal fun AnnouncementRoute(
                     isSyncing = state.isSyncing,
                     syncError = state.syncErrorMessageResId?.let { stringResource(it) },
                     onSuccessfulReview = viewModel::onSuccessfulReview,
-                    onAttachmentClick = viewModel::downloadAttachment
+                    onAttachmentClick = viewModel::downloadAttachment,
                 )
             }
         }
@@ -161,37 +157,31 @@ private fun AnnouncementScreenSuccess(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp)
-            .verticalScroll(scroll), verticalArrangement = Arrangement.spacedBy(24.dp)
+        modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp).verticalScroll(scroll),
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
         AnimatedVisibility(
             visible = isSyncing && syncError == null,
             enter = fadeIn(),
-            exit = fadeOut()
+            exit = fadeOut(),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                IeeLinearWavyProgressIndicator(
-                    modifier = Modifier.fillMaxWidth()
-                )
+                IeeLinearWavyProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
         }
 
-        AnimatedVisibility(
-            visible = syncError != null
-        ) {
+        AnimatedVisibility(visible = syncError != null) {
             syncError?.let { errorMessage ->
                 IeeStatusBanner(
                     text = errorMessage,
                     icon = Icons.Default.CloudOff,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
@@ -205,9 +195,8 @@ private fun AnnouncementScreenSuccess(
                 text = AnnotatedString.fromHtml(title),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                ), color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+                color = MaterialTheme.colorScheme.onSurface,
             )
             IconButton(
                 onClick = {
@@ -220,25 +209,25 @@ private fun AnnouncementScreenSuccess(
                     Icons.Outlined.Share,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
             }
         }
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 Icons.Outlined.Person,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.85f),
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(18.dp),
             )
             Text(
                 text = author,
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             IeeDotDivider()
@@ -246,7 +235,7 @@ private fun AnnouncementScreenSuccess(
             Text(
                 text = date,
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         if (prossedBodies.isNotEmpty()) {
@@ -256,7 +245,7 @@ private fun AnnouncementScreenSuccess(
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     prossedBodies.forEach { part ->
                         when (part) {
@@ -269,9 +258,7 @@ private fun AnnouncementScreenSuccess(
         }
 
         if (attachments.isNotEmpty()) {
-            Attachments(
-                attachments = attachments,
-            ) { attachment ->
+            Attachments(attachments = attachments) { attachment ->
                 analytics.logItemSelection(attachment.id.toString(), "attachment")
                 onAttachmentClick(
                     attachment.id,
@@ -289,7 +276,6 @@ private fun AnnouncementScreenSuccess(
     }
 }
 
-
 @Composable
 private fun Attachments(
     modifier: Modifier = Modifier,
@@ -299,24 +285,21 @@ private fun Attachments(
     Text(
         text = stringResource(R.string.attachments_label),
         style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.primary,
     )
 
     FlowRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         attachments.forEach { attachment ->
-            IeeAttachment(
-                fileName = attachment.fileName,
-            ) {
+            IeeAttachment(fileName = attachment.fileName) {
                 onAttachmentClick(attachment)
             }
         }
     }
 }
-
 
 @Composable
 private fun Tags(
@@ -326,13 +309,13 @@ private fun Tags(
     Text(
         text = stringResource(R.string.tags_label),
         style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.primary,
     )
 
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = modifier.padding(top = 8.dp)
+        modifier = modifier.padding(top = 8.dp),
     ) {
         tags.forEach { tag ->
             IeeTag(text = tag.title)
@@ -346,7 +329,7 @@ private fun HtmlText(text: ProcessedBody.Text) {
         Text(
             text = text.text,
             style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 24.sp),
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }
@@ -356,17 +339,13 @@ private fun HtmlImage(image: ProcessedBody.Image) {
     AsyncImage(
         model = image.url,
         contentDescription = null,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp)),
-        contentScale = ContentScale.FillWidth
+        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)),
+        contentScale = ContentScale.FillWidth,
     )
 }
 
 @Composable
-private fun AnnouncementScreenLoading(
-    announcementId: Int = 0
-) {
+private fun AnnouncementScreenLoading(announcementId: Int = 0) {
     val analytics = LocalAnalytics.current
 
     LaunchedEffect(announcementId) {
@@ -380,9 +359,7 @@ private fun AnnouncementScreenLoading(
 }
 
 @Composable
-private fun AnnouncementScreenError(
-    announcementId: Int,
-) {
+private fun AnnouncementScreenError(announcementId: Int) {
     val analytics = LocalAnalytics.current
 
     LaunchedEffect(announcementId) {
@@ -393,15 +370,13 @@ private fun AnnouncementScreenError(
         )
     }
 
-    StatusContent(
-        {
-            Text(
-                text = stringResource(R.string.sync_status_error),
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    )
+    StatusContent({
+        Text(
+            text = stringResource(R.string.sync_status_error),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+    })
 }
 
 @Preview
@@ -416,9 +391,7 @@ internal fun AnnouncementScreenLoadingPreview() {
 @Composable
 internal fun AnnouncementScreenErrorPreview() {
     IeePreview {
-        AnnouncementScreenError(
-            announcementId = 0,
-        )
+        AnnouncementScreenError(announcementId = 0)
     }
 }
 
@@ -431,11 +404,8 @@ internal fun AnnouncementScreenSuccessPreview() {
             title = "Announcement Title",
             author = "Author Name",
             date = "25-12-2026",
-            prossedBodies = persistentListOf(
-                ProcessedBody.Text(
-                    AnnotatedString("The quick brown fox")
-                )
-            )
+            prossedBodies =
+                persistentListOf(ProcessedBody.Text(AnnotatedString("The quick brown fox"))),
         )
     }
 }

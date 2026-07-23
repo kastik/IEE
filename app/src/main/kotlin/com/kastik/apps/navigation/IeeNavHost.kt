@@ -22,25 +22,23 @@ import com.kastik.apps.feature.settings.navigation.navigateToSettings
 import com.kastik.apps.feature.settings.navigation.settingsScreen
 
 @Composable
-fun IeeNavHost(
-    hasFinishedOnboarding: Boolean,
-) {
+fun IeeNavHost(hasFinishedOnboarding: Boolean) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = if (!hasFinishedOnboarding) OnboardRoute else HomeRoute(),
     ) {
-
         onboardScreen(
             onFinish = {
                 navController.navigateToHome(
-                    navOptions = navOptions {
-                        popUpTo<OnboardRoute> {
-                            inclusive = true
+                    navOptions =
+                        navOptions {
+                            popUpTo<OnboardRoute> {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
                         }
-                        launchSingleTop = true
-                    }
                 )
             }
         )
@@ -66,6 +64,5 @@ fun IeeNavHost(
         announcementScreen(navigateBack = navController::popBackStack)
 
         licenseScreen()
-
     }
 }

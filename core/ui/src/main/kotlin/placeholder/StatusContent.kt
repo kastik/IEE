@@ -12,18 +12,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.component.IeePreview
 
-
 @Composable
 fun StatusContent(
     message: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     action: (@Composable () -> Unit)? = null,
-
-    ) {
+) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         message()
         action?.let {
@@ -31,7 +29,6 @@ fun StatusContent(
         }
     }
 }
-
 
 @Preview
 @Composable
@@ -57,7 +54,7 @@ private fun StatusContentWithActionPreview() {
                 TextButton(onClick = {}) {
                     Text("Retry")
                 }
-            }
+            },
         )
     }
 }

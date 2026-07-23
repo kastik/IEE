@@ -8,7 +8,10 @@ import org.gradle.kotlin.dsl.apply
 class JvmLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            apply(plugin = "org.jetbrains.kotlin.jvm")
+            with(pluginManager) {
+                apply(plugin = "org.jetbrains.kotlin.jvm")
+                apply("com.kastik.spotless")
+            }
 
             configureKotlinJvm()
         }

@@ -14,7 +14,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-internal class SubscribeWorker @AssistedInject constructor(
+internal class SubscribeWorker
+@AssistedInject
+constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val notifier: Notifier,
@@ -30,8 +32,8 @@ internal class SubscribeWorker @AssistedInject constructor(
             SUBSCRIBE_SYNC_NOTIFICATION_ID,
             notifier.createSyncNotification(
                 titleResId = R.string.sync_subscribe_title,
-                bodyResId = R.string.sync_subscribe_body
-            )
+                bodyResId = R.string.sync_subscribe_body,
+            ),
         )
     }
 
@@ -40,17 +42,18 @@ internal class SubscribeWorker @AssistedInject constructor(
         val tagIdsArray = inputData.getIntArray(KEY_TAG_IDS)
         val tagIdsList = tagIdsArray?.toList() ?: emptyList()
 
-        return subscribeToTagsUseCase(tagIdsList).fold(
-            onSuccess = {
-                Result.success()
-            },
-            onError = {
-                if (runAttemptCount < 3) {
-                    Result.retry()
-                } else {
-                    Result.failure()
-                }
-            }
-        )
+        return subscribeToTagsUseCase(tagIdsList)
+            .fold(
+                onSuccess = {
+                    Result.success()
+                },
+                onError = {
+                    if (runAttemptCount < 3) {
+                        Result.retry()
+                    } else {
+                        Result.failure()
+                    }
+                },
+            )
     }
 }

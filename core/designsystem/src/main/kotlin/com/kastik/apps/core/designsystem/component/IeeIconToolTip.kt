@@ -28,38 +28,34 @@ fun IeeIconToolTip(
 ) {
     val vibrator = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
-    val tooltipState = rememberTooltipState(
-        isPersistent = true
-    )
-
+    val tooltipState = rememberTooltipState(isPersistent = true)
 
     TooltipBox(
         modifier = modifier,
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            TooltipAnchorPosition.Above,
-            16.dp
-        ),
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(
+                TooltipAnchorPosition.Above,
+                16.dp,
+            ),
         tooltip = {
-            RichTooltip(
-                title = tooltipTitle
-            ) {
+            RichTooltip(title = tooltipTitle) {
                 tooltipBody()
             }
         },
-        state = tooltipState
+        state = tooltipState,
     ) {
-        IconButton(onClick = {
-            scope.launch {
-                vibrator.performHapticFeedback(HapticFeedbackType.ContextClick)
-                tooltipState.show()
+        IconButton(
+            onClick = {
+                scope.launch {
+                    vibrator.performHapticFeedback(HapticFeedbackType.ContextClick)
+                    tooltipState.show()
+                }
             }
-        }) {
+        ) {
             icon()
         }
     }
 }
-
-
 
 @Preview(showBackground = true)
 @Composable
@@ -71,9 +67,9 @@ private fun IeeIconToolTipPreview() {
             icon = {
                 Icon(
                     imageVector = Icons.Default.Info,
-                    contentDescription = null
+                    contentDescription = null,
                 )
-            }
+            },
         )
     }
 }

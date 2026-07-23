@@ -17,6 +17,7 @@ import com.kastik.apps.core.model.sync.SyncState
 import com.kastik.apps.core.model.sync.isActive
 import com.kastik.apps.feature.announcement.navigation.AnnouncementRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Dispatchers
@@ -28,10 +29,11 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @HiltViewModel
-internal class AnnouncementViewModel @Inject constructor(
+internal class AnnouncementViewModel
+@Inject
+constructor(
     savedStateHandle: SavedStateHandle,
     getAnnouncementWithIdUseCase: GetAnnouncementWithIdUseCase,
     shouldShowReviewDialogUseCase: ShouldShowReviewDialogUseCase,
@@ -42,8 +44,8 @@ internal class AnnouncementViewModel @Inject constructor(
 ) : ViewModel() {
     private val args = savedStateHandle.toRoute<AnnouncementRoute>()
 
-    private val announcementDataFlow = getAnnouncementWithIdUseCase(args.id)
-        .map { announcement ->
+    private val announcementDataFlow =
+        getAnnouncementWithIdUseCase(args.id).map { announcement ->
             announcement?.let {
                 AnnouncementData(
                     title = announcement.title,
@@ -52,44 +54,49 @@ internal class AnnouncementViewModel @Inject constructor(
                     tags = announcement.tags,
                     attachments = announcement.attachments,
                     processedBodies = it.body.parseHtmlWithImages(),
-
-                    )
+                )
             }
         }
 
-    val uiState: StateFlow<AnnouncementUiState> = combine(
-        announcementDataFlow,
-        shouldShowReviewDialogUseCase(),
-        workScheduler.announcementSyncState,
-    ) { announcementData, shouldShowReviewDialog, syncState ->
-        when {
-            announcementData != null -> AnnouncementUiState.Success(
-                announcement = announcementData,
-                shouldShowReviewDialog = shouldShowReviewDialog,
-                isSyncing = syncState.isActive,
-                syncErrorMessageResId = syncState.toSyncMessageResId(),
+    val uiState: StateFlow<AnnouncementUiState> =
+        combine(
+                announcementDataFlow,
+                shouldShowReviewDialogUseCase(),
+                workScheduler.announcementSyncState,
+            ) { announcementData, shouldShowReviewDialog, syncState ->
+                when {
+                    announcementData != null ->
+                        AnnouncementUiState.Success(
+                            announcement = announcementData,
+                            shouldShowReviewDialog = shouldShowReviewDialog,
+                            isSyncing = syncState.isActive,
+                            syncErrorMessageResId = syncState.toSyncMessageResId(),
+                        )
+
+                    syncState is SyncState.Error -> AnnouncementUiState.Error
+                    else -> AnnouncementUiState.Loading
+                }
+            }
+            .onStart {
+                workScheduler.scheduleAnnouncementSync(args.id)
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = AnnouncementUiState.Loading,
             )
 
-            syncState is SyncState.Error -> AnnouncementUiState.Error
-            else -> AnnouncementUiState.Loading
-        }
-    }.onStart {
-        workScheduler.scheduleAnnouncementSync(args.id)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = AnnouncementUiState.Loading
-    )
-
     fun downloadAttachment(
-        attachmentId: Int, fileName: String, mimeType: String
+        attachmentId: Int,
+        fileName: String,
+        mimeType: String,
     ) {
         viewModelScope.launch {
             increaseImportantEventCountUseCase()
             downloadAttachmentUseCase(
                 attachmentId = attachmentId,
                 fileName = fileName,
-                mimeType = mimeType
+                mimeType = mimeType,
             )
         }
     }
@@ -102,16 +109,16 @@ internal class AnnouncementViewModel @Inject constructor(
 }
 
 @StringRes
-internal fun SyncState.toSyncMessageResId(): Int? = when (this) {
-    SyncState.Enqueued -> R.string.sync_status_enqueued
-    SyncState.Blocked -> R.string.sync_status_blocked
-    SyncState.Error -> R.string.sync_status_error
+internal fun SyncState.toSyncMessageResId(): Int? =
+    when (this) {
+        SyncState.Enqueued -> R.string.sync_status_enqueued
+        SyncState.Blocked -> R.string.sync_status_blocked
+        SyncState.Error -> R.string.sync_status_error
 
-    SyncState.Idle,
-    SyncState.Syncing,
-    SyncState.Success -> null
-}
-
+        SyncState.Idle,
+        SyncState.Syncing,
+        SyncState.Success -> null
+    }
 
 private suspend fun String.parseHtmlWithImages(): ImmutableList<ProcessedBody> {
     val imgRegex = """<img[^>]+src="([^">]+)"[^>]*>""".toRegex()

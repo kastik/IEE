@@ -25,11 +25,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class IeeMainActivity : ComponentActivity() {
-    @Inject
-    lateinit var analytics: Analytics
+    @Inject lateinit var analytics: Analytics
 
-    @Inject
-    lateinit var workScheduler: WorkScheduler
+    @Inject lateinit var workScheduler: WorkScheduler
 
     private val viewModel: IeeMainActivityViewModel by viewModels()
 
@@ -52,17 +50,19 @@ class IeeMainActivity : ComponentActivity() {
             if (state is IeeMainActivityUiState.Loaded) {
                 IeeTheme(
                     darkTheme = state.theme.shouldUseDarkTheme(),
-                    dynamicColor = state.dynamicColor
+                    dynamicColor = state.dynamicColor,
                 ) {
                     CompositionLocalProvider(LocalAnalytics provides analytics) {
                         Surface(
                             color = MaterialTheme.colorScheme.background,
-                            modifier = Modifier.semantics {
-                                testTagsAsResourceId = true
-                            }
+                            modifier =
+                                Modifier.semantics {
+                                    testTagsAsResourceId = true
+                                },
                         ) {
                             IeeNavHost(
-                                hasFinishedOnboarding = state.hasFinishedOnboarding || skipOnboardingForBenchmark
+                                hasFinishedOnboarding =
+                                    state.hasFinishedOnboarding || skipOnboardingForBenchmark
                             )
                         }
                     }
@@ -71,5 +71,3 @@ class IeeMainActivity : ComponentActivity() {
         }
     }
 }
-
-

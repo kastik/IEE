@@ -45,14 +45,16 @@ class PreferencesTest {
     fun searchScopeMapsToQueryScopeProto() {
         assertThat(SearchScope.Title.toSearchScopeProto()).isEqualTo(SearchScopeProto.Title)
         assertThat(SearchScope.Body.toSearchScopeProto()).isEqualTo(SearchScopeProto.Body)
-        assertThat(SearchScope.TitleAndBody.toSearchScopeProto()).isEqualTo(SearchScopeProto.TITLE_AND_BODY)
+        assertThat(SearchScope.TitleAndBody.toSearchScopeProto())
+            .isEqualTo(SearchScopeProto.TITLE_AND_BODY)
     }
 
     @Test
     fun searchScopeProtoMapsToSearchScope() {
         assertThat(SearchScopeProto.Title.toSearchScope()).isEqualTo(SearchScope.Title)
         assertThat(SearchScopeProto.Body.toSearchScope()).isEqualTo(SearchScope.Body)
-        assertThat(SearchScopeProto.TITLE_AND_BODY.toSearchScope()).isEqualTo(SearchScope.TitleAndBody)
+        assertThat(SearchScopeProto.TITLE_AND_BODY.toSearchScope())
+            .isEqualTo(SearchScope.TitleAndBody)
         assertThat(SearchScopeProto.UNRECOGNIZED.toSearchScope()).isEqualTo(SearchScope.Title)
     }
 }

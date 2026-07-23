@@ -41,7 +41,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class DataStoreModule {
@@ -66,9 +65,7 @@ internal abstract class DataStoreModule {
 
     @Binds
     @Singleton
-    abstract fun bindSubscribableTagsDataSource(
-        impl: TagsLocalDataSourceImpl
-    ): TagsLocalDataSource
+    abstract fun bindSubscribableTagsDataSource(impl: TagsLocalDataSourceImpl): TagsLocalDataSource
 
     @Binds
     @Singleton
@@ -82,18 +79,21 @@ internal abstract class DataStoreModule {
         @AuthDatastore
         fun provideAuthPreferencesDataStore(
             crashlytics: Crashlytics,
-            @ApplicationContext context: Context
-        ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
-            produceFile = { context.preferencesDataStoreFile("auth_prefs") },
-            corruptionHandler = ReplaceFileCorruptionHandler { exception ->
-                crashlytics.recordException(exception)
-                emptyPreferences()
-            },
-            migrations = listOf(
-                RemoveExpirationKey,
-                RemoveRefreshKey,
+            @ApplicationContext context: Context,
+        ): DataStore<Preferences> =
+            PreferenceDataStoreFactory.create(
+                produceFile = { context.preferencesDataStoreFile("auth_prefs") },
+                corruptionHandler =
+                    ReplaceFileCorruptionHandler { exception ->
+                        crashlytics.recordException(exception)
+                        emptyPreferences()
+                    },
+                migrations =
+                    listOf(
+                        RemoveExpirationKey,
+                        RemoveRefreshKey,
+                    ),
             )
-        )
 
         @Provides
         @Singleton
@@ -101,76 +101,84 @@ internal abstract class DataStoreModule {
         fun provideUserPreferencesDataStore(
             crashlytics: Crashlytics,
             @ApplicationContext context: Context,
-        ): DataStore<UserPreferencesProto> = DataStoreFactory.create(
-            serializer = UserPreferencesSerializer,
-            produceFile = { context.dataStoreFile("user_prefs.pb") },
-            corruptionHandler = ReplaceFileCorruptionHandler { exception ->
-                crashlytics.recordException(exception)
-                UserPreferencesSerializer.defaultValue
-            },
-            migrations = listOf(
-                MigrateInterval,
+        ): DataStore<UserPreferencesProto> =
+            DataStoreFactory.create(
+                serializer = UserPreferencesSerializer,
+                produceFile = { context.dataStoreFile("user_prefs.pb") },
+                corruptionHandler =
+                    ReplaceFileCorruptionHandler { exception ->
+                        crashlytics.recordException(exception)
+                        UserPreferencesSerializer.defaultValue
+                    },
+                migrations = listOf(MigrateInterval),
             )
-        )
 
         @Provides
         @Singleton
         @UserProfileDatastore
         fun provideUserProfileDataStore(
             crashlytics: Crashlytics,
-            @ApplicationContext context: Context
-        ): DataStore<ProfileProto> = DataStoreFactory.create(
-            serializer = ProfileSerializer,
-            produceFile = { context.dataStoreFile("user_profile.pb") },
-            corruptionHandler = ReplaceFileCorruptionHandler { exception ->
-                crashlytics.recordException(exception)
-                ProfileSerializer.defaultValue
-            },
-        )
+            @ApplicationContext context: Context,
+        ): DataStore<ProfileProto> =
+            DataStoreFactory.create(
+                serializer = ProfileSerializer,
+                produceFile = { context.dataStoreFile("user_profile.pb") },
+                corruptionHandler =
+                    ReplaceFileCorruptionHandler { exception ->
+                        crashlytics.recordException(exception)
+                        ProfileSerializer.defaultValue
+                    },
+            )
 
         @Provides
         @Singleton
         @UserSubscriptionsDatastore
         fun provideUserSubscriptionsDatastore(
             crashlytics: Crashlytics,
-            @ApplicationContext context: Context
-        ): DataStore<SubscriptionsProto> = DataStoreFactory.create(
-            serializer = SubscribedTagsSerializer,
-            produceFile = { context.dataStoreFile("user_subscriptions.pb") },
-            corruptionHandler = ReplaceFileCorruptionHandler { exception ->
-                crashlytics.recordException(exception)
-                SubscribedTagsSerializer.defaultValue
-            },
-        )
+            @ApplicationContext context: Context,
+        ): DataStore<SubscriptionsProto> =
+            DataStoreFactory.create(
+                serializer = SubscribedTagsSerializer,
+                produceFile = { context.dataStoreFile("user_subscriptions.pb") },
+                corruptionHandler =
+                    ReplaceFileCorruptionHandler { exception ->
+                        crashlytics.recordException(exception)
+                        SubscribedTagsSerializer.defaultValue
+                    },
+            )
 
         @Provides
         @Singleton
         @UserSubscribableTagsDatastore
         fun provideSubscribableTagsDatastore(
             crashlytics: Crashlytics,
-            @ApplicationContext context: Context
-        ): DataStore<SubscribableTagsProto> = DataStoreFactory.create(
-            serializer = SubscribableTagsSerializer,
-            produceFile = { context.dataStoreFile("subscribable_tags_tags.pb") },
-            corruptionHandler = ReplaceFileCorruptionHandler { exception ->
-                crashlytics.recordException(exception)
-                SubscribableTagsSerializer.defaultValue
-            },
-        )
+            @ApplicationContext context: Context,
+        ): DataStore<SubscribableTagsProto> =
+            DataStoreFactory.create(
+                serializer = SubscribableTagsSerializer,
+                produceFile = { context.dataStoreFile("subscribable_tags_tags.pb") },
+                corruptionHandler =
+                    ReplaceFileCorruptionHandler { exception ->
+                        crashlytics.recordException(exception)
+                        SubscribableTagsSerializer.defaultValue
+                    },
+            )
 
         @Provides
         @Singleton
         @OnboardDatastore
         fun provideOnboardDatastore(
             crashlytics: Crashlytics,
-            @ApplicationContext context: Context
-        ): DataStore<OnboardStageProto> = DataStoreFactory.create(
-            serializer = OnboardSerializer,
-            produceFile = { context.dataStoreFile("onboard.pb") },
-            corruptionHandler = ReplaceFileCorruptionHandler { exception ->
-                crashlytics.recordException(exception)
-                OnboardSerializer.defaultValue
-            },
-        )
+            @ApplicationContext context: Context,
+        ): DataStore<OnboardStageProto> =
+            DataStoreFactory.create(
+                serializer = OnboardSerializer,
+                produceFile = { context.dataStoreFile("onboard.pb") },
+                corruptionHandler =
+                    ReplaceFileCorruptionHandler { exception ->
+                        crashlytics.recordException(exception)
+                        OnboardSerializer.defaultValue
+                    },
+            )
     }
 }

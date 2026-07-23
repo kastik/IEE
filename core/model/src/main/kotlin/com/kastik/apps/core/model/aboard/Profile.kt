@@ -3,7 +3,6 @@ package com.kastik.apps.core.model.aboard
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-
 data class Profile(
     val id: Int,
     val uid: String,

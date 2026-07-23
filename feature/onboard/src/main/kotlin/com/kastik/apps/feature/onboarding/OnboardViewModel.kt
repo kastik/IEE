@@ -21,15 +21,17 @@ import com.kastik.apps.core.model.onboard.OnboardStage
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.Theme
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
-internal class OnboardViewModel @Inject constructor(
+internal class OnboardViewModel
+@Inject
+constructor(
     private val setHasFinishedOnboardUseCase: SetHasFinishedOnboardUseCase,
     private val setHasSkippedSignInUseCase: SetHasSkippedSignInUseCase,
     private val setAnnouncementCheckIntervalUseCase: SetAnnouncementCheckIntervalUseCase,
@@ -46,29 +48,31 @@ internal class OnboardViewModel @Inject constructor(
     getUserPreferencesUseCase: GetUserPreferencesUseCase,
 ) : ViewModel() {
 
-    val uiState: StateFlow<OnboardUiState> = combine(
-        areNotificationsAllowedUseCase(),
-        getIsSignedInUseCase(),
-        getUserPreferencesUseCase(),
-        getIsForYouAvailableUseCase(),
-        getOnboardStageUseCase(),
-    ) { areNotificationsAllowed, isSignedIn, preferences, isForYouAvailable, stage ->
-        OnboardUiState.Success(
-            isSignedIn = isSignedIn,
-            areNotificationsAllowed = areNotificationsAllowed,
-            theme = preferences.theme,
-            isDynamicColorEnabled = preferences.isDynamicColorEnabled,
-            searchScope = preferences.searchScope,
-            isForYouEnabled = preferences.isForYouEnabled,
-            sortType = preferences.sortType,
-            isForYouAvailable = isForYouAvailable,
-            onboardStage = stage,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = OnboardUiState.Loading
-    )
+    val uiState: StateFlow<OnboardUiState> =
+        combine(
+                areNotificationsAllowedUseCase(),
+                getIsSignedInUseCase(),
+                getUserPreferencesUseCase(),
+                getIsForYouAvailableUseCase(),
+                getOnboardStageUseCase(),
+            ) { areNotificationsAllowed, isSignedIn, preferences, isForYouAvailable, stage ->
+                OnboardUiState.Success(
+                    isSignedIn = isSignedIn,
+                    areNotificationsAllowed = areNotificationsAllowed,
+                    theme = preferences.theme,
+                    isDynamicColorEnabled = preferences.isDynamicColorEnabled,
+                    searchScope = preferences.searchScope,
+                    isForYouEnabled = preferences.isForYouEnabled,
+                    sortType = preferences.sortType,
+                    isForYouAvailable = isForYouAvailable,
+                    onboardStage = stage,
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = OnboardUiState.Loading,
+            )
 
     fun onSkipSignIn() {
         viewModelScope.launch {
@@ -94,25 +98,19 @@ internal class OnboardViewModel @Inject constructor(
         }
     }
 
-    fun onSortTypeChange(
-        sortType: SortType
-    ) {
+    fun onSortTypeChange(sortType: SortType) {
         viewModelScope.launch {
             setSortTypeUseCase(sortType)
         }
     }
 
-    fun onForYouChange(
-        isForYouEnabled: Boolean
-    ) {
+    fun onForYouChange(isForYouEnabled: Boolean) {
         viewModelScope.launch {
             setForYouEnabledUseCase(isForYouEnabled)
         }
     }
 
-    fun onSearchScopeChange(
-        searchScope: SearchScope
-    ) {
+    fun onSearchScopeChange(searchScope: SearchScope) {
         viewModelScope.launch {
             setSearchScopeUseCase(searchScope)
         }
@@ -129,5 +127,4 @@ internal class OnboardViewModel @Inject constructor(
             setOnboardStageUseCase(onboardStage)
         }
     }
-
 }

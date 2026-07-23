@@ -19,20 +19,20 @@ fun IeeTag(
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier
-            .clip(tearCornerShape),
+        modifier = modifier.clip(tearCornerShape),
         color = MaterialTheme.colorScheme.primaryContainer,
         tonalElevation = 2.dp,
         shadowElevation = 3.dp,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = text,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = MaterialTheme.typography.labelSmall, maxLines = 1
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
             )
         }
     }

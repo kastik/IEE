@@ -7,7 +7,6 @@ import com.kastik.apps.core.designsystem.component.IeePreview
 
 class AuthenticationScreenshotTest {
 
-
     @Preview
     @PreviewTest
     @Composable
@@ -32,6 +31,4 @@ class AuthenticationScreenshotTest {
             AuthenticationSuccessPreview()
         }
     }
-
-
 }

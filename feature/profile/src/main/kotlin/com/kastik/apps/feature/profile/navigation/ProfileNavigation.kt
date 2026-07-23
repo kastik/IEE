@@ -10,8 +10,7 @@ import androidx.navigation.navOptions
 import com.kastik.apps.feature.profile.ProfileRoute
 import kotlinx.serialization.Serializable
 
-@Serializable
-object ProfileRoute
+@Serializable object ProfileRoute
 
 fun NavController.navigateToProfile(
     navOptions: NavOptions = navOptions {
@@ -19,18 +18,15 @@ fun NavController.navigateToProfile(
     }
 ) = navigate(route = ProfileRoute, navOptions)
 
-fun NavGraphBuilder.profileScreen(
-    navigateBack: () -> Unit
-) {
-    composable<ProfileRoute>(enterTransition = {
-        slideInVertically(
-            initialOffsetY = { it },
-        )
-    }, exitTransition = {
-        slideOutVertically(
-            targetOffsetY = { it },
-        )
-    }) {
+fun NavGraphBuilder.profileScreen(navigateBack: () -> Unit) {
+    composable<ProfileRoute>(
+        enterTransition = {
+            slideInVertically(initialOffsetY = { it })
+        },
+        exitTransition = {
+            slideOutVertically(targetOffsetY = { it })
+        },
+    ) {
         ProfileRoute(navigateBack = navigateBack)
     }
 }

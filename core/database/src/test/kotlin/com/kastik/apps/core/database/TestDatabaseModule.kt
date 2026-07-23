@@ -10,7 +10,6 @@ import com.kastik.apps.core.database.dao.TagsDaoTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
-
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
     ListIntConverterTest::class,
@@ -19,7 +18,6 @@ import org.junit.runners.Suite
     AnnouncementDaoTest::class,
     AuthorsDaoTest::class,
     TagsDaoTest::class,
-    RemoteKeysEntityDaoTest::class
+    RemoteKeysEntityDaoTest::class,
 )
-
 class TestDatabaseModule

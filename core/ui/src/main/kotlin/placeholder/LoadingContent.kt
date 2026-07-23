@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kastik.apps.core.designsystem.component.IeePreview
 
-
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoadingContent(
@@ -28,10 +27,9 @@ fun LoadingContent(
     progressIndicatorSize: Dp = 64.dp,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         CircularWavyProgressIndicator(
             modifier = Modifier.size(progressIndicatorSize),
@@ -49,16 +47,13 @@ fun LoadingContent(
     }
 }
 
-
 @Preview
 @Composable
 private fun LoadingContentPreview() {
     IeePreview {
         LoadingContent(
             message = "Doing work...",
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
-
-

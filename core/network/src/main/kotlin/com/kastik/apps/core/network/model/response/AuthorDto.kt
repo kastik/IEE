@@ -5,9 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AuthorDto(
-
     @SerialName("id") val id: Int,
     @SerialName("name") val name: String,
-    @SerialName("announcements_count") val announcementCount: Int? = null
-
+    @SerialName("announcements_count") val announcementCount: Int? = null,
 )

@@ -14,9 +14,10 @@ import com.kastik.apps.core.work.R
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
-
 @HiltWorker
-internal class AnnouncementSyncWorker @AssistedInject constructor(
+internal class AnnouncementSyncWorker
+@AssistedInject
+constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val notifier: Notifier,
@@ -25,7 +26,6 @@ internal class AnnouncementSyncWorker @AssistedInject constructor(
 
     companion object {
         const val KEY_ANNOUNCEMENT_ID = "announcement_id"
-
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
@@ -33,8 +33,8 @@ internal class AnnouncementSyncWorker @AssistedInject constructor(
             ANNOUNCEMENT_SYNC_NOTIFICATION_ID,
             notifier.createSyncNotification(
                 titleResId = R.string.sync_announcement_title,
-                bodyResId = R.string.sync_announcement_body
-            )
+                bodyResId = R.string.sync_announcement_body,
+            ),
         )
     }
 
@@ -42,17 +42,18 @@ internal class AnnouncementSyncWorker @AssistedInject constructor(
 
         val announcementId = inputData.getInt(KEY_ANNOUNCEMENT_ID, 0)
 
-        return syncAnnouncementWithIdUseCase(announcementId).fold(
-            onSuccess = {
-                Result.success()
-            },
-            onError = { error ->
-                if (runAttemptCount < 3 && error !is NetworkError.Authentication) {
-                    Result.retry()
-                } else {
-                    Result.failure()
-                }
-            }
-        )
+        return syncAnnouncementWithIdUseCase(announcementId)
+            .fold(
+                onSuccess = {
+                    Result.success()
+                },
+                onError = { error ->
+                    if (runAttemptCount < 3 && error !is NetworkError.Authentication) {
+                        Result.retry()
+                    } else {
+                        Result.failure()
+                    }
+                },
+            )
     }
 }

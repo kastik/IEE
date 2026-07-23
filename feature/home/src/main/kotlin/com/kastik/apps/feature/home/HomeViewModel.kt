@@ -18,16 +18,19 @@ import com.kastik.apps.core.domain.usecases.SetAnnouncementCheckTimeUseCase
 import com.kastik.apps.core.domain.usecases.SetHasSkippedSignInUseCase
 import com.kastik.apps.core.domain.usecases.ShowSignInNoticeRationaleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
-internal class HomeViewModel @Inject constructor(
+internal class HomeViewModel
+@Inject
+constructor(
     getUserIdUseCase: GetUserIdUseCase,
     getIsSignedInUseCase: GetIsSignedInUseCase,
     showSignInNoticeRationaleUseCase: ShowSignInNoticeRationaleUseCase,
@@ -43,38 +46,50 @@ internal class HomeViewModel @Inject constructor(
 
     val searchBarTextFieldState = TextFieldState()
 
-    private val _quickSearchResultsState = snapshotFlow { searchBarTextFieldState.text }
-        .map { it.toString() }
-        .flatMapLatest { query ->
-            getQuickResultsUseCase(query)
-        }
-    val uiState = combine(
-        getUserIdUseCase(),
-        getIsSignedInUseCase(),
-        showSignInNoticeRationaleUseCase(),
-        getFilterOptionsUseCase(),
-        _quickSearchResultsState,
-        getUserPreferencesUseCase(),
-        isForYouEnabledUseCase(),
-    ) { userId, isSignedIn, showSignInNotice, availableFilters, quickResults, userPreferences, isForYouEnabled ->
-        HomeUiState(
-            userId = userId,
-            isSignedIn = isSignedIn,
-            showSignInNotice = showSignInNotice,
-            availableFilters = availableFilters,
-            quickResults = quickResults,
-            enableForYou = isForYouEnabled,
-            enableFabFilters = userPreferences.areFabFiltersEnabled
-        )
-    }.onStart {
-        viewModelScope.launch {
-            setAnnouncementCheckTimeUseCase()
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = HomeUiState()
-    )
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _quickSearchResultsState =
+        snapshotFlow { searchBarTextFieldState.text }
+            .map { it.toString() }
+            .flatMapLatest { query ->
+                getQuickResultsUseCase(query)
+            }
+    val uiState =
+        combine(
+                getUserIdUseCase(),
+                getIsSignedInUseCase(),
+                showSignInNoticeRationaleUseCase(),
+                getFilterOptionsUseCase(),
+                _quickSearchResultsState,
+                getUserPreferencesUseCase(),
+                isForYouEnabledUseCase(),
+            ) {
+                userId,
+                isSignedIn,
+                showSignInNotice,
+                availableFilters,
+                quickResults,
+                userPreferences,
+                isForYouEnabled ->
+                HomeUiState(
+                    userId = userId,
+                    isSignedIn = isSignedIn,
+                    showSignInNotice = showSignInNotice,
+                    availableFilters = availableFilters,
+                    quickResults = quickResults,
+                    enableForYou = isForYouEnabled,
+                    enableFabFilters = userPreferences.areFabFiltersEnabled,
+                )
+            }
+            .onStart {
+                viewModelScope.launch {
+                    setAnnouncementCheckTimeUseCase()
+                }
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000L),
+                initialValue = HomeUiState(),
+            )
 
     val homeFeedAnnouncements = getHomeAnnouncementsUseCase().cachedIn(viewModelScope)
 
@@ -85,5 +100,4 @@ internal class HomeViewModel @Inject constructor(
             setHasSkippedSignInUseCase(true)
         }
     }
-
 }

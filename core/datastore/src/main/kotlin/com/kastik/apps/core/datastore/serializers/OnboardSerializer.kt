@@ -9,10 +9,11 @@ import java.io.InputStream
 import java.io.OutputStream
 
 object OnboardSerializer : Serializer<OnboardStageProto> {
-    override val defaultValue: OnboardStageProto = OnboardStageProto.newBuilder()
-        .setHasFinishedOnboard(false)
-        .setCurrentStage(StageProto.Welcome)
-        .build()
+    override val defaultValue: OnboardStageProto =
+        OnboardStageProto.newBuilder()
+            .setHasFinishedOnboard(false)
+            .setCurrentStage(StageProto.Welcome)
+            .build()
 
     override suspend fun readFrom(input: InputStream): OnboardStageProto {
         try {
@@ -22,6 +23,5 @@ object OnboardSerializer : Serializer<OnboardStageProto> {
         }
     }
 
-    override suspend fun writeTo(t: OnboardStageProto, output: OutputStream) =
-        t.writeTo(output)
+    override suspend fun writeTo(t: OnboardStageProto, output: OutputStream) = t.writeTo(output)
 }

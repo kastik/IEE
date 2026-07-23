@@ -5,62 +5,69 @@ import android.util.Base64
 import com.kastik.apps.core.common.di.DefaultDispatcher
 import com.kastik.apps.core.common.di.IoDispatcher
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 
 interface Base64ImageExtractor {
     suspend fun process(html: String): String
 }
 
-
 @Singleton
-internal class Base64ImageExtractorImpl @Inject constructor(
+internal class Base64ImageExtractorImpl
+@Inject
+constructor(
     @ApplicationContext private val context: Context,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : Base64ImageExtractor {
-    override suspend fun process(html: String): String = withContext(defaultDispatcher) {
-        val regex =
-            "<img.+?src=\"(data:image/(.+?);base64,)(.+?)\".*?>".toRegex(RegexOption.DOT_MATCHES_ALL)
-        val matches = regex.findAll(html).toList()
+    override suspend fun process(html: String): String =
+        withContext(defaultDispatcher) {
+            val regex =
+                "<img.+?src=\"(data:image/(.+?);base64,)(.+?)\".*?>"
+                    .toRegex(RegexOption.DOT_MATCHES_ALL)
+            val matches = regex.findAll(html).toList()
 
-        if (matches.isEmpty()) return@withContext html
+            if (matches.isEmpty()) return@withContext html
 
-        val replacements = matches.map { match ->
-            async {
-                val base64Prefix = match.groupValues[1]
-                val extension = match.groupValues[2]
-                val base64Image = match.groupValues[3]
+            val replacements =
+                matches
+                    .map { match ->
+                        async {
+                            val base64Prefix = match.groupValues[1]
+                            val extension = match.groupValues[2]
+                            val base64Image = match.groupValues[3]
 
-                val cleanBase64 = base64Image.replace("\\s".toRegex(), "")
-                val imageBytes = Base64.decode(cleanBase64, Base64.DEFAULT)
+                            val cleanBase64 = base64Image.replace("\\s".toRegex(), "")
+                            val imageBytes = Base64.decode(cleanBase64, Base64.DEFAULT)
 
-                val filename = generateFilename(imageBytes, extension)
+                            val filename = generateFilename(imageBytes, extension)
 
-                val file = saveFile(filename, imageBytes)
+                            val file = saveFile(filename, imageBytes)
 
-                if (file != null) {
-                    val localUri = "file://${file.absolutePath}"
-                    base64Prefix + base64Image to localUri
-                } else {
-                    null
-                }
+                            if (file != null) {
+                                val localUri = "file://${file.absolutePath}"
+                                base64Prefix + base64Image to localUri
+                            } else {
+                                null
+                            }
+                        }
+                    }
+                    .awaitAll()
+                    .filterNotNull()
+
+            var currentHtml = html
+            replacements.forEach { (target, replacement) ->
+                currentHtml = currentHtml.replace(target, replacement)
             }
-        }.awaitAll().filterNotNull()
 
-        var currentHtml = html
-        replacements.forEach { (target, replacement) ->
-            currentHtml = currentHtml.replace(target, replacement)
+            currentHtml
         }
-
-        currentHtml
-    }
 
     private suspend fun generateFilename(imageBytes: ByteArray, extension: String): String =
         withContext(defaultDispatcher) {

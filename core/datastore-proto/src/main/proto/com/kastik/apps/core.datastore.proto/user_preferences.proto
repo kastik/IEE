@@ -1,11 +1,12 @@
 syntax = "proto3";
-option java_package = "com.kastik.apps.core.datastore.proto";
-option java_multiple_files = true;
 package com.kastik.apps.core.datastore.proto;
 
 import "google/protobuf/timestamp.proto";
 
-message UserPreferencesProto{
+option java_multiple_files = true;
+option java_package = "com.kastik.apps.core.datastore.proto";
+
+message UserPreferencesProto {
   ThemeProto theme = 1;
   bool is_for_you_enabled = 2;
   bool are_fab_filters_enabled = 3;

@@ -3,7 +3,6 @@ import com.android.build.api.dsl.LibraryExtension
 plugins {
     alias(libs.plugins.kastik.feature)
     alias(libs.plugins.kastik.hilt)
-
 }
 
 configure<LibraryExtension> {

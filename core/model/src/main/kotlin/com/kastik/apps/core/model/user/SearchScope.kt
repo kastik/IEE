@@ -10,5 +10,4 @@ enum class SearchScope {
 
     val includesBody: Boolean
         get() = this == Body || this == TitleAndBody
-
 }

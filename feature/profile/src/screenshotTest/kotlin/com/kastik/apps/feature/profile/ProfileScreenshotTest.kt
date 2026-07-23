@@ -26,5 +26,4 @@ class ProfileScreenshotTest {
     fun ProfileSuccessTest() {
         ProfileSuccessPreview()
     }
-
 }

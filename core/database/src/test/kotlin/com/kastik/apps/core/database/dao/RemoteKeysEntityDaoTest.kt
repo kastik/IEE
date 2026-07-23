@@ -16,14 +16,15 @@ internal class RemoteKeysEntityDaoTest : MemoryDatabase() {
     fun insertOrReplaceKeysInsertsNewKeys() = runTest {
         remoteKeysDao.insertOrReplaceKeys(baseRemoteKeyEntities)
 
-        val retrievedKey = remoteKeysDao.getKeyByAnnouncementId(
-            id = 5,
-            sortType = SortType.DESC,
-            titleQuery = "",
-            bodyQuery = "",
-            authorIds = emptyList(),
-            tagIds = emptyList()
-        )
+        val retrievedKey =
+            remoteKeysDao.getKeyByAnnouncementId(
+                id = 5,
+                sortType = SortType.DESC,
+                titleQuery = "",
+                bodyQuery = "",
+                authorIds = emptyList(),
+                tagIds = emptyList(),
+            )
 
         assertThat(retrievedKey).isNotNull()
         assertThat(retrievedKey).isEqualTo(baseRemoteKeyEntities[4]) // Index 4 is id 5
@@ -38,14 +39,15 @@ internal class RemoteKeysEntityDaoTest : MemoryDatabase() {
 
         remoteKeysDao.insertOrReplaceKeys(listOf(updatedKey))
 
-        val retrievedKey = remoteKeysDao.getKeyByAnnouncementId(
-            id = 1,
-            sortType = SortType.DESC,
-            titleQuery = "",
-            bodyQuery = "",
-            authorIds = emptyList(),
-            tagIds = emptyList()
-        )
+        val retrievedKey =
+            remoteKeysDao.getKeyByAnnouncementId(
+                id = 1,
+                sortType = SortType.DESC,
+                titleQuery = "",
+                bodyQuery = "",
+                authorIds = emptyList(),
+                tagIds = emptyList(),
+            )
 
         assertThat(retrievedKey).isNotNull()
         assertThat(retrievedKey?.nextKey).isEqualTo(999)
@@ -56,14 +58,15 @@ internal class RemoteKeysEntityDaoTest : MemoryDatabase() {
     fun getKeyByAnnouncementIdReturnsNullWhenNoMatch() = runTest {
         remoteKeysDao.insertOrReplaceKeys(baseRemoteKeyEntities)
 
-        val retrievedKey = remoteKeysDao.getKeyByAnnouncementId(
-            id = 1,
-            sortType = SortType.DESC,
-            titleQuery = "Android", // Does not match base data ("")
-            bodyQuery = "",
-            authorIds = emptyList(),
-            tagIds = emptyList()
-        )
+        val retrievedKey =
+            remoteKeysDao.getKeyByAnnouncementId(
+                id = 1,
+                sortType = SortType.DESC,
+                titleQuery = "Android", // Does not match base data ("")
+                bodyQuery = "",
+                authorIds = emptyList(),
+                tagIds = emptyList(),
+            )
 
         assertThat(retrievedKey).isNull()
     }
@@ -82,19 +85,29 @@ internal class RemoteKeysEntityDaoTest : MemoryDatabase() {
             titleQuery = "",
             bodyQuery = "",
             authorIds = emptyList(),
-            tagIds = emptyList()
+            tagIds = emptyList(),
         )
 
-        val missingBaseKey = remoteKeysDao.getKeyByAnnouncementId(
-            id = 1, sortType = SortType.DESC, titleQuery = "",
-            bodyQuery = "", authorIds = emptyList(), tagIds = emptyList()
-        )
+        val missingBaseKey =
+            remoteKeysDao.getKeyByAnnouncementId(
+                id = 1,
+                sortType = SortType.DESC,
+                titleQuery = "",
+                bodyQuery = "",
+                authorIds = emptyList(),
+                tagIds = emptyList(),
+            )
         assertThat(missingBaseKey).isNull()
 
-        val intactSearchKey = remoteKeysDao.getKeyByAnnouncementId(
-            id = 1, sortType = SortType.ASC, titleQuery = "Kotlin",
-            bodyQuery = "", authorIds = emptyList(), tagIds = emptyList()
-        )
+        val intactSearchKey =
+            remoteKeysDao.getKeyByAnnouncementId(
+                id = 1,
+                sortType = SortType.ASC,
+                titleQuery = "Kotlin",
+                bodyQuery = "",
+                authorIds = emptyList(),
+                tagIds = emptyList(),
+            )
         assertThat(intactSearchKey).isNotNull()
         assertThat(intactSearchKey?.titleQuery).isEqualTo("Kotlin")
     }

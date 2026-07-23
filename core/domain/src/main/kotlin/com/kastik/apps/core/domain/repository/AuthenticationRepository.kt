@@ -6,7 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface AuthenticationRepository {
     val isSignedIn: Flow<Boolean>
-    suspend fun signIn(code: String): Result<Unit, NetworkError>
-    suspend fun signOut()
 
+    suspend fun signIn(code: String): Result<Unit, NetworkError>
+
+    suspend fun signOut()
 }

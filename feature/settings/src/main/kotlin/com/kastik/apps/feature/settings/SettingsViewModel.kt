@@ -18,14 +18,16 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.Theme
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
-internal class SettingsViewModel @Inject constructor(
+internal class SettingsViewModel
+@Inject
+constructor(
     isForYouAvailableUseCase: IsForYouAvailableUseCase,
     getUserPreferencesUseCase: GetUserPreferencesUseCase,
     areNotificationsAllowedUseCase: AreNotificationsAllowedUseCase,
@@ -40,29 +42,35 @@ internal class SettingsViewModel @Inject constructor(
     private val setAnnouncementCheckIntervalUseCase: SetAnnouncementCheckIntervalUseCase,
 ) : ViewModel() {
 
-    val uiState = combine(
-        getUserPreferencesUseCase(),
-        isForYouAvailableUseCase(),
-        areNotificationsAllowedUseCase(),
-        isAnnouncementCheckIntervalAvailableUseCase(),
-    ) { preferences, isForYouAvailable, areNotificationsAllowed, isAnnouncementCheckIntervalAvailable ->
-        SettingsUiState.Success(
-            theme = preferences.theme,
-            sortType = preferences.sortType,
-            isDynamicColorEnabled = preferences.isDynamicColorEnabled,
-            searchScope = preferences.searchScope,
-            isForYouEnabled = preferences.isForYouEnabled,
-            isForYouAvailable = isForYouAvailable,
-            areFabFiltersEnabled = preferences.areFabFiltersEnabled,
-            isAnnouncementCheckIntervalAvailable = isAnnouncementCheckIntervalAvailable,
-            announcementCheckIntervalMinutes = preferences.checkIntervalMinutes,
-            areNotificationsAllowed = areNotificationsAllowed,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
-        initialValue = SettingsUiState.Loading
-    )
+    val uiState =
+        combine(
+                getUserPreferencesUseCase(),
+                isForYouAvailableUseCase(),
+                areNotificationsAllowedUseCase(),
+                isAnnouncementCheckIntervalAvailableUseCase(),
+            ) {
+                preferences,
+                isForYouAvailable,
+                areNotificationsAllowed,
+                isAnnouncementCheckIntervalAvailable ->
+                SettingsUiState.Success(
+                    theme = preferences.theme,
+                    sortType = preferences.sortType,
+                    isDynamicColorEnabled = preferences.isDynamicColorEnabled,
+                    searchScope = preferences.searchScope,
+                    isForYouEnabled = preferences.isForYouEnabled,
+                    isForYouAvailable = isForYouAvailable,
+                    areFabFiltersEnabled = preferences.areFabFiltersEnabled,
+                    isAnnouncementCheckIntervalAvailable = isAnnouncementCheckIntervalAvailable,
+                    announcementCheckIntervalMinutes = preferences.checkIntervalMinutes,
+                    areNotificationsAllowed = areNotificationsAllowed,
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
+                initialValue = SettingsUiState.Loading,
+            )
 
     fun setDynamicColor(value: Boolean) {
         viewModelScope.launch {

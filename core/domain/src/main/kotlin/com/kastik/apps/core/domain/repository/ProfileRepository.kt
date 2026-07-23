@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
     val profile: Flow<Profile?>
+
     suspend fun syncProfile(): Result<Unit, NetworkError>
+
     suspend fun clearProfile()
 }

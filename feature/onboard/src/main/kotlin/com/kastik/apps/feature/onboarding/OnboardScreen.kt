@@ -1,6 +1,7 @@
 package com.kastik.apps.feature.onboarding
 
 import android.Manifest
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -52,18 +53,16 @@ internal fun OnboardRoute(
 
     TrackScreenViewEvent(
         screenClass = "onboarding_route",
-        screenName = "onboarding_screen"
+        screenName = "onboarding_screen",
     )
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AnimatedContent(
         targetState = uiState,
-        contentKey = { state -> state::class }
+        contentKey = { state -> state::class },
     ) { state ->
-
         when (state) {
-
             OnboardUiState.Loading -> {
                 OnboardLoading()
             }
@@ -89,22 +88,17 @@ internal fun OnboardRoute(
                     onFinishOnboarding = {
                         viewModel.onFinishedOnboarding()
                         onFinish()
-                    }
+                    },
                 )
             }
         }
     }
-
-
 }
 
 @Composable
 fun OnboardLoading() {
-    LoadingContent(
-        modifier = Modifier.fillMaxSize(),
-    )
+    LoadingContent(modifier = Modifier.fillMaxSize())
 }
-
 
 @Composable
 fun OnboardSuccess(
@@ -131,82 +125,79 @@ fun OnboardSuccess(
     val pagerState = rememberPagerState(pageCount = { OnboardStage.entries.size })
     val scope = rememberCoroutineScope()
 
-
     LaunchedEffect(currentOnboardStage) {
         if (pagerState.currentPage != currentOnboardStage.ordinal) {
             pagerState.animateScrollToPage(currentOnboardStage.ordinal)
         }
     }
 
-
-    val goNext = remember(pagerState) {
-        {
-            val nextIndex = pagerState.currentPage + 1
-            if (nextIndex < OnboardStage.entries.size) {
-                onStageChange(OnboardStage.entries[nextIndex])
-            } else {
-                onFinishOnboarding()
+    val goNext =
+        remember(pagerState) {
+            {
+                val nextIndex = pagerState.currentPage + 1
+                if (nextIndex < OnboardStage.entries.size) {
+                    onStageChange(OnboardStage.entries[nextIndex])
+                } else {
+                    onFinishOnboarding()
+                }
             }
         }
-    }
 
-    val goBack = remember(pagerState) {
-        {
-            val previousIndex = (pagerState.currentPage - 1).coerceAtLeast(0)
-            onStageChange(OnboardStage.entries[previousIndex])
+    val goBack =
+        remember(pagerState) {
+            {
+                val previousIndex = (pagerState.currentPage - 1).coerceAtLeast(0)
+                onStageChange(OnboardStage.entries[previousIndex])
+            }
         }
-    }
 
-    val predictiveBackState = rememberPagerPredictiveBackState(
-        pagerState = pagerState,
-        onBack = { scope.launch { goBack() } }
-    )
+    val predictiveBackState =
+        rememberPagerPredictiveBackState(
+            pagerState = pagerState,
+            onBack = { scope.launch { goBack() } },
+        )
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        //if (isGranted) viewModel.enableNotifications(quietDurationMinutes = 60)
-    }
+    val permissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {
+            isGranted ->
+            // if (isGranted) viewModel.enableNotifications(quietDurationMinutes = 60)
+        }
 
     Scaffold { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            val progress by animateFloatAsState(
-                targetValue = (pagerState.targetPage + 1) / OnboardStage.entries.size.toFloat(),
-                animationSpec = tween(500),
-                label = "ProgressBarAnimation"
-            )
+        Column(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            val progress by
+                animateFloatAsState(
+                    targetValue = (pagerState.targetPage + 1) / OnboardStage.entries.size.toFloat(),
+                    animationSpec = tween(500),
+                    label = "ProgressBarAnimation",
+                )
 
             LinearWavyProgressIndicator(
                 progress = { progress },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
-                    .height(8.dp),
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                        .height(8.dp),
                 color = MaterialTheme.colorScheme.primary,
                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                waveSpeed = 0.dp
+                waveSpeed = 0.dp,
             )
 
             HorizontalPager(
                 state = pagerState,
                 userScrollEnabled = false,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) { page ->
-
                 val currentOnboardStage = OnboardStage.entries[page]
 
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .predictiveBackPagerEffect(
-                            page = page,
-                            currentPage = pagerState.currentPage,
-                            backState = predictiveBackState
-                        )
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .predictiveBackPagerEffect(
+                                page = page,
+                                currentPage = pagerState.currentPage,
+                                backState = predictiveBackState,
+                            )
                 ) {
                     when (currentOnboardStage) {
                         OnboardStage.Welcome -> {
@@ -221,7 +212,7 @@ fun OnboardSuccess(
                                     onSkipSignIn()
                                     goNext()
                                 },
-                                onContinueClick = goNext
+                                onContinueClick = goNext,
                             )
                         }
 
@@ -229,10 +220,14 @@ fun OnboardSuccess(
                             OnboardNotifications(
                                 areNotificationsAllowed = areNotificationsAllowed,
                                 onAllowClick = {
-                                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        permissionLauncher.launch(
+                                            Manifest.permission.POST_NOTIFICATIONS
+                                        )
+                                    }
                                 },
                                 onSkipClick = goNext,
-                                onContinueClick = goNext
+                                onContinueClick = goNext,
                             )
                         }
 
@@ -242,7 +237,7 @@ fun OnboardSuccess(
                                 dynamicColorEnabled = isDynamicColorEnabled,
                                 onThemeSelected = onThemeChange,
                                 onDynamicColorToggled = onDynamicColorChange,
-                                onContinueClick = goNext
+                                onContinueClick = goNext,
                             )
                         }
 
@@ -255,7 +250,7 @@ fun OnboardSuccess(
                                 onForYouChange = onForYouChange,
                                 onSortTypeChange = onSortTypeChange,
                                 onSearchScopeChange = onSearchScopeChange,
-                                onFinishClick = goNext
+                                onFinishClick = goNext,
                             )
                         }
 

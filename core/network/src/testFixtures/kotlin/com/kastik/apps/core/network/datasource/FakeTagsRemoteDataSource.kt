@@ -7,14 +7,11 @@ class FakeTagsRemoteDataSource : TagsRemoteDataSource {
 
     val fakeAboardApiClient = FakeAboardApiClient()
 
-    override suspend fun fetchAnnouncementTags() =
-        fakeAboardApiClient.getTags()
+    override suspend fun fetchAnnouncementTags() = fakeAboardApiClient.getTags()
 
-    override suspend fun fetchSubscribableTags() =
-        fakeAboardApiClient.getAvailableTags()
+    override suspend fun fetchSubscribableTags() = fakeAboardApiClient.getAvailableTags()
 
-    override suspend fun fetchSubscriptions() =
-        fakeAboardApiClient.getSubscribedTags()
+    override suspend fun fetchSubscriptions() = fakeAboardApiClient.getSubscribedTags()
 
     override suspend fun subscribeToTags(tagIds: List<Int>) =
         fakeAboardApiClient.subscribeToTags(SubscribeDto(tagIds))

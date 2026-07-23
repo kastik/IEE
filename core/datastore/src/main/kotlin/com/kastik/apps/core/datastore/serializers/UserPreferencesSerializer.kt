@@ -11,16 +11,17 @@ import java.io.InputStream
 import java.io.OutputStream
 
 object UserPreferencesSerializer : Serializer<UserPreferencesProto> {
-    override val defaultValue: UserPreferencesProto = UserPreferencesProto.newBuilder()
-        .setTheme(ThemeProto.System)
-        .setIsForYouEnabled(true)
-        .setAreFabFiltersEnabled(false)
-        .setIsDynamicColorEnabled(true)
-        .setSortType(SortTypeProto.Priority)
-        .setSearchScope(SearchScopeProto.Body)
-        .setHasSkippedSignIn(false)
-        .setCheckIntervalMinutes(120)
-        .build()
+    override val defaultValue: UserPreferencesProto =
+        UserPreferencesProto.newBuilder()
+            .setTheme(ThemeProto.System)
+            .setIsForYouEnabled(true)
+            .setAreFabFiltersEnabled(false)
+            .setIsDynamicColorEnabled(true)
+            .setSortType(SortTypeProto.Priority)
+            .setSearchScope(SearchScopeProto.Body)
+            .setHasSkippedSignIn(false)
+            .setCheckIntervalMinutes(120)
+            .build()
 
     override suspend fun readFrom(input: InputStream): UserPreferencesProto {
         try {
@@ -30,6 +31,5 @@ object UserPreferencesSerializer : Serializer<UserPreferencesProto> {
         }
     }
 
-    override suspend fun writeTo(t: UserPreferencesProto, output: OutputStream) =
-        t.writeTo(output)
+    override suspend fun writeTo(t: UserPreferencesProto, output: OutputStream) = t.writeTo(output)
 }

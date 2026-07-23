@@ -44,5 +44,4 @@ class TagsRemoteDataSourceImplTest {
         val result = aboardClient.getSubscribedIds()
         assertThat(result).containsExactlyElementsIn(remote)
     }
-
 }

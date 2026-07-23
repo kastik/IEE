@@ -13,7 +13,6 @@ class AnnouncementScreenshotTest {
         AnnouncementScreenLoadingPreview()
     }
 
-
     @Preview
     @PreviewTest
     @Composable
@@ -21,13 +20,10 @@ class AnnouncementScreenshotTest {
         AnnouncementScreenErrorPreview()
     }
 
-
     @Preview
     @PreviewTest
     @Composable
     fun AnnouncementScreenSuccessTest() {
         AnnouncementScreenSuccessPreview()
     }
-
-
 }

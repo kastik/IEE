@@ -20,26 +20,27 @@ fun SearchBarFilters(
     selectedAuthorsCount: Int,
     openTagSheet: () -> Unit,
     openAuthorSheet: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 6.dp)
-            .horizontalScroll(rememberScrollState())
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 6.dp)
+                .horizontalScroll(rememberScrollState()),
     ) {
         IeeFilterChip(
             label = tagLabel,
             selectedCount = selectedTagsCount,
-            onClick = openTagSheet
+            onClick = openTagSheet,
         )
 
         IeeFilterChip(
             label = authorLabel,
             selectedCount = selectedAuthorsCount,
-            onClick = openAuthorSheet
+            onClick = openAuthorSheet,
         )
     }
 }

@@ -12,44 +12,45 @@ import com.kastik.apps.core.domain.repository.ProfileRepository
 import com.kastik.apps.core.model.aboard.Profile
 import com.kastik.apps.core.model.result.Result
 import com.kastik.apps.core.network.datasource.ProfileRemoteDataSource
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-internal class ProfileRepositoryImpl @Inject constructor(
+internal class ProfileRepositoryImpl
+@Inject
+constructor(
     private val crashlytics: Crashlytics,
     private val profileLocalDataSource: ProfileLocalDataSource,
     private val profileRemoteDataSource: ProfileRemoteDataSource,
     private val authenticationLocalDataSource: AuthenticationLocalDataSource,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ProfileRepository {
 
     override val profile: Flow<Profile?> =
         profileLocalDataSource.profile.map { profile -> profile?.toProfile() }
 
+    override suspend fun syncProfile() =
+        withContext(ioDispatcher) {
+            if (!authenticationLocalDataSource.isSignedIn.first()) {
+                return@withContext Result.Success(Unit)
+            }
 
-    override suspend fun syncProfile() = withContext(ioDispatcher) {
-
-        if (!authenticationLocalDataSource.isSignedIn.first()) {
-            return@withContext Result.Success(Unit)
+            safeCall(
+                mapException = Exception::toNetworkError,
+                recordException = crashlytics::recordException,
+            ) {
+                val userProfile = profileRemoteDataSource.getProfile()
+                profileLocalDataSource.setProfile(userProfile.toProfileProto())
+            }
         }
 
-        safeCall(
-            mapException = Exception::toNetworkError,
-            recordException = crashlytics::recordException
-        ) {
-            val userProfile = profileRemoteDataSource.getProfile()
-            profileLocalDataSource.setProfile(userProfile.toProfileProto())
+    override suspend fun clearProfile() =
+        withContext(ioDispatcher) {
+            profileLocalDataSource.clearProfile()
         }
-
-    }
-
-    override suspend fun clearProfile() = withContext(ioDispatcher) {
-        profileLocalDataSource.clearProfile()
-    }
 }

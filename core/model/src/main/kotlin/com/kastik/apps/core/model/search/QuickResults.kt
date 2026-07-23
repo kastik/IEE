@@ -9,5 +9,5 @@ import kotlinx.collections.immutable.persistentListOf
 data class QuickResults(
     val tags: ImmutableList<Tag> = persistentListOf(),
     val authors: ImmutableList<Author> = persistentListOf(),
-    val announcements: ImmutableList<Announcement> = persistentListOf()
+    val announcements: ImmutableList<Announcement> = persistentListOf(),
 )

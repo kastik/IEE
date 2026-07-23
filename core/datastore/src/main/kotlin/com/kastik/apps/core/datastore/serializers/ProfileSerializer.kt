@@ -18,7 +18,5 @@ object ProfileSerializer : Serializer<ProfileProto> {
         }
     }
 
-    override suspend fun writeTo(t: ProfileProto, output: OutputStream) =
-        t.writeTo(output)
+    override suspend fun writeTo(t: ProfileProto, output: OutputStream) = t.writeTo(output)
 }
-

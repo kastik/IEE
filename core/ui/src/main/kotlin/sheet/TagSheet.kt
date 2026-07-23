@@ -31,10 +31,11 @@ import kotlinx.collections.immutable.toImmutableList
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TagSheet(
-    tagSheetState: SheetState = rememberBottomSheetState(
-        initialValue = SheetValue.Hidden,
-        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
-    ),
+    tagSheetState: SheetState =
+        rememberBottomSheetState(
+            initialValue = SheetValue.Hidden,
+            enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded),
+        ),
     tags: ImmutableList<Tag> = persistentListOf(),
     selectedTagIds: ImmutableList<Int> = persistentListOf(),
     onApply: (ImmutableList<Int>) -> Unit = {},
@@ -42,23 +43,25 @@ fun TagSheet(
 ) {
     var query by remember { mutableStateOf("") }
 
-    val tagRoots = remember(tags) {
-        buildTreeFromFlat(
-            items = tags,
-            idProvider = { it.id },
-            parentIdProvider = { it.parentId },
-            titleProvider = { it.title },
-        )
-    }
+    val tagRoots =
+        remember(tags) {
+            buildTreeFromFlat(
+                items = tags,
+                idProvider = { it.id },
+                parentIdProvider = { it.parentId },
+                titleProvider = { it.title },
+            )
+        }
 
-    val state = rememberHierarchicalSelection(
-        roots = tagRoots,
-        initialSelectedIds = selectedTagIds,
-        query = query,
-        idProvider = { it.data.id },
-        titleProvider = { it.data.title },
-        childrenProvider = { it.children },
-    )
+    val state =
+        rememberHierarchicalSelection(
+            roots = tagRoots,
+            initialSelectedIds = selectedTagIds,
+            query = query,
+            idProvider = { it.data.id },
+            titleProvider = { it.data.title },
+            childrenProvider = { it.children },
+        )
 
     IeeSheet(
         sheetState = tagSheetState,
@@ -71,30 +74,29 @@ fun TagSheet(
         clearLabel = stringResource(R.string.action_clear),
         applyLabel = stringResource(R.string.action_apply_tags),
         onApply = {
-            val appliedIds = getOnlyTopLevelSelected(
-                roots = tagRoots,
-                selectedIds = state.selectedIds.toSet(),
-                idProvider = { it.data.id },
-                childrenProvider = { it.children },
-            )
+            val appliedIds =
+                getOnlyTopLevelSelected(
+                    roots = tagRoots,
+                    selectedIds = state.selectedIds.toSet(),
+                    idProvider = { it.data.id },
+                    childrenProvider = { it.children },
+                )
             onApply(appliedIds.toImmutableList())
         },
     ) {
         LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
+            modifier = Modifier.weight(1f).fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
             items(items = state.flatList, key = { it.item.data.id }) { flatNode ->
                 IeeSelectableItem(
-                    modifier = Modifier
-                        .padding(start = (flatNode.depth * 16).dp)
-                        .animateItem(
-                            fadeInSpec = ieeListSpring(),
-                            fadeOutSpec = ieeListSpring(),
-                            placementSpec = ieeListSpring(),
-                        ),
+                    modifier =
+                        Modifier.padding(start = (flatNode.depth * 16).dp)
+                            .animateItem(
+                                fadeInSpec = ieeListSpring(),
+                                fadeOutSpec = ieeListSpring(),
+                                placementSpec = ieeListSpring(),
+                            ),
                     title = flatNode.item.data.title,
                     isSelected = flatNode.item.data.id in state.selectedIds,
                     onClick = { state.onToggle(flatNode.item) },
@@ -108,15 +110,16 @@ fun TagSheet(
 @Preview
 @Composable
 private fun TagSheetPreview() {
-    val sampleTags = persistentListOf(
-        Tag(id = 1, title = "Tag 1"),
-        Tag(id = 2, title = "Tag 2"),
-        Tag(id = 3, title = "Tag 3"),
-    )
+    val sampleTags =
+        persistentListOf(
+            Tag(id = 1, title = "Tag 1"),
+            Tag(id = 2, title = "Tag 2"),
+            Tag(id = 3, title = "Tag 3"),
+        )
     IeePreview {
         TagSheet(
             tags = sampleTags,
-            selectedTagIds = persistentListOf(1)
+            selectedTagIds = persistentListOf(1),
         )
     }
 }

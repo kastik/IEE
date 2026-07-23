@@ -7,18 +7,20 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    foreignKeys = [
-        ForeignKey(
-            entity = AnnouncementEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["announcementId"],
-            onDelete = CASCADE
-        )
-    ],
-    indices = [
-        Index("id"),
-        Index("announcementId"),
-    ]
+    foreignKeys =
+        [
+            ForeignKey(
+                entity = AnnouncementEntity::class,
+                parentColumns = ["id"],
+                childColumns = ["announcementId"],
+                onDelete = CASCADE,
+            )
+        ],
+    indices =
+        [
+            Index("id"),
+            Index("announcementId"),
+        ],
 )
 data class AttachmentEntity(
     @PrimaryKey val id: Int,

@@ -48,13 +48,12 @@ import com.kastik.apps.core.ui.announcement.AnnouncementCardShimmer
 import com.kastik.apps.core.ui.extensions.toFormattedString
 import com.kastik.apps.core.ui.placeholder.LoadingContent
 import com.kastik.apps.core.ui.placeholder.StatusContent
+import kotlin.time.Clock
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOf
-import kotlin.time.Clock
-
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -70,10 +69,11 @@ fun AnnouncementFeed(
     announcements: LazyPagingItems<Announcement>,
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
-    scrollBehavior: SearchBarScrollBehavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior(),
+    scrollBehavior: SearchBarScrollBehavior =
+        SearchBarDefaults.enterAlwaysSearchBarScrollBehavior(),
     onAnnouncementClick: (Int) -> Unit = {},
     onAnnouncementLongClick: (Int) -> Unit = {},
-    contentPadding: PaddingValues = PaddingValues(0.dp)
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
 
     val vibrator = LocalHapticFeedback.current
@@ -92,33 +92,31 @@ fun AnnouncementFeed(
     }
 
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .testTag("announcement_feed"),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .testTag("announcement_feed"),
         state = lazyListState,
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
     ) {
-
         when (refreshState) {
             is LoadState.Loading ->
                 if (isEmpty) {
                     item(
                         key = "refresh_state_loading",
-                        contentType = "refresh_indicators"
+                        contentType = "refresh_indicators",
                     ) {
                         StatusContent(
-                            modifier = Modifier
-                                .fillParentMaxSize()
-                                .animateItem(
-                                    fadeInSpec = ieeListSpring(),
-                                    fadeOutSpec = ieeListSpring(),
-                                    placementSpec = ieeListSpring()
-                                ),
+                            modifier =
+                                Modifier.fillParentMaxSize()
+                                    .animateItem(
+                                        fadeInSpec = ieeListSpring(),
+                                        fadeOutSpec = ieeListSpring(),
+                                        placementSpec = ieeListSpring(),
+                                    ),
                             message = {
-                                LoadingContent(
-                                    message = refreshLoadingText
-                                )
+                                LoadingContent(message = refreshLoadingText)
                             },
                         )
                     }
@@ -128,16 +126,16 @@ fun AnnouncementFeed(
                 if (isEmpty) {
                     item(
                         key = "refresh_state_error",
-                        contentType = "refresh_indicators"
+                        contentType = "refresh_indicators",
                     ) {
                         StatusContent(
-                            modifier = Modifier
-                                .fillParentMaxSize()
-                                .animateItem(
-                                    fadeInSpec = ieeListSpring(),
-                                    fadeOutSpec = ieeListSpring(),
-                                    placementSpec = ieeListSpring()
-                                ),
+                            modifier =
+                                Modifier.fillParentMaxSize()
+                                    .animateItem(
+                                        fadeInSpec = ieeListSpring(),
+                                        fadeOutSpec = ieeListSpring(),
+                                        placementSpec = ieeListSpring(),
+                                    ),
                             message = {
                                 Text(
                                     text = refreshErrorText,
@@ -146,9 +144,7 @@ fun AnnouncementFeed(
                                 )
                             },
                             action = {
-                                FilledTonalButton(
-                                    onClick = announcements::retry
-                                ) {
+                                FilledTonalButton(onClick = announcements::retry) {
                                     Text(
                                         text = refreshRetryText,
                                         style = MaterialTheme.typography.bodyLarge,
@@ -164,16 +160,16 @@ fun AnnouncementFeed(
                 if (isEmpty) {
                     item(
                         key = "refresh_state_not_loading",
-                        contentType = "refresh_indicators"
+                        contentType = "refresh_indicators",
                     ) {
                         StatusContent(
-                            modifier = Modifier
-                                .fillParentMaxSize()
-                                .animateItem(
-                                    fadeInSpec = ieeListSpring(),
-                                    fadeOutSpec = ieeListSpring(),
-                                    placementSpec = ieeListSpring()
-                                ),
+                            modifier =
+                                Modifier.fillParentMaxSize()
+                                    .animateItem(
+                                        fadeInSpec = ieeListSpring(),
+                                        fadeOutSpec = ieeListSpring(),
+                                        placementSpec = ieeListSpring(),
+                                    ),
                             message = {
                                 Text(
                                     text = refreshEmptyText,
@@ -190,7 +186,8 @@ fun AnnouncementFeed(
         items(
             count = announcements.itemCount,
             key = announcements.itemKey { it.id },
-            contentType = announcements.itemContentType { "announcement_card" }) { index ->
+            contentType = announcements.itemContentType { "announcement_card" },
+        ) { index ->
             val item = announcements[index]
             item?.let {
                 AnnouncementCard(
@@ -204,48 +201,49 @@ fun AnnouncementFeed(
                     },
                     publisher = item.author,
                     title = item.title,
-                    categories = remember(item.tags) {
-                        item.tags.map { it.title }.toImmutableList()
-                    },
+                    categories =
+                        remember(item.tags) {
+                            item.tags.map { it.title }.toImmutableList()
+                        },
                     date = item.date.toFormattedString(),
                     content = remember(item.preview) { item.preview },
                     isPinned = item.isPinned,
-                    modifier = Modifier
-                        .padding(6.dp)
-                        .animateItem(
-                            fadeInSpec = ieeListSpring(),
-                            fadeOutSpec = ieeListSpring(),
-                            placementSpec = ieeListSpring()
-                        )
+                    modifier =
+                        Modifier.padding(6.dp)
+                            .animateItem(
+                                fadeInSpec = ieeListSpring(),
+                                fadeOutSpec = ieeListSpring(),
+                                placementSpec = ieeListSpring(),
+                            ),
                 )
-            } ?: AnnouncementCardShimmer(
-                modifier = Modifier
-                    .padding(6.dp)
-                    .animateItem(
-                        fadeInSpec = ieeListSpring(),
-                        fadeOutSpec = ieeListSpring(),
-                        placementSpec = ieeListSpring()
-                    )
-            )
+            }
+                ?: AnnouncementCardShimmer(
+                    modifier =
+                        Modifier.padding(6.dp)
+                            .animateItem(
+                                fadeInSpec = ieeListSpring(),
+                                fadeOutSpec = ieeListSpring(),
+                                placementSpec = ieeListSpring(),
+                            )
+                )
         }
-
 
         when (appendState) {
             is LoadState.Loading -> {
                 item(
                     key = "append_state_loading",
-                    contentType = "append_indicators"
+                    contentType = "append_indicators",
                 ) {
                     LoadingContent(
                         message = appendLoadingText,
                         progressIndicatorSize = 32.dp,
-                        modifier = Modifier
-                            .padding(top = 16.dp, bottom = 32.dp)
-                            .animateItem(
-                                fadeInSpec = ieeListSpring(),
-                                fadeOutSpec = ieeListSpring(),
-                                placementSpec = ieeListSpring()
-                            ),
+                        modifier =
+                            Modifier.padding(top = 16.dp, bottom = 32.dp)
+                                .animateItem(
+                                    fadeInSpec = ieeListSpring(),
+                                    fadeOutSpec = ieeListSpring(),
+                                    placementSpec = ieeListSpring(),
+                                ),
                     )
                 }
             }
@@ -253,16 +251,16 @@ fun AnnouncementFeed(
             is LoadState.Error ->
                 item(
                     key = "append_state_error",
-                    contentType = "append_indicators"
+                    contentType = "append_indicators",
                 ) {
                     StatusContent(
-                        modifier = Modifier
-                            .padding(24.dp)
-                            .animateItem(
-                                fadeInSpec = ieeListSpring(),
-                                fadeOutSpec = ieeListSpring(),
-                                placementSpec = ieeListSpring()
-                            ),
+                        modifier =
+                            Modifier.padding(24.dp)
+                                .animateItem(
+                                    fadeInSpec = ieeListSpring(),
+                                    fadeOutSpec = ieeListSpring(),
+                                    placementSpec = ieeListSpring(),
+                                ),
                         message = {
                             Text(
                                 text = appendErrorText,
@@ -271,9 +269,7 @@ fun AnnouncementFeed(
                             )
                         },
                         action = {
-                            FilledTonalButton(
-                                onClick = announcements::retry
-                            ) {
+                            FilledTonalButton(onClick = announcements::retry) {
                                 Text(
                                     text = appendErrorRetryText,
                                     style = MaterialTheme.typography.bodyLarge,
@@ -288,25 +284,24 @@ fun AnnouncementFeed(
                 if (appendState.endOfPaginationReached && !isEmpty) {
                     item(
                         key = "append_state_end_of_pagination",
-                        contentType = "append_indicators"
+                        contentType = "append_indicators",
                     ) {
-
                         Row(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 16.dp, bottom = 32.dp)
-                                .animateItem(
-                                    fadeInSpec = ieeListSpring(),
-                                    fadeOutSpec = ieeListSpring(),
-                                    placementSpec = ieeListSpring()
-                                )
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .padding(top = 16.dp, bottom = 32.dp)
+                                    .animateItem(
+                                        fadeInSpec = ieeListSpring(),
+                                        fadeOutSpec = ieeListSpring(),
+                                        placementSpec = ieeListSpring(),
+                                    ),
                         ) {
                             Text(
                                 text = endOfPaginationText,
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                             Icon(
                                 Icons.Default.Celebration,
@@ -316,22 +311,23 @@ fun AnnouncementFeed(
                     }
                 } else if (!isEmpty) {
 
-                    val hasError = announcements.loadState.append as? LoadState.Error
-                        ?: announcements.loadState.refresh as? LoadState.Error
+                    val hasError =
+                        announcements.loadState.append as? LoadState.Error
+                            ?: announcements.loadState.refresh as? LoadState.Error
 
                     if (hasError != null) {
                         item(
                             key = "append_state_has_error",
-                            contentType = "append_indicators"
+                            contentType = "append_indicators",
                         ) {
                             StatusContent(
-                                modifier = Modifier
-                                    .padding(24.dp)
-                                    .animateItem(
-                                        fadeInSpec = ieeListSpring(),
-                                        fadeOutSpec = ieeListSpring(),
-                                        placementSpec = ieeListSpring()
-                                    ),
+                                modifier =
+                                    Modifier.padding(24.dp)
+                                        .animateItem(
+                                            fadeInSpec = ieeListSpring(),
+                                            fadeOutSpec = ieeListSpring(),
+                                            placementSpec = ieeListSpring(),
+                                        ),
                                 message = {
                                     Text(
                                         text = appendErrorText,
@@ -340,9 +336,7 @@ fun AnnouncementFeed(
                                     )
                                 },
                                 action = {
-                                    FilledTonalButton(
-                                        onClick = announcements::retry
-                                    ) {
+                                    FilledTonalButton(onClick = announcements::retry) {
                                         Text(
                                             text = appendErrorRetryText,
                                             style = MaterialTheme.typography.bodyLarge,
@@ -355,52 +349,53 @@ fun AnnouncementFeed(
                     } else {
                         item(
                             key = "append_state_spacer",
-                            contentType = "append_indicators"
+                            contentType = "append_indicators",
                         ) {
                             Spacer(
-                                modifier = Modifier
-                                    .height(116.dp)
-                                    .animateItem(
-                                        fadeInSpec = ieeListSpring(),
-                                        fadeOutSpec = ieeListSpring(),
-                                        placementSpec = ieeListSpring()
-                                    )
+                                modifier =
+                                    Modifier.height(116.dp)
+                                        .animateItem(
+                                            fadeInSpec = ieeListSpring(),
+                                            fadeOutSpec = ieeListSpring(),
+                                            placementSpec = ieeListSpring(),
+                                        )
                             )
                         }
                     }
                 }
             }
         }
-
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun AnnouncementFeedPreview() {
-    val sampleAnnouncements = persistentListOf(
-        Announcement(
-            id = 1,
-            author = "Admin",
-            title = "Welcome to AppsAboard!",
-            date = Clock.System.now(),
-            tags = persistentListOf(Tag(1, "General"), Tag(2, "New")),
-            preview = "This is the first announcement.",
-            isPinned = true,
-            body = "",
-        ), Announcement(
-            id = 2,
-            author = "Admin",
-            title = "Second Announcement",
-            date = Clock.System.now(),
-            tags = persistentListOf(Tag(1, "General")),
-            preview = "This is the second announcement with a bit longer preview text to see how it renders.",
-            isPinned = false,
-            body = "",
+    val sampleAnnouncements =
+        persistentListOf(
+            Announcement(
+                id = 1,
+                author = "Admin",
+                title = "Welcome to AppsAboard!",
+                date = Clock.System.now(),
+                tags = persistentListOf(Tag(1, "General"), Tag(2, "New")),
+                preview = "This is the first announcement.",
+                isPinned = true,
+                body = "",
+            ),
+            Announcement(
+                id = 2,
+                author = "Admin",
+                title = "Second Announcement",
+                date = Clock.System.now(),
+                tags = persistentListOf(Tag(1, "General")),
+                preview =
+                    "This is the second announcement with a bit longer preview text to see how it renders.",
+                isPinned = false,
+                body = "",
+            ),
         )
-    )
     val lazyPagingItems = flowOf(PagingData.from(sampleAnnouncements)).collectAsLazyPagingItems()
 
     IeePreview {
@@ -418,7 +413,6 @@ private fun AnnouncementFeedPreview() {
     }
 }
 
-
 @Preview
 @Composable
 fun LoadingContentPagingPreview() {
@@ -430,5 +424,3 @@ fun LoadingContentPagingPreview() {
         )
     }
 }
-
-

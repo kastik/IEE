@@ -1,14 +1,14 @@
 syntax = "proto3";
-option java_package = "com.kastik.apps.core.datastore.proto";
-option java_multiple_files = true;
 package com.kastik.apps.core.datastore.proto;
 
+option java_multiple_files = true;
+option java_package = "com.kastik.apps.core.datastore.proto";
 
-message SubscriptionsProto{
+message SubscriptionsProto {
   repeated SubscribedTagProto tags = 1;
 }
 
-message SubscribedTagProto{
+message SubscribedTagProto {
   int32 id = 1;
   string title = 2;
 }

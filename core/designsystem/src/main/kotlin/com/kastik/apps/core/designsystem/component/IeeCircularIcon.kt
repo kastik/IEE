@@ -19,16 +19,14 @@ fun IeeCircularIcon(
     tint: Color,
 ) {
     Box(
-        modifier = Modifier
-            .size(120.dp)
-            .background(containerColor, CircleShape),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.size(120.dp).background(containerColor, CircleShape),
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
             imageVector = imageVector,
             contentDescription = null,
             modifier = Modifier.size(64.dp),
-            tint = tint
+            tint = tint,
         )
     }
 }

@@ -35,13 +35,12 @@ internal fun OnboardNotifications(
     onContinueClick: () -> Unit = {},
 ) {
     AnimatedContent(
-        targetState = areNotificationsAllowed, contentKey = { it }
+        targetState = areNotificationsAllowed,
+        contentKey = { it },
     ) { state ->
         when (state) {
             true -> {
-                OnboardNotificationsGranted(
-                    onContinueClick = onContinueClick
-                )
+                OnboardNotificationsGranted(onContinueClick = onContinueClick)
             }
 
             false -> {
@@ -54,58 +53,49 @@ internal fun OnboardNotifications(
     }
 }
 
-
 @Composable
-private fun OnboardNotificationsGranted(
-    onContinueClick: () -> Unit
-) {
+private fun OnboardNotificationsGranted(onContinueClick: () -> Unit) {
     val haptics = LocalHapticFeedback.current
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
+        modifier = Modifier.fillMaxSize().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             IeeCircularIcon(
                 imageVector = Icons.Rounded.NotificationsActive,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
             Text(
                 text = stringResource(R.string.notifications_permission_accepted_title),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Text(
                 text = stringResource(R.string.notifications_permission_accepted_body),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
-
-
         }
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onContinueClick()
-                }
+                },
             ) {
                 Text(stringResource(R.string.notifications_next_page))
             }
@@ -121,73 +111,60 @@ private fun OnboardNotificationsNotGranted(
     val haptics = LocalHapticFeedback.current
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
+        modifier = Modifier.fillMaxSize().padding(32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             IeeCircularIcon(
                 imageVector = Icons.Rounded.NotificationsOff,
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                tint = MaterialTheme.colorScheme.onTertiaryContainer
+                tint = MaterialTheme.colorScheme.onTertiaryContainer,
             )
             Text(
                 text = stringResource(R.string.notifications_permission_rejected_title),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Text(
                 text = stringResource(R.string.notifications_permission_rejected_body),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
-
-
         }
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
             FilledTonalButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onNotNowClick()
-                }
+                },
             ) {
                 Text(stringResource(R.string.notification_rejected_secondary_action))
             }
 
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxWidth().height(56.dp),
                 onClick = {
                     haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                     onAllowClick()
-                }
+                },
             ) {
                 Text(stringResource(R.string.notification_rejected_primary_action))
             }
-
         }
     }
-
-
 }
-
 
 @Preview
 @Composable

@@ -2,14 +2,14 @@ package com.kastik.apps.core.data.provider
 
 import com.kastik.apps.core.datastore.datasource.AuthenticationLocalDataSource
 import com.kastik.apps.core.network.interceptor.TokenManager
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.first
 
 @Singleton
-class AboardTokenManagerImpl @Inject constructor(
-    val authenticationLocalDataSource: AuthenticationLocalDataSource,
-) : TokenManager {
+class AboardTokenManagerImpl
+@Inject
+constructor(val authenticationLocalDataSource: AuthenticationLocalDataSource) : TokenManager {
 
     override suspend fun getToken(): String? =
         authenticationLocalDataSource.aboardAccessToken.first()
@@ -20,5 +20,4 @@ class AboardTokenManagerImpl @Inject constructor(
     override suspend fun tokenExpired() {
         authenticationLocalDataSource.clearAuthenticationData()
     }
-
 }

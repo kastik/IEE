@@ -19,9 +19,8 @@ import org.junit.runner.RunWith
 
 @RunWith(RoboDatabaseTestRunner::class)
 @OptIn(ExperimentalPagingApi::class)
-class AnnouncementRemoteMediatorIntegrationTest : MemoryDatabase(
-    dispatcher = StandardTestDispatcher()
-) {
+class AnnouncementRemoteMediatorIntegrationTest :
+    MemoryDatabase(dispatcher = StandardTestDispatcher()) {
 
     private val fakeAnnouncementRemoteDataSource = FakeAnnouncementRemoteDataSource()
     private val fakeBase64ImageExtractor = FakeBase64ImageExtractor()
@@ -38,113 +37,114 @@ class AnnouncementRemoteMediatorIntegrationTest : MemoryDatabase(
             crashlytics = fakeCrashlytics,
             database = db,
             announcementRemoteDataSource = fakeAnnouncementRemoteDataSource,
-            base64ImageExtractor = fakeBase64ImageExtractor
+            base64ImageExtractor = fakeBase64ImageExtractor,
         )
 
-
-    private val pagerConfig = PagingConfig(
-        pageSize = 20,
-        initialLoadSize = 60,
-        prefetchDistance = 10,
-        enablePlaceholders = false
-    )
+    private val pagerConfig =
+        PagingConfig(
+            pageSize = 20,
+            initialLoadSize = 60,
+            prefetchDistance = 10,
+            enablePlaceholders = false,
+        )
 
     private val pagingSourceFactory = { db.announcementDao().getPagedAnnouncements() }
 
-    private val pager: Pager<Int, AnnouncementPreviewRelation> = Pager(
-        config = pagerConfig,
-        remoteMediator = announcementRemoteMediator,
-        pagingSourceFactory = pagingSourceFactory
-    )
+    private val pager: Pager<Int, AnnouncementPreviewRelation> =
+        Pager(
+            config = pagerConfig,
+            remoteMediator = announcementRemoteMediator,
+            pagingSourceFactory = pagingSourceFactory,
+        )
 
-//    @Test
-//    fun doesNotIgnoreInitialLoad() = runTest(dispatcher) {
-//
-//        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
-//            page = 1,
-//            perPage = pagerConfig.initialLoadSize,
-//            sortBy = SortType.DESC,
-//        ).data.map { it.id }
-//
-//        val mediatorItems: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
-//            scrollTo(0)
-//
-//        }
-//
-//        assertThat(mediatorItems).isNotEmpty()
-//        val mediatorItemIds = mediatorItems.map { it.announcement.id }
-//
-//        assertThat(mediatorItems.size).isEqualTo(pagerConfig.initialLoadSize)
-//        assertThat(mediatorItemIds).containsExactlyElementsIn(pageOneItemIds).inOrder()
-//    }
+    //    @Test
+    //    fun doesNotIgnoreInitialLoad() = runTest(dispatcher) {
+    //
+    //        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
+    //            page = 1,
+    //            perPage = pagerConfig.initialLoadSize,
+    //            sortBy = SortType.DESC,
+    //        ).data.map { it.id }
+    //
+    //        val mediatorItems: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
+    //            scrollTo(0)
+    //
+    //        }
+    //
+    //        assertThat(mediatorItems).isNotEmpty()
+    //        val mediatorItemIds = mediatorItems.map { it.announcement.id }
+    //
+    //        assertThat(mediatorItems.size).isEqualTo(pagerConfig.initialLoadSize)
+    //        assertThat(mediatorItemIds).containsExactlyElementsIn(pageOneItemIds).inOrder()
+    //    }
 
+    //    @Test
+    //    fun appendCanFetchTheNextPageTest() = runTest(dispatcher) {
+    //        val expectedItemCount = pagerConfig.initialLoadSize + pagerConfig.pageSize
+    //
+    //        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
+    //            page = 1,
+    //            perPage = expectedItemCount,
+    //            sortBy = SortType.DESC,
+    //        ).data.map { it.id }
+    //
+    //        val mediatorItems: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
+    //            scrollTo(60)
+    //
+    //        }
+    //
+    //        assertThat(mediatorItems).isNotEmpty()
+    //        val mediatorItemIds = mediatorItems.map { it.announcement.id }
+    //
+    //        assertThat(mediatorItems.size).isEqualTo(expectedItemCount)
+    //        assertThat(mediatorItemIds).containsExactlyElementsIn(pageOneItemIds).inOrder()
+    //    }
 
-//    @Test
-//    fun appendCanFetchTheNextPageTest() = runTest(dispatcher) {
-//        val expectedItemCount = pagerConfig.initialLoadSize + pagerConfig.pageSize
-//
-//        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
-//            page = 1,
-//            perPage = expectedItemCount,
-//            sortBy = SortType.DESC,
-//        ).data.map { it.id }
-//
-//        val mediatorItems: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
-//            scrollTo(60)
-//
-//        }
-//
-//        assertThat(mediatorItems).isNotEmpty()
-//        val mediatorItemIds = mediatorItems.map { it.announcement.id }
-//
-//        assertThat(mediatorItems.size).isEqualTo(expectedItemCount)
-//        assertThat(mediatorItemIds).containsExactlyElementsIn(pageOneItemIds).inOrder()
-//    }
-
-//    @Test
-//    fun triggersPrefetchDistanceTest() = runTest(dispatcher) {
-//        val expectedItemCount = pagerConfig.initialLoadSize + pagerConfig.pageSize
-//
-//        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
-//            page = 1,
-//            perPage = expectedItemCount,
-//            sortBy = SortType.DESC,
-//        ).data.map { it.id }
-//        val items: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
-//            scrollTo(index = pagerConfig.initialLoadSize)
-//
-//        }
-//        assertThat(items).isNotEmpty()
-//        assertThat(items.size).isEqualTo(expectedItemCount)
-//        assertThat(items.map { it.announcement.id }).containsExactlyElementsIn(pageOneItemIds)
-//            .inOrder()
-//    }
+    //    @Test
+    //    fun triggersPrefetchDistanceTest() = runTest(dispatcher) {
+    //        val expectedItemCount = pagerConfig.initialLoadSize + pagerConfig.pageSize
+    //
+    //        val pageOneItemIds = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
+    //            page = 1,
+    //            perPage = expectedItemCount,
+    //            sortBy = SortType.DESC,
+    //        ).data.map { it.id }
+    //        val items: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
+    //            scrollTo(index = pagerConfig.initialLoadSize)
+    //
+    //        }
+    //        assertThat(items).isNotEmpty()
+    //        assertThat(items.size).isEqualTo(expectedItemCount)
+    //        assertThat(items.map { it.announcement.id }).containsExactlyElementsIn(pageOneItemIds)
+    //            .inOrder()
+    //    }
 
     @Test
-    fun appendTillTheEndStopsTest() = runTest(dispatcher) {
-        val lastPageResponse = fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
-            page = 1,
-            perPage = pagerConfig.initialLoadSize,
-            sortBy = SortType.DESC,
-        )
-        val lastPage = lastPageResponse.meta.lastPage
-        val allPagesItemIds = lastPageResponse.data.map { it.id }
+    fun appendTillTheEndStopsTest() =
+        runTest(dispatcher) {
+            val lastPageResponse =
+                fakeAnnouncementRemoteDataSource.fetchPagedAnnouncements(
+                    page = 1,
+                    perPage = pagerConfig.initialLoadSize,
+                    sortBy = SortType.DESC,
+                )
+            val lastPage = lastPageResponse.meta.lastPage
+            val allPagesItemIds = lastPageResponse.data.map { it.id }
 
+            val lastItemIndex = lastPage * pagerConfig.pageSize - 1
 
-        val lastItemIndex = lastPage * pagerConfig.pageSize - 1
+            val items: List<AnnouncementPreviewRelation> =
+                pager.flow.asSnapshot {
+                    scrollTo(index = lastItemIndex)
+                }
 
-        val items: List<AnnouncementPreviewRelation> = pager.flow.asSnapshot {
-            scrollTo(index = lastItemIndex)
+            println("Final item count: ${items.size}")
+            println(allPagesItemIds)
 
+            assertThat(items).isNotEmpty()
+            assertThat(items.size).isEqualTo(allPagesItemIds.size)
+            assertThat(items.map { it.announcement.id })
+                .containsExactlyElementsIn(allPagesItemIds)
+                .inOrder()
         }
-
-        println("Final item count: ${items.size}")
-        println(allPagesItemIds)
-
-        assertThat(items).isNotEmpty()
-        assertThat(items.size).isEqualTo(allPagesItemIds.size)
-        assertThat(items.map { it.announcement.id }).containsExactlyElementsIn(allPagesItemIds)
-            .inOrder()
-    }
-
 }

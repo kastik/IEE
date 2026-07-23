@@ -32,8 +32,5 @@ internal abstract class RemoteConfigReleaseModule {
         }
     }
 
-    @Binds
-    @Singleton
-    abstract fun bindRemoteConfig(impl: RemoteConfigReleaseImpl): RemoteConfig
-
+    @Binds @Singleton abstract fun bindRemoteConfig(impl: RemoteConfigReleaseImpl): RemoteConfig
 }

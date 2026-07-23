@@ -31,13 +31,12 @@ fun IeeFloatingToolBar(
     val vibrator = LocalHapticFeedback.current
 
     HorizontalFloatingToolbar(
-        modifier = modifier
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         expanded = expanded,
         colors = FloatingToolbarDefaults.vibrantFloatingToolbarColors(),
-        contentPadding = if (collapsedSecondaryIcons == null) PaddingValues(0.dp) else PaddingValues(
-            horizontal = 16.dp
-        ),
+        contentPadding =
+            if (collapsedSecondaryIcons == null) PaddingValues(0.dp)
+            else PaddingValues(horizontal = 16.dp),
         floatingActionButton = {
             FloatingToolbarDefaults.VibrantFloatingActionButton(
                 onClick = {
@@ -49,7 +48,7 @@ fun IeeFloatingToolBar(
                     if (isExpanded) collapsedIcon() else expandedIcon()
                 }
             }
-        }
+        },
     ) {
         collapsedSecondaryIcons?.let {
             it()
@@ -64,7 +63,7 @@ private fun IeeFloatingToolBarExpandedPreview() {
         IeeFloatingToolBar(
             expanded = false,
             expandedAction = {},
-            collapsedAction = { },
+            collapsedAction = {},
             expandedIcon = { Icon(Icons.Default.ArrowUpward, null) },
             collapsedIcon = { Icon(Icons.Default.Search, null) },
         )
@@ -78,7 +77,7 @@ private fun IeeFloatingToolBarCollapsedPreview() {
         IeeFloatingToolBar(
             expanded = true,
             expandedAction = {},
-            collapsedAction = { },
+            collapsedAction = {},
             expandedIcon = { Icon(Icons.Default.ArrowUpward, null) },
             collapsedIcon = { Icon(Icons.Default.Search, null) },
         )

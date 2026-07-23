@@ -9,7 +9,10 @@ import com.kastik.apps.core.model.aboard.Announcement
 import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.model.result.Result
+import javax.inject.Inject
+import kotlin.time.Clock
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -17,10 +20,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import kotlin.time.Clock
 
-class GetHomeAnnouncementsUseCase @Inject constructor(
+class GetHomeAnnouncementsUseCase
+@Inject
+constructor(
     private val announcementRepository: AnnouncementRepository,
     private val authenticationRepository: AuthenticationRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
@@ -30,25 +33,30 @@ class GetHomeAnnouncementsUseCase @Inject constructor(
         val sortType: SortType,
     )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(): Flow<PagingData<Announcement>> {
         return combine(
-            authenticationRepository.isSignedIn,
-            userPreferencesRepository.userPreferences
-        ) { isSignedIn, userPreferences ->
-            FilterParams(isSignedIn, userPreferences.sortType)
-        }.distinctUntilChanged().flatMapLatest { params ->
-            announcementRepository.getPagedAnnouncements(
-                sortType = params.sortType,
-                titleQuery = "",
-                bodyQuery = "",
-                authorIds = emptyList(),
-                tagIds = emptyList(),
-            )
-        }
+                authenticationRepository.isSignedIn,
+                userPreferencesRepository.userPreferences,
+            ) { isSignedIn, userPreferences ->
+                FilterParams(isSignedIn, userPreferences.sortType)
+            }
+            .distinctUntilChanged()
+            .flatMapLatest { params ->
+                announcementRepository.getPagedAnnouncements(
+                    sortType = params.sortType,
+                    titleQuery = "",
+                    bodyQuery = "",
+                    authorIds = emptyList(),
+                    tagIds = emptyList(),
+                )
+            }
     }
 }
 
-class GetForYouAnnouncementsUseCase @Inject constructor(
+class GetForYouAnnouncementsUseCase
+@Inject
+constructor(
     private val tagsRepository: TagsRepository,
     private val announcementRepository: AnnouncementRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
@@ -62,102 +70,120 @@ class GetForYouAnnouncementsUseCase @Inject constructor(
         val isForYouAvailable: Boolean,
     )
 
-    operator fun invoke(): Flow<PagingData<Announcement>> = combine(
-        tagsRepository.subscribedTags,
-        userPreferencesRepository.userPreferences,
-        isForYouEnabledUseCase(),
-        isForYouAvailableUseCase(),
-    ) { subscribedTags, userPreferences, isForYouEnabled, isForYouAvailable ->
-        FilterParams(
-            sortType = userPreferences.sortType,
-            subscribedTagIds = subscribedTags.map { it.id },
-            isForYouEnabled = isForYouEnabled,
-            isForYouAvailable = isForYouAvailable,
-        )
-    }.distinctUntilChanged().flatMapLatest { params ->
-        if (!params.isForYouEnabled || !params.isForYouAvailable) {
-            flowOf(PagingData.empty())
-        } else {
-            announcementRepository.getPagedAnnouncements(
-                sortType = params.sortType,
-                tagIds = params.subscribedTagIds,
-            )
-        }
-    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    operator fun invoke(): Flow<PagingData<Announcement>> =
+        combine(
+                tagsRepository.subscribedTags,
+                userPreferencesRepository.userPreferences,
+                isForYouEnabledUseCase(),
+                isForYouAvailableUseCase(),
+            ) { subscribedTags, userPreferences, isForYouEnabled, isForYouAvailable ->
+                FilterParams(
+                    sortType = userPreferences.sortType,
+                    subscribedTagIds = subscribedTags.map { it.id },
+                    isForYouEnabled = isForYouEnabled,
+                    isForYouAvailable = isForYouAvailable,
+                )
+            }
+            .distinctUntilChanged()
+            .flatMapLatest { params ->
+                if (!params.isForYouEnabled || !params.isForYouAvailable) {
+                    flowOf(PagingData.empty())
+                } else {
+                    announcementRepository.getPagedAnnouncements(
+                        sortType = params.sortType,
+                        tagIds = params.subscribedTagIds,
+                    )
+                }
+            }
 }
 
-class GetFilteredAnnouncementsUseCase @Inject constructor(
+class GetFilteredAnnouncementsUseCase
+@Inject
+constructor(
     private val announcementRepository: AnnouncementRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     private data class FilterParams(
         val sortType: SortType,
         val titleQuery: String,
         val bodyQuery: String,
         val authorIds: List<Int>,
-        val tagIds: List<Int>
+        val tagIds: List<Int>,
     )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
-        query: String = "", authorIds: List<Int> = emptyList(), tagIds: List<Int> = emptyList()
+        query: String = "",
+        authorIds: List<Int> = emptyList(),
+        tagIds: List<Int> = emptyList(),
     ): Flow<PagingData<Announcement>> =
-        userPreferencesRepository.userPreferences.map { userPreferences ->
-            FilterParams(
-                sortType = userPreferences.sortType,
-                titleQuery = query.takeIf { userPreferences.searchScope.includesTitle } ?: "",
-                bodyQuery = query.takeIf { userPreferences.searchScope.includesBody } ?: "",
-                authorIds = authorIds,
-                tagIds = tagIds
-            )
-        }.distinctUntilChanged().flatMapLatest { params ->
-            announcementRepository.getPagedAnnouncements(
-                sortType = params.sortType,
-                titleQuery = params.titleQuery,
-                bodyQuery = params.bodyQuery,
-                authorIds = params.authorIds,
-                tagIds = params.tagIds,
-            )
-        }
-}
-
-class GetAnnouncementQuickResultsUseCase @Inject constructor(
-    private val announcementRepository: AnnouncementRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
-    operator fun invoke(query: String) =
-        userPreferencesRepository.userPreferences.map { userPreferences ->
-            userPreferences.sortType
-        }.distinctUntilChanged().flatMapLatest { sortType ->
-            announcementRepository.getAnnouncementsQuickResults(sortType, query).map {
-                it.toImmutableList()
+        userPreferencesRepository.userPreferences
+            .map { userPreferences ->
+                FilterParams(
+                    sortType = userPreferences.sortType,
+                    titleQuery = query.takeIf { userPreferences.searchScope.includesTitle } ?: "",
+                    bodyQuery = query.takeIf { userPreferences.searchScope.includesBody } ?: "",
+                    authorIds = authorIds,
+                    tagIds = tagIds,
+                )
             }
-        }
+            .distinctUntilChanged()
+            .flatMapLatest { params ->
+                announcementRepository.getPagedAnnouncements(
+                    sortType = params.sortType,
+                    titleQuery = params.titleQuery,
+                    bodyQuery = params.bodyQuery,
+                    authorIds = params.authorIds,
+                    tagIds = params.tagIds,
+                )
+            }
 }
 
-class GetAnnouncementWithIdUseCase @Inject constructor(
-    private val announcementRepository: AnnouncementRepository
+class GetAnnouncementQuickResultsUseCase
+@Inject
+constructor(
+    private val announcementRepository: AnnouncementRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    operator fun invoke(query: String) =
+        userPreferencesRepository.userPreferences
+            .map { userPreferences ->
+                userPreferences.sortType
+            }
+            .distinctUntilChanged()
+            .flatMapLatest { sortType ->
+                announcementRepository.getAnnouncementsQuickResults(sortType, query).map {
+                    it.toImmutableList()
+                }
+            }
+}
+
+class GetAnnouncementWithIdUseCase
+@Inject
+constructor(private val announcementRepository: AnnouncementRepository) {
     operator fun invoke(id: Int): Flow<Announcement?> =
         announcementRepository.getAnnouncementWithId(id)
 }
 
-
-class SyncAnnouncementWithIdUseCase @Inject constructor(
-    private val announcementRepository: AnnouncementRepository
-) {
+class SyncAnnouncementWithIdUseCase
+@Inject
+constructor(private val announcementRepository: AnnouncementRepository) {
     suspend operator fun invoke(id: Int) = announcementRepository.syncAnnouncementWithId(id)
 }
 
-class SetAnnouncementCheckTimeUseCase @Inject constructor(
-    private val userPreferencesRepository: UserPreferencesRepository
-) {
+class SetAnnouncementCheckTimeUseCase
+@Inject
+constructor(private val userPreferencesRepository: UserPreferencesRepository) {
     suspend operator fun invoke() {
         userPreferencesRepository.setLastCheckTime(Clock.System.now())
     }
 }
 
-
-class CheckNewAnnouncementsUseCase @Inject constructor(
+class CheckNewAnnouncementsUseCase
+@Inject
+constructor(
     private val announcementRepository: AnnouncementRepository,
     private val tagsRepository: TagsRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
@@ -165,7 +191,10 @@ class CheckNewAnnouncementsUseCase @Inject constructor(
     suspend operator fun invoke(): Result<List<Announcement>, NetworkError> {
         val subscriptionResult = tagsRepository.syncSubscribedTags()
 
-        if (subscriptionResult is Result.Error && subscriptionResult.error is NetworkError.Authentication) {
+        if (
+            subscriptionResult is Result.Error &&
+                subscriptionResult.error is NetworkError.Authentication
+        ) {
             return subscriptionResult
         }
 
@@ -179,13 +208,14 @@ class CheckNewAnnouncementsUseCase @Inject constructor(
             return Result.Success(emptyList())
         }
 
-        val announcementResult = announcementRepository.fetchAnnouncements(
-            page = 1,
-            perPage = 20,
-            sortType = SortType.DESC,
-            tagIds = subscribedTagIds,
-            updatedAfter = lastNotifiedTime
-        )
+        val announcementResult =
+            announcementRepository.fetchAnnouncements(
+                page = 1,
+                perPage = 20,
+                sortType = SortType.DESC,
+                tagIds = subscribedTagIds,
+                updatedAfter = lastNotifiedTime,
+            )
 
         when (announcementResult) {
             is Result.Success -> {

@@ -1,6 +1,5 @@
 package com.kastik.apps.core.network
 
-
 import com.kastik.apps.core.network.datasource.AnnouncementRemoteDataSourceImplTest
 import com.kastik.apps.core.network.datasource.AuthenticationRemoteDataSourceImplTest
 import com.kastik.apps.core.network.datasource.AuthorRemoteDataSourceImplTest
@@ -12,7 +11,6 @@ import com.kastik.apps.core.network.serializers.IntToSortTypeSerializerTest
 import com.kastik.apps.core.network.serializers.StringToInstantSerializerTest
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
-
 
 @RunWith(Suite::class)
 @Suite.SuiteClasses(
@@ -26,5 +24,4 @@ import org.junit.runners.Suite
     IntToBooleanSerializerTest::class,
     StringToInstantSerializerTest::class,
 )
-
 class TestNetworkModule

@@ -1,6 +1,5 @@
 package com.kastik.apps.core.network.interceptor
 
-
 class FakeTokenManager : TokenManager {
     private var token: String? = null
 
@@ -13,5 +12,4 @@ class FakeTokenManager : TokenManager {
     override suspend fun tokenExpired() {
         token = null
     }
-
 }

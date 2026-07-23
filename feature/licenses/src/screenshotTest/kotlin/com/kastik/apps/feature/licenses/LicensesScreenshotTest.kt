@@ -12,6 +12,4 @@ class LicensesScreenshotTest {
     fun LicensesScreenTest() {
         LicensesScreenPreview()
     }
-
-
 }

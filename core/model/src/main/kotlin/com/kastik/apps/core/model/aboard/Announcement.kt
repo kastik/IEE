@@ -1,8 +1,8 @@
 package com.kastik.apps.core.model.aboard
 
+import kotlin.time.Instant
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlin.time.Instant
 
 data class Announcement(
     val id: Int,

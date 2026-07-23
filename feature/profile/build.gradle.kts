@@ -10,7 +10,6 @@ configure<LibraryExtension> {
     namespace = "com.kastik.apps.feature.profile"
 }
 
-
 dependencies {
     implementation(project(":core:analytics"))
     implementation(project(":core:common"))
@@ -18,5 +17,4 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:ui"))
     implementation(project(":core:designsystem"))
-
 }

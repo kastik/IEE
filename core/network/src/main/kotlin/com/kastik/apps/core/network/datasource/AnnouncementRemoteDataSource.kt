@@ -6,9 +6,9 @@ import com.kastik.apps.core.network.di.AuthenticatorAboardClient
 import com.kastik.apps.core.network.model.common.PagedResponseDto
 import com.kastik.apps.core.network.model.common.SingleResponseDto
 import com.kastik.apps.core.network.model.response.AnnouncementDto
-import kotlinx.datetime.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.datetime.LocalDateTime
 
 interface AnnouncementRemoteDataSource {
     suspend fun fetchPagedAnnouncements(
@@ -26,9 +26,10 @@ interface AnnouncementRemoteDataSource {
 }
 
 @Singleton
-internal class AnnouncementRemoteDataSourceImpl @Inject constructor(
-    @AuthenticatorAboardClient private val aboardApiClient: AboardApiClient
-) : AnnouncementRemoteDataSource {
+internal class AnnouncementRemoteDataSourceImpl
+@Inject
+constructor(@AuthenticatorAboardClient private val aboardApiClient: AboardApiClient) :
+    AnnouncementRemoteDataSource {
     override suspend fun fetchPagedAnnouncements(
         page: Int,
         perPage: Int,
@@ -37,19 +38,19 @@ internal class AnnouncementRemoteDataSourceImpl @Inject constructor(
         body: String?,
         tagIds: List<Int>?,
         authorIds: List<Int>?,
-        updatedAfter: LocalDateTime?
-    ): PagedResponseDto<AnnouncementDto> = aboardApiClient.getAnnouncements(
-        page = page,
-        perPage = perPage,
-        sortType = sortBy,
-        title = title?.ifEmpty { null },
-        body = body?.ifEmpty { null },
-        tagIds = tagIds,
-        authorIds = authorIds,
-        updatedAfter = updatedAfter
-    )
+        updatedAfter: LocalDateTime?,
+    ): PagedResponseDto<AnnouncementDto> =
+        aboardApiClient.getAnnouncements(
+            page = page,
+            perPage = perPage,
+            sortType = sortBy,
+            title = title?.ifEmpty { null },
+            body = body?.ifEmpty { null },
+            tagIds = tagIds,
+            authorIds = authorIds,
+            updatedAfter = updatedAfter,
+        )
 
     override suspend fun fetchAnnouncementWithId(id: Int): SingleResponseDto<AnnouncementDto> =
         aboardApiClient.getAnnouncement(id)
-
 }
