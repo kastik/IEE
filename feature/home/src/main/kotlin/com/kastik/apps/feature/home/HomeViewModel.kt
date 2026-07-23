@@ -18,8 +18,8 @@ import com.kastik.apps.core.domain.usecases.SetAnnouncementCheckTimeUseCase
 import com.kastik.apps.core.domain.usecases.SetHasSkippedSignInUseCase
 import com.kastik.apps.core.domain.usecases.ShowSignInNoticeRationaleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map

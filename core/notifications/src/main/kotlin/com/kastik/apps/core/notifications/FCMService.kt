@@ -10,8 +10,7 @@ internal class FCMService : FirebaseMessagingService() {
 
     @Inject lateinit var notifier: Notifier
 
-    @Deprecated("Deprecated in Java")
-    override fun onNewToken(token: String) = Unit
+    @Deprecated("Deprecated in Java") override fun onNewToken(token: String) = Unit
 
     override fun onMessageReceived(message: RemoteMessage) {
         if (message.data["type"] == "fcm_campaign") {
