@@ -26,10 +26,10 @@ configure<ApplicationExtension> {
     productFlavors {
         maybeCreate(BuildFlavors.PRODUCTION).apply {
             dimension = BuildDimensions.ENVIRONMENT
+            isDefault = true
         }
         maybeCreate(BuildFlavors.LOCAL).apply {
             dimension = BuildDimensions.ENVIRONMENT
-            isDefault = true
             applicationIdSuffix = ".local"
             versionNameSuffix = "-local"
         }

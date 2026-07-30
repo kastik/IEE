@@ -2,8 +2,6 @@ package com.kastik.apps.feature.announcement
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -12,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -162,17 +161,17 @@ private fun AnnouncementScreenSuccess(
     ) {
         Spacer(Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
 
-        AnimatedVisibility(
-            visible = isSyncing && syncError == null,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                IeeLinearWavyProgressIndicator(modifier = Modifier.fillMaxWidth())
+        AnimatedContent(
+            targetState = isSyncing && syncError == null,
+            contentAlignment = Alignment.Center,
+            contentKey = { it },
+            modifier = Modifier.fillMaxWidth().height(10.dp),
+        ) { state ->
+            when (state) {
+                true -> {
+                    IeeLinearWavyProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
+                false -> Unit
             }
         }
 
