@@ -1,6 +1,7 @@
 package com.kastik.apps.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -22,9 +23,10 @@ import com.kastik.apps.feature.settings.navigation.navigateToSettings
 import com.kastik.apps.feature.settings.navigation.settingsScreen
 
 @Composable
-fun IeeNavHost(hasFinishedOnboarding: Boolean) {
-    val navController = rememberNavController()
-
+fun IeeNavHost(
+    hasFinishedOnboarding: Boolean,
+    navController: NavHostController = rememberNavController(),
+) {
     NavHost(
         navController = navController,
         startDestination = if (!hasFinishedOnboarding) OnboardRoute else HomeRoute(),

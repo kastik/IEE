@@ -104,11 +104,18 @@ dependencies {
 
     baselineProfile(project(":benchmark"))
     implementation(libs.androidx.profileinstaller)
+
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.splashscreen)
+    implementation(libs.androidx.navigation.compose)
+
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.navigation.testing)
 }
 
 baselineProfile {
