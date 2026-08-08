@@ -40,9 +40,6 @@ class AndroidBenchmarkConventionPlugin : Plugin<Project> {
                 targetCompatibility = AppConfig.targetCompatibility
             }
 
-            dependencies {
-                add("implementation", libs.findLibrary("androidx-core-ktx").get())
-            }
             configureKotlinJvm()
         }
     }
