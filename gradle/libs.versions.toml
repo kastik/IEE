@@ -3,7 +3,7 @@
 agp = "9.2.1"
 ksp = "2.3.9"
 
-kotlin = "2.4.0"
+kotlin = "2.4.10"
 coreKtx = "1.19.0"
 coroutines = "1.11.0"
 kotlinxSerialization = "1.11.0"
@@ -13,7 +13,7 @@ kotlinxDatetime = "0.8.0"
 okhttp = "5.4.0"
 retrofit = "3.0.0"
 
-hiltAndroid = "2.60"
+hiltAndroid = "2.60.1"
 hiltCompiler = "1.4.0"
 
 activity = "1.13.0"
@@ -21,14 +21,14 @@ lifecycle = "2.11.0"
 
 workRuntimeKtx = "2.11.2"
 
-material3 = "1.5.0-alpha23"
+material3 = "1.5.0-alpha25"
 composeBom = "2026.06.01"
 activityCompose = "1.13.0"
-navigationCompose = "2.9.8"
+navigation = "2.9.8"
 hiltNavigationCompose = "1.4.0"
 accompanistPermissions = "0.37.3"
 splashScreen = "1.2.0"
-composeStabilityAnalyzer = "0.10.0"
+composeStabilityAnalyzer = "0.12.0"
 
 
 
@@ -44,22 +44,22 @@ datastore = "1.2.1"
 
 androidx-junit = "1.3.0"
 androidx-test-core = "1.7.0"
-junitPlatformSuiteEngine = "6.1.1"
+junitPlatformSuiteEngine = "6.1.3"
 leakCanary = "2.14"
 
 mockk = "1.14.11"
 robolectric = "4.16.1"
 espressoCore = "3.7.0"
 
-screenshot = "0.0.1-alpha15"
+screenshot = "0.0.1-alpha16"
 uiautomator = "2.4.0"
 profileinstaller = "1.4.1"
-androidx-macro-benchmark = "1.5.0-alpha07"
+androidx-macro-benchmark = "1.5.0-beta01"
 
 
 
 gms = "4.5.0"
-firebase-bom = "34.15.0"
+firebase-bom = "34.17.0"
 crashlyticsGradle = "3.0.7"
 performanceGradle = "2.0.2"
 
@@ -69,10 +69,10 @@ appcompat = "1.7.1"
 material = "1.14.0"
 
 coilCompose = "3.5.0"
-aboutLibraries = "15.0.3"
+aboutLibraries = "15.0.4"
 
 
-spotless = "8.8.0"
+spotless = "8.9.0"
 
 
 [libraries]
@@ -184,7 +184,11 @@ androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigation" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }

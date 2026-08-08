@@ -12,7 +12,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
             apply(plugin = "com.kastik.library.compose")
-            apply(plugin = "com.android.compose.screenshot")
             apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
             val libs = project.libs
 
@@ -31,20 +30,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 )
                 add("implementation", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
 
-                add(
-                    "screenshotTestImplementation",
-                    libs.findLibrary("screenshot-validation-api").get()
-                )
-                add(
-                    "screenshotTestImplementation",
-                    libs.findLibrary("androidx-compose-ui-tooling").get()
-                )
             }
-
-            extensions.configure<LibraryExtension> {
-                experimentalProperties["android.experimental.enableScreenshotTest"] = true
-            }
-
 
         }
     }

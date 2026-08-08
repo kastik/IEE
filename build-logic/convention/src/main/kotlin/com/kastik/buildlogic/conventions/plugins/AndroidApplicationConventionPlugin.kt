@@ -61,12 +61,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 }
             }
 
-            dependencies {
-                add("implementation", libs.findLibrary("androidx-core-ktx").get())
-                add("implementation", libs.findLibrary("androidx.activity").get())
-                add("implementation", libs.findLibrary("androidx-activity-compose").get())
-            }
-
             configureKotlinJvm()
         }
     }
