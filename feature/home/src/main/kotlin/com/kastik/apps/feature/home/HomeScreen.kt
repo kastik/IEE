@@ -250,7 +250,7 @@ private fun HomeScreen(
                     expandedAction = {
                         analytics.logButtonClick("fab_scroll_up")
                         scope.launch {
-                            searchScroll.scrollOffset = 0f
+                            searchScroll.scrollState.scrollOffset = 0f
                             homeFeedLazyListState.animateScrollToItem(0)
                         }
                     },
