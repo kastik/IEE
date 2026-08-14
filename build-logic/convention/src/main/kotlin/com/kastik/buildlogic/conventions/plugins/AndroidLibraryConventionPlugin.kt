@@ -12,10 +12,13 @@ import org.gradle.kotlin.dsl.dependencies
 class AndroidLibraryConventionPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
+
         with(project) {
+
             with(pluginManager) {
                 apply("com.android.library")
                 apply("com.kastik.spotless")
+                apply("com.kastik.detekt")
             }
 
             extensions.configure<LibraryExtension> {

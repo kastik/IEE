@@ -9,7 +9,9 @@ import org.gradle.kotlin.dsl.withType
 
 class AndroidLibraryTestingConventionPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+
         with(project) {
+
             plugins.withId("com.android.library") {
                 dependencies {
                     add("testImplementation", libs.findLibrary("kotlin-test").get())

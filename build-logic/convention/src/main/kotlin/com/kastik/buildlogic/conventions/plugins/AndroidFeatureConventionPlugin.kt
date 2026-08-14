@@ -10,10 +10,13 @@ import org.gradle.kotlin.dsl.dependencies
 
 class AndroidFeatureConventionPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+
         with(project) {
-            apply(plugin = "com.kastik.library.compose")
-            apply(plugin = "org.jetbrains.kotlin.plugin.serialization")
-            val libs = project.libs
+
+            with(pluginManager){
+                apply("com.kastik.library.compose")
+                apply("org.jetbrains.kotlin.plugin.serialization")
+            }
 
             dependencies {
                 add(

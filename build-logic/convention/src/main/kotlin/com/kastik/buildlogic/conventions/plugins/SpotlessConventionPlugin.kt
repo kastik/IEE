@@ -6,11 +6,14 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 class SpotlessConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
+    override fun apply(project: Project) {
+
+        with(project) {
+
             with(pluginManager) {
                 apply("com.diffplug.spotless")
             }
+
             configure<SpotlessExtension> {
                 java {
                     target("**/*.java")

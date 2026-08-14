@@ -5,21 +5,22 @@ import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.kastik.buildlogic.conventions.AppConfig
 import com.kastik.buildlogic.conventions.extensions.configureAndroidCompose
 import com.kastik.buildlogic.conventions.extensions.configureKotlinJvm
-import com.kastik.buildlogic.conventions.extensions.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
+    override fun apply(project: Project) {
+
+        with(project) {
+
             with(pluginManager) {
                 apply("com.android.application")
                 apply("com.kastik.spotless")
+                apply("com.kastik.detekt")
             }
 
             extensions.configure<ApplicationExtension> {
@@ -50,8 +51,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             val androidComponents = extensions.getByType<ApplicationAndroidComponentsExtension>()
 
             androidComponents.onVariants { variant ->
-                val projectName = target.rootProject.name.lowercase()
-                val moduleName = target.name.lowercase()
+                val projectName = project.rootProject.name.lowercase()
+                val moduleName = project.name.lowercase()
 
                 val appVersionName = variant.outputs.first().versionName.getOrElse("unknown")
                 val appVersionCode = variant.outputs.first().versionCode.getOrElse(0)
