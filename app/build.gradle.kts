@@ -35,16 +35,18 @@ configure<ApplicationExtension> {
         }
     }
 
-    val keystoreProperties =
-        Properties().apply {
-            val propsFile = rootProject.file("local.properties")
-            if (propsFile.exists()) load(FileInputStream(propsFile))
+    val keystoreProperties = Properties().apply {
+        val propsFile = File(rootDir, "local.properties")
+        if (propsFile.exists()) {
+            propsFile.inputStream().use { load(it) }
         }
+    }
 
     signingConfigs {
         create("release") {
             val getSecret = { key: String, env: String ->
-                (keystoreProperties[key] as? String) ?: System.getenv(env)
+                (keystoreProperties[key] as? String)
+                    ?: providers.environmentVariable(env).orNull
             }
 
             storeFile = file(getSecret("store.file", "RELEASE_STORE_FILE") ?: "release.jks")

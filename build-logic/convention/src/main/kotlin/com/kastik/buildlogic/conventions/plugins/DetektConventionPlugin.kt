@@ -24,8 +24,8 @@ class DetektConventionPlugin : Plugin<Project> {
                 ignoreFailures.set(false)
                 failOnSeverity.set(FailOnSeverity.Warning)
                 buildUponDefaultConfig.set(true)
-                basePath.set(rootProject.layout.projectDirectory)
-                config.setFrom("${rootProject.layout.projectDirectory}/detekt.yml")
+                basePath.set(rootDir)
+                config.setFrom(files("$rootDir/detekt.yml"))
             }
 
             tasks.withType<Detekt>().configureEach {

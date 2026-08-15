@@ -8,6 +8,7 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginExtension
+import java.io.File
 
 fun Project.configureAndroidCompose(
     extension: CommonExtension
@@ -16,10 +17,6 @@ fun Project.configureAndroidCompose(
     pluginManager.apply("com.android.compose.screenshot")
 
     val libs = project.libs
-
-    libs.findPlugin("stability-analyzer").ifPresent {
-        pluginManager.apply(it.get().pluginId)
-    }
 
     extension.apply {
         buildFeatures.compose = true
@@ -31,8 +28,8 @@ fun Project.configureAndroidCompose(
 
 
     extensions.configure<ComposeCompilerGradlePluginExtension> {
-        stabilityConfigurationFiles.addAll(
-            rootProject.layout.projectDirectory.file("stability_config.conf")
+        stabilityConfigurationFiles.add(
+            layout.projectDirectory.file(relativePath(File(rootDir, "stability_config.conf")))
         )
     }
 
