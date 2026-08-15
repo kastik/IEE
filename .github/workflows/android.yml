@@ -132,7 +132,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Screenshot Tests
-        run: ./gradlew :feature:auth:validateDebugScreenshotTest :feature:onboard:validateDebugScreenshotTest :feature:licenses:validateDebugScreenshotTest :feature:profile:validateDebugScreenshotTest :feature:settings:validateDebugScreenshotTest :feature:announcement:validateDebugScreenshotTest :feature:home:validateDebugScreenshotTest :feature:search:validateDebugScreenshotTest
+        run: ./gradlew -Dorg.gradle.isolated-projects=false :feature:auth:validateDebugScreenshotTest :feature:onboard:validateDebugScreenshotTest :feature:licenses:validateDebugScreenshotTest :feature:profile:validateDebugScreenshotTest :feature:settings:validateDebugScreenshotTest :feature:announcement:validateDebugScreenshotTest :feature:home:validateDebugScreenshotTest :feature:search:validateDebugScreenshotTest
 
   generate-profiles:
     needs: [ detekt, spotless, lint, unit-tests, screenshot-tests ]
