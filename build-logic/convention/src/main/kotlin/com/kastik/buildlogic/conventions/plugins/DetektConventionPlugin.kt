@@ -1,6 +1,5 @@
 package com.kastik.buildlogic.conventions.plugins
 
-import com.kastik.buildlogic.conventions.extensions.libs
 import dev.detekt.gradle.Detekt
 import dev.detekt.gradle.extensions.DetektExtension
 import dev.detekt.gradle.extensions.FailOnSeverity
@@ -24,7 +23,9 @@ class DetektConventionPlugin : Plugin<Project> {
                 autoCorrect.set(true)
                 ignoreFailures.set(false)
                 failOnSeverity.set(FailOnSeverity.Warning)
+                buildUponDefaultConfig.set(true)
                 basePath.set(rootProject.layout.projectDirectory)
+                config.setFrom("${rootProject.layout.projectDirectory}/detekt.yml")
             }
 
             tasks.withType<Detekt>().configureEach {
