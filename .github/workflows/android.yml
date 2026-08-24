@@ -32,7 +32,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Detekt Check
-        run: ./gradlew detekt
+        run: ./gradlew detektMain
 
   spotless:
     name: Spotless
