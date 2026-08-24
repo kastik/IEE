@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class NotificationsModule {
+internal interface NotificationsModule {
 
     companion object {
         @Provides
@@ -20,5 +20,5 @@ internal abstract class NotificationsModule {
         fun provideFirebaseInstance(): FirebaseMessaging = FirebaseMessaging.getInstance()
     }
 
-    @Binds @Singleton abstract fun bindNotifier(notifierImpl: NotifierImpl): Notifier
+    @Binds @Singleton fun bindNotifier(notifierImpl: NotifierImpl): Notifier
 }

@@ -127,22 +127,29 @@ class AnnouncementRemoteMediator(
 
     private suspend fun insertAnnouncement(dto: PagedResponseDto<AnnouncementDto>) {
 
-        val mappedAuthors = dto.data.map { it.author.toAuthorEntity() }
+        val mappedAuthors =
+            dto.data.map { announcementsDto -> announcementsDto.author.toAuthorEntity() }
         authorLocalDataSource.insertOrIgnoreAuthors(mappedAuthors)
 
-        val mappedAnnouncements = dto.data.map { it.toAnnouncementEntity() }
+        val mappedAnnouncements =
+            dto.data.map { announcementsDto -> announcementsDto.toAnnouncementEntity() }
         announcementLocalDataSource.upsertAnnouncements(mappedAnnouncements)
 
-        val mappedBodies = dto.data.map { it.extractImages(base64ImageExtractor).toBodyEntity() }
+        val mappedBodies = dto.data.map { announcementsDto ->
+            announcementsDto.extractImages(base64ImageExtractor).toBodyEntity()
+        }
         announcementLocalDataSource.upsertBodies(mappedBodies)
 
-        val mappedAttachments = dto.data.flatMap { it.attachments.map { it.toAttachmentEntity() } }
+        val mappedAttachments =
+            dto.data.flatMap { announcementsDto -> announcementsDto.attachments.map { it.toAttachmentEntity() } }
         announcementLocalDataSource.upsertAttachments(mappedAttachments)
 
-        val mappedTags = dto.data.flatMap { it.tags.map { it.toTagEntity() } }
+        val mappedTags =
+            dto.data.flatMap { announcementsDto -> announcementsDto.tags.map { tags -> tags.toTagEntity() } }
         tagsLocalDataSource.upsertTags(mappedTags)
 
-        val mappedTagCrossRefs = dto.data.flatMap { it.toTagCrossRefs() }
+        val mappedTagCrossRefs =
+            dto.data.flatMap { announcementsDto -> announcementsDto.toTagCrossRefs() }
         announcementLocalDataSource.upsertTagCrossRefs(mappedTagCrossRefs)
     }
 

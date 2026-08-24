@@ -9,5 +9,5 @@ fun Timestamp.toInstant() =
         this.nanos,
     )
 
-fun Instant.toTimestamp() =
+fun Instant.toTimestamp(): Timestamp? =
     Timestamp.newBuilder().setSeconds(this.epochSeconds).setNanos(this.nanosecondsOfSecond).build()

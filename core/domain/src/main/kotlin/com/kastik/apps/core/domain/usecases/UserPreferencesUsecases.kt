@@ -1,5 +1,6 @@
 package com.kastik.apps.core.domain.usecases
 
+import com.kastik.apps.core.domain.constants.MINIMUM_EVENTS_FOR_REVIEW
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.NotificationRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
@@ -144,7 +145,7 @@ class ShouldShowReviewDialogUseCase
 constructor(private val userPreferencesRepository: UserPreferencesRepository) {
     operator fun invoke(): Flow<Boolean> =
         userPreferencesRepository.userPreferences.map {
-            it.importantEventCount > 20
+            it.importantEventCount > MINIMUM_EVENTS_FOR_REVIEW
         }
 }
 

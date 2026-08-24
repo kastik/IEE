@@ -40,7 +40,7 @@ constructor(
     override suspend fun doWork(): Result {
 
         val tagIdsArray = inputData.getIntArray(KEY_TAG_IDS)
-        val tagIdsList = tagIdsArray?.toList() ?: emptyList()
+        val tagIdsList = tagIdsArray?.toList().orEmpty()
 
         return subscribeToTagsUseCase(tagIdsList)
             .fold(

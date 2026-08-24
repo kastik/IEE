@@ -28,7 +28,7 @@ constructor(
 ) : AuthorRepository {
 
     override val authors: Flow<List<Author>> =
-        authorLocalDataSource.getAuthors().map { it.map { it.toAuthor() } }
+        authorLocalDataSource.getAuthors().map {authors-> authors.map { it.toAuthor() } }
 
     override suspend fun syncAuthors() =
         withContext(ioDispatcher) {

@@ -1,27 +1,27 @@
 package com.kastik.apps.core.model.sync
 
-sealed class SyncState {
-    object Idle : SyncState()
+sealed interface SyncStatus {
+    object Idle : SyncStatus
 
-    object Syncing : SyncState()
+    object Syncing : SyncStatus
 
-    object Enqueued : SyncState()
+    object Enqueued : SyncStatus
 
-    object Blocked : SyncState()
+    object Blocked : SyncStatus
 
-    object Success : SyncState()
+    object Success : SyncStatus
 
-    data object Error : SyncState()
+    data object Error : SyncStatus
 }
 
-val SyncState.isActive: Boolean
+val SyncStatus.isActive: Boolean
     get() =
         when (this) {
-            SyncState.Syncing,
-            SyncState.Enqueued,
-            SyncState.Blocked -> true
+            SyncStatus.Syncing,
+            SyncStatus.Enqueued,
+            SyncStatus.Blocked -> true
 
-            SyncState.Error,
-            SyncState.Idle,
-            SyncState.Success -> false
+            SyncStatus.Error,
+            SyncStatus.Idle,
+            SyncStatus.Success -> false
         }

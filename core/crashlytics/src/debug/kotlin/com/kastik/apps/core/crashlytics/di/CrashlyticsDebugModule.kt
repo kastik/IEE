@@ -10,6 +10,6 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class CrashlyticsModule {
-    @Binds @Singleton abstract fun bindCrashlytics(impl: CrashlyticsDebugImpl): Crashlytics
+internal interface CrashlyticsDebugModule {
+    @Binds @Singleton fun bindCrashlytics(impl: CrashlyticsDebugImpl): Crashlytics
 }

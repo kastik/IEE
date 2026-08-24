@@ -1,6 +1,7 @@
 package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.common.extensions.removeAccents
+import com.kastik.apps.core.domain.constants.MAX_QUICK_RESULTS
 import com.kastik.apps.core.domain.repository.AuthorRepository
 import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
@@ -23,7 +24,7 @@ constructor(private val authorRepository: AuthorRepository) {
                 .filter {
                     it.name.removeAccents().contains(query.removeAccents(), ignoreCase = true)
                 }
-                .take(5)
+                .take(MAX_QUICK_RESULTS)
                 .toImmutableList()
         }
 }

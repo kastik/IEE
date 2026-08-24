@@ -1,6 +1,6 @@
 package com.kastik.apps.core.domain.service
 
-import com.kastik.apps.core.model.sync.SyncState
+import com.kastik.apps.core.model.sync.SyncStatus
 import kotlinx.coroutines.flow.Flow
 
 interface WorkScheduler {
@@ -12,10 +12,10 @@ interface WorkScheduler {
 
     fun scheduleAnnouncementAlerts(intervalMinutes: Int)
 
-    val startupSyncState: Flow<SyncState>
-    val subscribeToTagsSyncState: Flow<SyncState>
-    val announcementSyncState: Flow<SyncState>
-    val announcementAlertsSyncState: Flow<SyncState>
+    val startupSyncStatus: Flow<SyncStatus>
+    val subscribeToTagsSyncStatus: Flow<SyncStatus>
+    val announcementSyncStatus: Flow<SyncStatus>
+    val announcementAlertsSyncStatus: Flow<SyncStatus>
 
     fun cancelStartupSync()
 

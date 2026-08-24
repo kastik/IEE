@@ -5,7 +5,7 @@ import java.lang.reflect.Type
 import retrofit2.Converter
 import retrofit2.Retrofit
 
-class SortTypeQueryConverterFactory : Converter.Factory() {
+class SortTypeConverterFactory : Converter.Factory() {
     override fun stringConverter(
         type: Type,
         annotations: Array<out Annotation>,

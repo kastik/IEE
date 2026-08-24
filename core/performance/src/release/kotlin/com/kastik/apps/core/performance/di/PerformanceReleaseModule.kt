@@ -10,11 +10,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class PerformanceReleaseModule {
+internal interface PerformanceReleaseModule {
 
     @Binds
     @Singleton
-    abstract fun bindPerformanceReleaseImpl(
+    fun bindPerformanceReleaseImpl(
         performanceReleaseImpl: PerformanceReleaseImpl
     ): Performance
 }

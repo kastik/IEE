@@ -98,9 +98,7 @@ constructor(
                 tagsRemoteDataSource.subscribeToTags(tagIds)
 
                 val syncStatus = syncSubscribedTags()
-                if (syncStatus is Result.Error) {
-                    throw Exception("Failed to sync tags after subscribing")
-                }
+                return@withContext syncStatus
             }
         }
 }

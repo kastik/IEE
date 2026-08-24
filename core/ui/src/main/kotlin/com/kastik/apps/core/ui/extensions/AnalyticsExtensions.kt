@@ -7,11 +7,11 @@ import com.kastik.apps.core.analytics.AnalyticsEvent.Param
 fun Analytics.logAnnouncementShared(announcementId: Int) =
     logEvent(
         AnalyticsEvent(
-            type = types.SHARE,
+            type = types.share,
             extras =
                 listOf(
-                    Param(paramKeys.ITEM_ID, announcementId.toString()),
-                    Param(paramKeys.CONTENT_TYPE, "announcement"),
+                    Param(paramKeys.itemId, announcementId.toString()),
+                    Param(paramKeys.contentType, "announcement"),
                 ),
         )
     )
@@ -19,11 +19,11 @@ fun Analytics.logAnnouncementShared(announcementId: Int) =
 private fun Analytics.logPreferenceChanged(preferenceName: String, value: String) =
     logEvent(
         AnalyticsEvent(
-            type = types.PREFERENCE_UPDATED,
+            type = types.preferencesUpdated,
             extras =
                 listOf(
-                    Param(paramKeys.ITEM_ID, preferenceName),
-                    Param(paramKeys.PREFERENCE_VALUE, value),
+                    Param(paramKeys.itemId, preferenceName),
+                    Param(paramKeys.preferenceValue, value),
                 ),
         )
     )
@@ -52,19 +52,19 @@ fun Analytics.logDynamicColorPreferenceChanged(useDynamicColor: Boolean) =
 fun Analytics.logButtonClick(buttonId: String) =
     logEvent(
         AnalyticsEvent(
-            type = types.BUTTON_CLICK,
-            extras = listOf(Param(paramKeys.ITEM_ID, buttonId)),
+            type = types.buttonClick,
+            extras = listOf(Param(paramKeys.itemId, buttonId)),
         )
     )
 
 fun Analytics.logNavigationAction(action: String, destination: String) =
     logEvent(
         AnalyticsEvent(
-            type = types.SELECT_CONTENT,
+            type = types.selectContent,
             extras =
                 listOf(
-                    Param(paramKeys.CONTENT_TYPE, "navigation_$action"),
-                    Param(paramKeys.ITEM_ID, destination),
+                    Param(paramKeys.contentType, "navigation_$action"),
+                    Param(paramKeys.itemId, destination),
                 ),
         )
     )
@@ -77,26 +77,26 @@ fun Analytics.logContentLoadState(
 ) {
     val params =
         mutableListOf(
-            Param(paramKeys.CONTENT_TYPE, contentType),
-            Param(paramKeys.ITEM_ID, itemId),
-            Param(paramKeys.STATUS, status),
+            Param(paramKeys.contentType, contentType),
+            Param(paramKeys.itemId, itemId),
+            Param(paramKeys.status, status),
         )
 
     if (errorMessage != null) {
-        params.add(Param(paramKeys.ERROR_MESSAGE, errorMessage))
+        params.add(Param(paramKeys.errorMessage, errorMessage))
     }
 
-    logEvent(AnalyticsEvent(type = types.CONTENT_LOAD_STATUS, extras = params))
+    logEvent(AnalyticsEvent(type = types.contentLoadStatus, extras = params))
 }
 
 fun Analytics.logItemSelection(itemId: String, category: String) =
     logEvent(
         AnalyticsEvent(
-            type = types.SELECT_ITEM,
+            type = types.selectItem,
             extras =
                 listOf(
-                    Param(paramKeys.ITEM_ID, itemId),
-                    Param(paramKeys.ITEM_CATEGORY, category),
+                    Param(paramKeys.itemId, itemId),
+                    Param(paramKeys.itemCategory, category),
                 ),
         )
     )
@@ -104,26 +104,26 @@ fun Analytics.logItemSelection(itemId: String, category: String) =
 fun Analytics.logSheetOpened(sheetName: String) =
     logEvent(
         AnalyticsEvent(
-            type = types.BOTTOM_SHEET_OPENED,
-            extras = listOf(Param(paramKeys.ITEM_ID, sheetName)),
+            type = types.bottomSheetOpened,
+            extras = listOf(Param(paramKeys.itemId, sheetName)),
         )
     )
 
 fun Analytics.logFiltersApplied(filterCategory: String, appliedIds: List<Int>) =
     logEvent(
         AnalyticsEvent(
-            type = types.FILTERS_APPLIED,
+            type = types.filtersApplied,
             extras =
                 listOf(
-                    Param(paramKeys.ITEM_CATEGORY, filterCategory),
-                    Param(paramKeys.ITEM_ID, appliedIds.joinToString(",")),
+                    Param(paramKeys.itemCategory, filterCategory),
+                    Param(paramKeys.itemId, appliedIds.joinToString(",")),
                 ),
         )
     )
 
-fun Analytics.logUserLogin() = logEvent(AnalyticsEvent(type = types.LOGIN))
+fun Analytics.logUserLogin() = logEvent(AnalyticsEvent(type = types.login))
 
-fun Analytics.logUserLogout() = logEvent(AnalyticsEvent(type = types.LOGOUT))
+fun Analytics.logUserLogout() = logEvent(AnalyticsEvent(type = types.logout))
 
 fun Analytics.logSearch(
     query: String = "",
@@ -133,18 +133,18 @@ fun Analytics.logSearch(
     val params = mutableListOf<Param>()
 
     if (query.isNotEmpty()) {
-        params.add(Param(paramKeys.SEARCH_TERM, query))
+        params.add(Param(paramKeys.searchTerm, query))
     }
     if (authorIds.isNotEmpty()) {
-        params.add(Param(paramKeys.AUTHOR_FILTERS, authorIds.joinToString(",")))
+        params.add(Param(paramKeys.authorFilters, authorIds.joinToString(",")))
     }
     if (tagIds.isNotEmpty()) {
-        params.add(Param(paramKeys.TAG_FILTERS, tagIds.joinToString(",")))
+        params.add(Param(paramKeys.tagFilters, tagIds.joinToString(",")))
     }
 
     logEvent(
         AnalyticsEvent(
-            type = types.SEARCH,
+            type = types.search,
             extras = params,
         )
     )

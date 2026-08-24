@@ -20,7 +20,7 @@ class DetektConventionPlugin : Plugin<Project> {
 
             configure<DetektExtension> {
                 parallel.set(true)
-                autoCorrect.set(true)
+                autoCorrect.set(false)
                 ignoreFailures.set(false)
                 failOnSeverity.set(FailOnSeverity.Warning)
                 buildUponDefaultConfig.set(true)

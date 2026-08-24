@@ -21,8 +21,8 @@ import com.kastik.apps.core.datastore.datasource.ProfileLocalDataSourceImpl
 import com.kastik.apps.core.datastore.datasource.TagsLocalDataSource
 import com.kastik.apps.core.datastore.datasource.TagsLocalDataSourceImpl
 import com.kastik.apps.core.datastore.migrations.MigrateInterval
-import com.kastik.apps.core.datastore.migrations.RemoveExpirationKey
-import com.kastik.apps.core.datastore.migrations.RemoveRefreshKey
+import com.kastik.apps.core.datastore.migrations.MigrateExpirationKey
+import com.kastik.apps.core.datastore.migrations.MigrateRefreshKey
 import com.kastik.apps.core.datastore.proto.OnboardStageProto
 import com.kastik.apps.core.datastore.proto.ProfileProto
 import com.kastik.apps.core.datastore.proto.SubscribableTagsProto
@@ -43,33 +43,33 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class DataStoreModule {
+internal interface DatastoreModule {
 
     @Binds
     @Singleton
-    abstract fun bindAuthenticationLocalDataSource(
+    fun bindAuthenticationLocalDataSource(
         impl: AuthenticationLocalDataSourceImpl
     ): AuthenticationLocalDataSource
 
     @Binds
     @Singleton
-    abstract fun bindUserPreferencesLocalDataSource(
+    fun bindUserPreferencesLocalDataSource(
         impl: PreferencesLocalDataSourceImpl
     ): PreferencesLocalDataSource
 
     @Binds
     @Singleton
-    abstract fun bindUserProfileLocalDataSource(
+    fun bindUserProfileLocalDataSource(
         impl: ProfileLocalDataSourceImpl
     ): ProfileLocalDataSource
 
     @Binds
     @Singleton
-    abstract fun bindSubscribableTagsDataSource(impl: TagsLocalDataSourceImpl): TagsLocalDataSource
+    fun bindSubscribableTagsDataSource(impl: TagsLocalDataSourceImpl): TagsLocalDataSource
 
     @Binds
     @Singleton
-    abstract fun bindOnboardLocalDatasource(
+    fun bindOnboardLocalDatasource(
         impl: OnboardLocalDatasourceImpl
     ): OnboardLocalDatasource
 
@@ -90,8 +90,8 @@ internal abstract class DataStoreModule {
                     },
                 migrations =
                     listOf(
-                        RemoveExpirationKey,
-                        RemoveRefreshKey,
+                        MigrateExpirationKey,
+                        MigrateRefreshKey,
                     ),
             )
 

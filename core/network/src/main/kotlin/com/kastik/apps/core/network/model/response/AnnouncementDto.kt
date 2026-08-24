@@ -1,6 +1,6 @@
 package com.kastik.apps.core.network.model.response
 
-import com.kastik.apps.core.network.serializers.IntAsBooleanSerializer
+import com.kastik.apps.core.network.serializers.IntToBooleanSerializer
 import com.kastik.apps.core.network.serializers.StringToInstantSerializer
 import kotlin.time.Instant
 import kotlinx.serialization.SerialName
@@ -18,7 +18,7 @@ data class AnnouncementDto(
     @Serializable(with = StringToInstantSerializer::class)
     @SerialName("updated_at")
     val updatedAt: Instant,
-    @Serializable(with = IntAsBooleanSerializer::class)
+    @Serializable(with = IntToBooleanSerializer::class)
     @SerialName("is_pinned")
     val isPinned: Boolean,
     @SerialName("pinned_until") val pinnedUntil: String? = null,

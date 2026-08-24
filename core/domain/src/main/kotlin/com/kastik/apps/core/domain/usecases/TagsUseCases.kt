@@ -1,6 +1,7 @@
 package com.kastik.apps.core.domain.usecases
 
 import com.kastik.apps.core.common.extensions.removeAccents
+import com.kastik.apps.core.domain.constants.MAX_QUICK_RESULTS
 import com.kastik.apps.core.domain.repository.AuthenticationRepository
 import com.kastik.apps.core.domain.repository.TagsRepository
 import com.kastik.apps.core.domain.repository.UserPreferencesRepository
@@ -81,7 +82,7 @@ constructor(
                     (isSignedIn || it.isPublic) &&
                         it.title.removeAccents().contains(normalizedQuery, ignoreCase = true)
                 }
-                .take(5)
+                .take(MAX_QUICK_RESULTS)
                 .toImmutableList()
         }
 }

@@ -11,6 +11,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 import retrofit2.HttpException
+import java.net.HttpURLConnection
 
 @Singleton
 class AboardAuthenticator
@@ -39,7 +40,7 @@ constructor(
                     tokenManager.updateToken(newToken.accessToken)
                     return@runBlocking buildRequest(response.request, newToken.accessToken)
                 } catch (e: HttpException) {
-                    if (e.code() == 401) tokenManager.tokenExpired()
+                    if (e.code() == HttpURLConnection.HTTP_UNAUTHORIZED) tokenManager.tokenExpired()
                     crashlytics.recordException(e)
                     return@runBlocking null
                 } catch (e: Exception) {

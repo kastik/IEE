@@ -12,9 +12,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class CrashlyticsReleaseModule {
+internal interface CrashlyticsReleaseModule {
 
-    @Binds @Singleton abstract fun bindCrashlytics(impl: CrashlyticsReleaseImpl): Crashlytics
+    @Binds @Singleton fun bindCrashlytics(impl: CrashlyticsReleaseImpl): Crashlytics
 
     companion object {
 

@@ -10,7 +10,7 @@ import com.kastik.apps.core.domain.usecases.GetSubscribableTagsUseCase
 import com.kastik.apps.core.domain.usecases.GetSubscriptionsUseCase
 import com.kastik.apps.core.domain.usecases.GetUserProfileUseCase
 import com.kastik.apps.core.domain.usecases.SignOutUseCase
-import com.kastik.apps.core.model.sync.SyncState
+import com.kastik.apps.core.model.sync.SyncStatus
 import com.kastik.apps.core.model.sync.isActive
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -42,7 +42,7 @@ constructor(
                 getSubscriptionsUseCase(),
                 getSubscribableTagsUseCase(),
                 _isSubscribeSheetVisible,
-                workScheduler.subscribeToTagsSyncState,
+                workScheduler.subscribeToTagsSyncStatus,
             ) {
                 isSignedIn,
                 profile,
@@ -93,13 +93,13 @@ constructor(
 }
 
 @StringRes
-fun SyncState.toSubscriptionSyncMessage(): Int? =
+fun SyncStatus.toSubscriptionSyncMessage(): Int? =
     when (this) {
-        SyncState.Enqueued -> R.string.sync_status_enqueued
-        SyncState.Blocked -> R.string.sync_status_blocked
-        SyncState.Error -> R.string.sync_status_error
+        SyncStatus.Enqueued -> R.string.sync_status_enqueued
+        SyncStatus.Blocked -> R.string.sync_status_blocked
+        SyncStatus.Error -> R.string.sync_status_error
 
-        SyncState.Idle,
-        SyncState.Syncing,
-        SyncState.Success -> null
+        SyncStatus.Idle,
+        SyncStatus.Syncing,
+        SyncStatus.Success -> null
     }

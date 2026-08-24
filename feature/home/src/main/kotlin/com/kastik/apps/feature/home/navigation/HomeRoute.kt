@@ -15,13 +15,6 @@ import com.kastik.apps.feature.home.HomeScreenRoute
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.serialization.Serializable
 
-@Keep
-@Serializable
-enum class HomeTab {
-    HOME,
-    FOR_YOU,
-}
-
 @Serializable data class HomeRoute(val initialTab: HomeTab? = null)
 
 fun NavController.navigateToHome(

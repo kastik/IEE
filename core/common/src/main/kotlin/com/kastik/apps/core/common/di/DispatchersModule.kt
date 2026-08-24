@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 
 @InstallIn(SingletonComponent::class)
 @Module
-internal object DispatchersModule {
+internal class DispatchersModule {
 
     @Provides
     @DefaultDispatcher

@@ -3,6 +3,7 @@ package com.kastik.apps.feature.settings
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -167,6 +168,7 @@ private fun SettingsScreenSuccess(
             val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             pInfo.versionName
         } catch (e: Exception) {
+            Log.e("SettingsScreenSuccess","Something went wrong getting packagename", e)
             "Unknown"
         }
     }
@@ -219,9 +221,9 @@ private fun SettingsScreenSuccess(
                                     SortType.ASC -> stringResource(R.string.sort_by_ascending_label)
                                 }
                             },
-                            onSelected = { sortType ->
-                                onSortTypeChange(sortType)
-                                analytics.logSortTypePreferenceChanged(sortType.name)
+                            onSelected = { newSortType ->
+                                onSortTypeChange(newSortType)
+                                analytics.logSortTypePreferenceChanged(newSortType.name)
                             },
                         )
                     }
@@ -313,9 +315,9 @@ private fun SettingsScreenSuccess(
                                     stringResource(R.string.search_in_both_label)
                             }
                         },
-                        onSelected = { searchScope ->
-                            onSearchScopeChange(searchScope)
-                            analytics.logSearchScopePreferenceChanged(searchScope.name)
+                        onSelected = { newSearchScope ->
+                            onSearchScopeChange(newSearchScope)
+                            analytics.logSearchScopePreferenceChanged(newSearchScope.name)
                         },
                     )
                 }
@@ -356,9 +358,9 @@ private fun SettingsScreenSuccess(
                                     Theme.DARK -> stringResource(R.string.theme_dark_label)
                                 }
                             },
-                            onSelected = { theme ->
-                                onThemeChange(theme)
-                                analytics.logThemePreferenceChanged(theme.name)
+                            onSelected = { newTheme ->
+                                onThemeChange(newTheme)
+                                analytics.logThemePreferenceChanged(newTheme.name)
                             },
                         )
                     }
@@ -512,9 +514,9 @@ private fun <T> SettingSegmentedButton(
 }
 
 @Composable
-private fun formatInterval(minutes: Int): String {
-    val hours = minutes / 60
-    val minutes = minutes % 60
+private fun formatInterval(totalMinutes: Int): String {
+    val hours = totalMinutes / 60
+    val minutes = totalMinutes % 60
     val hoursString = pluralStringResource(R.plurals.announcement_check_interval_hours, hours)
     val minutesString = stringResource(R.string.announcement_check_interval_minutes)
     return "$hours $hoursString, $minutes $minutesString"

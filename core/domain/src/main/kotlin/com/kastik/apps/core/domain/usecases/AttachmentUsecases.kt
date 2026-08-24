@@ -4,6 +4,7 @@ import com.kastik.apps.core.domain.repository.AnnouncementRepository
 import com.kastik.apps.core.domain.service.FileDownloader
 import javax.inject.Inject
 
+@Suppress("MatchingDeclarationName")
 class DownloadAttachmentUseCase
 @Inject
 constructor(

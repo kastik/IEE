@@ -11,7 +11,7 @@ import kotlinx.coroutines.SupervisorJob
 
 @InstallIn(SingletonComponent::class)
 @Module
-internal object ApplicationModule {
+internal class ApplicationModule {
     @Provides
     @Singleton
     @ApplicationScope

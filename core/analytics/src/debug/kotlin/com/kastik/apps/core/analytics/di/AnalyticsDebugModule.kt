@@ -14,15 +14,15 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class AnalyticsDebugModule {
+internal interface AnalyticsDebugModule {
 
     @Binds
     @Singleton
-    abstract fun bindEventTypes(impl: AnalyticsEventTypesDebugImpl): AnalyticsEventTypes
+    fun bindEventTypes(impl: AnalyticsEventTypesDebugImpl): AnalyticsEventTypes
 
     @Binds
     @Singleton
-    abstract fun bindParamKeys(impl: AnalyticsParamKeysDebugImpl): AnalyticsParamKeys
+    fun bindParamKeys(impl: AnalyticsParamKeysDebugImpl): AnalyticsParamKeys
 
-    @Binds @Singleton abstract fun bindAnalytics(impl: AnalyticsDebugImpl): Analytics
+    @Binds @Singleton fun bindAnalytics(impl: AnalyticsDebugImpl): Analytics
 }

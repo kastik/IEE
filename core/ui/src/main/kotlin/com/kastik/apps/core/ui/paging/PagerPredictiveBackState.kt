@@ -1,5 +1,6 @@
 package com.kastik.apps.core.ui.paging
 
+import android.util.Log
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -45,6 +46,7 @@ fun rememberPagerPredictiveBackState(
             backEventProgress = 0f
             onBack()
         } catch (e: CancellationException) {
+            Log.d("PredictiveBackHandler","Predictive Back Canceled",e)
             backEventProgress = 0f
         }
     }

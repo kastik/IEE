@@ -4,8 +4,8 @@ import com.kastik.apps.core.model.aboard.SortType
 import com.kastik.apps.core.model.user.SearchScope
 import com.kastik.apps.core.model.user.Theme
 
-internal sealed class SettingsUiState {
-    data object Loading : SettingsUiState()
+internal sealed interface SettingsUiState {
+    data object Loading : SettingsUiState
 
     data class Success(
         val theme: Theme,
@@ -18,5 +18,5 @@ internal sealed class SettingsUiState {
         val announcementCheckIntervalMinutes: Int,
         val isAnnouncementCheckIntervalAvailable: Boolean,
         val areNotificationsAllowed: Boolean,
-    ) : SettingsUiState()
+    ) : SettingsUiState
 }

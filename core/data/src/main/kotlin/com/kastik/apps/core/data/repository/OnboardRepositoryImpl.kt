@@ -17,7 +17,6 @@ internal class OnboardRepositoryImpl
 @Inject
 constructor(
     private val onboardLocalDatasource: OnboardLocalDatasource,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : OnboardRepository {
 
     override val hasFinishedOnboarding: Flow<Boolean> =

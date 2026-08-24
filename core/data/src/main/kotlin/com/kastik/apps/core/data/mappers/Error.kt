@@ -7,11 +7,13 @@ import android.database.sqlite.SQLiteFullException
 import androidx.datastore.core.CorruptionException
 import com.kastik.apps.core.model.error.LocalError
 import com.kastik.apps.core.model.error.NetworkError
+import com.kastik.apps.core.network.constants.SERVER_ERROR_RANGE
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import retrofit2.HttpException
+import java.net.HttpURLConnection
 
 fun Throwable.toLocalError(): LocalError {
     return when (this) {
@@ -37,8 +39,8 @@ fun Throwable.toNetworkError(): NetworkError {
 
         is HttpException -> {
             when (this.code()) {
-                401 -> NetworkError.Authentication
-                in 500..599 -> NetworkError.ServerError
+                HttpURLConnection.HTTP_UNAUTHORIZED -> NetworkError.Authentication
+                in SERVER_ERROR_RANGE -> NetworkError.ServerError
                 else -> NetworkError.Unknown
             }
         }

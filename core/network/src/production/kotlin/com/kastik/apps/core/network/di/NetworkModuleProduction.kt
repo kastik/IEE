@@ -1,8 +1,10 @@
 package com.kastik.apps.core.network.di
 
+import com.kastik.apps.core.network.constants.CONNECTION_TIMEOUT_SECONDS
+import com.kastik.apps.core.network.constants.READ_TIMEOUT_SECONDS
 import com.kastik.apps.core.network.interceptor.AboardAuthenticator
 import com.kastik.apps.core.network.interceptor.TokenInterceptor
-import com.kastik.apps.core.network.serializers.SortTypeQueryConverterFactory
+import com.kastik.apps.core.network.serializers.SortTypeConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +19,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModuleProduction {
+internal class NetworkModuleProduction {
 
     @Provides
     @Singleton
@@ -29,7 +31,7 @@ class NetworkModuleProduction {
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
             .baseUrl("https://aboard.iee.ihu.gr/api/")
-            .addConverterFactory(SortTypeQueryConverterFactory())
+            .addConverterFactory(SortTypeConverterFactory())
             .addConverterFactory(json.asConverterFactory(contentType))
             .client(client)
             .build()
@@ -58,8 +60,8 @@ class NetworkModuleProduction {
         aboardAuthenticator: AboardAuthenticator,
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .addInterceptor(tokenInterceptor)
             .authenticator(aboardAuthenticator)
             .build()
@@ -70,8 +72,8 @@ class NetworkModuleProduction {
     @BaseAboardOkHttp
     fun provideBaseAboardOkHttp(tokenInterceptor: TokenInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(CONNECTION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .addInterceptor(tokenInterceptor)
             .build()
     }

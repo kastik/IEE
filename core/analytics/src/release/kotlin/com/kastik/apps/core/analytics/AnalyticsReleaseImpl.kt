@@ -22,15 +22,15 @@ constructor(
     override fun logEvent(event: AnalyticsEvent) {
         analytics.logEvent(event.type) {
             event.extras.forEach { extra ->
-                val safeKey = extra.key.take(40)
+                val safeKey = extra.key.take(ANALYTICS_MAX_KEY_CHARACTERS)
                 when (val value = extra.value) {
-                    is String -> param(safeKey, value.take(100))
+                    is String -> param(safeKey, value.take(ANALYTICS_MAX_CHARACTERS))
                     is Long -> param(safeKey, value)
                     is Int -> param(safeKey, value.toLong())
                     is Double -> param(safeKey, value)
                     is Float -> param(safeKey, value.toDouble())
                     is Boolean -> param(safeKey, value.toString())
-                    else -> param(safeKey, value.toString().take(100))
+                    else -> param(safeKey, value.toString().take(ANALYTICS_MAX_CHARACTERS))
                 }
             }
         }

@@ -7,19 +7,21 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.kastik.apps.core.common.di.MainDispatcher
 import com.kastik.apps.core.domain.service.WorkScheduler
 import com.kastik.apps.core.domain.usecases.DownloadAttachmentUseCase
 import com.kastik.apps.core.domain.usecases.GetAnnouncementWithIdUseCase
 import com.kastik.apps.core.domain.usecases.IncreaseImportantEventCountUseCase
 import com.kastik.apps.core.domain.usecases.ResetImportantEventCountUseCase
 import com.kastik.apps.core.domain.usecases.ShouldShowReviewDialogUseCase
-import com.kastik.apps.core.model.sync.SyncState
+import com.kastik.apps.core.model.sync.SyncStatus
 import com.kastik.apps.core.model.sync.isActive
 import com.kastik.apps.feature.announcement.navigation.AnnouncementRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -41,6 +43,7 @@ constructor(
     private val downloadAttachmentUseCase: DownloadAttachmentUseCase,
     private val increaseImportantEventCountUseCase: IncreaseImportantEventCountUseCase,
     private val resetImportantEventCountUseCase: ResetImportantEventCountUseCase,
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val args = savedStateHandle.toRoute<AnnouncementRoute>()
 
@@ -53,7 +56,7 @@ constructor(
                     author = announcement.author,
                     tags = announcement.tags,
                     attachments = announcement.attachments,
-                    processedBodies = it.body.parseHtmlWithImages(),
+                    processedBodies = it.body.parseHtmlWithImages(mainDispatcher),
                 )
             }
         }
@@ -62,7 +65,7 @@ constructor(
         combine(
                 announcementDataFlow,
                 shouldShowReviewDialogUseCase(),
-                workScheduler.announcementSyncState,
+                workScheduler.announcementSyncStatus,
             ) { announcementData, shouldShowReviewDialog, syncState ->
                 when {
                     announcementData != null ->
@@ -73,7 +76,7 @@ constructor(
                             syncErrorMessageResId = syncState.toSyncMessageResId(),
                         )
 
-                    syncState is SyncState.Error -> AnnouncementUiState.Error
+                    syncState is SyncStatus.Error -> AnnouncementUiState.Error
                     else -> AnnouncementUiState.Loading
                 }
             }
@@ -109,20 +112,22 @@ constructor(
 }
 
 @StringRes
-internal fun SyncState.toSyncMessageResId(): Int? =
+internal fun SyncStatus.toSyncMessageResId(): Int? =
     when (this) {
-        SyncState.Enqueued -> R.string.sync_status_enqueued
-        SyncState.Blocked -> R.string.sync_status_blocked
-        SyncState.Error -> R.string.sync_status_error
+        SyncStatus.Enqueued -> R.string.sync_status_enqueued
+        SyncStatus.Blocked -> R.string.sync_status_blocked
+        SyncStatus.Error -> R.string.sync_status_error
 
-        SyncState.Idle,
-        SyncState.Syncing,
-        SyncState.Success -> null
+        SyncStatus.Idle,
+        SyncStatus.Syncing,
+        SyncStatus.Success -> null
     }
 
-private suspend fun String.parseHtmlWithImages(): ImmutableList<ProcessedBody> {
+private suspend fun String.parseHtmlWithImages(
+    dispatcher: CoroutineDispatcher
+): ImmutableList<ProcessedBody> {
     val imgRegex = """<img[^>]+src="([^">]+)"[^>]*>""".toRegex()
-    return withContext(Dispatchers.Default) {
+    return withContext(dispatcher) {
         val parts = mutableListOf<ProcessedBody>()
         var lastIndex = 0
 

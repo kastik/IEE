@@ -28,59 +28,59 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class DataModule {
+internal interface DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindAnnouncementRepository(
+    fun bindAnnouncementRepository(
         announcementRepositoryImpl: AnnouncementRepositoryImpl
     ): AnnouncementRepository
 
     @Binds
     @Singleton
-    abstract fun bindTagsRepository(tagsRepositoryImpl: TagsRepositoryImpl): TagsRepository
+    fun bindTagsRepository(tagsRepositoryImpl: TagsRepositoryImpl): TagsRepository
 
     @Binds
     @Singleton
-    abstract fun bindAuthorRepository(authorRepositoryImpl: AuthorRepositoryImpl): AuthorRepository
+    fun bindAuthorRepository(authorRepositoryImpl: AuthorRepositoryImpl): AuthorRepository
 
     @Binds
     @Singleton
-    abstract fun bindAuthenticationRepository(
+    fun bindAuthenticationRepository(
         authenticationRepositoryImpl: AuthenticationRepositoryImpl
     ): AuthenticationRepository
 
     @Binds
     @Singleton
-    abstract fun bindUserPreferencesRepository(
+    fun bindUserPreferencesRepository(
         userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
     ): UserPreferencesRepository
 
     @Binds
     @Singleton
-    abstract fun bindUserInfoRepository(
+    fun bindUserInfoRepository(
         profileRepositoryImpl: ProfileRepositoryImpl
     ): ProfileRepository
 
     @Binds
     @Singleton
-    abstract fun bindNotificationRepository(
+    fun bindNotificationRepository(
         notificationRepositoryImp: NotificationsRepositoryImpl
     ): NotificationRepository
 
     @Binds
     @Singleton
-    abstract fun bindOnboardRepository(
+    fun bindOnboardRepository(
         onboardRepositoryImpl: OnboardRepositoryImpl
     ): OnboardRepository
 
     @Binds
     @Singleton
-    abstract fun bindTokenProvider(tokenProvider: AboardTokenManagerImpl): TokenManager
+    fun bindTokenProvider(tokenProvider: AboardTokenManagerImpl): TokenManager
 
     @Binds
     @Singleton
-    abstract fun bindBase64ImageExtractor(
+    fun bindBase64ImageExtractor(
         imageExtractorImpl: Base64ImageExtractorImpl
     ): Base64ImageExtractor
 }

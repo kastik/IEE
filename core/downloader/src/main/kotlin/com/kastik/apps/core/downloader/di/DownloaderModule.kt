@@ -10,9 +10,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class DownloaderModule {
+internal interface DownloaderModule {
 
     @Binds
     @Singleton
-    abstract fun provideFileDownloader(fileDownloaderImpl: FileDownloaderImpl): FileDownloader
+    fun provideFileDownloader(fileDownloaderImpl: FileDownloaderImpl): FileDownloader
 }

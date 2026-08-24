@@ -188,7 +188,7 @@ fun OnboardSuccess(
                 userScrollEnabled = false,
                 modifier = Modifier.weight(1f),
             ) { page ->
-                val currentOnboardStage = OnboardStage.entries[page]
+                val currentStage = OnboardStage.entries[page]
 
                 Box(
                     modifier =
@@ -199,7 +199,7 @@ fun OnboardSuccess(
                                 backState = predictiveBackState,
                             )
                 ) {
-                    when (currentOnboardStage) {
+                    when (currentStage) {
                         OnboardStage.Welcome -> {
                             OnboardWelcome(onGetStartedClick = goNext)
                         }

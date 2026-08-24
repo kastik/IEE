@@ -89,7 +89,7 @@ fun AuthorSheet(
         LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
             groupedItems.keys.sorted().forEach { header ->
                 stickyHeader { AlphabetHeader(header, Modifier.animateItem()) }
-                items(groupedItems[header] ?: emptyList()) { author ->
+                items(groupedItems[header].orEmpty()) { author ->
                     val id = author.id
                     val isSelected = id in currentSelection
                     val label =

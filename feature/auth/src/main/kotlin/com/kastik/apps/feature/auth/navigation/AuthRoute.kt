@@ -9,14 +9,12 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import com.kastik.apps.feature.auth.AuthenticationRoute
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class AuthRoute(
     val code: String? = null,
-    val state: String? = null,
-    val error: String? = null,
-    val error_description: String? = null,
 )
 
 fun NavController.navigateToAuthentication(navOptions: NavOptions) =

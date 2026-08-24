@@ -14,7 +14,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.kastik.apps.core.domain.service.WorkScheduler
-import com.kastik.apps.core.model.sync.SyncState
+import com.kastik.apps.core.model.sync.SyncStatus
 import com.kastik.apps.core.work.worker.AnnouncementAlertWorker
 import com.kastik.apps.core.work.worker.AnnouncementSyncWorker
 import com.kastik.apps.core.work.worker.AnnouncementSyncWorker.Companion.KEY_ANNOUNCEMENT_ID
@@ -137,16 +137,16 @@ internal class WorkSchedulerImpl @Inject constructor(@ApplicationContext context
         )
     }
 
-    override val startupSyncState: Flow<SyncState> =
+    override val startupSyncStatus: Flow<SyncStatus> =
         workManager.getWorkInfosForUniqueWorkFlow(STARTUP_SYNC_WORK_NAME).mapToSyncState()
 
-    override val subscribeToTagsSyncState: Flow<SyncState> =
+    override val subscribeToTagsSyncStatus: Flow<SyncStatus> =
         workManager.getWorkInfosForUniqueWorkFlow(SUBSCRIBE_TO_TAGS_WORK_NAME).mapToSyncState()
 
-    override val announcementSyncState: Flow<SyncState> =
+    override val announcementSyncStatus: Flow<SyncStatus> =
         workManager.getWorkInfosForUniqueWorkFlow(ANNOUNCEMENT_SYNC_WORK_NAME).mapToSyncState()
 
-    override val announcementAlertsSyncState: Flow<SyncState> =
+    override val announcementAlertsSyncStatus: Flow<SyncStatus> =
         workManager.getWorkInfosForUniqueWorkFlow(ANNOUNCEMENT_REFRESH_WORK_NAME).mapToSyncState()
 
     override fun cancelStartupSync() {
@@ -166,15 +166,15 @@ internal class WorkSchedulerImpl @Inject constructor(@ApplicationContext context
     }
 }
 
-private fun Flow<List<WorkInfo>>.mapToSyncState(): Flow<SyncState> = map { workInfos ->
-    val workInfo = workInfos.firstOrNull() ?: return@map SyncState.Idle
+private fun Flow<List<WorkInfo>>.mapToSyncState(): Flow<SyncStatus> = map { workInfos ->
+    val workInfo = workInfos.firstOrNull() ?: return@map SyncStatus.Idle
 
     when (workInfo.state) {
-        WorkInfo.State.RUNNING -> SyncState.Syncing
-        WorkInfo.State.ENQUEUED -> SyncState.Enqueued
-        WorkInfo.State.BLOCKED -> SyncState.Blocked
-        WorkInfo.State.SUCCEEDED -> SyncState.Success
-        WorkInfo.State.FAILED -> SyncState.Error
-        WorkInfo.State.CANCELLED -> SyncState.Idle
+        WorkInfo.State.RUNNING -> SyncStatus.Syncing
+        WorkInfo.State.ENQUEUED -> SyncStatus.Enqueued
+        WorkInfo.State.BLOCKED -> SyncStatus.Blocked
+        WorkInfo.State.SUCCEEDED -> SyncStatus.Success
+        WorkInfo.State.FAILED -> SyncStatus.Error
+        WorkInfo.State.CANCELLED -> SyncStatus.Idle
     }
 }

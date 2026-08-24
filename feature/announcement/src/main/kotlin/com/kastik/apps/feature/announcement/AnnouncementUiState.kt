@@ -21,7 +21,7 @@ internal sealed interface AnnouncementUiState {
     data object Error : AnnouncementUiState
 }
 
-data class AnnouncementData(
+internal data class AnnouncementData(
     val title: String,
     val date: Instant,
     val author: String,
@@ -30,8 +30,8 @@ data class AnnouncementData(
     val processedBodies: ImmutableList<ProcessedBody>,
 )
 
-sealed class ProcessedBody {
-    data class Text(val text: AnnotatedString) : ProcessedBody()
+internal sealed interface ProcessedBody {
+    data class Text(val text: AnnotatedString) : ProcessedBody
 
-    data class Image(val url: String) : ProcessedBody()
+    data class Image(val url: String) : ProcessedBody
 }

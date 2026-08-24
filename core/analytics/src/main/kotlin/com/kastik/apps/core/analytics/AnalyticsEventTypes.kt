@@ -1,17 +1,17 @@
 package com.kastik.apps.core.analytics
 
 interface AnalyticsEventTypes {
-    val LOGIN: String
-    val LOGOUT: String
-    val SHARE: String
-    val SCREEN_VIEW: String
-    val SEARCH: String
-    val SELECT_ITEM: String
-    val SELECT_CONTENT: String
-    val VIEW_SEARCH_RESULTS: String
-    val BUTTON_CLICK: String
-    val PREFERENCE_UPDATED: String
-    val CONTENT_LOAD_STATUS: String
-    val FILTERS_APPLIED: String
-    val BOTTOM_SHEET_OPENED: String
+    val login: String
+    val logout: String
+    val share: String
+    val screenView: String
+    val search: String
+    val selectItem: String
+    val selectContent: String
+    val viewSearchResults: String
+    val buttonClick: String
+    val preferencesUpdated: String
+    val contentLoadStatus: String
+    val filtersApplied: String
+    val bottomSheetOpened: String
 }

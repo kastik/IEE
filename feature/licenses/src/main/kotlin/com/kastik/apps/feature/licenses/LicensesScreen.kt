@@ -17,7 +17,7 @@ import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 
 @Composable
-internal fun LicensesRoute(viewModel: LicensesViewModel = hiltViewModel()) {
+internal fun LicensesRoute() {
 
     TrackScreenViewEvent(
         screenClass = "licenses_route",

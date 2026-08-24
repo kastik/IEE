@@ -30,11 +30,11 @@ fun Analytics.logScreenView(
 ) {
     logEvent(
         AnalyticsEvent(
-            type = types.SCREEN_VIEW,
+            type = types.screenView,
             extras =
                 listOf(
-                    Param(paramKeys.SCREEN_CLASS, screenClass),
-                    Param(paramKeys.SCREEN_NAME, screenName),
+                    Param(paramKeys.screenClass, screenClass),
+                    Param(paramKeys.screenName, screenName),
                 ) + params,
         )
     )
