@@ -20,8 +20,8 @@ import com.kastik.apps.core.datastore.datasource.ProfileLocalDataSource
 import com.kastik.apps.core.datastore.datasource.ProfileLocalDataSourceImpl
 import com.kastik.apps.core.datastore.datasource.TagsLocalDataSource
 import com.kastik.apps.core.datastore.datasource.TagsLocalDataSourceImpl
-import com.kastik.apps.core.datastore.migrations.MigrateInterval
 import com.kastik.apps.core.datastore.migrations.MigrateExpirationKey
+import com.kastik.apps.core.datastore.migrations.MigrateInterval
 import com.kastik.apps.core.datastore.migrations.MigrateRefreshKey
 import com.kastik.apps.core.datastore.proto.OnboardStageProto
 import com.kastik.apps.core.datastore.proto.ProfileProto
@@ -59,9 +59,7 @@ internal interface DatastoreModule {
 
     @Binds
     @Singleton
-    fun bindUserProfileLocalDataSource(
-        impl: ProfileLocalDataSourceImpl
-    ): ProfileLocalDataSource
+    fun bindUserProfileLocalDataSource(impl: ProfileLocalDataSourceImpl): ProfileLocalDataSource
 
     @Binds
     @Singleton
@@ -69,9 +67,7 @@ internal interface DatastoreModule {
 
     @Binds
     @Singleton
-    fun bindOnboardLocalDatasource(
-        impl: OnboardLocalDatasourceImpl
-    ): OnboardLocalDatasource
+    fun bindOnboardLocalDatasource(impl: OnboardLocalDatasourceImpl): OnboardLocalDatasource
 
     companion object {
         @Provides

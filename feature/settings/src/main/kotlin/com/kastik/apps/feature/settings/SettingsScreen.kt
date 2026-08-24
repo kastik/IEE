@@ -168,7 +168,7 @@ private fun SettingsScreenSuccess(
             val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             pInfo.versionName
         } catch (e: Exception) {
-            Log.e("SettingsScreenSuccess","Something went wrong getting packagename", e)
+            Log.e("SettingsScreenSuccess", "Something went wrong getting packagename", e)
             "Unknown"
         }
     }

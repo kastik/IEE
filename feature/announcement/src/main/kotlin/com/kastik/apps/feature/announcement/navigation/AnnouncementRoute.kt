@@ -36,8 +36,6 @@ fun NavGraphBuilder.announcementScreen() {
         popEnterTransition = { fadeIn() },
     ) { backStackEntry ->
         val args = backStackEntry.toRoute<AnnouncementRoute>()
-        AnnouncementScreenRoute(
-            announcementId = args.id,
-        )
+        AnnouncementScreenRoute(announcementId = args.id)
     }
 }

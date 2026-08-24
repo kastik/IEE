@@ -16,13 +16,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 internal interface AnalyticsDebugModule {
 
-    @Binds
-    @Singleton
-    fun bindEventTypes(impl: AnalyticsEventTypesDebugImpl): AnalyticsEventTypes
+    @Binds @Singleton fun bindEventTypes(impl: AnalyticsEventTypesDebugImpl): AnalyticsEventTypes
 
-    @Binds
-    @Singleton
-    fun bindParamKeys(impl: AnalyticsParamKeysDebugImpl): AnalyticsParamKeys
+    @Binds @Singleton fun bindParamKeys(impl: AnalyticsParamKeysDebugImpl): AnalyticsParamKeys
 
     @Binds @Singleton fun bindAnalytics(impl: AnalyticsDebugImpl): Analytics
 }

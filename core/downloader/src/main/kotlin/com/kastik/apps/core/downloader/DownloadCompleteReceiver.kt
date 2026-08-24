@@ -8,7 +8,6 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class DownloadCompleteReceiver : BroadcastReceiver() {
@@ -40,7 +39,7 @@ class DownloadCompleteReceiver : BroadcastReceiver() {
             try {
                 context.startActivity(openIntent)
             } catch (e: ActivityNotFoundException) {
-                Log.w("DownloadCompleteReceiver","No app found to open this file",e)
+                Log.w("DownloadCompleteReceiver", "No app found to open this file", e)
                 Toast.makeText(context, "No app found to open this file", Toast.LENGTH_SHORT).show()
             }
         }

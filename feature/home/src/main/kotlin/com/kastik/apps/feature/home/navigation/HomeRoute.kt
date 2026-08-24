@@ -1,6 +1,5 @@
 package com.kastik.apps.feature.home.navigation
 
-import androidx.annotation.Keep
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn

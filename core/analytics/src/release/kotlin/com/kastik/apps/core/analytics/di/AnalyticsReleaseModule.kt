@@ -20,13 +20,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 internal interface AnalyticsReleaseModule {
 
-    @Binds
-    @Singleton
-    fun bindEventTypes(impl: AnalyticsEventTypesReleaseImpl): AnalyticsEventTypes
+    @Binds @Singleton fun bindEventTypes(impl: AnalyticsEventTypesReleaseImpl): AnalyticsEventTypes
 
-    @Binds
-    @Singleton
-    fun bindParamKeys(impl: AnalyticsParamKeysReleaseImpl): AnalyticsParamKeys
+    @Binds @Singleton fun bindParamKeys(impl: AnalyticsParamKeysReleaseImpl): AnalyticsParamKeys
 
     @Binds @Singleton fun bindAnalytics(impl: AnalyticsReleaseImpl): Analytics
 

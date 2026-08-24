@@ -122,7 +122,8 @@ constructor(
             .map { userPreferences ->
                 FilterParams(
                     sortType = userPreferences.sortType,
-                    titleQuery = query.takeIf { userPreferences.searchScope.includesTitle }.orEmpty(),
+                    titleQuery =
+                        query.takeIf { userPreferences.searchScope.includesTitle }.orEmpty(),
                     bodyQuery = query.takeIf { userPreferences.searchScope.includesBody }.orEmpty(),
                     authorIds = authorIds,
                     tagIds = tagIds,

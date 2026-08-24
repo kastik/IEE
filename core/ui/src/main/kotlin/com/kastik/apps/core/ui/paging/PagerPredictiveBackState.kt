@@ -46,7 +46,7 @@ fun rememberPagerPredictiveBackState(
             backEventProgress = 0f
             onBack()
         } catch (e: CancellationException) {
-            Log.d("PredictiveBackHandler","Predictive Back Canceled",e)
+            Log.d("PredictiveBackHandler", "Predictive Back Canceled", e)
             backEventProgress = 0f
         }
     }

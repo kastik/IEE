@@ -36,9 +36,7 @@ internal interface DataModule {
         announcementRepositoryImpl: AnnouncementRepositoryImpl
     ): AnnouncementRepository
 
-    @Binds
-    @Singleton
-    fun bindTagsRepository(tagsRepositoryImpl: TagsRepositoryImpl): TagsRepository
+    @Binds @Singleton fun bindTagsRepository(tagsRepositoryImpl: TagsRepositoryImpl): TagsRepository
 
     @Binds
     @Singleton
@@ -58,9 +56,7 @@ internal interface DataModule {
 
     @Binds
     @Singleton
-    fun bindUserInfoRepository(
-        profileRepositoryImpl: ProfileRepositoryImpl
-    ): ProfileRepository
+    fun bindUserInfoRepository(profileRepositoryImpl: ProfileRepositoryImpl): ProfileRepository
 
     @Binds
     @Singleton
@@ -70,17 +66,11 @@ internal interface DataModule {
 
     @Binds
     @Singleton
-    fun bindOnboardRepository(
-        onboardRepositoryImpl: OnboardRepositoryImpl
-    ): OnboardRepository
+    fun bindOnboardRepository(onboardRepositoryImpl: OnboardRepositoryImpl): OnboardRepository
+
+    @Binds @Singleton fun bindTokenProvider(tokenProvider: AboardTokenManagerImpl): TokenManager
 
     @Binds
     @Singleton
-    fun bindTokenProvider(tokenProvider: AboardTokenManagerImpl): TokenManager
-
-    @Binds
-    @Singleton
-    fun bindBase64ImageExtractor(
-        imageExtractorImpl: Base64ImageExtractorImpl
-    ): Base64ImageExtractor
+    fun bindBase64ImageExtractor(imageExtractorImpl: Base64ImageExtractorImpl): Base64ImageExtractor
 }

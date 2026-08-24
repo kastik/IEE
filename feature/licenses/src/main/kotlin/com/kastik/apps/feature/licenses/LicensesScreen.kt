@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.kastik.apps.core.designsystem.component.IeePreview
 import com.kastik.apps.core.designsystem.extensions.TrackScreenViewEvent
 import com.mikepenz.aboutlibraries.Libs

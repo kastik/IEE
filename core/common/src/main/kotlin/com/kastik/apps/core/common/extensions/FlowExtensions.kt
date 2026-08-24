@@ -1,4 +1,5 @@
 @file:Suppress("UNCHECKED_CAST", "MagicNumber", "LongParameterList")
+
 package com.kastik.apps.core.common.extensions
 
 import kotlinx.coroutines.flow.Flow

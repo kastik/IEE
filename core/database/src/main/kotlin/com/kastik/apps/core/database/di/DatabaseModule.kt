@@ -19,22 +19,17 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 internal class DatabaseModule {
 
-
-
-        @Provides
-        @Singleton
-        fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
-            Room.databaseBuilder(
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(
                 context,
                 AppDatabase::class.java,
                 "announcement_cache.db",
             )
-                .fallbackToDestructiveMigration(true)
-                .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
-                .build()
-
-
-
+            .fallbackToDestructiveMigration(true)
+            .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
+            .build()
 
     @Provides
     @Singleton

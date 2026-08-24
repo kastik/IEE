@@ -54,7 +54,7 @@ suspend fun Context.launchInAppReview(onSuccessfulReview: () -> Unit) {
         manager.launchReview(activity, reviewInfo)
         onSuccessfulReview()
     } catch (e: Exception) {
-        Log.e("launchInAppReview","Something when wrong",e)
+        Log.e("launchInAppReview", "Something when wrong", e)
         return
     }
 }

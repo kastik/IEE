@@ -10,10 +10,10 @@ import com.kastik.apps.core.model.error.NetworkError
 import com.kastik.apps.core.network.constants.SERVER_ERROR_RANGE
 import java.io.IOException
 import java.net.ConnectException
+import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import retrofit2.HttpException
-import java.net.HttpURLConnection
 
 fun Throwable.toLocalError(): LocalError {
     return when (this) {

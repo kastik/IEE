@@ -14,7 +14,5 @@ internal interface PerformanceReleaseModule {
 
     @Binds
     @Singleton
-    fun bindPerformanceReleaseImpl(
-        performanceReleaseImpl: PerformanceReleaseImpl
-    ): Performance
+    fun bindPerformanceReleaseImpl(performanceReleaseImpl: PerformanceReleaseImpl): Performance
 }
