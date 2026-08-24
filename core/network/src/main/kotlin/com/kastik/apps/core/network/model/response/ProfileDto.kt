@@ -1,6 +1,6 @@
 package com.kastik.apps.core.network.model.response
 
-import com.kastik.apps.core.network.serializers.IntAsBooleanSerializer
+import com.kastik.apps.core.network.serializers.IntToBooleanSerializer
 import com.kastik.apps.core.network.serializers.StringToInstantSerializer
 import kotlin.time.Instant
 import kotlinx.serialization.SerialName
@@ -12,10 +12,10 @@ data class ProfileDto(
     @SerialName("uid") val uid: String,
     @SerialName("name") val name: String,
     @SerialName("email") val email: String,
-    @Serializable(with = IntAsBooleanSerializer::class)
+    @Serializable(with = IntToBooleanSerializer::class)
     @SerialName("is_admin")
     val isAdmin: Boolean,
-    @Serializable(with = IntAsBooleanSerializer::class)
+    @Serializable(with = IntToBooleanSerializer::class)
     @SerialName("is_author")
     val isAuthor: Boolean,
     @Serializable(with = StringToInstantSerializer::class)

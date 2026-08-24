@@ -10,9 +10,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class PerformanceDebugModule {
+internal interface PerformanceDebugModule {
 
     @Binds
     @Singleton
-    abstract fun bindPerformanceDebugImpl(performanceDebugImpl: PerformanceDebugImpl): Performance
+    fun bindPerformanceDebugImpl(performanceDebugImpl: PerformanceDebugImpl): Performance
 }

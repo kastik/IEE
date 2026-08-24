@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.navOptions
 import androidx.navigation.toRoute
-import com.kastik.apps.feature.announcement.AnnouncementRoute
+import com.kastik.apps.feature.announcement.AnnouncementScreenRoute
 import kotlinx.serialization.Serializable
 
 @Serializable data class AnnouncementRoute(val id: Int)
@@ -22,7 +22,7 @@ fun NavController.navigateToAnnouncement(
     },
 ) = navigate(route = AnnouncementRoute(announcementId), navOptions)
 
-fun NavGraphBuilder.announcementScreen(navigateBack: () -> Unit) {
+fun NavGraphBuilder.announcementScreen() {
     composable<AnnouncementRoute>(
         deepLinks =
             listOf(
@@ -36,9 +36,6 @@ fun NavGraphBuilder.announcementScreen(navigateBack: () -> Unit) {
         popEnterTransition = { fadeIn() },
     ) { backStackEntry ->
         val args = backStackEntry.toRoute<AnnouncementRoute>()
-        AnnouncementRoute(
-            navigateBack = navigateBack,
-            announcementId = args.id,
-        )
+        AnnouncementScreenRoute(announcementId = args.id)
     }
 }

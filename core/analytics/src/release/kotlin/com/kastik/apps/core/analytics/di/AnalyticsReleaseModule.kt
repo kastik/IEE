@@ -1,4 +1,4 @@
-package com.kastik.apps.core.di
+package com.kastik.apps.core.analytics.di
 
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -18,17 +18,13 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class AnalyticsModule {
+internal interface AnalyticsReleaseModule {
 
-    @Binds
-    @Singleton
-    abstract fun bindEventTypes(impl: AnalyticsEventTypesReleaseImpl): AnalyticsEventTypes
+    @Binds @Singleton fun bindEventTypes(impl: AnalyticsEventTypesReleaseImpl): AnalyticsEventTypes
 
-    @Binds
-    @Singleton
-    abstract fun bindParamKeys(impl: AnalyticsParamKeysReleaseImpl): AnalyticsParamKeys
+    @Binds @Singleton fun bindParamKeys(impl: AnalyticsParamKeysReleaseImpl): AnalyticsParamKeys
 
-    @Binds @Singleton abstract fun bindAnalytics(impl: AnalyticsReleaseImpl): Analytics
+    @Binds @Singleton fun bindAnalytics(impl: AnalyticsReleaseImpl): Analytics
 
     companion object {
 

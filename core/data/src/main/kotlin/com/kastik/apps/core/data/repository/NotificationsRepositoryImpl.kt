@@ -41,20 +41,20 @@ constructor(@ApplicationContext private val context: Context) : NotificationRepo
                         override fun onActivityCreated(
                             activity: Activity,
                             savedInstanceState: Bundle?,
-                        ) {}
+                        ) = Unit
 
-                        override fun onActivityStarted(activity: Activity) {}
+                        override fun onActivityStarted(activity: Activity) = Unit
 
-                        override fun onActivityPaused(activity: Activity) {}
+                        override fun onActivityPaused(activity: Activity) = Unit
 
-                        override fun onActivityStopped(activity: Activity) {}
+                        override fun onActivityStopped(activity: Activity) = Unit
 
                         override fun onActivitySaveInstanceState(
                             activity: Activity,
                             outState: Bundle,
-                        ) {}
+                        ) = Unit
 
-                        override fun onActivityDestroyed(activity: Activity) {}
+                        override fun onActivityDestroyed(activity: Activity) = Unit
                     }
 
                 application.registerActivityLifecycleCallbacks(lifecycleCallbacks)

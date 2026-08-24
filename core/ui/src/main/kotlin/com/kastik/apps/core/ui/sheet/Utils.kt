@@ -25,8 +25,10 @@ internal fun <T> buildTreeFromFlat(
     val childrenMap = items.groupBy { parentIdProvider(it) }
     fun buildNode(item: T): TreeNode<T> {
         val children =
-            childrenMap[idProvider(item)]?.sortedBy { titleProvider(it) }?.map { buildNode(it) }
-                ?: emptyList()
+            childrenMap[idProvider(item)]
+                ?.sortedBy { titleProvider(it) }
+                ?.map { buildNode(it) }
+                .orEmpty()
         return TreeNode(item, children)
     }
     return items

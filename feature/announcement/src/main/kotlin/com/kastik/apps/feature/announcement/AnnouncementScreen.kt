@@ -74,10 +74,9 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-internal fun AnnouncementRoute(
+internal fun AnnouncementScreenRoute(
     announcementId: Int,
     viewModel: AnnouncementViewModel = hiltViewModel(),
-    navigateBack: () -> Unit,
 ) {
     val analytics = LocalAnalytics.current
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -87,8 +86,8 @@ internal fun AnnouncementRoute(
         screenName = "announcement_screen",
         params =
             listOf(
-                AnalyticsEvent.Param(analytics.paramKeys.ITEM_ID, announcementId.toString()),
-                AnalyticsEvent.Param(analytics.paramKeys.ITEM_CATEGORY, "announcement"),
+                AnalyticsEvent.Param(analytics.paramKeys.itemId, announcementId.toString()),
+                AnalyticsEvent.Param(analytics.paramKeys.itemCategory, "announcement"),
             ),
     )
 

@@ -6,8 +6,8 @@ import com.kastik.apps.core.model.aboard.Tag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-internal sealed class ProfileUiState {
-    data object Loading : ProfileUiState()
+internal sealed interface ProfileUiState {
+    data object Loading : ProfileUiState
 
     data class Success(
         val profile: Profile,
@@ -16,7 +16,7 @@ internal sealed class ProfileUiState {
         val isSubscribeSheetVisible: Boolean = false,
         val isSyncingSubscriptions: Boolean = false,
         @StringRes val subscribeSyncErrorMessageResId: Int? = null,
-    ) : ProfileUiState()
+    ) : ProfileUiState
 
-    data object SignedOut : ProfileUiState()
+    data object SignedOut : ProfileUiState
 }

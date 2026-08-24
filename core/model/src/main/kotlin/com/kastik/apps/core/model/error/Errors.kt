@@ -2,28 +2,28 @@ package com.kastik.apps.core.model.error
 
 interface AppError
 
-sealed class NetworkError : AppError {
-    data object Connection : NetworkError()
+sealed interface NetworkError : AppError {
+    data object Connection : NetworkError
 
-    data object Timeout : NetworkError()
+    data object Timeout : NetworkError
 
-    data object Authentication : NetworkError()
+    data object Authentication : NetworkError
 
-    data object ServerError : NetworkError()
+    data object ServerError : NetworkError
 
-    data object Unknown : NetworkError()
+    data object Unknown : NetworkError
 }
 
-sealed class LocalError : AppError {
-    data object DiskFull : LocalError()
+sealed interface LocalError : AppError {
+    data object DiskFull : LocalError
 
-    data object DatabaseCorrupt : LocalError()
+    data object DatabaseCorrupt : LocalError
 
-    data object DataStoreCorrupt : LocalError()
+    data object DataStoreCorrupt : LocalError
 
-    data object ConstraintViolation : LocalError()
+    data object ConstraintViolation : LocalError
 
-    data object IOError : LocalError()
+    data object IOError : LocalError
 
-    data object Unknown : LocalError()
+    data object Unknown : LocalError
 }

@@ -10,9 +10,9 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class WorkModule {
+internal interface WorkModule {
 
     @Binds
     @Singleton
-    abstract fun bindTokenRefreshScheduler(workSchedulerImpl: WorkSchedulerImpl): WorkScheduler
+    fun bindTokenRefreshScheduler(workSchedulerImpl: WorkSchedulerImpl): WorkScheduler
 }

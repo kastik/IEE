@@ -11,6 +11,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  detekt:
+    name: Detekt
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'jetbrains'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Decode Google Services
+        env:
+          GOOGLE_JSON: ${{ secrets.GOOGLE_SERVICES_FILE }}
+        run: echo "$GOOGLE_JSON" > app/google-services.json
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Run Detekt Check
+        run: ./gradlew detektMain
+
   spotless:
     name: Spotless
     runs-on: ubuntu-latest
@@ -109,10 +137,10 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Screenshot Tests
-        run: ./gradlew :feature:auth:validateDebugScreenshotTest :feature:onboard:validateDebugScreenshotTest :feature:licenses:validateDebugScreenshotTest :feature:profile:validateDebugScreenshotTest :feature:settings:validateDebugScreenshotTest :feature:announcement:validateDebugScreenshotTest :feature:home:validateDebugScreenshotTest :feature:search:validateDebugScreenshotTest
+        run: ./gradlew -Dorg.gradle.isolated-projects=false :feature:auth:validateDebugScreenshotTest :feature:onboard:validateDebugScreenshotTest :feature:licenses:validateDebugScreenshotTest :feature:profile:validateDebugScreenshotTest :feature:settings:validateDebugScreenshotTest :feature:announcement:validateDebugScreenshotTest :feature:home:validateDebugScreenshotTest :feature:search:validateDebugScreenshotTest
 
   generate-profiles:
-    needs: [ spotless, lint, unit-tests, screenshot-tests ]
+    needs: [ detekt, spotless, lint, unit-tests, screenshot-tests ]
     if: github.event_name == 'push'
     name: Generate Profile
     runs-on: ubuntu-latest

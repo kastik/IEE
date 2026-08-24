@@ -6,18 +6,18 @@ import javax.inject.Singleton
 
 @Singleton
 internal class AnalyticsParamKeysReleaseImpl @Inject constructor() : AnalyticsParamKeys {
-    override val SCREEN_NAME = FirebaseAnalytics.Param.SCREEN_NAME
-    override val SCREEN_CLASS = FirebaseAnalytics.Param.SCREEN_CLASS
-    override val ITEM_ID = FirebaseAnalytics.Param.ITEM_ID
-    override val ITEM_CATEGORY = FirebaseAnalytics.Param.ITEM_CATEGORY
-    override val ITEM_NAME = FirebaseAnalytics.Param.ITEM_NAME
-    override val SEARCH_TERM = FirebaseAnalytics.Param.SEARCH_TERM
-    override val CONTENT_TYPE = FirebaseAnalytics.Param.CONTENT_TYPE
+    override val screenName = FirebaseAnalytics.Param.SCREEN_NAME
+    override val screenClass = FirebaseAnalytics.Param.SCREEN_CLASS
+    override val itemId = FirebaseAnalytics.Param.ITEM_ID
+    override val itemCategory = FirebaseAnalytics.Param.ITEM_CATEGORY
+    override val itemName = FirebaseAnalytics.Param.ITEM_NAME
+    override val searchTerm = FirebaseAnalytics.Param.SEARCH_TERM
+    override val contentType = FirebaseAnalytics.Param.CONTENT_TYPE
 
     // Custom definitions
-    override val PREFERENCE_VALUE = "preference_value"
-    override val STATUS = "status"
-    override val ERROR_MESSAGE = "error_message"
-    override val TAG_FILTERS = "tag_filters"
-    override val AUTHOR_FILTERS = "author_filters"
+    override val preferenceValue = "preference_value"
+    override val status = "status"
+    override val errorMessage = "error_message"
+    override val tagFilters = "tag_filters"
+    override val authorFilters = "author_filters"
 }

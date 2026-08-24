@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class RemoteConfigDebugModule {
+internal interface RemoteConfigDebugModule {
 
-    @Binds @Singleton abstract fun bindRemoteConfig(impl: RemoteConfigDebugImpl): RemoteConfig
+    @Binds @Singleton fun bindRemoteConfig(impl: RemoteConfigDebugImpl): RemoteConfig
 }

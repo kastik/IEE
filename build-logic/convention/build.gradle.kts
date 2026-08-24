@@ -15,6 +15,7 @@ dependencies {
     compileOnly(libs.compose.gradlePlugin)
     compileOnly(libs.screenshot.gradlePlugin)
     compileOnly(libs.spotless.gradlePlugin)
+    compileOnly(libs.detekt.gradlePlugin)
 }
 
 gradlePlugin {
@@ -71,6 +72,11 @@ gradlePlugin {
             id = "com.kastik.spotless"
             implementationClass =
                 "com.kastik.buildlogic.conventions.plugins.SpotlessConventionPlugin"
+        }
+        create("detekt") {
+            id = "com.kastik.detekt"
+            implementationClass =
+                "com.kastik.buildlogic.conventions.plugins.DetektConventionPlugin"
         }
 
     }

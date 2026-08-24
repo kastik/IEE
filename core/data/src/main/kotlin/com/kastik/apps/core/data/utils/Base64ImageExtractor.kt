@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Base64
 import com.kastik.apps.core.common.di.DefaultDispatcher
 import com.kastik.apps.core.common.di.IoDispatcher
+import com.kastik.apps.core.crashlytics.Crashlytics
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileOutputStream
@@ -25,6 +26,7 @@ constructor(
     @ApplicationContext private val context: Context,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val crashlytics: Crashlytics,
 ) : Base64ImageExtractor {
     override suspend fun process(html: String): String =
         withContext(defaultDispatcher) {
@@ -69,6 +71,7 @@ constructor(
             currentHtml
         }
 
+    @Suppress("ImplicitDefaultLocale")
     private suspend fun generateFilename(imageBytes: ByteArray, extension: String): String =
         withContext(defaultDispatcher) {
             val messageDigest = java.security.MessageDigest.getInstance("SHA-256")
@@ -89,6 +92,7 @@ constructor(
                 FileOutputStream(file).use { it.write(bytes) }
                 file
             } catch (e: Exception) {
+                crashlytics.recordException(e)
                 null
             }
         }

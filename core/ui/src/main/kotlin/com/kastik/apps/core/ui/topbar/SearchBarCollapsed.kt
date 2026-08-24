@@ -22,7 +22,7 @@ fun SearchBarCollapsed(
     actions: @Composable RowScope.() -> Unit = {},
     collapsedSecondaryActions: @Composable () -> Unit = {},
 ) {
-    Surface(modifier = modifier.then(with(scrollBehavior) { Modifier.searchBarScrollBehavior() })) {
+    Surface(modifier = scrollBehavior.searchBarScrollBehaviorModifier) {
         Column {
             AppBarWithSearch(
                 modifier = modifier,

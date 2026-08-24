@@ -10,7 +10,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-object IntAsBooleanSerializer : KSerializer<Boolean> {
+object IntToBooleanSerializer : KSerializer<Boolean> {
 
     private val intSerializer = Int.serializer().nullable
 

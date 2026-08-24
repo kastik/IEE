@@ -22,7 +22,7 @@ import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class NetworkModule {
+internal interface NetworkModule {
 
     companion object {
         @Provides
@@ -48,31 +48,31 @@ abstract class NetworkModule {
 
     @Binds
     @Singleton
-    internal abstract fun bindAuthenticationRemoteDataSource(
+    fun bindAuthenticationRemoteDataSource(
         authenticationRemoteDataSourceImpl: AuthenticationRemoteDataSourceImpl
     ): AuthenticationRemoteDataSource
 
     @Binds
     @Singleton
-    internal abstract fun bindTagsRemoteDataSource(
+    fun bindTagsRemoteDataSource(
         tagsRemoteDataSourceImpl: TagsRemoteDataSourceImpl
     ): TagsRemoteDataSource
 
     @Binds
     @Singleton
-    internal abstract fun bindAuthorRemoteDataSource(
+    fun bindAuthorRemoteDataSource(
         authorRemoteDataSourceImpl: AuthorRemoteDataSourceImpl
     ): AuthorRemoteDataSource
 
     @Binds
     @Singleton
-    internal abstract fun bindProfileRemoteDataSource(
+    fun bindProfileRemoteDataSource(
         profileRemoteDataSourceImpl: ProfileRemoteDataSourceImpl
     ): ProfileRemoteDataSource
 
     @Binds
     @Singleton
-    internal abstract fun bindAnnouncementRemoteDataSource(
+    fun bindAnnouncementRemoteDataSource(
         announcementRemoteDataSourceImpl: AnnouncementRemoteDataSourceImpl
     ): AnnouncementRemoteDataSource
 }

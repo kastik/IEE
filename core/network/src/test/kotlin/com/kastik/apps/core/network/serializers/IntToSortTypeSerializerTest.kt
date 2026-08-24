@@ -8,7 +8,7 @@ import retrofit2.Retrofit
 
 class IntToSortTypeSerializerTest {
 
-    private val factory = SortTypeQueryConverterFactory()
+    private val factory = SortTypeConverterFactory()
     private val dummyRetrofit = Retrofit.Builder().baseUrl("http://localhost/").build()
     private val emptyAnnotations = emptyArray<Annotation>()
 

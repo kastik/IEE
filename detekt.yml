@@ -1,0 +1,33 @@
+exceptions:
+  TooGenericExceptionCaught:
+    active: false
+naming:
+  MatchingDeclarationName:
+    active: false
+  FunctionNaming:
+    active: false
+coroutines:
+  InjectDispatcher:
+    excludes:
+      - '**/DispatchersModule.kt'
+complexity:
+  TooManyFunctions:
+    allowedFunctionsPerFile: 18
+    allowedFunctionsPerInterface: 14
+  LongParameterList:
+    allowedFunctionParameters: 18
+    allowedConstructorParameters: 14
+  CyclomaticComplexMethod:
+    allowedComplexity: 22
+  LongMethod:
+    allowedLines: 420
+style:
+  UnusedPrivateFunction:
+    ignoreAnnotated:
+      - 'Preview'
+  UnusedPrivateProperty:
+    active: false
+  ReturnCount:
+    max: 4
+  MagicNumber:
+    active: false

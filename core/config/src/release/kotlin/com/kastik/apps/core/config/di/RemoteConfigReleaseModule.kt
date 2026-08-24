@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal abstract class RemoteConfigReleaseModule {
+internal interface RemoteConfigReleaseModule {
 
     companion object {
         @Provides
@@ -32,5 +32,5 @@ internal abstract class RemoteConfigReleaseModule {
         }
     }
 
-    @Binds @Singleton abstract fun bindRemoteConfig(impl: RemoteConfigReleaseImpl): RemoteConfig
+    @Binds @Singleton fun bindRemoteConfig(impl: RemoteConfigReleaseImpl): RemoteConfig
 }

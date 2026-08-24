@@ -63,7 +63,7 @@ fun IeeNavHost(
 
         profileScreen(navigateBack = navController::popBackStack)
 
-        announcementScreen(navigateBack = navController::popBackStack)
+        announcementScreen()
 
         licenseScreen()
     }

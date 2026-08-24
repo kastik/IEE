@@ -1,39 +1,39 @@
 package com.kastik.apps.core.analytics
 
 object EmptyAnalyticsParamKeys : AnalyticsParamKeys {
-    override val SCREEN_NAME: String
+    override val screenName: String
         get() = ""
 
-    override val SCREEN_CLASS: String
+    override val screenClass: String
         get() = ""
 
-    override val ITEM_ID: String
+    override val itemId: String
         get() = ""
 
-    override val ITEM_CATEGORY: String
+    override val itemCategory: String
         get() = ""
 
-    override val ITEM_NAME: String
+    override val itemName: String
         get() = ""
 
-    override val SEARCH_TERM: String
+    override val searchTerm: String
         get() = ""
 
-    override val CONTENT_TYPE: String
+    override val contentType: String
         get() = ""
 
-    override val PREFERENCE_VALUE: String
+    override val preferenceValue: String
         get() = ""
 
-    override val STATUS: String
+    override val status: String
         get() = ""
 
-    override val ERROR_MESSAGE: String
+    override val errorMessage: String
         get() = ""
 
-    override val TAG_FILTERS: String
+    override val tagFilters: String
         get() = ""
 
-    override val AUTHOR_FILTERS: String
+    override val authorFilters: String
         get() = ""
 }

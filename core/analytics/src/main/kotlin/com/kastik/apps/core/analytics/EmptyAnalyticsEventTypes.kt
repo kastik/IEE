@@ -1,42 +1,42 @@
 package com.kastik.apps.core.analytics
 
 object EmptyAnalyticsEventTypes : AnalyticsEventTypes {
-    override val LOGIN: String
+    override val login: String
         get() = ""
 
-    override val LOGOUT: String
+    override val logout: String
         get() = ""
 
-    override val SHARE: String
+    override val share: String
         get() = ""
 
-    override val SCREEN_VIEW: String
+    override val screenView: String
         get() = ""
 
-    override val SEARCH: String
+    override val search: String
         get() = ""
 
-    override val SELECT_ITEM: String
+    override val selectItem: String
         get() = ""
 
-    override val SELECT_CONTENT: String
+    override val selectContent: String
         get() = ""
 
-    override val VIEW_SEARCH_RESULTS: String
+    override val viewSearchResults: String
         get() = ""
 
-    override val BUTTON_CLICK: String
+    override val buttonClick: String
         get() = ""
 
-    override val PREFERENCE_UPDATED: String
+    override val preferencesUpdated: String
         get() = ""
 
-    override val CONTENT_LOAD_STATUS: String
+    override val contentLoadStatus: String
         get() = ""
 
-    override val FILTERS_APPLIED: String
+    override val filtersApplied: String
         get() = ""
 
-    override val BOTTOM_SHEET_OPENED: String
+    override val bottomSheetOpened: String
         get() = ""
 }

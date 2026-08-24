@@ -7,9 +7,14 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 
 class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            pluginManager.apply("com.kastik.library")
+
+    override fun apply(project: Project) {
+
+        with(project) {
+
+            with(pluginManager){
+                apply("com.kastik.library")
+            }
 
             val extension = extensions.getByType<LibraryExtension>()
             configureAndroidCompose(extension)

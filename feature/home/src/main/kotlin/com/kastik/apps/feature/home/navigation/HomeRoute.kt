@@ -1,6 +1,5 @@
 package com.kastik.apps.feature.home.navigation
 
-import androidx.annotation.Keep
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -14,13 +13,6 @@ import androidx.navigation.toRoute
 import com.kastik.apps.feature.home.HomeScreenRoute
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.serialization.Serializable
-
-@Keep
-@Serializable
-enum class HomeTab {
-    HOME,
-    FOR_YOU,
-}
 
 @Serializable data class HomeRoute(val initialTab: HomeTab? = null)
 

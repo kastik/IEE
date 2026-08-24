@@ -3,6 +3,7 @@ package com.kastik.apps.core.network.interceptor
 import com.kastik.apps.core.crashlytics.Crashlytics
 import com.kastik.apps.core.network.api.AboardApiClient
 import com.kastik.apps.core.network.di.BaseAboardClient
+import java.net.HttpURLConnection
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.runBlocking
@@ -39,7 +40,7 @@ constructor(
                     tokenManager.updateToken(newToken.accessToken)
                     return@runBlocking buildRequest(response.request, newToken.accessToken)
                 } catch (e: HttpException) {
-                    if (e.code() == 401) tokenManager.tokenExpired()
+                    if (e.code() == HttpURLConnection.HTTP_UNAUTHORIZED) tokenManager.tokenExpired()
                     crashlytics.recordException(e)
                     return@runBlocking null
                 } catch (e: Exception) {

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.util.Log
 import androidx.core.net.toUri
 import com.google.android.play.core.ktx.launchReview
 import com.google.android.play.core.ktx.requestReview
@@ -53,6 +54,7 @@ suspend fun Context.launchInAppReview(onSuccessfulReview: () -> Unit) {
         manager.launchReview(activity, reviewInfo)
         onSuccessfulReview()
     } catch (e: Exception) {
+        Log.e("launchInAppReview", "Something when wrong", e)
         return
     }
 }

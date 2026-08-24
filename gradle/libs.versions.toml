@@ -1,6 +1,6 @@
 [versions]
 
-agp = "9.2.1"
+agp = "9.3.2"
 ksp = "2.3.9"
 
 kotlin = "2.4.10"
@@ -10,7 +10,7 @@ kotlinxSerialization = "1.11.0"
 kotlinx-collections = "0.5.1"
 kotlinxDatetime = "0.8.0"
 
-okhttp = "5.4.0"
+okhttp = "5.5.0"
 retrofit = "3.0.0"
 
 hiltAndroid = "2.60.1"
@@ -21,21 +21,21 @@ lifecycle = "2.11.0"
 
 workRuntimeKtx = "2.11.2"
 
-material3 = "1.5.0-alpha25"
-composeBom = "2026.06.01"
+material3 = "1.5.0-alpha26"
+composeBom = "2026.08.00"
 activityCompose = "1.13.0"
 navigation = "2.9.8"
 hiltNavigationCompose = "1.4.0"
 accompanistPermissions = "0.37.3"
 splashScreen = "1.2.0"
-composeStabilityAnalyzer = "0.12.0"
+composeStabilityAnalyzer = "0.13.0"
 
 
 
 room = "2.8.4"
-paging = "3.5.0"
+paging = "3.5.1"
 
-protobuf = "4.35.1"
+protobuf = "4.36.0"
 protobufPlugin = "0.10.0"
 
 datastore = "1.2.1"
@@ -54,25 +54,26 @@ espressoCore = "3.7.0"
 screenshot = "0.0.1-alpha16"
 uiautomator = "2.4.0"
 profileinstaller = "1.4.1"
-androidx-macro-benchmark = "1.5.0-beta01"
+androidx-macro-benchmark = "1.5.0-rc01"
 
 
 
 gms = "4.5.0"
-firebase-bom = "34.17.0"
-crashlyticsGradle = "3.0.7"
+firebase-bom = "34.18.0"
+crashlyticsGradle = "3.0.8"
 performanceGradle = "2.0.2"
 
 play-core = "2.0.2"
 
-appcompat = "1.7.1"
+appcompat = "1.8.0"
 material = "1.14.0"
 
 coilCompose = "3.5.0"
-aboutLibraries = "15.0.4"
+aboutLibraries = "15.1.1"
 
 
-spotless = "8.9.0"
+spotless = "8.10.0"
+detekt = "2.0.0-alpha.6"
 
 
 [libraries]
@@ -173,6 +174,7 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 screenshot-gradlePlugin = { group = "com.android.compose.screenshot", name = "screenshot-test-gradle-plugin", version.ref = "screenshot" }
 spotless-gradlePlugin = { group = "com.diffplug.spotless", name = "spotless-plugin-gradle", version.ref = "spotless" }
+detekt-gradlePlugin = { group = "dev.detekt", name = "detekt-gradle-plugin", version.ref = "detekt" }
 
 #Compose
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
@@ -223,6 +225,7 @@ android-test = { id = "com.android.test", version.ref = "agp" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutLibraries" }
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "composeStabilityAnalyzer" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
 
 ####### Convention plugins #######
@@ -234,3 +237,5 @@ kastik-jvm-library = { id = "com.kastik.jvm.library" }
 kastik-library-testing = { id = "com.kastik.library.testing" }
 kastik-benchmark = { id = "com.kastik.benchmark" }
 kastik-feature = { id = "com.kastik.library.feature" }
+kastik-spotless = { id = "com.kastik.library.spotless" }
+kastik-detekt = { id = "com.kastik.library.detekt" }

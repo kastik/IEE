@@ -10,19 +10,19 @@ class IntToBooleanSerializerTest {
 
     @Test
     fun oneDeserializesToTrueTest() {
-        val result = json.decodeFromString(IntAsBooleanSerializer, "1")
+        val result = json.decodeFromString(IntToBooleanSerializer, "1")
         assertThat(result).isTrue()
     }
 
     @Test
     fun zeroDeserializesToFalseTest() {
-        val result = json.decodeFromString(IntAsBooleanSerializer, "0")
+        val result = json.decodeFromString(IntToBooleanSerializer, "0")
         assertThat(result).isFalse()
     }
 
     @Test
     fun nullDeserializesToFalseTest() {
-        val result = json.decodeFromString(IntAsBooleanSerializer, "null")
+        val result = json.decodeFromString(IntToBooleanSerializer, "null")
         assertThat(result).isFalse()
     }
 }
