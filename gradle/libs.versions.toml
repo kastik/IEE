@@ -1,6 +1,6 @@
 [versions]
 
-agp = "9.3.1"
+agp = "9.3.2"
 ksp = "2.3.9"
 
 kotlin = "2.4.10"
@@ -10,7 +10,7 @@ kotlinxSerialization = "1.11.0"
 kotlinx-collections = "0.5.1"
 kotlinxDatetime = "0.8.0"
 
-okhttp = "5.4.0"
+okhttp = "5.5.0"
 retrofit = "3.0.0"
 
 hiltAndroid = "2.60.1"
@@ -28,14 +28,14 @@ navigation = "2.9.8"
 hiltNavigationCompose = "1.4.0"
 accompanistPermissions = "0.37.3"
 splashScreen = "1.2.0"
-composeStabilityAnalyzer = "0.12.0"
+composeStabilityAnalyzer = "0.13.0"
 
 
 
 room = "2.8.4"
 paging = "3.5.1"
 
-protobuf = "4.35.1"
+protobuf = "4.36.0"
 protobufPlugin = "0.10.0"
 
 datastore = "1.2.1"
@@ -59,8 +59,8 @@ androidx-macro-benchmark = "1.5.0-rc01"
 
 
 gms = "4.5.0"
-firebase-bom = "34.17.0"
-crashlyticsGradle = "3.0.7"
+firebase-bom = "34.18.0"
+crashlyticsGradle = "3.0.8"
 performanceGradle = "2.0.2"
 
 play-core = "2.0.2"
@@ -69,10 +69,10 @@ appcompat = "1.8.0"
 material = "1.14.0"
 
 coilCompose = "3.5.0"
-aboutLibraries = "15.0.4"
+aboutLibraries = "15.1.1"
 
 
-spotless = "8.9.0"
+spotless = "8.10.0"
 detekt = "2.0.0-alpha.6"
 
 
