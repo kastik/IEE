@@ -19,6 +19,8 @@ configure<ApplicationExtension> {
         applicationId = "com.kastik.apps"
         versionCode = 63
         versionName = "2.4.8"
+
+        testInstrumentationRunner = "com.kastik.apps.IeeTestRunner"
     }
 
     flavorDimensions += BuildDimensions.ENVIRONMENT
@@ -117,6 +119,19 @@ dependencies {
 
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.navigation.testing)
+    androidTestImplementation(libs.hilt.android.testing)
+
+    testFixturesImplementation(libs.androidx.runner)
+    testFixturesImplementation(libs.hilt.android.testing)
+
+    kspAndroidTest(libs.hilt.android.compiler)
+
+
+
+    //TODO THESE NEED TO GO INTO CONVENTIONS?
+
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
 baselineProfile {
