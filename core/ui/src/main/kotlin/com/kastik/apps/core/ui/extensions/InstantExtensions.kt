@@ -21,33 +21,33 @@ fun Instant.toFormattedString(): String {
     val localDateTime = this.toLocalDateTime(TimeZone.UTC)
     val isSystem24Hour = DateFormat.is24HourFormat(context)
 
-    val customFormat = remember(isSystem24Hour, locale) {
+    val customFormat =
+        remember(isSystem24Hour, locale) {
+            val amPmStrings = DateFormatSymbols.getInstance(locale.platformLocale).amPmStrings
+            val localAm = amPmStrings[0]
+            val localPm = amPmStrings[1]
 
-        val amPmStrings = DateFormatSymbols.getInstance(locale.platformLocale).amPmStrings
-        val localAm = amPmStrings[0]
-        val localPm = amPmStrings[1]
-
-        LocalDateTime.Format {
-            day()
-            char('/')
-            monthNumber()
-            char('/')
-            year()
-            char(' ')
-
-            if (isSystem24Hour) {
-                hour()
-                char(':')
-                minute()
-            } else {
-                amPmHour()
-                char(':')
-                minute()
+            LocalDateTime.Format {
+                day()
+                char('/')
+                monthNumber()
+                char('/')
+                year()
                 char(' ')
-                amPmMarker(localAm, localPm)
+
+                if (isSystem24Hour) {
+                    hour()
+                    char(':')
+                    minute()
+                } else {
+                    amPmHour()
+                    char(':')
+                    minute()
+                    char(' ')
+                    amPmMarker(localAm, localPm)
+                }
             }
         }
-    }
 
     return localDateTime.format(customFormat)
 }

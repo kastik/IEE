@@ -3,11 +3,11 @@
 agp = "9.3.2"
 ksp = "2.3.9"
 
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 coreKtx = "1.19.0"
 coroutines = "1.11.0"
 kotlinxSerialization = "1.11.0"
-kotlinx-collections = "0.5.1"
+kotlinx-collections = "0.5.2"
 kotlinxDatetime = "0.8.0"
 
 okhttp = "5.5.0"
@@ -21,10 +21,10 @@ lifecycle = "2.11.0"
 
 workRuntimeKtx = "2.11.2"
 
-material3 = "1.5.0-alpha26"
-composeBom = "2026.08.00"
+material3 = "1.5.0-alpha28"
+composeBom = "2026.09.00"
 activityCompose = "1.13.0"
-navigation = "2.9.8"
+navigation = "2.10.1"
 hiltNavigationCompose = "1.4.0"
 accompanistPermissions = "0.37.3"
 splashScreen = "1.2.0"
@@ -32,10 +32,10 @@ composeStabilityAnalyzer = "0.13.0"
 
 
 
-room = "2.8.4"
+room = "2.8.5"
 paging = "3.5.1"
 
-protobuf = "4.36.0"
+protobuf = "4.36.1"
 protobufPlugin = "0.10.0"
 
 datastore = "1.2.1"
@@ -54,12 +54,12 @@ espressoCore = "3.7.0"
 screenshot = "0.0.1-alpha16"
 uiautomator = "2.4.0"
 profileinstaller = "1.4.1"
-androidx-macro-benchmark = "1.5.0-rc01"
+androidx-macro-benchmark = "1.5.0"
 
 
 
 gms = "4.5.0"
-firebase-bom = "34.18.0"
+firebase-bom = "34.19.0"
 crashlyticsGradle = "3.0.8"
 performanceGradle = "2.0.2"
 
@@ -68,11 +68,11 @@ play-core = "2.0.2"
 appcompat = "1.8.0"
 material = "1.14.0"
 
-coilCompose = "3.5.0"
-aboutLibraries = "15.1.1"
+coilCompose = "3.6.2"
+aboutLibraries = "15.2.0"
 
 
-spotless = "8.10.0"
+spotless = "8.10.2"
 detekt = "2.0.0-alpha.6"
 
 
