@@ -39,9 +39,9 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -538,9 +538,14 @@ private fun SettingsSliderRow(
     onValueChangeFinished: (Int) -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    var sliderValue by remember { mutableFloatStateOf(initialValue) }
     var lastVibratedValue by remember { mutableIntStateOf(initialValue.roundToInt()) }
     val vibrator = LocalHapticFeedback.current
+    val sliderState =
+        rememberSliderState(
+            value = initialValue,
+            steps = steps,
+            trackRange = valueRange,
+        )
 
     Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp)) {
         Row(
@@ -594,27 +599,25 @@ private fun SettingsSliderRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Slider(
+                state = sliderState,
                 enabled = enabled,
-                value = sliderValue,
-                onValueChange = {
-                    val newVibrationValue = it.roundToInt()
+                interactionSource = interactionSource,
+                onValueChange = { newValue ->
+                    val newVibrationValue = newValue.roundToInt()
                     if (newVibrationValue != lastVibratedValue) {
                         vibrator.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                         lastVibratedValue = newVibrationValue
                     }
-                    sliderValue = it
+                    sliderState.value = newValue
                 },
-                valueRange = valueRange,
-                steps = steps,
-                interactionSource = interactionSource,
                 onValueChangeFinished = {
-                    onValueChangeFinished(sliderValue.roundToInt())
+                    onValueChangeFinished(sliderState.value.roundToInt())
                 },
-                thumb = {
+                thumb = { sliderState ->
                     IeeSliderThumbToolTip(
                         enabled = enabled,
                         interactionSource = interactionSource,
-                        tooltipText = valueFormatter(sliderValue.roundToInt()),
+                        tooltipText = valueFormatter(sliderState.value.roundToInt()),
                     )
                 },
             )
