@@ -35,6 +35,14 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     showAll = true
                     abortOnError = true
                     warningsAsErrors = true
+
+                    informational.addAll(
+                        listOf(
+                            "AndroidGradlePluginVersion",
+                            "GradleDependency",
+                            "NewerVersionAvailable"
+                        )
+                    )
                 }
             }
 
